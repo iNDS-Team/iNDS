@@ -1,0 +1,18 @@
+  The code pass all test cases on contrib/check and lightning tests
+running under qemu versatilepb (armv5te).
+
+  It is not optimal but should be compatible with most lightning
+usages. Some redesign could be done, like not using r0-r3 for
+JIT_R(n), but start at r4 (and change JIT_R_NUM and JIT_V_NUM from
+4 to 3), what would mean JIT_R(n) would actually be callee save, and
+use "ip" as temporary (not used currently), but that would miss one
+temporary, making it harder to implement some double operations.
+
+  One thing that could be done to reduce overhead is to map JIT_TMP
+to ip, and keep JIT_FPR(0) in r8-r9.
+
+  Another change could be to have prolog map fp to the address of the
+lr register in the stack, like is done by "normally" compiled code,
+but should only be useful, but still probably not fully correct, to
+unwind C++ exceptions, but unwind of exceptions from functions called
+from lightning jit is not tested, and most likely broken on all ports.

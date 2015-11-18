@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86
+END
+x86operand.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86operand.cpp
+END
+x86compileritem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compileritem.cpp
+END
+x86func.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86func.cpp
+END
+x86compilerfunc.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compilerfunc.h
+END
+x86operand.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86operand.h
+END
+x86compileritem.h
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compileritem.h
+END
+x86func.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86func.h
+END
+x86cpuinfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86cpuinfo.cpp
+END
+x86cpuinfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86cpuinfo.h
+END
+x86compiler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compiler.cpp
+END
+x86assembler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86assembler.cpp
+END
+x86util.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86util.cpp
+END
+x86compilercontext.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compilercontext.cpp
+END
+x86compiler.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compiler.h
+END
+x86defs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86defs.cpp
+END
+x86assembler.h
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86assembler.h
+END
+x86util.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86util.h
+END
+x86compilercontext.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compilercontext.h
+END
+x86defs.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86defs.h
+END
+x86compilerfunc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86/x86compilerfunc.cpp
+END

@@ -1,0 +1,34 @@
+CoreFoundation = 1240.100000
+Nov  6 10:26:41  iNDS[3459] <Error>: CGContextSaveGState: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Nov  6 10:26:41  iNDS[3459] <Error>: CGContextTranslateCTM: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Nov  6 10:26:41  iNDS[3459] <Error>: CGContextRestoreGState: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+2015-11-06 10:26:51.412 iNDS[3459:230196] Opening! file:///private/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Inbox/2652%20-%20Addy%20-%20Do%20You%20Speak%20English%20(E)(SQUiRE).7z
+2015-11-06 10:26:51.416 iNDS[3459:230196] Zip File
+2015-11-06 10:26:51.416 iNDS[3459:230196] Expanding: /private/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Inbox/2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:26:51.417 iNDS[3459:230196] cd to /private/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/tmp/2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:26:52.029 iNDS[3459:230196] Searching
+2015-11-06 10:26:52.030 iNDS[3459:230196] found ROM in zip: 2652 - Addy - Do You Speak English (E)(SQUiRE).nds
+2015-11-06 10:26:52.031 iNDS[3459:230196] Discarding: 2652 - Cover.png
+2015-11-06 10:26:52.031 iNDS[3459:230196] Discarding: 2652 - Icon.png
+2015-11-06 10:26:52.031 iNDS[3459:230196] Discarding: 2652 - InGame.png
+2015-11-06 10:26:52.031 iNDS[3459:230196] Discarding: 2652 - SQUiRE.nfo
+2015-11-06 10:26:52.031 iNDS[3459:230196] Removing
+2015-11-06 10:26:52.032 iNDS[3459:230196] Done
+2015-11-06 10:29:57.860 iNDS[3459:230196] Downloading http://192.211.61.66/happyxhJ1ACmlTrxJQpol71nBc/Nintendo%20DS/Nintendo%20DS%202601%20-%202700/2652%20-%20Addy%20-%20Do%20You%20Speak%20English%20(E)(SQUiRE).7z
+2015-11-06 10:29:57.957 iNDS[3459:230196] 0.003121
+2015-11-06 10:29:57.966 iNDS[3459:230196] 0.003474
+...
+2015-11-06 10:29:59.347 iNDS[3459:230196] 0.998588
+2015-11-06 10:29:59.353 iNDS[3459:230196] 1.000000
+2015-11-06 10:29:59.354 iNDS[3459:230196] Saving! 2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:29:59.524 iNDS[3459:230196] Error: Error Domain=NSCocoaErrorDomain Code=512 "The file “Rombox” couldn’t be saved in the folder “Documents”." UserInfo={NSFilePath=/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Rombox, NSUnderlyingError=0x1396c3f40 {Error Domain=NSPOSIXErrorDomain Code=21 "Is a directory"}}
+2015-11-06 10:29:59.525 iNDS[3459:230196] Opening! file:///var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Rombox/2652%20-%20Addy%20-%20Do%20You%20Speak%20English%20(E)(SQUiRE).7z
+2015-11-06 10:29:59.525 iNDS[3459:230196] Zip File
+2015-11-06 10:29:59.527 iNDS[3459:230196] Expanding: /var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Rombox/2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:29:59.529 iNDS[3459:230196] cd to /private/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/tmp/2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:29:59.533 iNDS[3459:230196] Error Extracting 7z: 8 
+/var/mobile/Containers/Data/Application/73B2CCF9-6F77-4CD9-BDBA-8C223E6C70E3/Documents/Rombox/2652 - Addy - Do You Speak English (E)(SQUiRE).7z
+2015-11-06 10:29:59.533 iNDS[3459:230196] Unable to extract 7z
+2015-11-06 10:29:59.533 iNDS[3459:230196] Searching
+2015-11-06 10:29:59.534 iNDS[3459:230196] Removing
+2015-11-06 10:29:59.535 iNDS[3459:230196] Done

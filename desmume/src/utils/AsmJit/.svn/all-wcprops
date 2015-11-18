@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/desmume/!svn/ver/4473/trunk/desmume/src/utils/AsmJit
+END
+core.h
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core.h
+END
+COPYING.txt
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/desmume/!svn/ver/4311/trunk/desmume/src/utils/AsmJit/COPYING.txt
+END
+Config.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/Config.h
+END
+x86.h
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/x86.h
+END
+AsmJit.h
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/AsmJit.h
+END

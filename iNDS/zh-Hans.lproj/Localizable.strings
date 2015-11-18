@@ -1,0 +1,49 @@
+ROM_LIST = "ROM列表";
+ABOUT_INDS = "关于iNDS";
+SETTINGS = "设置";
+DONATE = "捐助";
+
+SHARE = "分享";
+
+EMULATOR_CORE_CODE = "特别感谢";
+
+EMULATOR = "模拟器设置";
+CONTROLS = "控制设置";
+DEVELOPER = "开发设置";
+EXPERIMENTAL = "实验设置";
+
+OVERLAY_PIXEL_GRID_DETAIL = "像素网格会使画面看上去更清晰，但是黑色的网格会降低一半的亮度。";
+ENABLE_DROPBOX_DETAIL = "启用Dropbox将会在您的Dropbox帐户里增加一个“iNDS”文件夹。您的游戏存档将会保存到该文件夹，它会进行跨设备同步。（iPhone、iPad、iPod touch、Android、PC）。";
+ARMLJIT_DETAIL = "GNU Lighting JIT将让游戏运行得更快。您必须越狱您的iOS设备，否则iNDS会崩溃。";
+
+AUTO = "自动";
+DPAD = "方向键";
+JOYSTICK = "摇杆";
+TOP = "顶部";
+BOTTOM = "底部";
+
+FRAME_SKIP = "跳帧";
+DISABLE_SOUND = "禁用声音";
+OVERLAY_PIXEL_GRID = "显示网格";
+
+CONTROL_PAD_STYLE = "控制类型";
+CONTROL_POSITION_PORTRAIT = "按键位置";
+CONTROL_OPACITY_PORTRAIT = "按键透明度";
+
+ENABLE_DROPBOX = "开启Dropbox同步";
+NOT_LINKED = "未连接";
+LINKED = "已连接";
+UNLINKED = "连接断开!";
+UNLINKED_DETAIL = "Dropbox 的连接已经断开。已保存的文件将停止同步。";
+SUCCESS = "成功！";
+SUCCESS_DETAIL = "Dropbox 连接成功！ iNDS 将会把已保存的文件同步到Dropbox 根目录里的文件夹“iNDS”中。";
+DROPBOX_CFG_ERROR = "Dropbox配置错误";
+
+SHOW_FPS = "显示FPS";
+VIBRATION = "振动";
+
+LAUNCH_GAME = "加载游戏";
+LAUNCH_GAME_DETAIL = "正常开始游戏";
+RESUME_AUTOSAVE = "从自动存档中继续游戏";
+
+ARMLJIT = "GNU Lightning JIT";

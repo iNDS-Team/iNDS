@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+  <META http-equiv="Content-Type" content="text/html; charset=Windows-1252">
+  <TITLE>7-Zip Options Dialog Box</TITLE>
+  <LINK href="style.css" rel="stylesheet" type="text/css">
+</HEAD>
+
+<BODY>
+
+<H1>7-Zip Options Dialog Box</H1>
+
+
+<P>You can change many of the settings that affect the 7-Zip Plugin 
+in the 7-Zip Options Dialog Box.
+To access this dialog box, select Options from the Tools menu, then select the Plugins Page,
+select 7-Zip plugin, and press Options.</P>
+
+<P>The options dialog box contains the following pages:</P>
+<UL>
+  <LI><A href = "#system">System  Page</A></LI>
+  <LI><A href = "#folders">Folders Page</A></LI>
+</UL>
+
+<H2><a name="system"></a>System  Page</H2>
+<P>Allows you to specify behavior of 7-Zip in Windows Shell.</P>
+<DL>
+  <DT>Integrate 7-Zip to shell context menu</DT>
+    <DD>Select this check box to add 7-Zip commands to Shell Context Menu.</DD>
+  <DT>Cascaded context menu</DT>
+    <DD>Select this check box to group 7-Zip context menu items to one <B>7-Zip</B> submenu.</DD>
+  <DT>Context menu items</DT>
+    <DD>Lists the optional context menu items. If an item is checked,
+        7-Zip will add this item to the context menu.</DD>
+</DL>
+
+<H2><a name="folders"></a>Folders Page</H2>
+<P>Allows you to set the folders which 7-Zip will use for internal purposes.</P>
+
+<H3>Working folder</H3>
+
+<P>The working folder section allows you to specify a folder which will be used
+for temporary archive files:</P>
+
+<DL>
+  <DT>System temp folder</DT>
+    <DD>7-Zip will use the Windows temp folder.</DD>
+  <DT>Current</DT>
+    <DD>7-Zip will use the folder containing the target archive.</DD>
+  <DT>Specified</DT>
+    <DD>7-Zip will use the folder specified in the following edit control.</DD>
+</DL>
+
+<DL>
+  <DT>Use for removable drives only</DT>
+    <DD> Specifies whether 7-Zip should use the specified folder settings
+         only for removable drives;  for other drives, 7-Zip will create
+         temporary archives in the folder containing the target archive.
+         If you clear this check box, 7-Zip always will use the specified folder
+         settings mode always.
+    </DD>
+</DL>
+
+<P>7-Zip uses temporary archive files for all update operations. 
+So, for speed reasons, it is recommended that you select the
+<B>System temp folder</B> option and select 
+<B>Use for removable drives only</B> check box.
+</P>
+
+</BODY>
+</HTML>

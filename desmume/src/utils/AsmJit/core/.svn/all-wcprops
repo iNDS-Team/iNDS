@@ -1,0 +1,269 @@
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/desmume/!svn/ver/4473/trunk/desmume/src/utils/AsmJit/core
+END
+func.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/func.h
+END
+assert.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/assert.cpp
+END
+cpuinfo.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/cpuinfo.cpp
+END
+build.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/desmume/!svn/ver/4473/trunk/desmume/src/utils/AsmJit/core/build.h
+END
+zonememory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/zonememory.cpp
+END
+apiend.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/apiend.h
+END
+memorymanager.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/memorymanager.h
+END
+buffer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/buffer.cpp
+END
+stringutil.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/stringutil.h
+END
+memorymarker.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/memorymarker.cpp
+END
+compiler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compiler.cpp
+END
+podvector.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/podvector.h
+END
+assembler.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/assembler.cpp
+END
+compilercontext.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compilercontext.cpp
+END
+virtualmemory.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/virtualmemory.cpp
+END
+defs.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/defs.cpp
+END
+stringbuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/stringbuilder.h
+END
+apibegin.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/apibegin.h
+END
+logger.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/logger.h
+END
+context.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/context.cpp
+END
+operand.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/operand.cpp
+END
+func.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/func.cpp
+END
+compilerfunc.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compilerfunc.h
+END
+lock.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/lock.h
+END
+intutil.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/intutil.h
+END
+compileritem.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compileritem.h
+END
+memorymanager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/memorymanager.cpp
+END
+stringutil.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/stringutil.cpp
+END
+assert.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/assert.h
+END
+cpuinfo.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/cpuinfo.h
+END
+zonememory.h
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/zonememory.h
+END
+stringbuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/stringbuilder.cpp
+END
+buffer.h
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/buffer.h
+END
+logger.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/logger.cpp
+END
+compiler.h
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compiler.h
+END
+memorymarker.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/memorymarker.h
+END
+assembler.h
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/assembler.h
+END
+compilercontext.h
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compilercontext.h
+END
+virtualmemory.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/virtualmemory.h
+END
+defs.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/defs.h
+END
+compilerfunc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compilerfunc.cpp
+END
+context.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/context.h
+END
+compileritem.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/compileritem.cpp
+END
+operand.h
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/desmume/!svn/ver/4469/trunk/desmume/src/utils/AsmJit/core/operand.h
+END

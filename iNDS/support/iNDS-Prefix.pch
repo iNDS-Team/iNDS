@@ -1,0 +1,45 @@
+//
+// Prefix header for all source files of the 'iNDS' target in the 'iNDS' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+// needs refactor later.
+
+#ifdef __cplusplus
+
+//#undef __APPLE__
+#define OBJ_C
+
+#define MAP_ANONYMOUS MAP_ANON
+#define _MAIN_H
+
+#if defined(__arm__) || defined(__arm64__)
+#define HAVE_NEON
+#endif
+
+#define HAVE_JIT
+
+// Necessary #defines
+
+#define ANDROID_LOG_ERROR ""
+#define __android_log_print(fmt, ...) printf(fmt)
+
+
+#include <mach/mach.h>
+#include <mach/mach_time.h>
+#include <strings.h>
+
+//#include "types.h"
+//#include "nullJit.h"
+
+#endif
