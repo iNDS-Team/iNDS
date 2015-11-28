@@ -37,6 +37,9 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"controlSize"]) {
+        [[NSUserDefaults standardUserDefaults] setFloat:0.5 forKey:@"controlSize"];
+    }
     
     //Dropbox DBSession Auth
     

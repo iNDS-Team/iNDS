@@ -192,7 +192,7 @@ const float textureVert[] =
     
     
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
-    self.pixelGrid.hidden = ![defaults integerForKey:@"showPixelGrid"];
+    self.pixelGrid.hidden = YES;//![defaults integerForKey:@"showPixelGrid"];
 }
 
 - (void)viewWillLayoutSubviews

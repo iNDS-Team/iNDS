@@ -2069,10 +2069,8 @@ void NDS_exec(s32 nb)
 	nds.cpuloopIterationCount = 0;
 
 	IF_DEVELOPER(for(int i=0;i<32;i++) DEBUG_statistics.sequencerExecutionCounters[i] = 0);
-
 	if(nds.sleeping)
 	{
-		///*remove*/printf("Sleeping\n");
 		//speculative code: if ANY irq happens, wake up the arm7.
 		//I think the arm7 program analyzes the system and may decide not to wake up
 		//if it is dissatisfied with the conditions
@@ -2092,7 +2090,6 @@ void NDS_exec(s32 nb)
 		unsigned long long st,ed,ed2;
 		unsigned int s1=0,s2=0,s3=0;
 #endif
-
 		for(;;)
 		{
 #ifdef PRINT_LOOP
@@ -2108,7 +2105,6 @@ void NDS_exec(s32 nb)
 					nds_debug_continuing[0] = nds_debug_continuing[1] = true;
 				}
 			#endif
-
 			nds.cpuloopIterationCount++;
 			sequencer.execHardware();
 
@@ -2147,7 +2143,7 @@ void NDS_exec(s32 nb)
 			s1+=ed-st;
 #endif
 	
-#ifdef HAVE_JIT		
+#ifdef HAVE_JIT
 			std::pair<s32,s32> arm9arm7;
 			switch(CommonSettings.CpuMode)
 			{
