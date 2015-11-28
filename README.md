@@ -8,13 +8,13 @@ Currently, emulation is powered by the DeSmuME threaded ARM interpreter and runs
 
 Due to the need to mmap the entire ROM into memory, older devices with only 256MB of RAM are not supported. These devices include the iPod touch 4, iPad 1, iPhone 3GS, and anything below those devices.
 
-[iNDS](http://www.williamlcobb.com/inds)
+[iNDS](http://www.williamlcobb.com/iNDS.html)
 
 [DeSmuME](http://desmume.org/) 
 
 Installing iNDS
 ------------------------
-<!-- ##### Please Do not redistribute iNDS on other sites. We already provide official ways to download iNDS below.
+##### Support for non jailbroken Devices is coming soon.
 #### Option 1: Cydia
 
 If you're jailbroken, please add the following source: http://www.williamlcobb.com/repo
@@ -22,7 +22,6 @@ If you're jailbroken, please add the following source: http://www.williamlcobb.c
 Download iNDS from the repository.
 
 #### Option 2: Compile and install iNDS from the Xcode IDE
--->
 ##### Please Do not redistribute self-compiled versions of iNDS on other sites. 
 #### Compile and install iNDS from the Xcode IDE (your only option for now)
 ##### IMPORTANT: Make sure your working directory is devoid of spaces. Otherwise, bad things will happen.
