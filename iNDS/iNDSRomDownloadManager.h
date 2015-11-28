@@ -23,10 +23,11 @@
     
     long long expectedBytes;
     float progress;
-    NSMutableData * fileData;
     
     iNDSRomDownloadManager *_delegate;
-    
+    NSFileHandle *fileHandle;
+    NSString * savePath;
+    NSURL * escapedPath;
 }
 
 @property (weak, nonatomic)UILabel * progressLabel;

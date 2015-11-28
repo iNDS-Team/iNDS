@@ -208,7 +208,6 @@
 {
     [super viewWillAppear:animated];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
     NSInteger frameSkip = [defaults integerForKey:@"frameSkip"];
     self.frameSkipControl.selectedSegmentIndex = frameSkip < 0 ? 5 : frameSkip;
     self.disableSoundSwitch.on = [defaults boolForKey:@"disableSound"];

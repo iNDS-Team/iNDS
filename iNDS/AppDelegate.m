@@ -14,6 +14,8 @@
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
 
+#import "iNDSInitialViewController.h"
+
 #ifndef kCFCoreFoundationVersionNumber_iOS_7_0
 #define kCFCoreFoundationVersionNumber_iOS_7_0 847.20
 #endif
@@ -34,6 +36,7 @@
     }
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
+    
     
     //Dropbox DBSession Auth
     
@@ -62,6 +65,8 @@
 		   delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil]
 		 show];
 	}
+    
+    [self checkForUpdates];
     
     return YES;
 }
@@ -129,7 +134,7 @@
             else if (foundItems.count == 1) {
                 [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added: %@", foundItems[0]] duration:3];
             } else {
-                [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added %ld items", foundItems.count] duration:3];
+                [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added %ld items", (long)foundItems.count] duration:3];
             }
             // remove unzip dir
             [fm removeItemAtPath:dstDir error:NULL];
@@ -143,12 +148,37 @@
         }
         // remove inbox (shouldn't be needed)
         [fm removeItemAtPath:[self.documentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+        // Clear temp
+        NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
+        for (NSString *file in tmpDirectory) {
+            [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
+        }
         
         return YES;
     } else {
-        NSLog(@"Invalid URL! %i %i", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path]);
+        [ZAActivityBar showErrorWithStatus:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url] duration:10];
+        
     }
     return NO;
+}
+
+- (void)checkForUpdates
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.williamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:nil];
+        latestVersion = [latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        
+        if ([latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending) {
+            NSLog(@"Upgrade Needed lastest<%@> mine<%@>", latestVersion, myVersion);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                UIImage * upgrade = [UIImage imageNamed:@"upgrade.png"];
+                [ZAActivityBar showImage:upgrade status:@"An Update is avaliable from www.williamlcobb.com/repo" duration:5];
+            });
+        } else {
+            NSLog(@"No Update %@ >= %@", myVersion, latestVersion);
+        }
+    });
 }
 
 - (NSString *)batteryDir
@@ -179,9 +209,9 @@
     emulatorViewController.game = game;
     emulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
     [AppDelegate sharedInstance].currentEmulatorViewController = emulatorViewController;
-    UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    iNDSInitialViewController *rootViewController = (iNDSInitialViewController*)[UIApplication sharedApplication].keyWindow.rootViewController;
     //[rootViewController doSlideIn:nil];
-    [rootViewController presentViewController:emulatorViewController animated:YES completion:nil];
+    [rootViewController.rootView presentViewController:emulatorViewController animated:YES completion:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

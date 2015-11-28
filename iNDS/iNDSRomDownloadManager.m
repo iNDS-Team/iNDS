@@ -17,7 +17,15 @@
     if (self = [super init]) {
         _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
         _delegate = delegate;
-        fileData = [NSMutableData dataWithLength:0];
+        
+        savePath = [NSString stringWithFormat:@"file://%@%@", NSTemporaryDirectory(), [_connection.originalRequest.URL lastPathComponent]];
+        escapedPath  = [NSURL URLWithString:[savePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        
+        [[NSFileManager defaultManager] createFileAtPath:escapedPath.path contents:nil attributes:nil];
+        fileHandle = [NSFileHandle fileHandleForWritingAtPath:escapedPath.path];
+        if (!fileHandle) {
+            NSLog(@"Error opening handle");
+        }
     }
     return self;
 }
@@ -44,10 +52,16 @@
 }
 
 - (void) connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    [fileData appendData:data];
-    progress = (float)[fileData length] / (float)expectedBytes;
+    [fileHandle seekToEndOfFile];
+    [fileHandle writeData:data];
+    progress = [fileHandle offsetInFile] / (float)expectedBytes;
     if (self.progressLabel) {
-        self.progressLabel.text = [NSString stringWithFormat:@"Downloading: %i%%", (int)(progress * 100)];
+        int roundedProgress = (int)(progress * 100);
+        if (roundedProgress < 100) {
+            self.progressLabel.text = [NSString stringWithFormat:@"Downloading: %i%%", roundedProgress];
+        } else {
+            self.progressLabel.text = [NSString stringWithFormat:@"Opening"];
+        }
     }
 }
 
@@ -66,31 +80,17 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     NSError * error;
     
-    NSString * savePath = [NSString stringWithFormat:@"file://%@%@", NSTemporaryDirectory(), [connection.originalRequest.URL lastPathComponent]];
-    NSURL * escapedPath  = [NSURL URLWithString:[savePath stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    
+    [fileHandle closeFile];
     
     error = nil;
-    if (self.progressLabel) {
-        self.progressLabel.text = @"Opening";
-    }
-    [fileData writeToFile:escapedPath.path options:NSDataWritingAtomic error:&error];
-    if (error) {
-        NSLog(@"Error Downloading File: %@", error);
-        [ZAActivityBar showErrorWithStatus:@"Failed to download ROM, Error Saving File" duration:5];
-    } else if (![[NSFileManager defaultManager] fileExistsAtPath:escapedPath.path]) {
-        NSLog(@"Error: unable to save file");
-    } else {
-        [ZAActivityBar showWithStatus:@"Download Complete, Extracting"];
-        [AppDelegate.sharedInstance application:nil openURL:escapedPath sourceApplication:nil annotation:nil];
-    }
+    [ZAActivityBar showWithStatus:@"Download Complete, Opening"];
+    [AppDelegate.sharedInstance application:nil openURL:escapedPath sourceApplication:nil annotation:nil];
     [_delegate removeDownload:self];
 }
 @end
 
 
 @implementation iNDSRomDownloadManager
-
 
 + (id)sharedManager {
     static iNDSRomDownloadManager * sharedMyManager = nil;

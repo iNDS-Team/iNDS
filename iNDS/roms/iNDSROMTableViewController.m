@@ -73,7 +73,6 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.tableView reloadData];
-    NSLog(@"Active DLS: %@", activeDownloads);
 }
 
 - (void)viewDiddAppear:(BOOL)animated {

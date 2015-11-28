@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="dZK-hw-lIu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="rdm-Mv-s2q">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9051"/>
@@ -574,7 +574,7 @@
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
                             <button opaque="NO" alpha="0.5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="VZZ-1B-BHQ">
-                                <rect key="frame" x="193" y="0.0" width="28" height="28"/>
+                                <rect key="frame" x="193" y="6" width="28" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <gestureRecognizers/>
@@ -735,7 +735,7 @@
                         <barButtonItem key="leftBarButtonItem" style="plain" id="qhC-Ro-o7O">
                             <textField key="customView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" id="U2K-K6-WC8">
                                 <rect key="frame" x="16" y="7" width="260" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="URL" returnKeyType="go" enablesReturnKeyAutomatically="YES"/>
@@ -835,6 +835,31 @@
             </objects>
             <point key="canvasLocation" x="-533" y="868"/>
         </scene>
+        <!--Initial View Controller-->
+        <scene sceneID="7ey-11-iRG">
+            <objects>
+                <viewController id="rdm-Mv-s2q" customClass="iNDSInitialViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="oGZ-TU-GJQ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppIcon-Transparent.png" id="PJC-bQ-OKh">
+                                <rect key="frame" x="0.0" y="124" width="320" height="320"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <animations/>
+                            </imageView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <segue destination="dZK-hw-lIu" kind="modal" identifier="ToRoot" animates="NO" id="xEw-07-9WD"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="htV-sa-8b1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1515" y="1513"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="gWU-AR-SIA">
             <objects>
@@ -881,6 +906,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="AppIcon-Transparent.png" width="640" height="640"/>
         <image name="Gear" width="22" height="23"/>
         <image name="HideEmulator.png" width="28" height="28"/>
         <image name="LTrigger.png" width="67" height="44"/>
@@ -889,5 +915,5 @@
         <image name="Start.png" width="48" height="26"/>
         <image name="pixelgrid.png" width="640" height="960"/>
     </resources>
-    <color key="tintColor" red="0.2588235438" green="0.75294125079999996" blue="0.98431378599999997" alpha="1" colorSpace="deviceRGB"/>
+    <color key="tintColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="deviceRGB"/>
 </document>

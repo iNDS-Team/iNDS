@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "iNDSEmulatorViewController.h"
+
 #import "iNDSGame.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

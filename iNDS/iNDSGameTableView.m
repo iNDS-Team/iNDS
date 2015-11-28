@@ -25,6 +25,7 @@
 {
     [super viewWillAppear:animated];
     [self.tableView reloadData];
+    
 }
 
 #pragma mark - Table View

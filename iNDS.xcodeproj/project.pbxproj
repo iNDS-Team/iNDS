@@ -173,8 +173,10 @@
 		CA031D2E1BEBE1EB00EDE98D /* Ppmd8Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D1C1BEBE1EB00EDE98D /* Ppmd8Dec.c */; };
 		CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D301BEBE36200EDE98D /* 7zAlloc.c */; };
 		CA031D341BEBE36200EDE98D /* 7zMain.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D321BEBE36200EDE98D /* 7zMain.c */; };
-		CA031D371BED0D3500EDE98D /* log.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA031D361BED0D3500EDE98D /* log.txt */; };
 		CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */; };
+		CA7079C61C08F901005A1B19 /* upgrade.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079C51C08F901005A1B19 /* upgrade.png */; };
+		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
+		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -513,10 +515,14 @@
 		CA031D301BEBE36200EDE98D /* 7zAlloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zAlloc.c; sourceTree = "<group>"; };
 		CA031D311BEBE36200EDE98D /* 7zAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zAlloc.h; sourceTree = "<group>"; };
 		CA031D321BEBE36200EDE98D /* 7zMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zMain.c; sourceTree = "<group>"; };
-		CA031D361BED0D3500EDE98D /* log.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = log.txt; sourceTree = "<group>"; };
 		CA0BA5401BF9712B00C93357 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloadManager.h; sourceTree = "<group>"; };
 		CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
+		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
+		CA7079C51C08F901005A1B19 /* upgrade.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = upgrade.png; path = iNDS/upgrade.png; sourceTree = "<group>"; };
+		CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSInitialViewController.h; sourceTree = "<group>"; };
+		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
+		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -641,7 +647,8 @@
 				CA031ADE1BEB103B00EDE98D /* iNDSRomDownloader.m */,
 				CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */,
 				CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */,
-				CA031D361BED0D3500EDE98D /* log.txt */,
+				CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */,
+				CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */,
 			);
 			name = "App Init";
 			sourceTree = "<group>";
@@ -682,6 +689,8 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
+				CA7079C51C08F901005A1B19 /* upgrade.png */,
 				D325821017A1D69B0009C84B /* pixelgrid.png */,
 				D325821117A1D69B0009C84B /* pixelgrid@2x.png */,
 				BF9D517017867F8200B5864B /* Controls */,
@@ -778,6 +787,7 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */,
 				9C4DD2851891E5390075B66C /* GameController.framework */,
 				D3B8BB911794ACCE0061D1D8 /* DropboxSDK.framework */,
 				D32C39DA178E749C00E6809E /* libc++.dylib */,
@@ -1309,7 +1319,9 @@
 				28DA4A51178802FB002236A4 /* LTrigger@2x.png in Resources */,
 				CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */,
 				28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */,
+				CA7079C61C08F901005A1B19 /* upgrade.png in Resources */,
 				28DA4A53178802FB002236A4 /* RTrigger@2x.png in Resources */,
+				CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */,
 				28DA4A50178802FB002236A4 /* LTrigger.png in Resources */,
 				BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */,
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
@@ -1317,7 +1329,6 @@
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
-				CA031D371BED0D3500EDE98D /* log.txt in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
 				BF9D516D17867F7D00B5864B /* JoystickBackground@2x.png in Resources */,
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
@@ -1458,6 +1469,7 @@
 				BFCFE23C176634EE000A70CF /* slot1_none.cpp in Sources */,
 				BFCFE23D176634EE000A70CF /* slot1_r4.cpp in Sources */,
 				CA031D2C1BEBE1EB00EDE98D /* Ppmd7Dec.c in Sources */,
+				CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */,
 				CA031CCB1BEBDC4F00EDE98D /* zip.c in Sources */,
 				BFCFE23E176634EE000A70CF /* slot1_retail_nand.cpp in Sources */,
 				BFCFE23F176634EE000A70CF /* slot1_retail.cpp in Sources */,
@@ -1566,7 +1578,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DANDROID",
@@ -1619,7 +1631,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DANDROID",
@@ -1664,7 +1676,7 @@
 					"$(SRCROOT)/desmume/src/android",
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -1704,7 +1716,7 @@
 					"$(SRCROOT)/desmume/src/android",
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

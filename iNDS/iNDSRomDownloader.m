@@ -41,10 +41,10 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    //[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.emuparadise.me/Nintendo_DS_ROMs/32"]]];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://10.20.51.95:8000"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.emuparadise.me/Nintendo_DS_ROMs/32"]]];
+    //[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://10.20.51.95:8000"]]];
     webView.scrollView.delegate = self;
-    urlField.text = webView.request.URL.absoluteString;
+    urlField.text = @"http://www.emuparadise.me/Nintendo_DS_ROMs/32";
     lastURL = urlField.text;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
@@ -86,7 +86,7 @@
         [ZAActivityBar showErrorWithStatus:@"Sorry! iNDS does not support .rar files yet"];
     }
     else {
-        NSLog(@"Ignore: %@", request.URL);
+        //NSLog(@"Ignore: %@", request.URL);
     }
     return ![urlField isFirstResponder]; //Prevent leaving page while editing
 }
@@ -120,6 +120,6 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    [self.view endEditing:YES];
+    //[self.view endEditing:YES];
 }
 @end
