@@ -126,6 +126,9 @@
         case 4:
             sectionName = NSLocalizedString(@"EXPERIMENTAL", nil);
             break;
+        case 5:
+            sectionName = @"Credit";
+            break;
         default:
             sectionName = @"";
             break;
