@@ -265,6 +265,7 @@ const float textureVert[] =
         self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
         self.dismissButton.alpha = 1;
         self.fpsLabel.frame = CGRectMake(6, 0, 70, 24);
+        [self.directionalControl frameUpdated];
     }
 }
 

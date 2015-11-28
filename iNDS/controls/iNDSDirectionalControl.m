@@ -40,12 +40,15 @@
     }
     return self;
 }
-- (void) updateConstraints
+- (void) frameUpdated
 {
     [super updateConstraints];
     _buttonImageView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
     self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
+    
+    _buttonImageView.frame = CGRectMake(0, 0, _backgroundImageView.frame.size.width/2, _backgroundImageView.frame.size.width/2);
 }
+
 - (iNDSDirectionalControlDirection)directionForTouch:(UITouch *)touch
 {
     // convert coords to based on center of control

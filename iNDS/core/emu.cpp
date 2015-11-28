@@ -426,7 +426,7 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 	}
     
     //This doesn't really work right
-	/*if(FastForward)
+	if(FastForward)
 	{
 		if(mainLoopData.framesskipped < ffSkipRate)
 		{
@@ -436,11 +436,10 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 		if (mainLoopData.framestoskip < 1)
 			mainLoopData.framestoskip += ffSkipRate;
 	}
-	else if((/*autoframeskipenab && frameskiprate ||/ FrameLimit) && allowSleep)
+	else if((/*autoframeskipenab && frameskiprate ||*/ FrameLimit) && allowSleep)
 	{
 		SpeedThrottle();
-	}*/
-    SpeedThrottle();
+	}
     
 	if (autoframeskipenab && frameskiprate)
 	{
