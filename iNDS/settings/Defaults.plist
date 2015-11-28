@@ -10,6 +10,8 @@
 	<false/>
 	<key>controlOpacity</key>
 	<real>0.5</real>
+	<key>controlSize</key>
+	<string>0.5</string>
 	<key>controlPosition</key>
 	<integer>1</integer>
 	<key>controlPadStyle</key>

@@ -206,21 +206,32 @@ const float textureVert[] =
     
     self.snapshotView.frame = glkView[extWindow?1:0].frame;
     
+    CGFloat controllerSizeDelta = 0.5 + (([defaults floatForKey:@"controlSize"] - 0.4) * 0.5);
+    
+    CGRect directionalFrame = self.directionalControl.frame;
+    directionalFrame.size.width = directionalFrame.size.height = MAX(50, 240 * controllerSizeDelta);
+    CGRect buttonFrame = self.buttonControl.frame;
+    buttonFrame.size.width = buttonFrame.size.height = MAX(50, 240 * controllerSizeDelta);
+    
+    self.directionalControl.frame = directionalFrame;
+    self.buttonControl.frame = buttonFrame;
+    
     if (isLandscape) {
         self.dismissButton.frame = CGRectMake((self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2 + 8, 8, 28, 28);
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
         {
             self.controllerContainerView.frame = self.view.bounds;
-            self.directionalControl.center = CGPointMake(66, self.view.bounds.size.height-128);
-            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-66, self.view.bounds.size.height-128);
+            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.view.bounds.size.height/2);
+            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-self.directionalControl.frame.size.width/2 - 5, self.view.bounds.size.height/2);
             self.startButton.center = CGPointMake(self.view.bounds.size.width-102, self.view.bounds.size.height-48);
             self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, self.view.bounds.size.height-16);
             self.controllerContainerView.alpha = self.dismissButton.alpha = 1.0;
             self.fpsLabel.frame = CGRectMake(70, 0, 70, 24);
         } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
             self.controllerContainerView.frame = CGRectMake(0, (self.view.bounds.size.height/2)-150, self.view.bounds.size.width, 300);
-            self.directionalControl.center = CGPointMake(66, 150);
-            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-66, 150);
+            //Could be wrong
+            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height/2);
+            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height/2);
             self.startButton.center = CGPointMake(self.view.bounds.size.width-102, 258);
             self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, 226);
             self.controllerContainerView.alpha = self.dismissButton.alpha = 1.0;
@@ -232,7 +243,7 @@ const float textureVert[] =
         }
     } else {
         CGFloat screenOffset = (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2; //Black space at top
-        //NSLog(@"%f %f", glkView[1].frame.origin.y, screenOffset);
+        
         CGFloat screenHeight = [self rectForScreenView:1].size.height / 2;
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
         {
@@ -246,8 +257,8 @@ const float textureVert[] =
             self.selectButton.center = CGPointMake(self.view.bounds.size.width-25, screenHeight - 60);
             self.dismissButton.frame = CGRectMake(self.view.bounds.size.width-35, 5, 28, 28);
         }
-        self.directionalControl.center = CGPointMake(60, self.controllerContainerView.frame.size.height - 100);
-        self.buttonControl.center = CGPointMake(self.view.bounds.size.width-60, self.controllerContainerView.frame.size.height - 100);
+        self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height - self.directionalControl.frame.size.height/2 - 20);
+        self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 20);
         self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
         self.dismissButton.alpha = 1;
         self.fpsLabel.frame = CGRectMake(6, 0, 70, 24);

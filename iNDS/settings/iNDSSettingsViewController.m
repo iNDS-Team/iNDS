@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *controlPadStyleControl;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *controlPositionControl;
 @property (weak, nonatomic) IBOutlet UISlider *controlOpacitySlider;
+@property (weak, nonatomic) IBOutlet UISlider *controlSizeSlider;
 
 @property (weak, nonatomic) IBOutlet UILabel *showFPSLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveLabel;
@@ -179,6 +180,8 @@
         [defaults setInteger:self.controlPositionControl.selectedSegmentIndex forKey:@"controlPosition"];
     } else if (sender == self.controlOpacitySlider) {
         [defaults setFloat:self.controlOpacitySlider.value forKey:@"controlOpacity"];
+    } else if (sender == self.controlSizeSlider) {
+        [defaults setFloat:self.controlSizeSlider.value forKey:@"controlSize"];
     } else if (sender == self.showFPSSwitch) {
         [defaults setBool:self.showFPSSwitch.on forKey:@"showFPS"];
     } else if (sender == self.enableJITSwitch) {
@@ -215,6 +218,7 @@
     self.controlPadStyleControl.selectedSegmentIndex = [defaults integerForKey:@"controlPadStyle"];
     self.controlPositionControl.selectedSegmentIndex = [defaults integerForKey:@"controlPosition"];
     self.controlOpacitySlider.value = [defaults floatForKey:@"controlOpacity"];
+    self.controlSizeSlider.value = [defaults floatForKey:@"controlSize"];
     
     self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
     self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];

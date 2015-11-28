@@ -1658,6 +1658,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1681,6 +1682,7 @@
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LLVM_LTO = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -1698,6 +1700,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1721,6 +1724,7 @@
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LLVM_LTO = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
