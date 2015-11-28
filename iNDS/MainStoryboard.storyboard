@@ -474,7 +474,6 @@
                         <outlet property="synchSoundSwitch" destination="c1F-hA-v70" id="sJA-h1-gfc"/>
                         <outlet property="vibrateLabel" destination="cNL-IT-Ar0" id="1CC-ba-efi"/>
                         <outlet property="vibrateSwitch" destination="bp0-zJ-1yS" id="Fh5-fN-3Jp"/>
-                        <outlet property="view" destination="gaP-db-aFa" id="U2Y-IW-bee"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="jjl-tV-jFD" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -790,7 +789,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ivX-kl-M3O" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-129" y="2155"/>
+            <point key="canvasLocation" x="-129" y="2191"/>
         </scene>
         <!--Game Table View-->
         <scene sceneID="JXi-jS-VO5">
@@ -890,7 +889,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="htV-sa-8b1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1515" y="1513"/>
+            <point key="canvasLocation" x="-1663" y="1513"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="gWU-AR-SIA">
@@ -934,7 +933,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hrT-hz-Npp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-533" y="2155"/>
+            <point key="canvasLocation" x="-533" y="2191"/>
         </scene>
     </scenes>
     <resources>
