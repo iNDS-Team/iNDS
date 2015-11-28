@@ -177,6 +177,7 @@
 		CA7079C61C08F901005A1B19 /* upgrade.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079C51C08F901005A1B19 /* upgrade.png */; };
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
+		CA7079CD1C095147005A1B19 /* toDo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CC1C095147005A1B19 /* toDo.txt */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -523,6 +524,7 @@
 		CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSInitialViewController.h; sourceTree = "<group>"; };
 		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
 		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
+		CA7079CC1C095147005A1B19 /* toDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = toDo.txt; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -649,6 +651,7 @@
 				CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */,
 				CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */,
 				CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */,
+				CA7079CC1C095147005A1B19 /* toDo.txt */,
 			);
 			name = "App Init";
 			sourceTree = "<group>";
@@ -1335,6 +1338,7 @@
 				BF9D516F17867F7D00B5864B /* JoystickButton@2x.png in Resources */,
 				AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */,
 				D3B8BB961794ACEF0061D1D8 /* ZAActivityBar.bundle in Resources */,
+				CA7079CD1C095147005A1B19 /* toDo.txt in Resources */,
 				D325821217A1D69B0009C84B /* pixelgrid.png in Resources */,
 				D325821317A1D69B0009C84B /* pixelgrid@2x.png in Resources */,
 				AE2F3B6718EF82F1007A4BA0 /* MainStoryboard.storyboard in Resources */,

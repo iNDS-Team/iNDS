@@ -68,6 +68,8 @@ Reporting Bugs
 To-do
 ------------------------
 ###### Planned improvments
+* Cheat Codes
+* Fast Forwarding
 * GNU Lightning JIT
 * OpenGL ES rendering
 * Sharing roms between devices

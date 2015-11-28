@@ -22,6 +22,8 @@
 #include <math.h>
 #include <zlib.h>
 
+#include <time.h>
+
 #include "common.h"
 #include "NDSSystem.h"
 #include "render3D.h"
@@ -2070,6 +2072,7 @@ void NDS_exec(s32 nb)
 
 	if(nds.sleeping)
 	{
+		///*remove*/printf("Sleeping\n");
 		//speculative code: if ANY irq happens, wake up the arm7.
 		//I think the arm7 program analyzes the system and may decide not to wake up
 		//if it is dissatisfied with the conditions
@@ -2208,6 +2211,7 @@ void NDS_exec(s32 nb)
 	//}
 
 	//end of frame emulation housekeeping
+	
 	if(LagFrameFlag)
 	{
 		lagframecounter++;

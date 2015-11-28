@@ -173,9 +173,9 @@ void SpeedThrottle()
 	AutoFrameSkip_BeforeThrottle();
 
 waiter:
-	if(FastForward)
+	if(FastForward) {
 		return;
-
+    }
 	u64 ttime = GetCurTime();
 
 	if((ttime - ltime) < (tfreq / desiredfps))

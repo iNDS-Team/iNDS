@@ -19,6 +19,7 @@
 #import <GameController/GameController.h>
 
 #include "emu.h"
+#include "throttle.h"
 
 #import "iNDSMFIControllerSupport.h"
 
@@ -231,7 +232,7 @@ const float textureVert[] =
         }
     } else {
         CGFloat screenOffset = (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2; //Black space at top
-        NSLog(@"%f %f", glkView[1].frame.origin.y, screenOffset);
+        //NSLog(@"%f %f", glkView[1].frame.origin.y, screenOffset);
         CGFloat screenHeight = [self rectForScreenView:1].size.height / 2;
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
         {
@@ -439,6 +440,7 @@ const float textureVert[] =
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
         
         while (execute) {
+            //CFTimeInterval now = CACurrentMediaTime();
             EMU_runCore();
             fps = EMU_runOther();
             EMU_copyMasterBuffer();
@@ -521,7 +523,7 @@ const float textureVert[] =
     
     if (state != _previousDirection && state != 0)
     {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"] && ![[NSUserDefaults standardUserDefaults] boolForKey: @"controlPadStyle"])
         {
             [self vibrate];
         }
@@ -535,7 +537,6 @@ const float textureVert[] =
 - (IBAction)pressedABXY:(iNDSButtonControl *)sender
 {
     iNDSButtonControlButton state = sender.selectedButtons;
-    
     if (state != _previousButtons && state != 0)
     {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])

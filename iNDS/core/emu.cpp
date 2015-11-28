@@ -25,6 +25,7 @@
 #include "version.h"
 #include "metaspu.h"
 
+
 #define LOGI(...) printf(__VA_ARGS__);printf("\n")
 
 CACHE_ALIGN u8 __GPU_screen[4*256*192];
@@ -167,7 +168,7 @@ void EMU_init(int lang)
 	for(int i = 0 ; i < fw_config.nickname_len ; ++i)
 		fw_config.nickname[i] = nickname[i];
     
-	static const char* message = "iNDS makes you happy!";
+	static const char* message = "iNDS is the best!";
 	fw_config.message_len = strlen(message);
 	for(int i = 0 ; i < fw_config.message_len ; ++i)
 		fw_config.message[i] = message[i];
@@ -394,12 +395,15 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 	int skipRate = (forceFrameSkip < 0) ? frameskiprate : forceFrameSkip;
 	int ffSkipRate = (forceFrameSkip < 0) ? 9 : forceFrameSkip;
     
+    //Change in skip rate
 	if(lastskiprate != skipRate)
 	{
 		lastskiprate = skipRate;
 		mainLoopData.framestoskip = 0; // otherwise switches to lower frameskip rates will lag behind
 	}
     
+    
+    //Load a frame
 	if(!mainLoopData.skipnextframe || forceFrameSkip == 0 || frameAdvance || (continuousframeAdvancing && !FastForward))
 	{
 		mainLoopData.framesskipped = 0;
@@ -407,7 +411,7 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 		if (mainLoopData.framestoskip > 0)
 			mainLoopData.skipnextframe = 1;
 	}
-	else
+	else //Skip
 	{
 		mainLoopData.framestoskip--;
         
@@ -421,7 +425,8 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 		NDS_SkipNextFrame();
 	}
     
-	if(FastForward)
+    //This doesn't really work right
+	/*if(FastForward)
 	{
 		if(mainLoopData.framesskipped < ffSkipRate)
 		{
@@ -431,10 +436,11 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 		if (mainLoopData.framestoskip < 1)
 			mainLoopData.framestoskip += ffSkipRate;
 	}
-	else if((/*autoframeskipenab && frameskiprate ||*/ FrameLimit) && allowSleep)
+	else if((/*autoframeskipenab && frameskiprate ||/ FrameLimit) && allowSleep)
 	{
 		SpeedThrottle();
-	}
+	}*/
+    SpeedThrottle();
     
 	if (autoframeskipenab && frameskiprate)
 	{
