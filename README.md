@@ -23,7 +23,7 @@ Download iNDS from the repository.
 
 #### Option 2: Compile and install iNDS from the Xcode IDE
 ##### Please Do not redistribute self-compiled versions of iNDS on other sites. 
-#### Compile and install iNDS from the Xcode IDE (your only option for now)
+#### Compile and install iNDS from the Xcode IDE
 ##### IMPORTANT: Make sure your working directory is devoid of spaces. Otherwise, bad things will happen.
 
 1. Clone the iNDS Git repository. You may do this from a Terminal instance with the command `git clone https://github.com/iNDSEmulator/iNDS.git`, or from a Git frontend like [SourceTree](http://sourcetreeapp.com/).
