@@ -42,10 +42,11 @@
 }
 - (void) frameUpdated
 {
-    _buttonImageView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
+    
     self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
     
-    _buttonImageView.frame = CGRectMake(0, 0, _backgroundImageView.frame.size.width/2, _backgroundImageView.frame.size.width/2);
+    _buttonImageView.frame = CGRectMake(0, 0, self.frame.size.width/2, self.frame.size.width/2);
+    _buttonImageView.center = self.backgroundImageView.center;
 }
 
 - (iNDSDirectionalControlDirection)directionForTouch:(UITouch *)touch
