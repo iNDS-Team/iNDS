@@ -19,7 +19,6 @@
 #import <GameController/GameController.h>
 
 #include "emu.h"
-#include "throttle.h"
 
 #import "iNDSMFIControllerSupport.h"
 
@@ -87,6 +86,8 @@ const float textureVert[] =
     UIWindow *extWindow;
     
     CFTimeInterval lastAutosave;
+    
+    NSInteger speed;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
@@ -99,7 +100,9 @@ const float textureVert[] =
 @property (weak, nonatomic) IBOutlet iNDSButtonControl *buttonControl;
 @property (weak, nonatomic) IBOutlet UIButton *dismissButton;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
+@property (weak, nonatomic) IBOutlet UIButton *cheatsButton;
 @property (weak, nonatomic) IBOutlet UIButton *selectButton;
+@property (weak, nonatomic) IBOutlet UIButton *speedButton;
 @property (strong, nonatomic) UIImageView *snapshotView;
 
 - (IBAction)hideEmulator:(id)sender;
@@ -142,6 +145,10 @@ const float textureVert[] =
         [self controllerActivated:nil];
     }
     [self defaultsChanged:nil];
+    
+    speed = 1;
+    
+    self.cheatsButton.layer.cornerRadius = self.speedButton.layer.cornerRadius = 2;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -241,6 +248,9 @@ const float textureVert[] =
             self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
             self.dismissButton.alpha = 1;
         }
+        CGFloat glkWidth = [self rectForScreenView:1].size.width;
+        self.cheatsButton.center = CGPointMake(self.view.frame.size.width/2 - glkWidth/2 - 70, 20);
+        self.speedButton.center = CGPointMake(self.view.frame.size.width/2 + glkWidth/2 + 70, 20);
     } else {
         CGFloat screenOffset = (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2; //Black space at top
         
@@ -252,7 +262,7 @@ const float textureVert[] =
             self.selectButton.center = CGPointMake((self.view.bounds.size.width/2)+40, self.controllerContainerView.frame.size.height - 20);
             self.dismissButton.frame = CGRectMake((self.view.bounds.size.width/2)-14, 0, 28, 28);
             self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height - self.directionalControl.frame.size.height/2 - 20);
-        self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 20);
+            self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 20);
         } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
             self.controllerContainerView.frame = CGRectMake(0, [defaults integerForKey:@"controlPosition"] == 0? screenOffset : screenOffset + screenHeight, self.view.bounds.size.width, screenHeight);
             self.startButton.center = CGPointMake(25, screenHeight - 30);
@@ -261,12 +271,15 @@ const float textureVert[] =
             self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height - self.directionalControl.frame.size.height/2 - 40);
             self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 40);
         }
-        
+        self.cheatsButton.center = CGPointMake(self.view.frame.size.width - 64, 20);
+        self.speedButton.center = CGPointMake(self.view.frame.size.width - 122, 20);
         self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
         self.dismissButton.alpha = 1;
         self.fpsLabel.frame = CGRectMake(6, 0, 70, 24);
         [self.directionalControl frameUpdated];
     }
+    self.cheatsButton.alpha = self.speedButton.alpha = self.controllerContainerView.alpha;
+    self.cheatsButton.alpha = 0; //Until implemented
 }
 
 - (CGRect)rectForScreenView:(NSInteger)screen
@@ -455,8 +468,9 @@ const float textureVert[] =
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
         
         while (execute) {
-            //CFTimeInterval now = CACurrentMediaTime();
-            EMU_runCore();
+            for (int i = 0; i < speed; i++) {
+                EMU_runCore();
+            }
             fps = EMU_runOther();
             EMU_copyMasterBuffer();
             
@@ -513,7 +527,42 @@ const float textureVert[] =
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
+#pragma mark - Cheats
+
+- (IBAction)showCheats:(id)sender
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cheats not implemented"
+                                                message:@"Cheats have not been implemented yet but they'll be here soon!"
+                                               delegate:nil 
+                                      cancelButtonTitle:@"OK"
+                                      otherButtonTitles:nil];
+    [alert show];
+}
+
 #pragma mark - Controls
+
+- (IBAction)changeSpeed:(id)sender
+{
+    switch (speed) {
+      case 1:
+        speed = 2;
+        [self.speedButton setTitle:@"2x" forState:UIControlStateNormal];
+        self.speedButton.alpha = 1;
+        break;
+      
+      case 2:
+        speed = 4;
+        [self.speedButton setTitle:@"4x" forState:UIControlStateNormal];
+        self.speedButton.alpha = 1;
+        break;
+    
+      case 4:
+        speed = 1;
+        [self.speedButton setTitle:@"1x" forState:UIControlStateNormal];
+        self.speedButton.alpha = MAX(MAX(0.1, [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"]), self.view.bounds.size.width > self.view.bounds.size.height);
+        break;
+    }
+}
 
 - (void)controllerActivated:(NSNotification *)notification {
     if (_controllerContainerView.superview) {

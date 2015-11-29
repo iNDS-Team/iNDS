@@ -22,8 +22,6 @@
 #include <math.h>
 #include <zlib.h>
 
-#include <time.h>
-
 #include "common.h"
 #include "NDSSystem.h"
 #include "render3D.h"

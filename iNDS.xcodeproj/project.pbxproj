@@ -178,6 +178,7 @@
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
 		CA7079CD1C095147005A1B19 /* toDo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CC1C095147005A1B19 /* toDo.txt */; };
+		CA7079D31C0A59EA005A1B19 /* cocoa_cheat.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA7079D21C0A59EA005A1B19 /* cocoa_cheat.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -525,6 +526,8 @@
 		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
 		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
 		CA7079CC1C095147005A1B19 /* toDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = toDo.txt; sourceTree = "<group>"; };
+		CA7079D11C0A59EA005A1B19 /* cocoa_cheat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa_cheat.h; sourceTree = "<group>"; };
+		CA7079D21C0A59EA005A1B19 /* cocoa_cheat.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = cocoa_cheat.mm; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -631,6 +634,8 @@
 				8BEA098917872CF40060B347 /* throttle.h */,
 				28387161179561F5009B8E84 /* iNDSGame.h */,
 				28387162179561F5009B8E84 /* iNDSGame.m */,
+				CA7079D11C0A59EA005A1B19 /* cocoa_cheat.h */,
+				CA7079D21C0A59EA005A1B19 /* cocoa_cheat.mm */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -1379,6 +1384,7 @@
 				BFCFE18817650FB0000A70CF /* cp15.cpp in Sources */,
 				BFCFE18917650FB0000A70CF /* CpuBase.cpp in Sources */,
 				BFCFE18A17650FB0000A70CF /* debug.cpp in Sources */,
+				CA7079D31C0A59EA005A1B19 /* cocoa_cheat.mm in Sources */,
 				BFCFE18B17650FB0000A70CF /* Disassembler.cpp in Sources */,
 				8BEA097617872C3F0060B347 /* DocWatchHelper.m in Sources */,
 				BFCFE18C17650FB0000A70CF /* driver.cpp in Sources */,

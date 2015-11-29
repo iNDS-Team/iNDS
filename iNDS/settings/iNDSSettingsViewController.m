@@ -124,10 +124,10 @@
             sectionName = NSLocalizedString(@"DEVELOPER", nil);
             break;
         case 4:
-            sectionName = NSLocalizedString(@"EXPERIMENTAL", nil);
+            sectionName = @"Credit";
             break;
         case 5:
-            sectionName = @"Credit";
+            sectionName = NSLocalizedString(@"EXPERIMENTAL", nil);
             break;
         default:
             sectionName = @"";
@@ -148,7 +148,7 @@
         case 2:
             sectionName = NSLocalizedString(@"ENABLE_DROPBOX_DETAIL", nil);
             break;
-        case 4:
+        case 5:
             sectionName = NSLocalizedString(@"ARMLJIT_DETAIL", nil);
             break;
         default:
@@ -265,7 +265,7 @@
         //return 5;
     }
     
-    return 4;
+    return 5;
 }
 
 -(IBAction)back:(id)sender
