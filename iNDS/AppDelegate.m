@@ -37,7 +37,7 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"controlSize"]) {
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"controlSize"]) { //Attempt to fix bug upgrading people from 1.0.3 to 1.0.4, remove later
         [[NSUserDefaults standardUserDefaults] setFloat:0.5 forKey:@"controlSize"];
     }
     

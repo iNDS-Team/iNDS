@@ -239,8 +239,8 @@ const float textureVert[] =
             //Could be wrong
             self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height/2);
             self.buttonControl.center = CGPointMake(self.view.bounds.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height/2);
-            self.startButton.center = CGPointMake(self.view.bounds.size.width-102, 258);
-            self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, 226);
+            self.startButton.center = CGPointMake(self.view.bounds.size.width-102, 278);
+            self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, 246);
             self.controllerContainerView.alpha = self.dismissButton.alpha = 1.0;
             self.fpsLabel.frame = CGRectMake(185, 5, 70, 24);
         }
@@ -288,13 +288,25 @@ const float textureVert[] =
     CGRect rect = CGRectZero;
     BOOL isLandscape = self.view.bounds.size.width > self.view.bounds.size.height;
     if (isLandscape) {
-        if (extWindow) rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/0.75)/2, 0, self.view.bounds.size.height/0.75, self.view.bounds.size.height);
-        else rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2, 0, self.view.bounds.size.height/1.5, self.view.bounds.size.height);
+        if (extWindow) rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/0.75)/2,
+                                         0,
+                                         self.view.bounds.size.height/0.75,
+                                         self.view.bounds.size.height);
+        else rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2,
+                               0,
+                               self.view.bounds.size.height/1.5,
+                               self.view.bounds.size.height);
     } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2, 0, self.view.bounds.size.height/1.5, self.view.bounds.size.height);
+        rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2,
+                          0,
+                          self.view.bounds.size.height/1.5,
+                          self.view.bounds.size.height);
         if (extWindow) rect.size.height /= 2;
     } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        rect = CGRectMake(0, (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2, self.view.bounds.size.width, self.view.bounds.size.width*1.5);
+        rect = CGRectMake(0,
+                          (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2,
+                          self.view.bounds.size.width,
+                          self.view.bounds.size.width*1.5);
         if (extWindow) rect.size.height /= 2;
     }
     
@@ -466,14 +478,19 @@ const float textureVert[] =
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
-        
+        float realFps = 0.0;
+        CFTimeInterval start;
+        float smoothing = 0.5;
         while (execute) {
+            start = CACurrentMediaTime();
             for (int i = 0; i < speed; i++) {
                 EMU_runCore();
             }
             fps = EMU_runOther();
             EMU_copyMasterBuffer();
-            
+            for (int i = 0; i < 10000; i++) {
+                //Lag
+            }
             [self updateDisplay];
             if (CACurrentMediaTime() - lastAutosave > 60 * 3) {
                 NSString *lastAutosavePath = [self.game pathForSaveStateWithName:@"Auto Save"];
@@ -483,6 +500,9 @@ const float textureVert[] =
                 [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 lastAutosave = CACurrentMediaTime();
             }
+            float thisFps = 1.0 / (CACurrentMediaTime() - start);
+            realFps = (thisFps * smoothing) + (realFps * (1.0-smoothing));
+            printf("%f\n", realFps);
         }
         
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
