@@ -478,19 +478,14 @@ const float textureVert[] =
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
-        float realFps = 0.0;
-        CFTimeInterval start;
-        float smoothing = 0.5;
         while (execute) {
-            start = CACurrentMediaTime();
             for (int i = 0; i < speed; i++) {
-                EMU_runCore();
+                //for (int j = 0; j < MIN(MAX(60 / fps, 6), 1); j++) { //10 - 60 fps
+                    EMU_runCore();
+                //}
             }
             fps = EMU_runOther();
             EMU_copyMasterBuffer();
-            for (int i = 0; i < 10000; i++) {
-                //Lag
-            }
             [self updateDisplay];
             if (CACurrentMediaTime() - lastAutosave > 60 * 3) {
                 NSString *lastAutosavePath = [self.game pathForSaveStateWithName:@"Auto Save"];
@@ -500,9 +495,6 @@ const float textureVert[] =
                 [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 lastAutosave = CACurrentMediaTime();
             }
-            float thisFps = 1.0 / (CACurrentMediaTime() - start);
-            realFps = (thisFps * smoothing) + (realFps * (1.0-smoothing));
-            printf("%f\n", realFps);
         }
         
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
@@ -567,11 +559,13 @@ const float textureVert[] =
       case 1:
         speed = 2;
         [self.speedButton setTitle:@"2x" forState:UIControlStateNormal];
+        EMU_setFrameSkip(2);
         self.speedButton.alpha = 1;
         break;
       
       case 2:
         speed = 4;
+        EMU_setFrameSkip(4);
         [self.speedButton setTitle:@"4x" forState:UIControlStateNormal];
         self.speedButton.alpha = 1;
         break;
@@ -580,6 +574,7 @@ const float textureVert[] =
         speed = 1;
         [self.speedButton setTitle:@"1x" forState:UIControlStateNormal];
         self.speedButton.alpha = MAX(MAX(0.1, [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"]), self.view.bounds.size.width > self.view.bounds.size.height);
+        EMU_setFrameSkip((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"]);
         break;
     }
 }
