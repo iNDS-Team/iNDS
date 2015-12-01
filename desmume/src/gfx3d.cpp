@@ -2242,7 +2242,7 @@ static bool gfx3d_ysort_compare(int num1, int num2)
 	//this may be verified by checking the game create menus in harvest moon island of happiness
 	//also the buttons in the knights in the nightmare frontend depend on this and the perspective division
     //Added by Will
-    if (num1 > polylist->count || num2 > polylist->count) return false;
+    if (num1 > polylist->count || num2 > polylist->count || num1 < 0 || num2 < 0) return false;
     //
 	if (poly1.maxy < poly2.maxy) return true;
 	if (poly1.maxy > poly2.maxy) return false;
