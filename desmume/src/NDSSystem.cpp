@@ -2105,7 +2105,7 @@ void NDS_exec(s32 nb)
 			#endif
 			nds.cpuloopIterationCount++;
 			sequencer.execHardware();
-
+			
 			//break out once per frame
 			if(sequencer.nds_vblankEnded) break;
 			//it should be benign to execute execHardware in the next frame,

@@ -37,8 +37,43 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"controlSize"]) { //Attempt to fix bug upgrading people from 1.0.3 to 1.0.4, remove later
-        [[NSUserDefaults standardUserDefaults] setFloat:0.5 forKey:@"controlSize"];
+    
+    //Create iNDS folder and move old stuff
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
+        NSError* error;
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"Unable to create documents");
+            } else {
+            //Move Battery
+            if ([[NSFileManager defaultManager] fileExistsAtPath:self.oldBatteryDir]) {
+                [[NSFileManager defaultManager] moveItemAtPath:self.oldBatteryDir toPath:self.batteryDir error:nil];
+            }
+            //Move Games
+            NSDirectoryEnumerator* enumerator = [[NSFileManager defaultManager] enumeratorAtPath:self.oldDocumentsPath];
+            NSString* file;
+            while (file = [enumerator nextObject])
+            {
+                // check if it's a directory
+                BOOL isDirectory = NO;
+                NSString* fullPath = [self.oldDocumentsPath stringByAppendingPathComponent:file];
+                [[NSFileManager defaultManager] fileExistsAtPath:fullPath
+                                                 isDirectory: &isDirectory];
+                if (!isDirectory)
+                {
+                    
+                    if ([fullPath.pathExtension isEqualToString:@"nds"]) {
+                        //NSLog(@"Moving %@", fullPath);
+                        //NSLog(@"TO: %@", [self.documentsPath stringByAppendingPathComponent:file]);
+                        [[NSFileManager defaultManager] moveItemAtPath:fullPath toPath:[self.documentsPath stringByAppendingPathComponent:file] error:&error];
+                        if (error) {
+                            NSLog(@"E: %@", error);
+                        }
+                    }
+                    
+                }
+            }
+        }
     }
     
     //Dropbox DBSession Auth
@@ -191,7 +226,17 @@
 
 - (NSString *)documentsPath
 {
+    return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:@"iNDS"];
+}
+
+- (NSString *)oldDocumentsPath //remove later
+{
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+}
+
+- (NSString *)oldBatteryDir
+{
+    return [self.oldDocumentsPath stringByAppendingPathComponent:@"Battery"];
 }
 
 - (NSString *)appKey
