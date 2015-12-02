@@ -74,21 +74,6 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     }];
 }
 
-//Not implemented yet
-- (void) cleanAutosaves
-{
-    NSMutableArray * autoSaves = [NSMutableArray array];
-    for (int i = 0; i < saveStates.count; i++) {
-        NSString * saveState = saveStates[i];
-        NSArray * components = [saveState componentsSeparatedByString:@"."];
-        if ([[components[components.count - 2] substringToIndex:9] isEqualToString:@"Auto Save"]) {
-            [autoSaves addObject:saveState];
-        } else {
-            NSLog(@"Not Savestate %@", saveState);
-        }
-    }
-}
-
 - (void)reloadSaveStates
 {
     [self _loadSaveStates];

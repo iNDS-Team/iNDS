@@ -361,7 +361,9 @@ void iNDS_user()
 		mainLoopData.fpsticks = GetTickCount();
 	}
     
-	if(nds.idleFrameCounter==0 || oneSecond)
+    //Don't think this is actually does anything
+	return;
+    if(nds.idleFrameCounter==0 || oneSecond)
 	{
 		//calculate a 16 frame arm9 load average
 		for(int cpu=0;cpu<2;cpu++)
@@ -425,18 +427,7 @@ static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
 		NDS_SkipNextFrame();
 	}
     
-    //This doesn't really work right
-	if(FastForward)
-	{
-		if(mainLoopData.framesskipped < ffSkipRate)
-		{
-			mainLoopData.skipnextframe = 1;
-			mainLoopData.framestoskip = 1;
-		}
-		if (mainLoopData.framestoskip < 1)
-			mainLoopData.framestoskip += ffSkipRate;
-	}
-	else if((/*autoframeskipenab && frameskiprate ||*/ FrameLimit) && allowSleep)
+    if ((/*autoframeskipenab && frameskiprate ||*/ FrameLimit) && allowSleep)
 	{
 		SpeedThrottle();
 	}
@@ -574,6 +565,38 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
     _b[BUTTON_X] = !!x;
     _b[BUTTON_Y] = !!y;
     NDS_setPad(all_button, false, false);
+}
+
+#pragma mark - Cheats
+
+bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled)
+{
+    if (cheats->add(size, address, val, description, enabled)) {
+        printf("Cheat Added!");
+        return true;
+    } else {
+        printf("Error, unable to add cheat");
+        return false;
+    }
+}
+
+bool EMU_update(u8 size, u32 address, u32 val, char *description, bool enabled, u32 pos)
+{
+    return false;
+}
+bool EMU_add_AR(const char *code, const char *description, bool enabled)
+{
+    if (cheats->add_AR(code, description, enabled)) {
+        printf("AR Cheat Added!-----------------\n");
+        return true;
+    } else {
+        printf("Error, unable to add AR cheat-----------------\n");
+        return false;
+    }
+}
+bool EMU_update_AR(const char *code, const char *description, bool enabled, u32 pos)
+{
+    return false;
 }
 
 const char* EMU_version()

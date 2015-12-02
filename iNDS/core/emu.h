@@ -13,6 +13,9 @@
 
 extern volatile bool execute;
 
+typedef unsigned char u8;
+typedef unsigned int u32;
+
 typedef enum {
 	BUTTON_RIGHT = 0,
     BUTTON_LEFT = 1,
@@ -56,6 +59,13 @@ void EMU_buttonDown(BUTTON_ID button);
 void EMU_buttonUp(BUTTON_ID button);
 void EMU_setDPad(bool up, bool down, bool left, bool right);
 void EMU_setABXY(bool a, bool b, bool x, bool y);
+
+// Cheats
+
+bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled);
+bool EMU_update(u8 size, u32 address, u32 val, char *description, bool enabled, u32 pos);
+bool EMU_add_AR(const char *code, const char *description, bool enabled);
+bool EMU_update_AR(const char *code, const char *description, bool enabled, u32 pos);
 
 const char *EMU_version();
 
