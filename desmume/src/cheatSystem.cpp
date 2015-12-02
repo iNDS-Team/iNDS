@@ -733,7 +733,7 @@ void CHEATS::process()
 	if (CommonSettings.cheatsDisable) return;
 	if (list.size() == 0) return;
 	size_t num = list.size();
-	for (size_t i = 0; i < num; i++)
+	for (size_t i = 0; i < num; i++) //Loop throught cheats
 	{
 		if (!list[i].enabled) continue;
 
@@ -768,9 +768,10 @@ void CHEATS::process()
 			} //end case 0 internal cheat system
 
 			case 1:		// Action Replay
+                printf("AR Code %s\n", list[i].description);
 				ARparser(list[i]);
 				break;
-			case 2:		// Codebreaker
+			case 2:		// Codebreaker - looks like this doesn't work
 				break;
 			default: continue;
 		}

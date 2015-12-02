@@ -169,6 +169,18 @@ const float textureVert[] =
     [super viewDidAppear:animated];
     [self loadROM];
     [self defaultsChanged:nil];
+    
+    //NSString * testCheat = @"9208B3F4FFFD0002920CA88000000000021B6ABO00004000D2000000000000009208B3F4FFFE0001920CA88000000000021B6AB000004000D200000000000000";
+    //NSLog(@"Adding Cheat: %@", testCheat);
+    //EMU_add_AR("9208B3F4FFFD0002920CA88000000000021B6ABO00004000D2000000000000009208B3F4FFFE0001920CA88000000000021B6AB000004000D200000000000000", "Big Jump", YES);
+    //EMU_add_AR("03807D40EBAFD8AF", "Master Code", true);
+    //EMU_add_AR("221B6ACD00000000221B6AD100000000221B6AD500000000", "Tiny Mario", YES);
+    //EMU_add_AR("1208b3340000027c2208b32400000003", "Giant Mario", true);
+    /*EMU_addCheat(3, 0x620c2b54, 0x00000000, "Master Code", true);
+    EMU_addCheat(3, 0xb20c2b54, 0x00000000, "A", true);
+    EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
+    EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
+    EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
 }
 
 - (void)didReceiveMemoryWarning
@@ -451,7 +463,7 @@ const float textureVert[] =
         self.snapshotView.hidden = NO;
     }
     self.snapshotView.image = [self screenSnapshot:extWindow?1:-1];
-    
+    NSLog(@"%@", self.snapshotView.image);
     // pause emulation
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
@@ -480,6 +492,8 @@ const float textureVert[] =
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
         while (execute) {
             for (int i = 0; i < speed; i++) {
+                //Enabling this can provide full emulation speed on most devices but will reduce fps
+                
                 //for (int j = 0; j < MIN(MAX(60 / fps, 6), 1); j++) { //10 - 60 fps
                     EMU_runCore();
                 //}
