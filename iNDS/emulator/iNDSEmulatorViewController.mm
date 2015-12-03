@@ -501,7 +501,7 @@ const float textureVert[] =
             fps = EMU_runOther();
             EMU_copyMasterBuffer();
             [self updateDisplay];
-            if (CACurrentMediaTime() - lastAutosave > 60 * 3) {
+            if (CACurrentMediaTime() - lastAutosave > 180) {
                 NSString *lastAutosavePath = [self.game pathForSaveStateWithName:@"Auto Save"];
                 if ([[NSFileManager defaultManager] fileExistsAtPath:lastAutosavePath]) {
                     [[NSFileManager defaultManager] removeItemAtPath:lastAutosavePath error:nil];

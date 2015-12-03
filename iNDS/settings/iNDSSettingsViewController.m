@@ -124,7 +124,7 @@
             sectionName = NSLocalizedString(@"DEVELOPER", nil);
             break;
         case 4:
-            sectionName = @"Credit";
+            sectionName = @"Info";
             break;
         case 5:
             sectionName = NSLocalizedString(@"EXPERIMENTAL", nil);
@@ -248,6 +248,36 @@
     }
 }
 
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 4) { //Info
+        switch (indexPath.row) {
+          case 0: //Will Cobb
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/miniroo321"]];
+            break;
+        
+          case 1: //Updates
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/iNDSapp"]];
+            break;
+        
+          case 3: //DeSmuME
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.desmume.org/"]];
+            break;
+        
+          case 4: //PMP174
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/pmp174"]];
+            break;
+        
+          case 5: //Source
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/WilliamLCobb/iNDS"]];
+            break;
+        
+          default:
+            break;
+        }
+    }
+}
+
 #pragma mark - Hidden Settings
 
 - (void)revealHiddenSettings:(UITapGestureRecognizer *)tapGestureRecognizer
@@ -262,7 +292,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"revealHiddenSettings"]) {
-        //return 5;
+        //return 6 ;
     }
     
     return 5;

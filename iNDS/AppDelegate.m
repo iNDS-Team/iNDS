@@ -211,7 +211,7 @@
             NSLog(@"Upgrade Needed lastest<%@> mine<%@>", latestVersion, myVersion);
             dispatch_async(dispatch_get_main_queue(), ^{
                 UIImage * upgrade = [UIImage imageNamed:@"upgrade.png"];
-                [ZAActivityBar showImage:upgrade status:@"An Update is avaliable from www.williamlcobb.com/repo" duration:5];
+                [ZAActivityBar showImage:upgrade status:[NSString stringWithFormat:@"iNDS version %@ is avaliable for download", latestVersion] duration:5];
             });
         } else {
             NSLog(@"No Update %@ >= %@", myVersion, latestVersion);
