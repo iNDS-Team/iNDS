@@ -13,6 +13,7 @@
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
+#import <UnrarKit/UnrarKit.h>
 
 #import "iNDSInitialViewController.h"
 
@@ -128,7 +129,7 @@
         NSLog(@"Zip File");
         NSFileManager *fm = [NSFileManager defaultManager];
         NSError *err = nil;
-        if ([url.pathExtension.lowercaseString isEqualToString:@"zip"] || [url.pathExtension.lowercaseString isEqualToString:@"7z"]) {
+        if ([url.pathExtension.lowercaseString isEqualToString:@"zip"] || [url.pathExtension.lowercaseString isEqualToString:@"7z"] || [url.pathExtension.lowercaseString isEqualToString:@"rar"]) {
             
             // expand zip
             // create directory to expand
@@ -144,11 +145,29 @@
             NSLog(@"To: %@", dstDir);
             if ([url.pathExtension.lowercaseString isEqualToString:@"zip"]) {
                 [SSZipArchive unzipFileAtPath:url.path toDestination:dstDir];
-            } else {
-                if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
+            } else if ([url.pathExtension.lowercaseString isEqualToString:@"7z"]) {
+                //if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
+                if (![LZMAExtractor extract7zArchive:url.path tmpDirName:dstDir]) {
                     NSLog(@"Unable to extract 7z");
                     return NO;
                 }
+            } else { //Rar
+                NSError *archiveError = nil;
+                URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
+                if (!archive) {
+                    NSLog(@"Unable to open rar: %@", archiveError);
+                    [ZAActivityBar showErrorWithStatus:@"Error: Unable to read rar file" duration:5];
+                    return NO;
+                }
+                //Extract
+                NSError *error;
+                [archive extractFilesTo:dstDir overwrite:YES progress:nil error:&error];
+                if (error) {
+                    NSLog(@"Unable to extract rar: %@", archiveError);
+                    [ZAActivityBar showErrorWithStatus:@"Error: Unable to extrace rar file" duration:5];
+                    return NO;
+                }
+                
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];

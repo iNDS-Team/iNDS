@@ -69,7 +69,7 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     NSString *fileExtension = request.URL.pathExtension.lowercaseString;
-    if (navigationType == UIWebViewNavigationTypeLinkClicked && ([fileExtension isEqualToString:@"ds"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]))
+    if (navigationType == UIWebViewNavigationTypeLinkClicked && ([fileExtension isEqualToString:@"ds"] || [fileExtension isEqualToString:@"rar"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]))
     {
         NSLog(@"Downloading %@", request.URL);
         lastProgress = 0.0;
@@ -82,10 +82,7 @@
         //[self dismissViewControllerAnimated:YES completion:nil];
         
         return NO;
-    } else if (navigationType == UIWebViewNavigationTypeLinkClicked && [fileExtension isEqualToString:@"rar"]) {
-        [ZAActivityBar showErrorWithStatus:@"Sorry! iNDS does not support .rar files yet"];
-    }
-    else {
+    } else {
         //NSLog(@"Ignore: %@", request.URL);
     }
     return ![urlField isFirstResponder]; //Prevent leaving page while editing

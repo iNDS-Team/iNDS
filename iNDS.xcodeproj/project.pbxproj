@@ -174,6 +174,8 @@
 		CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D301BEBE36200EDE98D /* 7zAlloc.c */; };
 		CA031D341BEBE36200EDE98D /* 7zMain.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D321BEBE36200EDE98D /* 7zMain.c */; };
 		CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */; };
+		CA4748E51C100178006F1438 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; };
+		CA4748E61C100178006F1438 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CA7079C61C08F901005A1B19 /* upgrade.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079C51C08F901005A1B19 /* upgrade.png */; };
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
@@ -197,8 +199,21 @@
 		D3B8BB9A1794ACFE0061D1D8 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B8BB991794ACFE0061D1D8 /* SKBounceAnimation.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		CA4748E71C100178006F1438 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				CA4748E61C100178006F1438 /* UnrarKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		21C82E004F73F43420239FB5 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2838715C17950B2A009B8E84 /* math_neon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = math_neon.h; path = "desmume/src/android/math-neon/math_neon.h"; sourceTree = SOURCE_ROOT; };
 		2838715D17950B69009B8E84 /* math_mat4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_mat4.c; path = "desmume/src/android/math-neon/math_mat4.c"; sourceTree = SOURCE_ROOT; };
 		2838715E17950B69009B8E84 /* math_sqrtf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_sqrtf.c; path = "desmume/src/android/math-neon/math_sqrtf.c"; sourceTree = SOURCE_ROOT; };
@@ -519,6 +534,7 @@
 		CA0BA5401BF9712B00C93357 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloadManager.h; sourceTree = "<group>"; };
 		CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
+		CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnrarKit.framework; path = iNDS/frameworks/UnrarKit.framework; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
 		CA7079C51C08F901005A1B19 /* upgrade.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = upgrade.png; path = iNDS/upgrade.png; sourceTree = "<group>"; };
 		CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSInitialViewController.h; sourceTree = "<group>"; };
@@ -575,6 +591,7 @@
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
+				CA4748E51C100178006F1438 /* UnrarKit.framework in Frameworks */,
 				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -806,7 +823,7 @@
 				BFCFE0F21764FBD3000A70CF /* UIKit.framework */,
 				BFCFE0F41764FBD3000A70CF /* Foundation.framework */,
 				BFCFE0F61764FBD3000A70CF /* CoreGraphics.framework */,
-				21C82E004F73F43420239FB5 /* libPods.a */,
+				CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1259,6 +1276,7 @@
 				BFCFE0EC1764FBD3000A70CF /* Frameworks */,
 				BFCFE0ED1764FBD3000A70CF /* Resources */,
 				28CC0BE7178E46D200AE77C2 /* ShellScript */,
+				CA4748E71C100178006F1438 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1582,7 +1600,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-DANDROID",
@@ -1635,7 +1653,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
 					"-DANDROID",
@@ -1670,6 +1688,8 @@
 					"\"$(SRCROOT)/iNDS\"",
 					"\"$(SRCROOT)/iNDS/dropbox\"",
 					"\"$(SRCROOT)/iNDS/Reveal\"",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1682,7 +1702,12 @@
 					"$(SRCROOT)/desmume/src/android",
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				LLVM_LTO = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1713,6 +1738,8 @@
 					"\"$(SRCROOT)/iNDS\"",
 					"\"$(SRCROOT)/iNDS/dropbox\"",
 					"\"$(SRCROOT)/iNDS/Reveal\"",
+					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1725,7 +1752,12 @@
 					"$(SRCROOT)/desmume/src/android",
 				);
 				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				LLVM_LTO = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
