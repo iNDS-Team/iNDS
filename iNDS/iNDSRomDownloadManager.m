@@ -113,6 +113,7 @@
 {
     iNDSRomDownload *newDownload = [[iNDSRomDownload alloc] initWithRequest:request delegate:self];
     [_activeDownloads addObject:newDownload];
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
     
 }
 
@@ -120,6 +121,9 @@
 {
     [_activeDownloads removeObject:download];
     [download stop];
+    if (_activeDownloads.count == 0) {
+        [UIApplication sharedApplication].idleTimerDisabled = NO;
+    }
 }
 
 @end
