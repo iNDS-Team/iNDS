@@ -15,45 +15,45 @@
 #include <errno.h>
 #include <sys/mman.h>
 
-#include <limits.h>	   /* for PAGESIZE */
-#ifndef PAGESIZE
-#define PAGESIZE 4096
-#endif
+#include <unistd.h> //getpagesize
 
 //#define USE_TEMP_JIT
 
 #ifdef USE_TEMP_JIT
 
 typedef int (*inc_t)(int a);
-inc_t _inc = NULL;
 
 int
 main(void)
 {
+    inc_t _inc = NULL;
+    int PAGESIZE = getpagesize();
 	uint32_t code[] = {
-		0xe2800001, // add	r0, r0, #1
-		0xe12fff1e, // bx	lr
+		0xd10043ff, // sub    sp, sp, #16
+        0xb9000fe0, // str    w0, [sp, #12]
+        0xb9400fe0, // ldr    w0, [sp, #12]
+        0x11000400, // add    w0, w0, #1
+        0x910043ff, // add    sp, sp, #16
+        0xd65f03c0, // ret
 	};
 	
 	uint32_t *p;
-	
+    
 	/* Allocate a buffer; it will have the default
 	 protection of PROT_READ|PROT_WRITE. */
-	p = malloc(1024+PAGESIZE-1);
+	posix_memalign((void **)&p, PAGESIZE, 1024);
 	if (!p) {
 		perror("Couldn't malloc(1024)");
 		exit(errno);
 	}
 	
-	/* Align to a multiple of PAGESIZE, assumed to be a power of two */
-	p = (uint32_t *)(((int) p + PAGESIZE-1) & ~(PAGESIZE-1));
-	
 	// copy instructions to function
-	p[0] = code[0];
-	p[1] = code[1];
+    int size = sizeof(code);
+    memcpy(p, code, size);
 	
 	/* Mark the buffer read / execute. */
-	if (mprotect(p, 1024, PROT_READ | PROT_EXEC)) {
+    int result = mprotect(p, 1024, PROT_READ | PROT_EXEC);
+	if (result == -1) {
 		perror("Couldn't mprotect");
 		exit(errno);
 	}
