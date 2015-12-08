@@ -291,11 +291,11 @@
 #pragma mark - UITableView Data Source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"revealHiddenSettings"]) {
-        //return 6 ;
-    }
+    /*if ([[NSUserDefaults standardUserDefaults] boolForKey:@"revealHiddenSettings"]) {
+        return 6 ;
+    }*/
     
-    return 5;
+    return 6;
 }
 
 -(IBAction)back:(id)sender

@@ -146,8 +146,7 @@
             if ([url.pathExtension.lowercaseString isEqualToString:@"zip"]) {
                 [SSZipArchive unzipFileAtPath:url.path toDestination:dstDir];
             } else if ([url.pathExtension.lowercaseString isEqualToString:@"7z"]) {
-                //if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
-                if (![LZMAExtractor extract7zArchive:url.path tmpDirName:dstDir]) {
+                if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
                     NSLog(@"Unable to extract 7z");
                     return NO;
                 }
