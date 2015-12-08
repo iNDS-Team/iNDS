@@ -295,7 +295,7 @@
         return 6 ;
     }*/
     
-    return 6;
+    return 5;
 }
 
 -(IBAction)back:(id)sender
