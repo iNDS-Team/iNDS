@@ -1760,7 +1760,7 @@ namespace ArmLJit
 		jit_insn* bk_ptr = jit_get_label();
 
 		uintptr_t new_ptr = (uintptr_t)jit_get_ip().ptr + (SLZONE_SIZE + ALIGN_SIZE);
-		jit_insn* new_ptr_align = (jit_insn*)(new_ptr & ~ALIGN_SIZE);
+		jit_insn* new_ptr_align = (jit_insn*)(new_ptr - new_ptr % (ALIGN_SIZE + 1));
 
 		jit_set_ip(new_ptr_align);
 
