@@ -16,6 +16,7 @@
 */
 #include <stddef.h>
 #import <string>
+#import <unistd.h>
 
 #include "ArmLJit.h"
 #include "ArmAnalyze.h"
@@ -1759,7 +1760,7 @@ namespace ArmLJit
 		jit_insn* bk_ptr = jit_get_label();
 
 		uintptr_t new_ptr = (uintptr_t)jit_get_ip().ptr + (SLZONE_SIZE + ALIGN_SIZE);
-		jit_insn* new_ptr_align = (jit_insn*)(new_ptr & ~ALIGN_SIZE);
+		jit_insn* new_ptr_align = (jit_insn*)(new_ptr - new_ptr % (ALIGN_SIZE + 1));
 
 		jit_set_ip(new_ptr_align);
 
@@ -7010,10 +7011,13 @@ static u8* AllocCodeBuffer(size_t size)
 	uintptr_t ptr = (uintptr_t)s_CodeBuffer->Alloc(size_new);
 	if (ptr == 0)
 		return NULL;
+    if (ptr % 4 == 0) { //It's already aligned
+        return (u8 *)ptr;
+    }
 
-	uintptr_t retptr = (ptr + align) & ~align;
+	uintptr_t retptr = ptr - ptr % 4;;
 
-	return (u8*)retptr;
+	return (u8 *)retptr;
 }
 
 static void FreeCodeBuffer(size_t size)
@@ -7438,10 +7442,8 @@ TEMPLATE static void cpuClear(u32 Addr, u32 Size)
 	}
 }
 
-#define PAGESIZE 4096
-
 // Comment out the following line to test Riley's attempts at JIT.
-#define USE_TEST_JIT
+//#define USE_TEST_JIT
 
 #ifdef USE_TEST_JIT
 
@@ -7451,9 +7453,7 @@ uint32_t *p;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
-	/*ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
-     if (!opfun)
-     opfun = armcpu_compile<PROCNUM>();*/
+    int pagesize = getpagesize();
     
     uint32_t code[] = {
 		0xe2800001, // add	r0, r0, #1
@@ -7464,7 +7464,7 @@ TEMPLATE static u32 cpuExecuteLJIT()
     
     if (!p)
     {
-        p = (uint32_t *)malloc(1024+PAGESIZE-1);
+        posix_memalign((void **)&p, pagesize, 1024);
     }
     else
     {
@@ -7480,13 +7480,10 @@ TEMPLATE static u32 cpuExecuteLJIT()
     
     printf("Malloced\n");
     
-    p = (uint32_t *)(((uintptr_t)p + PAGESIZE-1) & ~(PAGESIZE-1));
-    
     printf("Before Compiling\n");
     
     // copy instructions to function
-	p[0] = code[0];
-	p[1] = code[1];
+    memcpy(p, code, sizeof(code));
     
     printf("After Compiling\n");
     
@@ -7511,12 +7508,13 @@ uint32_t *p;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
+    int pagesize = getpagesize();
     
     printf("Before Execution\n");
     
     if (!p)
     {
-        p = (uint32_t *)malloc(1024+PAGESIZE-1);
+        posix_memalign((void **)&p, pagesize, 1024);
     }
     else
     {
@@ -7532,14 +7530,12 @@ TEMPLATE static u32 cpuExecuteLJIT()
     
     printf("Malloced\n");
     
-    p = (uint32_t *)(((uintptr_t)p + PAGESIZE-1) & ~(PAGESIZE-1));
-    
     printf("Before Compiling\n");
     
 	*p = (uint32_t)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!*p) {
-        
-        *p = (uint32_t)armcpu_compile<PROCNUM>();
+        uint32_t *result = (uint32_t *)armcpu_compile<PROCNUM>();
+        *p = *result;
     }
     
     printf("After Compiling\n");
