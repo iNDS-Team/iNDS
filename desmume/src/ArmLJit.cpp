@@ -7011,10 +7011,13 @@ static u8* AllocCodeBuffer(size_t size)
 	uintptr_t ptr = (uintptr_t)s_CodeBuffer->Alloc(size_new);
 	if (ptr == 0)
 		return NULL;
+    if (ptr % 4 == 0) { //It's already aligned
+        return (u8 *)ptr;
+    }
 
-	uintptr_t retptr = (ptr + align) & ~align;
+	uintptr_t retptr = ptr - ptr % 4;;
 
-	return (u8*)retptr;
+	return (u8 *)retptr;
 }
 
 static void FreeCodeBuffer(size_t size)
