@@ -23,8 +23,7 @@
 
 typedef int (*inc_t)(int a);
 
-int
-main(void)
+int main(void)
 {
     inc_t _inc = NULL;
     int PAGESIZE = getpagesize();
@@ -36,6 +35,8 @@ main(void)
         0x910043ff, // add    sp, sp, #16
         0xd65f03c0, // ret
 	};
+    
+    
 	
 	uint32_t *p;
     

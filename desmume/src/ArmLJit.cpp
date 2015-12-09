@@ -7556,7 +7556,7 @@ TEMPLATE static u32 cpuExecuteLJIT()
 
 static u32 cpuGetCacheReserve()
 {
-	return s_CacheReserve / 1024 /1024;
+	return s_CacheReserve /1024 /1024;
 }
 
 static void cpuSetCacheReserve(u32 reserveInMegs)

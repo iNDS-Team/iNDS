@@ -26,7 +26,7 @@
  * along with GNU lightning; see the file COPYING.LESSER; if not, write to the
  * Free Software Foundation, 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- *
+ * http://www.gnu.org/software/lightning/manual/lightning.html
  ***********************************************************************/
 
 
