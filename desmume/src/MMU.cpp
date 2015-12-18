@@ -1104,7 +1104,7 @@ static void execsqrt() {
 
 	//clear the result while the sqrt unit is busy
 	//todo - is this right? is it reasonable?
-	T1WriteLong(MMU.MMU_MEM[ARMCPU_ARM9][0x40], 0x2B4, 0);
+    T1WriteLong(MMU.MMU_MEM[ARMCPU_ARM9][0x40], 0x2B4, 0);
 
 	MMU.sqrtCycles = nds_timer + 26;
 	MMU.sqrtResult = ret;
@@ -3566,7 +3566,7 @@ void FASTCALL _MMU_ARM9_write32(u32 adr, u32 val)
 			case REG_SQRTPARAM :
 			{
 				T1WriteLong(MMU.MMU_MEM[ARMCPU_ARM9][0x40], 0x2B8, val);
-				execsqrt();
+				execsqrt(); 
 				return;
 			}
 			case REG_SQRTPARAM+4 :

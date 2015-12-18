@@ -116,7 +116,7 @@ static INLINE void T1WriteLong(u8* const mem, const u32 addr, const u32 val)
    mem[addr + 1] = (val >> 8) & 0xFF;
    mem[addr] = val & 0xFF;
 #else
-   *((u32 *) (mem + addr)) = val;
+   *((u32 *) (mem + addr)) = val; //Crashing here
 #endif
 }
 
