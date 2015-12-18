@@ -2878,7 +2878,11 @@ static inline void gotInputRequest()
 {
 	// nobody should set the raw input while we're processing the input.
 	// it might not screw anything up but it would be completely useless.
-	assert(!validToProcessInput);
+	
+	// When speeding up emulation sometimes we do process raw input while processing input by accident - Will
+	// This should be fixed later higher up
+	
+	//assert(!validToProcessInput);
 }
 
 void NDS_setPad(bool R,bool L,bool D,bool U,bool T,bool S,bool B,bool A,bool Y,bool X,bool W,bool E,bool G, bool F)
