@@ -12,6 +12,7 @@
 #import "CHBgDropboxSync.h"
 #import "iNDSGameTableView.h"
 #import "iNDSRomDownloadManager.h"
+#import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
 #import "SCLAlertView.h"
 @interface iNDSROMTableViewController () {
@@ -199,15 +200,13 @@
                 }
             });
         }
-        NSLog(@"HIIHI %d", [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"]);
         //Show Twitter alert
         if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
             [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
         } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] < 5) {
             [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
         } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] == 5) {
-            NSLog(@"HEYEYEY");
-            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
+            [[NSUserDefaults standardUserDefaults] setInteger:10 forKey:@"TwitterAlert"];
             dispatch_async(dispatch_get_main_queue(), ^{
                 SCLAlertView * alert = [[SCLAlertView alloc] init];
                 alert.iconTintColor = [UIColor whiteColor];
