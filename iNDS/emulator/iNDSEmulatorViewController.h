@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "iNDSGame.h"
 
+@class iNDSEmulationProfile;
 @interface iNDSEmulatorViewController : UIViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) iNDSGame *game;

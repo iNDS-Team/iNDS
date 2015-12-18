@@ -21,6 +21,7 @@
 #include "emu.h"
 
 #import "iNDSMFIControllerSupport.h"
+#import "iNDSEmulationProfile.h"
 
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
@@ -88,6 +89,8 @@ const float textureVert[] =
     CFTimeInterval lastAutosave;
     
     NSInteger speed;
+    
+    iNDSEmulationProfile * profile;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
@@ -103,6 +106,8 @@ const float textureVert[] =
 @property (weak, nonatomic) IBOutlet UIButton *cheatsButton;
 @property (weak, nonatomic) IBOutlet UIButton *selectButton;
 @property (weak, nonatomic) IBOutlet UIButton *speedButton;
+@property (weak, nonatomic) IBOutlet UIButton *leftTrigger;
+@property (weak, nonatomic) IBOutlet UIButton *rightTrigger;
 @property (strong, nonatomic) UIImageView *snapshotView;
 
 - (IBAction)hideEmulator:(id)sender;
@@ -129,6 +134,7 @@ const float textureVert[] =
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
+    profile = [[iNDSEmulationProfile alloc] init];
     
     self.view.multipleTouchEnabled = YES;
     
@@ -216,114 +222,9 @@ const float textureVert[] =
 
 - (void)viewWillLayoutSubviews
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    BOOL isLandscape = self.view.bounds.size.width > self.view.bounds.size.height;
-    //BOOL isWidescreen = [[UIScreen mainScreen] isWidescreen];
     
-    glkView[0].frame = [self rectForScreenView:0];
-    glkView[1].frame = [self rectForScreenView:1];
-    
-    self.snapshotView.frame = glkView[extWindow?1:0].frame;
-    
-    CGFloat controllerSizeDelta = 0.5 + (([defaults floatForKey:@"controlSize"] - 0.4) * 0.5);
-    
-    CGRect directionalFrame = self.directionalControl.frame;
-    directionalFrame.size.width = directionalFrame.size.height = MAX(50, 240 * controllerSizeDelta);
-    CGRect buttonFrame = self.buttonControl.frame;
-    buttonFrame.size.width = buttonFrame.size.height = MAX(50, 240 * controllerSizeDelta);
-    
-    self.directionalControl.frame = directionalFrame;
-    self.buttonControl.frame = buttonFrame;
-    
-    if (isLandscape) {
-        self.dismissButton.frame = CGRectMake((self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2 + 8, 8, 28, 28);
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-        {
-            self.controllerContainerView.frame = self.view.bounds;
-            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.view.bounds.size.height/2);
-            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-self.directionalControl.frame.size.width/2 - 5, self.view.bounds.size.height/2);
-            self.startButton.center = CGPointMake(self.view.bounds.size.width-102, self.view.bounds.size.height-48);
-            self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, self.view.bounds.size.height-16);
-            self.controllerContainerView.alpha = self.dismissButton.alpha = 1.0;
-            self.fpsLabel.frame = CGRectMake(70, 0, 70, 24);
-        } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            self.controllerContainerView.frame = CGRectMake(0, (self.view.bounds.size.height/2)-150, self.view.bounds.size.width, 300);
-            //Could be wrong
-            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height/2);
-            self.buttonControl.center = CGPointMake(self.view.bounds.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height/2);
-            self.startButton.center = CGPointMake(self.view.bounds.size.width-102, 278);
-            self.selectButton.center = CGPointMake(self.view.bounds.size.width-102, 246);
-            self.controllerContainerView.alpha = self.dismissButton.alpha = 1.0;
-            self.fpsLabel.frame = CGRectMake(185, 5, 70, 24);
-        }
-        if ([UIScreen screens].count > 1) {
-            self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
-            self.dismissButton.alpha = 1;
-        }
-        CGFloat glkWidth = [self rectForScreenView:1].size.width;
-        self.cheatsButton.center = CGPointMake(self.view.frame.size.width/2 - glkWidth/2 - 70, 20);
-        self.speedButton.center = CGPointMake(self.view.frame.size.width/2 + glkWidth/2 + 70, 20);
-    } else {
-        CGFloat screenOffset = (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2; //Black space at top
-        
-        CGFloat screenHeight = [self rectForScreenView:1].size.height / 2;
-        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
-        {
-            self.controllerContainerView.frame = CGRectMake(0, [defaults integerForKey:@"controlPosition"] == 0? screenOffset : screenOffset + screenHeight, self.view.bounds.size.width, self.view.frame.size.height - screenOffset - screenHeight);
-            self.startButton.center = CGPointMake((self.view.bounds.size.width/2)-40, self.controllerContainerView.frame.size.height - 20);
-            self.selectButton.center = CGPointMake((self.view.bounds.size.width/2)+40, self.controllerContainerView.frame.size.height - 20);
-            self.dismissButton.frame = CGRectMake((self.view.bounds.size.width/2)-14, 0, 28, 28);
-            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height - self.directionalControl.frame.size.height/2 - 20);
-            self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 20);
-        } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-            self.controllerContainerView.frame = CGRectMake(0, [defaults integerForKey:@"controlPosition"] == 0? screenOffset : screenOffset + screenHeight, self.view.bounds.size.width, screenHeight);
-            self.startButton.center = CGPointMake(25, screenHeight - 30);
-            self.selectButton.center = CGPointMake(self.view.bounds.size.width-25, screenHeight - 30);
-            self.dismissButton.frame = CGRectMake(self.view.bounds.size.width-35, 5, 28, 28);
-            self.directionalControl.center = CGPointMake(self.directionalControl.frame.size.width/2 + 5, self.controllerContainerView.frame.size.height - self.directionalControl.frame.size.height/2 - 40);
-            self.buttonControl.center = CGPointMake(self.controllerContainerView.frame.size.width-self.directionalControl.frame.size.width/2 - 5, self.controllerContainerView.frame.size.height-self.buttonControl.frame.size.height/2 - 40);
-        }
-        self.cheatsButton.center = CGPointMake(self.view.frame.size.width - 64, 20);
-        self.speedButton.center = CGPointMake(self.view.frame.size.width - 122, 20);
-        self.controllerContainerView.alpha = MAX(0.1, [defaults floatForKey:@"controlOpacity"]);
-        self.dismissButton.alpha = 1;
-        self.fpsLabel.frame = CGRectMake(6, 0, 70, 24);
-        [self.directionalControl frameUpdated];
-    }
-    self.cheatsButton.alpha = self.speedButton.alpha = self.controllerContainerView.alpha;
-    self.cheatsButton.alpha = 0; //Until implemented
 }
 
-- (CGRect)rectForScreenView:(NSInteger)screen
-{
-    if (extWindow && screen == 0) return extWindow.bounds;
-    CGRect rect = CGRectZero;
-    BOOL isLandscape = self.view.bounds.size.width > self.view.bounds.size.height;
-    if (isLandscape) {
-        if (extWindow) rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/0.75)/2,
-                                         0,
-                                         self.view.bounds.size.height/0.75,
-                                         self.view.bounds.size.height);
-        else rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2,
-                               0,
-                               self.view.bounds.size.height/1.5,
-                               self.view.bounds.size.height);
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        rect = CGRectMake(self.view.bounds.size.width - (self.view.bounds.size.width + self.view.bounds.size.height/1.5)/2,
-                          0,
-                          self.view.bounds.size.height/1.5,
-                          self.view.bounds.size.height);
-        if (extWindow) rect.size.height /= 2;
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        rect = CGRectMake(0,
-                          (self.view.frame.size.height - (self.view.bounds.size.width*1.5)) / 2,
-                          self.view.bounds.size.width,
-                          self.view.bounds.size.width*1.5);
-        if (extWindow) rect.size.height /= 2;
-    }
-    
-    return rect;
-}
 
 - (void)dealloc
 {
@@ -365,17 +266,26 @@ const float textureVert[] =
         extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
         extWindow.screen = extScreen;
         extWindow.backgroundColor = [UIColor orangeColor];
-        glkView[0] = [[GLKView alloc] initWithFrame:[self rectForScreenView:0] context:self.context];
-        glkView[1] = [[GLKView alloc] initWithFrame:[self rectForScreenView:1] context:self.context];
+        glkView[0] = [[GLKView alloc] initWithFrame:extWindow.bounds context:self.context];
+        glkView[1] = [[GLKView alloc] initWithFrame:profile.touchScreenRect context:self.context];
         glkView[0].delegate = self;
         glkView[1].delegate = self;
         [self.view insertSubview:glkView[1] atIndex:0];
         [extWindow addSubview:glkView[0]];
         [extWindow makeKeyAndVisible];
     } else {
-        glkView[0] = [[GLKView alloc] initWithFrame:[self rectForScreenView:0] context:self.context];
+        UIScreen *extScreen = [UIScreen screens][1];
+        extScreen.currentMode = extScreen.availableModes[0];
+        extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
+        extWindow.screen = extScreen;
+        extWindow.backgroundColor = [UIColor orangeColor];
+        glkView[0] = [[GLKView alloc] initWithFrame:profile.mainScreenRect context:self.context];
+        glkView[1] = [[GLKView alloc] initWithFrame:profile.touchScreenRect context:self.context];
         glkView[0].delegate = self;
-        [self.view insertSubview:glkView[0] atIndex:0];
+        glkView[1].delegate = self;
+        [self.view insertSubview:glkView[1] atIndex:0];
+        [extWindow addSubview:glkView[0]];
+        [extWindow makeKeyAndVisible];
     }
     
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
@@ -400,28 +310,26 @@ const float textureVert[] =
     
     [self.program use];
     
-    glGenTextures(extWindow ? 2 : 1, texHandle);
+    glGenTextures(2, texHandle);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    if (extWindow) {
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texHandle[1]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    } else {
-        texHandle[1] = 0;
-    }
+    
+    //Window 2
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texHandle[1]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 - (void)shutdownGL
 {
-    glDeleteTextures(texHandle[1] ? 2 : 1, texHandle);
+    glDeleteTextures(2, texHandle);
     texHandle[0] = 0;
     texHandle[1] = 0;
     self.context = nil;
@@ -456,14 +364,14 @@ const float textureVert[] =
 {
     if (!execute) return;
     // save snapshot of screen
-    if (self.snapshotView == nil) {
+    /*if (self.snapshotView == nil) {
         self.snapshotView = [[UIImageView alloc] initWithFrame:glkView[extWindow?1:0].frame];
         [self.view insertSubview:self.snapshotView aboveSubview:glkView[extWindow?1:0]];
     } else {
         self.snapshotView.hidden = NO;
     }
     self.snapshotView.image = [self screenSnapshot:extWindow?1:-1];
-    NSLog(@"%@", self.snapshotView.image);
+    NSLog(@"%@", self.snapshotView.image);*/
     // pause emulation
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
@@ -532,13 +440,13 @@ const float textureVert[] =
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, texHandle[1] ? 192 : 384, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
     [glkView[0] display];
-    if (texHandle[1]) {
-        glBindTexture(GL_TEXTURE_2D, texHandle[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + 256*192*4);
-        [glkView[1] display];
-    }
+    
+    glBindTexture(GL_TEXTURE_2D, texHandle[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + 256*192*4);
+    [glkView[1] display];
+    
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect

@@ -189,9 +189,10 @@
 		CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C041C2356F700B2A864 /* SCLTextView.m */; };
 		CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */; };
 		CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0E1C235AA000B2A864 /* Accelerate.framework */; };
-		CA908C151C236D6B00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C141C236D6B00B2A864 /* Twitter.png */; };
 		CA908C181C239D0000B2A864 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C161C239D0000B2A864 /* Fabric.framework */; };
 		CA908C191C239D0000B2A864 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C171C239D0000B2A864 /* Crashlytics.framework */; };
+		CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */; };
+		CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C1D1C23B2BE00B2A864 /* Twitter.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -570,9 +571,11 @@
 		CA908C041C2356F700B2A864 /* SCLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTextView.m; sourceTree = "<group>"; };
 		CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		CA908C0E1C235AA000B2A864 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		CA908C141C236D6B00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Twitter.png; sourceTree = "<group>"; };
 		CA908C161C239D0000B2A864 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		CA908C171C239D0000B2A864 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
+		CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfile.m; sourceTree = "<group>"; };
+		CA908C1D1C23B2BE00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Twitter.png; path = Resources/Twitter.png; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -745,7 +748,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CA908C141C236D6B00B2A864 /* Twitter.png */,
+				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
 				CA7079C51C08F901005A1B19 /* upgrade.png */,
 				D325821017A1D69B0009C84B /* pixelgrid.png */,
@@ -806,6 +809,8 @@
 				8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */,
 				8BEA096E17872C320060B347 /* GLProgram.h */,
 				8BEA096F17872C320060B347 /* GLProgram.m */,
+				CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */,
+				CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */,
 			);
 			name = "Emulator View";
 			sourceTree = "<group>";
@@ -1404,6 +1409,7 @@
 				28DA4A51178802FB002236A4 /* LTrigger@2x.png in Resources */,
 				CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */,
 				28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */,
+				CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */,
 				CA7079C61C08F901005A1B19 /* upgrade.png in Resources */,
 				28DA4A53178802FB002236A4 /* RTrigger@2x.png in Resources */,
 				CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */,
@@ -1412,7 +1418,6 @@
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
 				28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */,
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
-				CA908C151C236D6B00B2A864 /* Twitter.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
@@ -1480,6 +1485,7 @@
 				BFCFE19317650FB0000A70CF /* GPU.cpp in Sources */,
 				BFCFE19417650FB0000A70CF /* JitCommon.cpp in Sources */,
 				BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */,
+				CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */,
 				BFCFE19517650FB0000A70CF /* matrix.cpp in Sources */,
 				BFCFE19617650FB0000A70CF /* mc.cpp in Sources */,
 				BFCFE19717650FB0000A70CF /* MMU.cpp in Sources */,
