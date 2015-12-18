@@ -35,6 +35,8 @@
         [self addSubview:_buttonImageView];
         
         self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
+        self.direction = iNDSDirectionalControlDirectionDown;
+        
         
         [self setStyle:iNDSDirectionalControlStyleDPad];
     }

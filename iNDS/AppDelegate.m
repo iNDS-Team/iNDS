@@ -7,6 +7,8 @@
 //
 
 #import "AppDelegate.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
 #import "OLGhostAlertView.h"
 #import "CHBgDropboxSync.h"
@@ -30,6 +32,8 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    [Fabric with:@[[Crashlytics class]]];
     
     self.alertView = [[SCLAlertView alloc] init];
     self.alertView.shouldDismissOnTapOutside = YES;
