@@ -139,6 +139,7 @@
 - (NSString *)tableView:(UITableView *)tableView  titleForFooterInSection:(NSInteger)section
 {
     NSString *sectionName;
+    NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
     switch (section)
     {
         case 0:
@@ -147,6 +148,9 @@
             break;
         case 2:
             sectionName = NSLocalizedString(@"ENABLE_DROPBOX_DETAIL", nil);
+            break;
+        case 4:
+            sectionName = [NSString stringWithFormat:@"Version %@", myVersion];
             break;
         case 5:
             sectionName = NSLocalizedString(@"ARMLJIT_DETAIL", nil);

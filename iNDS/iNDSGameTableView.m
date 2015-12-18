@@ -60,7 +60,7 @@
         [alert addButton:@"Show Name" actionBlock:^(void) {
             NSLog(@"Text value: %@", textField.text);
         }];
-        [alert showEdit:self title:@"Edit View" subTitle:@"This alert view shows a text box" closeButtonTitle:@"Done" duration:0.0f];
+        //[alert showEdit:self title:@"Edit View" subTitle:@"This alert view shows a text box" closeButtonTitle:@"Done" duration:0.0f];
     }];
     renameAction.backgroundColor = [UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1];
     
