@@ -305,7 +305,8 @@
 
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState
 {
-    
+    [[Crashlytics sharedInstance] setObjectValue:game.title forKey:@"GameTitle"];
+    [[Crashlytics sharedInstance] setIntValue:(int)savedState forKey:@"SavedState"];
     // TODO: check if resuming current game, also call EMU_closeRom maybe
     iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
     emulatorViewController.game = game;

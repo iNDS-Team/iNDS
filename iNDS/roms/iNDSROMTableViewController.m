@@ -12,6 +12,8 @@
 #import "CHBgDropboxSync.h"
 #import "iNDSGameTableView.h"
 #import "iNDSRomDownloadManager.h"
+#import <Crashlytics/Crashlytics.h>
+
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
 }
@@ -110,10 +112,12 @@
         if (indexPath.section == 0) {  // Del game
             iNDSGame *game = games[indexPath.row];
             if ([[NSFileManager defaultManager] removeItemAtPath:game.path error:NULL]) {
+                CLS_LOG(@"Removeing Game");
                 games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
         } else {  // Del DL
+            CLS_LOG(@"Removeing Download");
             iNDSRomDownload * download = activeDownloads[indexPath.row];
             [[iNDSRomDownloadManager sharedManager] removeDownload:download];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];

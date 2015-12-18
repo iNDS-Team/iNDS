@@ -8,6 +8,7 @@
 
 #import "iNDSGameTableView.h"
 #import "iNDSEmulatorViewController.h"
+#import "SCLAlertView.h"
 @interface iNDSGameTableView() {
     
 }
@@ -30,19 +31,11 @@
 
 #pragma mark - Table View
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {}
+
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return YES;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if ([_game deleteSaveStateAtIndex:indexPath.row]) {
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        } else {
-            NSLog(@"Error! unable to delete save state");
-        }
-    }
+    return indexPath.section != 0;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -57,9 +50,29 @@
     return 2;
 }
 
-- (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return nil;
+-(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        SCLAlertView * alert = [[SCLAlertView alloc] init];
+        NSLog(@"Save %@", _game.saveStates[indexPath.row]);
+        UITextField *textField = [alert addTextField:@"Hey"];
+        
+        [alert addButton:@"Show Name" actionBlock:^(void) {
+            NSLog(@"Text value: %@", textField.text);
+        }];
+        [alert showEdit:self title:@"Edit View" subTitle:@"This alert view shows a text box" closeButtonTitle:@"Done" duration:0.0f];
+    }];
+    renameAction.backgroundColor = [UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1];
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        if ([_game deleteSaveStateAtIndex:indexPath.row]) {
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        } else {
+            NSLog(@"Error! unable to delete save state");
+        }
+    }];
+    deleteAction.backgroundColor = [UIColor redColor];
+    return @[deleteAction, renameAction];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
