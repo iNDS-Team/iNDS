@@ -10,13 +10,14 @@
 #import "iNDSEmulatorViewController.h"
 
 #import "iNDSGame.h"
-
+@class SCLAlertView;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) iNDSGame *currentGame;
 @property (strong, nonatomic) iNDSEmulatorViewController *currentEmulatorViewController;
 @property (strong, nonatomic) NSURL *lastUrl;
+@property (strong, atomic) SCLAlertView * alertView;
 
 + (AppDelegate *)sharedInstance;
 

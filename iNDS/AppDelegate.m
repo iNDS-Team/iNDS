@@ -16,6 +16,7 @@
 #import <UnrarKit/UnrarKit.h>
 
 #import "iNDSInitialViewController.h"
+#import "SCLAlertView.h"
 
 #ifndef kCFCoreFoundationVersionNumber_iOS_7_0
 #define kCFCoreFoundationVersionNumber_iOS_7_0 847.20
@@ -29,6 +30,9 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    self.alertView = [[SCLAlertView alloc] init];
+    self.alertView.shouldDismissOnTapOutside = YES;
     
     if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
         [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
@@ -45,6 +49,7 @@
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:&error];
         if (error) {
             NSLog(@"Unable to create documents");
+            [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to create iNDS folder in documents" closeButtonTitle:@"OK" duration:0.0];
             } else {
             //Move Battery
             if ([[NSFileManager defaultManager] fileExistsAtPath:self.oldBatteryDir]) {
@@ -99,10 +104,7 @@
     [DBSession setSharedSession:dbSession];
     
     if (errorMsg != nil) {
-		[[[UIAlertView alloc]
-		   initWithTitle:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) message:errorMsg
-		   delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil]
-		 show];
+        [self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
 	}
     
     [self checkForUpdates];
@@ -137,6 +139,7 @@
             if ([fm createDirectoryAtPath:dstDir withIntermediateDirectories:YES attributes:nil error:&err] == NO) {
                 NSLog(@"Could not create directory to expand zip: %@ %@", dstDir, err);
                 [fm removeItemAtURL:url error:NULL];
+                [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .zip file." closeButtonTitle:@"OK" duration:0.0];
                 return NO;
             }
             
@@ -148,6 +151,7 @@
             } else if ([url.pathExtension.lowercaseString isEqualToString:@"7z"]) {
                 if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
                     NSLog(@"Unable to extract 7z");
+                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .7z file." closeButtonTitle:@"OK" duration:0.0];
                     return NO;
                 }
             } else { //Rar
@@ -155,7 +159,7 @@
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
                     NSLog(@"Unable to open rar: %@", archiveError);
-                    [ZAActivityBar showErrorWithStatus:@"Error: Unable to read rar file" duration:5];
+                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to read extract .rar file." closeButtonTitle:@"OK" duration:0.0];
                     return NO;
                 }
                 //Extract
@@ -163,7 +167,7 @@
                 [archive extractFilesTo:dstDir overwrite:YES progress:nil error:&error];
                 if (error) {
                     NSLog(@"Unable to extract rar: %@", archiveError);
-                    [ZAActivityBar showErrorWithStatus:@"Error: Unable to extrace rar file" duration:5];
+                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .rar file." closeButtonTitle:@"OK" duration:0.0];
                     return NO;
                 }
                 
@@ -185,7 +189,7 @@
                 }
             }
             if (foundItems.count == 0) {
-                [ZAActivityBar showErrorWithStatus:@"Error: No Roms or Saves found in zip" duration:5];
+                [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"No roms or saves found in archive." closeButtonTitle:@"OK" duration:0.0];
             }
             else if (foundItems.count == 1) {
                 [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added: %@", foundItems[0]] duration:3];
@@ -212,7 +216,7 @@
         
         return YES;
     } else {
-        [ZAActivityBar showErrorWithStatus:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url] duration:10];
+        [self.alertView showError:[self topMostController] title:@"Error!" subTitle:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url] closeButtonTitle:@"OK" duration:0.0];
         
     }
     return NO;
@@ -228,13 +232,41 @@
         if ([latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending) {
             NSLog(@"Upgrade Needed lastest<%@> mine<%@>", latestVersion, myVersion);
             dispatch_async(dispatch_get_main_queue(), ^{
-                UIImage * upgrade = [UIImage imageNamed:@"upgrade.png"];
-                [ZAActivityBar showImage:upgrade status:[NSString stringWithFormat:@"iNDS version %@ is avaliable for download", latestVersion] duration:5];
+                if (![[NSUserDefaults standardUserDefaults] objectForKey:myVersion]) {
+                [self.alertView showInfo:[self topMostController] title:@"Update" subTitle:[NSString stringWithFormat:@"A newer version of iNDS is now avaliable: %@", latestVersion] closeButtonTitle:@"Thanks!" duration:0.0];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:myVersion];
+                }
             });
-        } else {
-            NSLog(@"No Update %@ >= %@", myVersion, latestVersion);
+        }
+        //Show Twitter alert
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
+            [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] < 5) {
+            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] == 5) {
+            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                SCLAlertView * alert = [[SCLAlertView alloc] init];
+                alert.iconTintColor = [UIColor whiteColor];
+                alert.shouldDismissOnTapOutside = YES;
+                [alert addButton:@"Follow" actionBlock:^(void) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/miniroo321"]];
+                }];
+                UIImage * twitterImage = [[UIImage imageNamed:@"Twitter.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TwitterAlert"];
+            });
         }
     });
+}
+
+- (UIViewController*) topMostController
+{
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    return topController;
 }
 
 - (NSString *)batteryDir
@@ -275,9 +307,9 @@
     emulatorViewController.game = game;
     emulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
     [AppDelegate sharedInstance].currentEmulatorViewController = emulatorViewController;
-    iNDSInitialViewController *rootViewController = (iNDSInitialViewController*)[UIApplication sharedApplication].keyWindow.rootViewController;
+    iNDSInitialViewController *rootViewController = (iNDSInitialViewController*)[self topMostController];
     //[rootViewController doSlideIn:nil];
-    [rootViewController.rootView presentViewController:emulatorViewController animated:YES completion:nil];
+    [rootViewController presentViewController:emulatorViewController animated:YES completion:nil];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

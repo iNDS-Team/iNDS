@@ -180,6 +180,16 @@
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
 		CA7079CD1C095147005A1B19 /* toDo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CC1C095147005A1B19 /* toDo.txt */; };
+		CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */; };
+		CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF91C2356F700B2A864 /* SCLAlertView.m */; };
+		CA908C071C2356F700B2A864 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFB1C2356F700B2A864 /* SCLButton.m */; };
+		CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */; };
+		CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */; };
+		CA908C0A1C2356F700B2A864 /* SCLTimerDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */; };
+		CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C041C2356F700B2A864 /* SCLTextView.m */; };
+		CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */; };
+		CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0E1C235AA000B2A864 /* Accelerate.framework */; };
+		CA908C151C236D6B00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C141C236D6B00B2A864 /* Twitter.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -541,6 +551,24 @@
 		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
 		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
 		CA7079CC1C095147005A1B19 /* toDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = toDo.txt; sourceTree = "<group>"; };
+		CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		CA908BF81C2356F700B2A864 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
+		CA908BF91C2356F700B2A864 /* SCLAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertView.m; sourceTree = "<group>"; };
+		CA908BFA1C2356F700B2A864 /* SCLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLButton.h; sourceTree = "<group>"; };
+		CA908BFB1C2356F700B2A864 /* SCLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLButton.m; sourceTree = "<group>"; };
+		CA908BFC1C2356F700B2A864 /* SCLAlertViewResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertViewResponder.h; sourceTree = "<group>"; };
+		CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertViewResponder.m; sourceTree = "<group>"; };
+		CA908BFE1C2356F700B2A864 /* SCLAlertViewStyleKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertViewStyleKit.h; sourceTree = "<group>"; };
+		CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertViewStyleKit.m; sourceTree = "<group>"; };
+		CA908C001C2356F700B2A864 /* SCLMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLMacros.h; sourceTree = "<group>"; };
+		CA908C011C2356F700B2A864 /* SCLTimerDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLTimerDisplay.h; sourceTree = "<group>"; };
+		CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTimerDisplay.m; sourceTree = "<group>"; };
+		CA908C031C2356F700B2A864 /* SCLTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLTextView.h; sourceTree = "<group>"; };
+		CA908C041C2356F700B2A864 /* SCLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTextView.m; sourceTree = "<group>"; };
+		CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		CA908C0E1C235AA000B2A864 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		CA908C141C236D6B00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Twitter.png; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -577,6 +605,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */,
+				CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */,
 				9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */,
 				1A5BAE8117D184AD00BABC01 /* AudioToolbox.framework in Frameworks */,
 				D32C39DB178E749C00E6809E /* libc++.dylib in Frameworks */,
@@ -709,6 +739,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CA908C141C236D6B00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
 				CA7079C51C08F901005A1B19 /* upgrade.png */,
 				D325821017A1D69B0009C84B /* pixelgrid.png */,
@@ -807,6 +838,8 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA908C0E1C235AA000B2A864 /* Accelerate.framework */,
+				CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */,
 				CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */,
 				9C4DD2851891E5390075B66C /* GameController.framework */,
 				D3B8BB911794ACCE0061D1D8 /* DropboxSDK.framework */,
@@ -844,6 +877,7 @@
 				CA031CFE1BEBE1A700EDE98D /* 7z */,
 				CA031CBB1BEBDC3500EDE98D /* Zip */,
 				D31CC89F17927BCB0098FB9C /* Dropbox */,
+				CA908BDF1C2356DA00B2A864 /* SCLAlertView */,
 				D31CC8B617927E840098FB9C /* ZAActivityBar */,
 				BFCFE0F91764FBD3000A70CF /* Supporting Files */,
 			);
@@ -1213,6 +1247,28 @@
 			name = 7z;
 			sourceTree = "<group>";
 		};
+		CA908BDF1C2356DA00B2A864 /* SCLAlertView */ = {
+			isa = PBXGroup;
+			children = (
+				CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */,
+				CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */,
+				CA908BF81C2356F700B2A864 /* SCLAlertView.h */,
+				CA908BF91C2356F700B2A864 /* SCLAlertView.m */,
+				CA908BFA1C2356F700B2A864 /* SCLButton.h */,
+				CA908BFB1C2356F700B2A864 /* SCLButton.m */,
+				CA908BFC1C2356F700B2A864 /* SCLAlertViewResponder.h */,
+				CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */,
+				CA908BFE1C2356F700B2A864 /* SCLAlertViewStyleKit.h */,
+				CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */,
+				CA908C001C2356F700B2A864 /* SCLMacros.h */,
+				CA908C011C2356F700B2A864 /* SCLTimerDisplay.h */,
+				CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */,
+				CA908C031C2356F700B2A864 /* SCLTextView.h */,
+				CA908C041C2356F700B2A864 /* SCLTextView.m */,
+			);
+			name = SCLAlertView;
+			sourceTree = "<group>";
+		};
 		D31CC89F17927BCB0098FB9C /* Dropbox */ = {
 			isa = PBXGroup;
 			children = (
@@ -1348,6 +1404,7 @@
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
 				28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */,
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
+				CA908C151C236D6B00B2A864 /* Twitter.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
@@ -1440,6 +1497,7 @@
 				CA031CCA1BEBDC4F00EDE98D /* unzip.c in Sources */,
 				BFCFE1A517650FB0000A70CF /* version.cpp in Sources */,
 				BFCFE1A617650FB0000A70CF /* wifi.cpp in Sources */,
+				CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */,
 				BFCFE1B417651005000A70CF /* 2xsai.cpp in Sources */,
 				CA031D291BEBE1EB00EDE98D /* LzmaDec.c in Sources */,
 				BFCFE1B517651005000A70CF /* bilinear.cpp in Sources */,
@@ -1449,10 +1507,12 @@
 				CA031D2A1BEBE1EB00EDE98D /* LZMAExtractor.m in Sources */,
 				BFCFE1B917651005000A70CF /* lq2x.cpp in Sources */,
 				BFCFE1BA17651005000A70CF /* scanline.cpp in Sources */,
+				CA908C071C2356F700B2A864 /* SCLButton.m in Sources */,
 				BFCFE1BE17651038000A70CF /* metaspu.cpp in Sources */,
 				CA031D1F1BEBE1EB00EDE98D /* 7zBuf.c in Sources */,
 				BFCFE1D517651076000A70CF /* ConvertUTF.c in Sources */,
 				BFCFE1D617651076000A70CF /* datetime.cpp in Sources */,
+				CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */,
 				CA031ADC1BEAB1B000EDE98D /* iNDSGameTableView.m in Sources */,
 				BFCFE1D717651076000A70CF /* dlditool.cpp in Sources */,
 				BFCFE1D817651076000A70CF /* emufat.cpp in Sources */,
@@ -1472,6 +1532,7 @@
 				C345B67218906BB40065A795 /* iNDSMFIControllerSupport.mm in Sources */,
 				BFCFE1E91765109C000A70CF /* header.cpp in Sources */,
 				BFCFE21A176634AF000A70CF /* cache.cpp in Sources */,
+				CA908C0A1C2356F700B2A864 /* SCLTimerDisplay.m in Sources */,
 				BFCFE21B176634AF000A70CF /* directory.cpp in Sources */,
 				BFCFE21C176634AF000A70CF /* disc.cpp in Sources */,
 				BFCFE21D176634AF000A70CF /* fatdir.cpp in Sources */,
@@ -1508,6 +1569,7 @@
 				CA031D271BEBE1EB00EDE98D /* Delta.c in Sources */,
 				BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */,
 				BFCFE247176634EE000A70CF /* slot2_rumblepak.cpp in Sources */,
+				CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */,
 				BFCFE26B1766379F000A70CF /* addons.cpp in Sources */,
 				BF9D514317865CD800B5864B /* SndOut.cpp in Sources */,
 				CA031D231BEBE1EB00EDE98D /* 7zIn.c in Sources */,
@@ -1518,6 +1580,7 @@
 				8B4895C0178CCBEE00BA61C3 /* OLGhostAlertView.m in Sources */,
 				8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */,
 				CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */,
+				CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */,
 				8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */,
 				D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */,
 				D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */,
@@ -1526,6 +1589,7 @@
 				D31CC8B417927C3B0098FB9C /* NSDictionary+ConciseKit.m in Sources */,
 				D31CC8B517927C3B0098FB9C /* NSString+ConciseKit.m in Sources */,
 				CA031ADF1BEB103B00EDE98D /* iNDSRomDownloader.m in Sources */,
+				CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */,
 				D3B8BB971794ACEF0061D1D8 /* ZAActivityBar.m in Sources */,
 				D3B8BB9A1794ACFE0061D1D8 /* SKBounceAnimation.m in Sources */,
 				2838715F17950B69009B8E84 /* math_mat4.c in Sources */,

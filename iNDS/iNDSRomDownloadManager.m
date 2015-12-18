@@ -57,11 +57,7 @@
     progress = [fileHandle offsetInFile] / (float)expectedBytes;
     if (self.progressLabel) {
         int roundedProgress = (int)(progress * 100);
-        if (roundedProgress < 100) {
-            self.progressLabel.text = [NSString stringWithFormat:@"Downloading: %i%%", roundedProgress];
-        } else {
-            self.progressLabel.text = [NSString stringWithFormat:@"Opening"];
-        }
+        self.progressLabel.text = [NSString stringWithFormat:@"Downloading: %i%%", roundedProgress];
     }
 }
 
@@ -78,6 +74,10 @@
 - (void) connectionDidFinishLoading:(NSURLConnection *)connection {
     //NSFileManager *fm = [NSFileManager defaultManager];
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.progressLabel.text = [NSString stringWithFormat:@"Opening"];
+    });
     NSError * error;
     
     [fileHandle closeFile];
