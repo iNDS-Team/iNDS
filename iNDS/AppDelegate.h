@@ -19,6 +19,7 @@
 @property (strong, nonatomic) NSURL *lastUrl;
 @property (strong, atomic) SCLAlertView * alertView;
 
+
 + (AppDelegate *)sharedInstance;
 
 - (NSString *)batteryDir;

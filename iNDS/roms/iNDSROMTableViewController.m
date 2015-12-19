@@ -63,7 +63,6 @@
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
     
     [self reloadGames:nil];
-    [self checkForUpdates];
 }
 
 - (void)didReceiveMemoryWarning
@@ -185,44 +184,6 @@
     }
 }
 
-- (void)checkForUpdates
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.williamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:nil];
-        latestVersion = @"2.0.0";//[latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-        NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-        
-        if ([latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending) {
-            NSLog(@"Upgrade Needed lastest<%@> mine<%@>", latestVersion, myVersion);
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (![[NSUserDefaults standardUserDefaults] objectForKey:myVersion]) {
-                    SCLAlertView * alert = [[SCLAlertView alloc] init];
-                    [alert showInfo:self title:@"Update" subTitle:[NSString stringWithFormat:@"A newer version of iNDS is now avaliable: %@", latestVersion] closeButtonTitle:@"Thanks!" duration:0.0];
-                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:myVersion];
-                    return;
-                }
-            });
-        }
-        //Show Twitter alert
-        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
-            [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
-        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] < 5) {
-            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
-        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] == 5) {
-            [[NSUserDefaults standardUserDefaults] setInteger:10 forKey:@"TwitterAlert"];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                SCLAlertView * alert = [[SCLAlertView alloc] init];
-                alert.iconTintColor = [UIColor whiteColor];
-                alert.shouldDismissOnTapOutside = YES;
-                [alert addButton:@"Follow" actionBlock:^(void) {
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/miniroo321"]];
-                }];
-                UIImage * twitterImage = [[UIImage imageNamed:@"Twitter.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                [alert showCustom:self image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TwitterAlert"];
-            });
-        }
-    });
-}
+
 
 @end

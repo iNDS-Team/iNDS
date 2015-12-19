@@ -807,7 +807,7 @@ SCLTimerDisplay *buttonTimer;
         // Adjust text view size, if necessary
         CGSize sz = CGSizeMake(_windowWidth - 24.0f, CGFLOAT_MAX);
         NSDictionary *attr = @{NSFontAttributeName:self.viewText.font};
-        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading | NSStringDrawingUsesDeviceMetrics;
+        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading;
         
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0"))
         {
@@ -851,6 +851,7 @@ SCLTimerDisplay *buttonTimer;
     }
     else
     {
+        
         // Subtitle is nil, we can move the title to center and remove it from superView
         self.subTitleHeight = 0.0f;
         self.windowHeight -= _viewText.frame.size.height;
