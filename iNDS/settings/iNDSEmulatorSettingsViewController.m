@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 iNDS. All rights reserved.
 //
 
-#import "iNDSSettingsViewController.h"
+#import "iNDSEmulatorSettingsViewController.h"
 #import <DropboxSDK/DropboxSDK.h>
 #import "OLGhostAlertView.h"
 #import "CHBgDropboxSync.h"
 
-@interface iNDSSettingsViewController ()
+@interface iNDSEmulatorSettingsViewController ()
 
 @property (weak, nonatomic) IBOutlet UINavigationItem *settingsTitle;
 
@@ -54,7 +54,7 @@
 
 @end
 
-@implementation iNDSSettingsViewController
+@implementation iNDSEmulatorSettingsViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {

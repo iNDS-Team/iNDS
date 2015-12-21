@@ -14,9 +14,10 @@
 
 @property (strong, nonatomic) iNDSGame *game;
 @property (copy, nonatomic) NSString *saveState;
+@property (assign, nonatomic) NSInteger speed;
 
 - (void)pauseEmulation;
 - (void)resumeEmulation;
 - (void)saveStateWithName:(NSString*)saveStateName;
-
+- (void)changeGame;
 @end

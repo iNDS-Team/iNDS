@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface iNDSSettingsViewController : UITableViewController
+@interface iNDSEmulatorSettingsViewController : UITableViewController
 
 @end

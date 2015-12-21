@@ -5,6 +5,19 @@
 //  Created by iNDS on 6/11/13.
 //  Copyright (c) 2014 iNDS. All rights reserved.
 //
+/*settings notes
+Change Rom
+  List of roms
+Profile
+  List of profiles
+Edit Layout
+Speed
+  Speed switcher
+Cheats
+  List of cheats and switches to enable
+    Text area to type cheats in
+ 
+*/
 
 #import "AppDelegate.h"
 #import "iNDSEmulatorViewController.h"
@@ -88,24 +101,25 @@ const float textureVert[] =
     
     CFTimeInterval lastAutosave;
     
-    NSInteger speed;
-    
     iNDSEmulationProfile * profile;
+    
+    BOOL settingsShown;
 }
 
+
+@property (weak, nonatomic) IBOutlet UIView *gameContainer;
+@property (weak, nonatomic) IBOutlet UIView *settingsContainer;
+
 @property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *pixelGrid;
 @property (strong, nonatomic) GLProgram *program;
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) IBOutlet UIView *controllerContainerView;
 
 @property (weak, nonatomic) IBOutlet iNDSDirectionalControl *directionalControl;
 @property (weak, nonatomic) IBOutlet iNDSButtonControl *buttonControl;
-@property (weak, nonatomic) IBOutlet UIButton *dismissButton;
+@property (weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
-@property (weak, nonatomic) IBOutlet UIButton *cheatsButton;
 @property (weak, nonatomic) IBOutlet UIButton *selectButton;
-@property (weak, nonatomic) IBOutlet UIButton *speedButton;
 @property (weak, nonatomic) IBOutlet UIButton *leftTrigger;
 @property (weak, nonatomic) IBOutlet UIButton *rightTrigger;
 @property (strong, nonatomic) UIImageView *snapshotView;
@@ -134,7 +148,7 @@ const float textureVert[] =
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     
-    profile = [[iNDSEmulationProfile alloc] init];
+    [self loadProfile:@"Default"];
     
     self.view.multipleTouchEnabled = YES;
     
@@ -152,9 +166,18 @@ const float textureVert[] =
     }
     [self defaultsChanged:nil];
     
-    speed = 1;
+    self.speed = 1;
     
-    self.cheatsButton.layer.cornerRadius = self.speedButton.layer.cornerRadius = 2;
+    self.gameContainer.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.gameContainer.layer.shadowRadius = 5;
+    self.gameContainer.layer.shadowOffset = CGSizeMake(-3, 0);
+    self.gameContainer.layer.shouldRasterize = YES;
+    self.gameContainer.layer.rasterizationScale = UIScreen.mainScreen.scale;
+    self.gameContainer.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, -10, 10, self.gameContainer.frame.size.height+20)].CGPath;
+    
+    CGRect settingsContainerFrame = self.settingsContainer.frame;
+    settingsContainerFrame.size.width = MIN(self.view.frame.size.width - 40, 400);
+    self.settingsContainer.frame = settingsContainerFrame;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -187,6 +210,17 @@ const float textureVert[] =
     EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
     EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
     EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
+    [profile ajustLayout];
+}
+
+- (void)changeGame
+{
+    [self shutdownGL];
+    [self loadROM];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [profile ajustLayout];
+        [self toggleSettings:self];
+    });
 }
 
 - (void)didReceiveMemoryWarning
@@ -200,6 +234,20 @@ const float textureVert[] =
     return YES;
 }
 
+- (void)loadProfile:(NSString *)name
+{
+    profile = [[iNDSEmulationProfile alloc] initWithProfileName:name];
+    //Attach views
+    profile.directionalControl = self.directionalControl;
+    profile.buttonControl = self.buttonControl;
+    profile.settingsButton = self.settingsButton;
+    profile.startButton = self.startButton;
+    profile.selectButton = self.selectButton;
+    profile.leftTrigger = self.leftTrigger;
+    profile.rightTrigger = self.rightTrigger;
+    profile.fpsLabel = self.fpsLabel;
+}
+
 - (void)defaultsChanged:(NSNotification*)notification
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -209,20 +257,19 @@ const float textureVert[] =
         EMU_setSynchMode([defaults boolForKey:@"synchSound"]);
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
-    
-    [self viewWillLayoutSubviews];
-    
-    // Purposefully commented out line below, as we don't want to be able to switch CPU modes in the middle of emulation
-    // EMU_setCPUMode([defaults boolForKey:@"enableLightningJIT"] ? 2 : 1);
-    
-    
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
-    self.pixelGrid.hidden = YES;//![defaults integerForKey:@"showPixelGrid"];
+    
+    //[self.view setNeedsLayout];
 }
 
 - (void)viewWillLayoutSubviews
 {
-    
+    if (!settingsShown) {
+        self.gameContainer.frame = self.view.frame;
+        self.controllerContainerView.frame = self.view.frame;
+        [profile ajustLayout];
+        settingsShown = NO;
+    }
 }
 
 
@@ -267,26 +314,24 @@ const float textureVert[] =
         extWindow.screen = extScreen;
         extWindow.backgroundColor = [UIColor orangeColor];
         glkView[0] = [[GLKView alloc] initWithFrame:extWindow.bounds context:self.context];
-        glkView[1] = [[GLKView alloc] initWithFrame:profile.touchScreenRect context:self.context];
+        glkView[1] = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context]; //4:3 ratio is all that matters
         glkView[0].delegate = self;
         glkView[1].delegate = self;
-        [self.view insertSubview:glkView[1] atIndex:0];
+        [self.gameContainer insertSubview:glkView[1] atIndex:0];
         [extWindow addSubview:glkView[0]];
         [extWindow makeKeyAndVisible];
-    } else {
-        UIScreen *extScreen = [UIScreen screens][1];
-        extScreen.currentMode = extScreen.availableModes[0];
-        extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
-        extWindow.screen = extScreen;
-        extWindow.backgroundColor = [UIColor orangeColor];
-        glkView[0] = [[GLKView alloc] initWithFrame:profile.mainScreenRect context:self.context];
-        glkView[1] = [[GLKView alloc] initWithFrame:profile.touchScreenRect context:self.context];
+    } else { //1 screen
+        glkView[0] = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
+        glkView[1] = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
         glkView[0].delegate = self;
         glkView[1].delegate = self;
-        [self.view insertSubview:glkView[1] atIndex:0];
-        [extWindow addSubview:glkView[0]];
-        [extWindow makeKeyAndVisible];
+        [self.gameContainer insertSubview:glkView[1] atIndex:0];
+        [self.gameContainer insertSubview:glkView[0] atIndex:0];
     }
+    
+    //Attach views to profile
+    profile.mainScreen = glkView[0];
+    profile.touchScreen = glkView[1];
     
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
     
@@ -303,10 +348,7 @@ const float textureVert[] =
     glEnableVertexAttribArray(attribPos);
     glEnableVertexAttribArray(attribTexCoord);
     
-    float scale = [UIScreen mainScreen].scale;
-    CGSize size = CGSizeMake(glkView[1].bounds.size.width * scale, glkView[1].bounds.size.height * scale);
-    
-    glViewport(0, 0, size.width, size.height);
+    glViewport(0, 0, 4, 3);//size.width, size.height);
     
     [self.program use];
     
@@ -376,7 +418,7 @@ const float textureVert[] =
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
     [emuLoopLock unlock];
-    [self shutdownGL];
+    //[self shutdownGL];
 }
 
 - (void)resumeEmulation
@@ -387,8 +429,9 @@ const float textureVert[] =
     self.snapshotView.hidden = YES;
     
     // resume emulation
-    [self initGL];
+    //[self initGL];
     EMU_pause(false);
+    //[profile ajustLayout];
     [self startEmulatorLoop];
 }
 
@@ -398,8 +441,10 @@ const float textureVert[] =
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
+        if (self.speed == 0)
+            NSLog(@"WARNING!!! SPEED IS 0. FIX THIS");
         while (execute) {
-            for (int i = 0; i < speed; i++) {
+            for (int i = 0; i < MAX(self.speed, 1); i++) {
                 //Enabling this can provide full emulation speed on most devices but will reduce fps
                 
                 //for (int j = 0; j < MIN(MAX(60 / fps, 6), 1); j++) { //10 - 60 fps
@@ -418,7 +463,6 @@ const float textureVert[] =
                 lastAutosave = CACurrentMediaTime();
             }
         }
-        
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
     });
@@ -475,28 +519,20 @@ const float textureVert[] =
 
 #pragma mark - Controls
 
-- (IBAction)changeSpeed:(id)sender
+- (void) setSpeed:(NSInteger)speed
 {
-    switch (speed) {
-      case 1:
-        speed = 2;
-        [self.speedButton setTitle:@"2x" forState:UIControlStateNormal];
-        EMU_setFrameSkip(2);
-        self.speedButton.alpha = 1;
+    int userFrameSkip = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"];
+    switch (self.speed) {
+      case 2:
+        EMU_setFrameSkip(MAX(2, userFrameSkip));
         break;
       
-      case 2:
-        speed = 4;
-        EMU_setFrameSkip(4);
-        [self.speedButton setTitle:@"4x" forState:UIControlStateNormal];
-        self.speedButton.alpha = 1;
+      case 4:
+        EMU_setFrameSkip(MAX(4, userFrameSkip));
         break;
     
-      case 4:
-        speed = 1;
-        [self.speedButton setTitle:@"1x" forState:UIControlStateNormal];
-        self.speedButton.alpha = MAX(MAX(0.1, [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"]), self.view.bounds.size.width > self.view.bounds.size.height);
-        EMU_setFrameSkip((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"]);
+      case 1:
+        EMU_setFrameSkip(userFrameSkip);
         break;
     }
 }
@@ -509,11 +545,6 @@ const float textureVert[] =
 
 - (void)controllerDeactivated:(NSNotification *)notification {
     if ([[GCController controllers] count] == 0) {
-        CGRect controllerContainerFrame = _controllerContainerView.frame;
-        controllerContainerFrame.origin.x = 0;
-        controllerContainerFrame.origin.y = self.view.frame.size.height-controllerContainerFrame.size.height;
-        controllerContainerFrame.size.width = self.view.frame.size.width;
-        _controllerContainerView.frame = controllerContainerFrame;
         [self.view addSubview:_controllerContainerView];
     }
 }
@@ -583,26 +614,18 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)touchScreenAtPoint:(CGPoint)point
 {
-    if (glkView[1] != nil) {
-        // glkView[1] is touch screen
-        point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
-    } else {
-        // bottom half of glkView[0] is touch screen
-        if (point.y < glkView[0].bounds.size.height/2) return;
-        CGAffineTransform t = CGAffineTransformConcat(CGAffineTransformMakeTranslation(0, -glkView[0].bounds.size.height/2), CGAffineTransformMakeScale(256/glkView[0].bounds.size.width, 192/(glkView[0].bounds.size.height/2)));
-        point = CGPointApplyAffineTransform(point, t);
-    }
+    point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
     EMU_touchScreenTouch(point.x, point.y);
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[extWindow?1:0]]];
+    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[1]]];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[extWindow?1:0]]];
+    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[1]]];
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -610,10 +633,51 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     EMU_touchScreenRelease();
 }
 
-- (IBAction)hideEmulator:(id)sender
+#pragma mark - API
+
+- (IBAction)toggleSettings:(id)sender
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (!settingsShown) { //About to show settings
+        self.gameContainer.layer.shadowOpacity = 0.8;
+        
+        [self.settingsContainer setHidden:NO];
+        [self pauseEmulation];
+        
+        CGRect gameContainerFrame = self.gameContainer.frame;
+        gameContainerFrame.origin.x = MIN(400, self.view.frame.size.width - 60);
+        
+        CGRect settingsContainerFrame = self.settingsContainer.frame;
+        settingsContainerFrame.origin.x = 0;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.gameContainer.frame = gameContainerFrame;
+            self.settingsContainer.frame = settingsContainerFrame;
+        } completion:^(BOOL finished) {
+            settingsShown = YES;
+        }];
+    } else {
+        CGRect gameContainerFrame = self.gameContainer.frame;
+        gameContainerFrame.origin.x = 0;
+        
+        CGRect settingsContainerFrame = self.settingsContainer.frame;
+        settingsContainerFrame.origin.x = -60;
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.gameContainer.frame = gameContainerFrame;
+            self.settingsContainer.frame = settingsContainerFrame;
+        } completion:^(BOOL finished) {
+            self.gameContainer.layer.shadowOpacity = 0;
+            settingsShown = NO;
+            [self.settingsContainer setHidden:YES];
+            [self resumeEmulation];
+        }];
+    }
+    
+    
 }
+
+
+#pragma mark - Saving
 
 - (IBAction)doSaveState:(UILongPressGestureRecognizer*)sender
 {

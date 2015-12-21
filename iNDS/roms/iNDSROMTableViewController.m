@@ -156,8 +156,6 @@
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;
         cell.detailTextLabel.text = @"Waiting...";
-        CALayer * progressLayer = [[CALayer alloc] init];
-        progressLayer.frame = CGRectMake(0, 0, 0, 5);
         cell.imageView.image = nil;
     }
     return cell;

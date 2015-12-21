@@ -207,7 +207,7 @@ void EMU_loadSettings()
 	CommonSettings.hud.ShowLagFrameCounter = false;
 	CommonSettings.hud.ShowMicrophone = false;
 	CommonSettings.hud.ShowRTC = false;
-	CommonSettings.micMode = TCommonSettings::InternalNoise;
+    CommonSettings.micMode = TCommonSettings::InternalNoise;
 	video.screengap = 0;
 	CommonSettings.showGpu.main = 1;
 	CommonSettings.showGpu.sub = 1;
@@ -569,6 +569,7 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
 
 #pragma mark - Cheats
 
+//Will
 bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled)
 {
     if (cheats->add(size, address, val, description, enabled)) {

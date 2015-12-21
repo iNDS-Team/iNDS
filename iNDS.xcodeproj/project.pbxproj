@@ -27,7 +27,7 @@
 		8B305F99178B998800FD010A /* iNDSAboutViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8B305F98178B998800FD010A /* iNDSAboutViewController.mm */; };
 		8B4895C0178CCBEE00BA61C3 /* OLGhostAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4895BF178CCBEE00BA61C3 /* OLGhostAlertView.m */; };
 		8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */; };
-		8BEA096517872C080060B347 /* iNDSSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096417872C080060B347 /* iNDSSettingsViewController.m */; };
+		8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */; };
 		8BEA096A17872C190060B347 /* iNDSButtonControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096717872C190060B347 /* iNDSButtonControl.m */; };
 		8BEA096B17872C190060B347 /* iNDSDirectionalControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096917872C190060B347 /* iNDSDirectionalControl.m */; };
 		8BEA097017872C320060B347 /* iNDSEmulatorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */; };
@@ -58,10 +58,10 @@
 		BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFCFE0F41764FBD3000A70CF /* Foundation.framework */; };
 		BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFCFE0F61764FBD3000A70CF /* CoreGraphics.framework */; };
 		BFCFE1031764FBD3000A70CF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE1021764FBD3000A70CF /* AppDelegate.m */; };
-		BFCFE18017650FB0000A70CF /* arm_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13217650FB0000A70CF /* arm_instructions.cpp */; };
-		BFCFE18117650FB0000A70CF /* ArmAnalyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13417650FB0000A70CF /* ArmAnalyze.cpp */; };
+		BFCFE18017650FB0000A70CF /* arm_instructions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13217650FB0000A70CF /* arm_instructions.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
+		BFCFE18117650FB0000A70CF /* ArmAnalyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13417650FB0000A70CF /* ArmAnalyze.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BFCFE18317650FB0000A70CF /* armcpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13817650FB0000A70CF /* armcpu.cpp */; };
-		BFCFE18417650FB0000A70CF /* ArmThreadedInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13A17650FB0000A70CF /* ArmThreadedInterpreter.cpp */; };
+		BFCFE18417650FB0000A70CF /* ArmThreadedInterpreter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13A17650FB0000A70CF /* ArmThreadedInterpreter.cpp */; settings = {COMPILER_FLAGS = "-w"; }; };
 		BFCFE18517650FB0000A70CF /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13C17650FB0000A70CF /* bios.cpp */; };
 		BFCFE18617650FB0000A70CF /* cheatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13E17650FB0000A70CF /* cheatSystem.cpp */; };
 		BFCFE18717650FB0000A70CF /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE14017650FB0000A70CF /* common.cpp */; };
@@ -193,6 +193,7 @@
 		CA908C191C239D0000B2A864 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C171C239D0000B2A864 /* Crashlytics.framework */; };
 		CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */; };
 		CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C1D1C23B2BE00B2A864 /* Twitter.png */; };
+		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -252,8 +253,8 @@
 		8B4895BF178CCBEE00BA61C3 /* OLGhostAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OLGhostAlertView.m; path = iNDS/resumealert/OLGhostAlertView.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSROMTableViewController.h; path = iNDS/roms/iNDSROMTableViewController.h; sourceTree = SOURCE_ROOT; };
-		8BEA096317872C080060B347 /* iNDSSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSSettingsViewController.h; path = iNDS/settings/iNDSSettingsViewController.h; sourceTree = SOURCE_ROOT; };
-		8BEA096417872C080060B347 /* iNDSSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSSettingsViewController.m; path = iNDS/settings/iNDSSettingsViewController.m; sourceTree = SOURCE_ROOT; };
+		8BEA096317872C080060B347 /* iNDSEmulatorSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSEmulatorSettingsViewController.h; path = iNDS/settings/iNDSEmulatorSettingsViewController.h; sourceTree = SOURCE_ROOT; };
+		8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSEmulatorSettingsViewController.m; path = iNDS/settings/iNDSEmulatorSettingsViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096617872C190060B347 /* iNDSButtonControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSButtonControl.h; path = iNDS/controls/iNDSButtonControl.h; sourceTree = SOURCE_ROOT; };
 		8BEA096717872C190060B347 /* iNDSButtonControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSButtonControl.m; path = iNDS/controls/iNDSButtonControl.m; sourceTree = SOURCE_ROOT; };
 		8BEA096817872C190060B347 /* iNDSDirectionalControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSDirectionalControl.h; path = iNDS/controls/iNDSDirectionalControl.h; sourceTree = SOURCE_ROOT; };
@@ -576,6 +577,8 @@
 		CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
 		CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfile.m; sourceTree = "<group>"; };
 		CA908C1D1C23B2BE00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Twitter.png; path = Resources/Twitter.png; sourceTree = "<group>"; };
+		CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSSettingsTableViewController.h; sourceTree = "<group>"; };
+		CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSSettingsTableViewController.m; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -795,8 +798,8 @@
 		BF9D51751786A60E00B5864B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				8BEA096317872C080060B347 /* iNDSSettingsViewController.h */,
-				8BEA096417872C080060B347 /* iNDSSettingsViewController.m */,
+				8BEA096317872C080060B347 /* iNDSEmulatorSettingsViewController.h */,
+				8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */,
 				28E7A6ED1787D110003A9C5B /* Defaults.plist */,
 			);
 			name = Settings;
@@ -805,6 +808,7 @@
 		BFAE6F8F176748CF000911CF /* Emulator View */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38301C27E44800BE8857 /* Settings */,
 				8BEA096C17872C320060B347 /* iNDSEmulatorViewController.h */,
 				8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */,
 				8BEA096E17872C320060B347 /* GLProgram.h */,
@@ -1282,6 +1286,15 @@
 			name = SCLAlertView;
 			sourceTree = "<group>";
 		};
+		CABE38301C27E44800BE8857 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */,
+				CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
 		D31CC89F17927BCB0098FB9C /* Dropbox */ = {
 			isa = PBXGroup;
 			children = (
@@ -1501,7 +1514,7 @@
 				BFCFE19E17650FB0000A70CF /* ROMReader.cpp in Sources */,
 				BFCFE19F17650FB0000A70CF /* rtc.cpp in Sources */,
 				BFCFE1A017650FB0000A70CF /* saves.cpp in Sources */,
-				8BEA096517872C080060B347 /* iNDSSettingsViewController.m in Sources */,
+				8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */,
 				8BEA097E17872C5E0060B347 /* main.m in Sources */,
 				BFCFE1A117650FB0000A70CF /* slot1.cpp in Sources */,
 				BFCFE1A217650FB0000A70CF /* SPU.cpp in Sources */,
@@ -1520,6 +1533,7 @@
 				BFCFE1B817651005000A70CF /* hq4x.cpp in Sources */,
 				CA031D2A1BEBE1EB00EDE98D /* LZMAExtractor.m in Sources */,
 				BFCFE1B917651005000A70CF /* lq2x.cpp in Sources */,
+				CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */,
 				BFCFE1BA17651005000A70CF /* scanline.cpp in Sources */,
 				CA908C071C2356F700B2A864 /* SCLButton.m in Sources */,
 				BFCFE1BE17651038000A70CF /* metaspu.cpp in Sources */,
