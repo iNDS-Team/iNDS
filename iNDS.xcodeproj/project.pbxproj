@@ -194,6 +194,7 @@
 		CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */; };
 		CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C1D1C23B2BE00B2A864 /* Twitter.png */; };
 		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
+		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -579,6 +580,8 @@
 		CA908C1D1C23B2BE00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Twitter.png; path = Resources/Twitter.png; sourceTree = "<group>"; };
 		CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSSettingsTableViewController.h; sourceTree = "<group>"; };
 		CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSSettingsTableViewController.m; sourceTree = "<group>"; };
+		CABE38371C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfileTableViewController.h; sourceTree = "<group>"; };
+		CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfileTableViewController.m; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -1291,6 +1294,8 @@
 			children = (
 				CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */,
 				CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */,
+				CABE38371C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.h */,
+				CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1620,6 +1625,7 @@
 				CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */,
 				D3B8BB971794ACEF0061D1D8 /* ZAActivityBar.m in Sources */,
 				D3B8BB9A1794ACFE0061D1D8 /* SKBounceAnimation.m in Sources */,
+				CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */,
 				2838715F17950B69009B8E84 /* math_mat4.c in Sources */,
 				2838716017950B69009B8E84 /* math_sqrtf.c in Sources */,
 				28387163179561F5009B8E84 /* iNDSGame.m in Sources */,

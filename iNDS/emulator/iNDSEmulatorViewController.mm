@@ -32,6 +32,7 @@ Cheats
 #import <GameController/GameController.h>
 
 #include "emu.h"
+#import "SCLAlertView.h"
 
 #import "iNDSMFIControllerSupport.h"
 #import "iNDSEmulationProfile.h"
@@ -101,14 +102,10 @@ const float textureVert[] =
     
     CFTimeInterval lastAutosave;
     
-    iNDSEmulationProfile * profile;
-    
     BOOL settingsShown;
+    BOOL inEditingMode;
 }
 
-
-@property (weak, nonatomic) IBOutlet UIView *gameContainer;
-@property (weak, nonatomic) IBOutlet UIView *settingsContainer;
 
 @property (weak, nonatomic) IBOutlet UILabel *fpsLabel;
 @property (strong, nonatomic) GLProgram *program;
@@ -124,7 +121,6 @@ const float textureVert[] =
 @property (weak, nonatomic) IBOutlet UIButton *rightTrigger;
 @property (strong, nonatomic) UIImageView *snapshotView;
 
-- (IBAction)hideEmulator:(id)sender;
 - (IBAction)onButtonUp:(UIControl*)sender;
 - (IBAction)onButtonDown:(UIControl*)sender;
 
@@ -146,9 +142,15 @@ const float textureVert[] =
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    
-    [self loadProfile:@"Default"];
+	
+    NSString * currentProfile = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
+    iNDSEmulationProfile * profile;
+    if ([currentProfile isEqualToString:@"Default"]) {
+        profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+    } else {
+        profile = [iNDSEmulationProfile profileWithPath:[iNDSEmulationProfile pathForProfileName:currentProfile]];
+    }
+    [self loadProfile:profile];
     
     self.view.multipleTouchEnabled = YES;
     
@@ -176,8 +178,9 @@ const float textureVert[] =
     self.gameContainer.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, -10, 10, self.gameContainer.frame.size.height+20)].CGPath;
     
     CGRect settingsContainerFrame = self.settingsContainer.frame;
-    settingsContainerFrame.size.width = MIN(self.view.frame.size.width - 40, 400);
+    settingsContainerFrame.size.width = MIN(self.view.frame.size.width - 60, 400);
     self.settingsContainer.frame = settingsContainerFrame;
+    self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -210,7 +213,7 @@ const float textureVert[] =
     EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
     EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
     EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
-    [profile ajustLayout];
+    [self.profile ajustLayout];
 }
 
 - (void)changeGame
@@ -218,7 +221,7 @@ const float textureVert[] =
     [self shutdownGL];
     [self loadROM];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [profile ajustLayout];
+        [self.profile ajustLayout];
         [self toggleSettings:self];
     });
 }
@@ -234,18 +237,21 @@ const float textureVert[] =
     return YES;
 }
 
-- (void)loadProfile:(NSString *)name
+- (void)loadProfile:(iNDSEmulationProfile *)profile
 {
-    profile = [[iNDSEmulationProfile alloc] initWithProfileName:name];
+    self.profile = profile;
+    [[NSUserDefaults standardUserDefaults] setObject:profile.name forKey:@"currentProfile"];
     //Attach views
-    profile.directionalControl = self.directionalControl;
-    profile.buttonControl = self.buttonControl;
-    profile.settingsButton = self.settingsButton;
-    profile.startButton = self.startButton;
-    profile.selectButton = self.selectButton;
-    profile.leftTrigger = self.leftTrigger;
-    profile.rightTrigger = self.rightTrigger;
-    profile.fpsLabel = self.fpsLabel;
+    self.profile.directionalControl = self.directionalControl;
+    self.profile.buttonControl = self.buttonControl;
+    self.profile.settingsButton = self.settingsButton;
+    self.profile.startButton = self.startButton;
+    self.profile.selectButton = self.selectButton;
+    self.profile.leftTrigger = self.leftTrigger;
+    self.profile.rightTrigger = self.rightTrigger;
+    self.profile.fpsLabel = self.fpsLabel;
+    self.profile.mainScreen = glkView[0];
+    self.profile.touchScreen = glkView[1];
 }
 
 - (void)defaultsChanged:(NSNotification*)notification
@@ -267,7 +273,7 @@ const float textureVert[] =
     if (!settingsShown) {
         self.gameContainer.frame = self.view.frame;
         self.controllerContainerView.frame = self.view.frame;
-        [profile ajustLayout];
+        [self.profile ajustLayout];
         settingsShown = NO;
     }
 }
@@ -330,8 +336,8 @@ const float textureVert[] =
     }
     
     //Attach views to profile
-    profile.mainScreen = glkView[0];
-    profile.touchScreen = glkView[1];
+    self.profile.mainScreen = glkView[0];
+    self.profile.touchScreen = glkView[1];
     
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
     
@@ -424,14 +430,14 @@ const float textureVert[] =
 - (void)resumeEmulation
 {
     if (self.presentingViewController.presentedViewController != self) return;
-    if (execute) return;
+    if (execute || inEditingMode) return;
     // remove snapshot
     self.snapshotView.hidden = YES;
     
     // resume emulation
     //[self initGL];
     EMU_pause(false);
-    //[profile ajustLayout];
+    //[self.profile ajustLayout];
     [self startEmulatorLoop];
 }
 
@@ -441,8 +447,6 @@ const float textureVert[] =
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
-        if (self.speed == 0)
-            NSLog(@"WARNING!!! SPEED IS 0. FIX THIS");
         while (execute) {
             for (int i = 0; i < MAX(self.speed, 1); i++) {
                 //Enabling this can provide full emulation speed on most devices but will reduce fps
@@ -522,7 +526,7 @@ const float textureVert[] =
 - (void) setSpeed:(NSInteger)speed
 {
     int userFrameSkip = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"];
-    switch (self.speed) {
+    switch (speed) {
       case 2:
         EMU_setFrameSkip(MAX(2, userFrameSkip));
         break;
@@ -535,6 +539,7 @@ const float textureVert[] =
         EMU_setFrameSkip(userFrameSkip);
         break;
     }
+    _speed = speed;
 }
 
 - (void)controllerActivated:(NSNotification *)notification {
@@ -620,20 +625,55 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[1]]];
+    if (settingsShown) {
+        [self toggleSettings:self];
+        return;
+    } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+    } else {
+        [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self touchScreenAtPoint:[[touches anyObject] locationInView:glkView[1]]];
+    if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
+    } else {
+        [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    EMU_touchScreenRelease();
+    if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
+    } else {
+        EMU_touchScreenRelease();
+    }
 }
 
 #pragma mark - API
+
+- (void)enterEditMode
+{
+    inEditingMode = YES;
+    settingsShown = YES;
+    [self toggleSettings:self];
+    [self pauseEmulation];
+    [self.profile enterEditMode];
+}
+
+- (void)exitEditMode
+{
+    inEditingMode = NO;
+    settingsShown = YES;
+    [self toggleSettings:self];
+    [self.profile exitEditMode];
+}
 
 - (IBAction)toggleSettings:(id)sender
 {
@@ -675,37 +715,28 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     
     
 }
-
-
 #pragma mark - Saving
 
-- (IBAction)doSaveState:(UILongPressGestureRecognizer*)sender
+- (void)newSaveState
 {
-    if (![sender isKindOfClass:[UILongPressGestureRecognizer class]] || sender.state != UIGestureRecognizerStateBegan) return;
-    UIAlertView *saveAlert = [[UIAlertView alloc] initWithTitle:@"Save State" message:@"Name for save state:" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Save", nil];
-    saveAlert.alertViewStyle = UIAlertViewStylePlainTextInput;
-    [saveAlert show];
+    [self pauseEmulation];
+    SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+    
+    UITextField *textField = [alert addTextField:@""];
+    
+    [alert addButton:@"Save" actionBlock:^(void) {
+        [self saveStateWithName:textField.text];
+        [self toggleSettings:self];
+    }];
+    
+    [alert addButton:@"Cancel" actionBlock:^(void) {
+        [self toggleSettings:self];
+    }];
+    
+    [alert showEdit:self title:@"Save State" subTitle:@"Name for save state:\n" closeButtonTitle:nil duration:0.0f];
 }
 
 #pragma mark Alert View Delegate
-
-- (void)willPresentAlertView:(UIAlertView *)alertView
-{
-    [self pauseEmulation];
-}
-
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 0) {
-        [self resumeEmulation];
-    }
-    if (buttonIndex == 1) {
-        // save
-        NSString *saveStateName = [alertView textFieldAtIndex:0].text;
-        [self saveStateWithName:saveStateName];
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
-}
 
 - (void)viewDidUnload {
     [super viewDidUnload];

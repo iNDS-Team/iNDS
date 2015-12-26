@@ -23,8 +23,10 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     NSMutableArray *games = [NSMutableArray new];
     NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:gamesPath error:NULL];
     for(NSString *file in files) {
-        iNDSGame *game = [iNDSGame gameWithPath:[gamesPath stringByAppendingPathComponent:file] saveStateDirectoryPath:saveStatePath];
-        if (game) [games addObject:game];
+        if ([file.pathExtension isEqualToString:@"nds"]) {
+            iNDSGame *game = [iNDSGame gameWithPath:[gamesPath stringByAppendingPathComponent:file] saveStateDirectoryPath:saveStatePath];
+            if (game) [games addObject:game];
+        }
     }
     
     return [NSArray arrayWithArray:games];

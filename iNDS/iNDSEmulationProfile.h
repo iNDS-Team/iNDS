@@ -12,8 +12,7 @@
 
 @interface iNDSEmulationProfile : NSObject
 
-@property (strong, nonatomic, readonly) NSString* name;
-@property (assign, nonatomic, readonly) UIUserInterfaceIdiom device;
+@property (strong, nonatomic) NSString* name;
 
 @property (assign, nonatomic) CGSize screenSize;
 
@@ -30,6 +29,14 @@
 
 
 - (id)initWithProfileName:(NSString*) name;
++ (NSArray*)profilesAtPath:(NSString*)profilesPath;
++ (iNDSEmulationProfile *)profileWithPath:(NSString*)path;
 - (void)ajustLayout;
+- (void)enterEditMode;
+- (void)handlePan:(UIView *)currentView Location:(CGPoint) location state:(UIGestureRecognizerState) state;
+- (void)exitEditMode;
+- (void)saveProfile;
+- (BOOL)deleteProfile;
++ (NSString*)pathForProfileName:(NSString *)name;
 @end
 

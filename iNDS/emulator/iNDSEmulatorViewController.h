@@ -13,11 +13,20 @@
 @interface iNDSEmulatorViewController : UIViewController <UIAlertViewDelegate>
 
 @property (strong, nonatomic) iNDSGame *game;
+@property (strong, nonatomic) iNDSEmulationProfile * profile;
 @property (copy, nonatomic) NSString *saveState;
 @property (assign, nonatomic) NSInteger speed;
+
+@property (weak, nonatomic) IBOutlet UIView *gameContainer;
+@property (weak, nonatomic) IBOutlet UIView *settingsContainer;
 
 - (void)pauseEmulation;
 - (void)resumeEmulation;
 - (void)saveStateWithName:(NSString*)saveStateName;
 - (void)changeGame;
+- (void)enterEditMode;
+- (void)exitEditMode;
+- (IBAction)toggleSettings:(id)sender;
+- (void)loadProfile:(iNDSEmulationProfile *)profile;
+- (void)newSaveState;
 @end

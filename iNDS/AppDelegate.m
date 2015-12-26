@@ -56,7 +56,7 @@
         if (error) {
             NSLog(@"Unable to create documents");
             [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to create iNDS folder in documents" closeButtonTitle:@"OK" duration:0.0];
-            } else {
+        } else {
             //Move Battery
             if ([[NSFileManager defaultManager] fileExistsAtPath:self.oldBatteryDir]) {
                 [[NSFileManager defaultManager] moveItemAtPath:self.oldBatteryDir toPath:self.batteryDir error:nil];
@@ -143,7 +143,6 @@
                 OLGhostAlertView *linkSuccess = [[OLGhostAlertView alloc] initWithTitle:NSLocalizedString(@"SUCCESS", nil) message:NSLocalizedString(@"SUCCESS_DETAIL", nil) timeout:5 dismissible:YES];
                 [linkSuccess show];
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"enableDropbox"];
-                
                 [CHBgDropboxSync clearLastSyncData];
                 [CHBgDropboxSync start];
             }

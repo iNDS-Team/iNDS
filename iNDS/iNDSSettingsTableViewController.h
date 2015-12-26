@@ -11,5 +11,6 @@
 @interface iNDSSettingsTableViewController : UITableViewController
 
 @property (strong, nonatomic) IBOutlet UILabel * romName;
-
+@property (strong, nonatomic) IBOutlet UILabel * layoutLabel;
+@property (strong, nonatomic) IBOutlet UILabel * layoutName;
 @end

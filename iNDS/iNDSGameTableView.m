@@ -64,14 +64,14 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UITableViewCell* cell;
     if (indexPath.section == 0) {
-         UITableViewCell* cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Launch"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Launch"];
         cell.textLabel.text = @"Launch Normally";
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        return cell;
     }
     else if (indexPath.section == 1) {
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+        cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
         }
@@ -88,8 +88,8 @@
         NSString * dateString = [timeFormatter stringFromDate:[_game dateOfSaveStateAtIndex:indexPath.row]];
         cell.detailTextLabel.text = dateString;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        return cell;
     }
+    return cell;
 }
 
 #pragma mark - Select ROMs
