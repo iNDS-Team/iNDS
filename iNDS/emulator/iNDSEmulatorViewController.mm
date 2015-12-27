@@ -275,6 +275,7 @@ const float textureVert[] =
 
 - (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
     self.gameContainer.frame = self.view.frame;
     self.controllerContainerView.frame = self.view.frame;
     [self.profile ajustLayout];
@@ -705,8 +706,6 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         
         [self.settingsContainer setHidden:NO];
         [self pauseEmulation];
-        
-        
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.hidden = NO;
             self.darkenView.alpha = 0.6;

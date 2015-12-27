@@ -53,7 +53,7 @@
         // Setup the default screen profile
         _name = name;
         
-        CGSize screenSize = [self currentScreenSize];
+        CGSize screenSize = [self currentScreenSizeAlwaysPortrait:YES];
         CGSize gameScreenSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333 * 0.5), MIN(screenSize.width, screenSize.height * 1.333 * 0.5) * 0.75); //Bound the screens by height or width
         NSInteger view = 0; //0 Portait, 1 Landscape
         // Portrait
@@ -229,7 +229,6 @@
 - (void)enterEditMode
 {
     for (UIView * view in [self editableViews]) {
-        NSLog(@"%@", view);
         UIPanGestureRecognizer * pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
         pan.maximumNumberOfTouches = 1;
         [view addGestureRecognizer:pan];
@@ -238,8 +237,9 @@
         tap.numberOfTapsRequired = 1;
         tap.numberOfTouchesRequired = 1;
         [view addGestureRecognizer:tap];
-        
     }
+    [emulationView.view setNeedsLayout];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 - (void)exitEditMode
@@ -258,6 +258,12 @@
     return @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl, self.fpsLabel]; //Maybe add settings later
 }
 
+- (void) didRotate:(NSNotification *)notification
+{
+    if (selectedView) {
+        [self selectNewView:selectedView];
+    }
+}
 
 - (void)selectNewView:(UIView *)view;
 {
@@ -268,7 +274,7 @@
     selectedView = view;
     
     self.sizeSlider.hidden = NO;
-    CGSize screenSize = [self currentScreenSize];
+    CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
     CGFloat ratio = selectedView.frame.size.height/selectedView.frame.size.width;
     if (screenSize.width * ratio < screenSize.height / ratio) { //Width is limiting this view
         self.sizeSlider.value = selectedView.frame.size.width / screenSize.width;
@@ -299,7 +305,7 @@
 {
     NSLog(@"Size %f", sender.value);
     
-    CGSize screenSize = [self currentScreenSize];
+    CGSize screenSize = [self currentScreenSizeAlwaysPortrait:YES];
     
     CGRect viewFrame = selectedView.frame;
     CGFloat ratio = viewFrame.size.height/ MAX(viewFrame.size.width, 1);
@@ -327,8 +333,6 @@
     } else if (viewFrame.origin.y + viewFrame.size.height > screenSize.height) {
         viewFrame.origin.y = screenSize.height - viewFrame.size.height;
     }
-    NSLog(@"R %@", NSStringFromCGRect(viewFrame));
-    NSLog(@"is %f", ratio);
     selectedView.frame = viewFrame;
     [selectedView setNeedsLayout];
     [self removeSnapLines];
@@ -353,7 +357,7 @@
     }
     if (state == UIGestureRecognizerStateChanged) {
         [self removeSnapLines];
-        CGSize screenSize = [self currentScreenSize];
+        CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
         CGRect viewFrame = currentView.frame;
         
         //Snap to other views
@@ -513,16 +517,18 @@
     [emulationView.gameContainer.layer addSublayer:snapLine];
 }
 
--(CGSize)currentScreenSize
-{ 
+-(CGSize)currentScreenSizeAlwaysPortrait:(BOOL)portrait
+{
+    if (!portrait)
+        return [UIScreen mainScreen].bounds.size;
+    //Get portrait size
     CGRect screenBounds = [UIScreen mainScreen].bounds ;
     CGFloat width = CGRectGetWidth(screenBounds);
     CGFloat height = CGRectGetHeight(screenBounds);
-    
     if ([self isPortrait]){
         return CGSizeMake(width, height);
     }
-    return CGSizeMake(width, height);
+    return CGSizeMake(height, width);
 }
 
 -(BOOL) isPortrait
