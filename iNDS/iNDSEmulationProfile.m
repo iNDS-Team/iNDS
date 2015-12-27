@@ -177,7 +177,7 @@
     return [NSKeyedUnarchiver unarchiveObjectWithFile:path];
 }
 
-- (void)saveProfile
+- (void)saveProfileWithCancel:(BOOL)showCancel
 {
     
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -187,12 +187,13 @@
     
     [alert addButton:@"Save" actionBlock:^(void) {
         self.name = textField.text;
-        NSString * savePath = [[AppDelegate.sharedInstance.batteryDir stringByAppendingPathComponent:self.name] stringByAppendingPathExtension:@"ips"];
+        NSString * savePath = [iNDSEmulationProfile pathForProfileName:self.name];
         [NSKeyedArchiver archiveRootObject:self toFile:savePath];
         [AppDelegate.sharedInstance.currentEmulatorViewController exitEditMode];
+        [AppDelegate.sharedInstance.currentEmulatorViewController loadProfile:self];
     }];
     
-    [alert showEdit:[AppDelegate sharedInstance].currentEmulatorViewController title:@"Save Profile" subTitle:@"Name for save profile:\n" closeButtonTitle:@"Cancel" duration:0.0f];
+    [alert showEdit:[AppDelegate sharedInstance].currentEmulatorViewController title:@"Save Profile" subTitle:@"Name for save profile:\n" closeButtonTitle:showCancel ? @"Cancel":nil duration:0.0f];
     
     
 }

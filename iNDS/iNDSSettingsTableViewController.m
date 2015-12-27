@@ -13,8 +13,6 @@
 #import "iNDSEmulationProfile.h"
 @interface iNDSSettingsTableViewController () {
     iNDSEmulatorViewController * emulationController;
-    
-    BOOL inEditingMode;
 }
 @end
 
@@ -63,20 +61,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.row) {
-        case 2: //Edit Layout
-            if (!inEditingMode) {
-                [emulationController enterEditMode];
-                inEditingMode = YES;
-                [self.layoutLabel performSelector:@selector(setText:) withObject:@"Save Layout" afterDelay:0.3];
-            } else {
-                [emulationController.profile saveProfile];
-                inEditingMode = NO;
-                [self.layoutLabel performSelector:@selector(setText:) withObject:@"Edit Layout" afterDelay:0.3];
-            }
-            break;
-        
         case 3: //Save State
             [emulationController newSaveState]; //Request that the controller save
+            break;
         default:
             break;
     }

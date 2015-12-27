@@ -93,6 +93,8 @@ const float textureVert[] =
     
     BOOL settingsShown;
     BOOL inEditingMode;
+    
+    UINavigationController * settingsNav;
 }
 
 
@@ -174,6 +176,7 @@ const float textureVert[] =
     self.settingsContainer.center = self.view.center;
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     self.settingsContainer.layer.cornerRadius = 7;
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -692,6 +695,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     inEditingMode = NO;
     settingsShown = YES;
     [self toggleSettings:self];
+    [settingsNav popToRootViewControllerAnimated:YES];
     [self.profile exitEditMode];
 }
 
@@ -759,9 +763,10 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     [alert showEdit:self title:@"Save State" subTitle:@"Name for save state:\n" closeButtonTitle:nil duration:0.0f];
 }
 
-#pragma mark Alert View Delegate
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"SettingsEmbed"]) {
+        settingsNav = segue.destinationViewController;
+    }
 }
 @end

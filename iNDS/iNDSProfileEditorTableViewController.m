@@ -7,8 +7,12 @@
 //
 
 #import "iNDSProfileEditorTableViewController.h"
-
-@interface iNDSProfileEditorTableViewController ()
+#import "AppDelegate.h"
+#import "iNDSEmulationProfile.h"
+@interface iNDSProfileEditorTableViewController () {
+    BOOL inEditingMode;
+    iNDSEmulatorViewController * emulationController;
+}
 
 @end
 
@@ -16,12 +20,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    emulationController = [AppDelegate sharedInstance].currentEmulatorViewController;
+    self.navigationItem.title = emulationController.profile.name;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,70 +29,85 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Incomplete implementation, return the number of sections
-    return 0;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete implementation, return the number of rows
-    return 0;
-}
-
-/*
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell * cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+    if (inEditingMode) {
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Save Profile";
+                break;
+            case 1:
+                cell.textLabel.text = @"Discard Changes";
+                break;
+            default:
+                break;
+        }
+    } else {
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Edit Profile";
+                break;
+            case 1:
+                cell.textLabel.text = @"Rename Profile";
+                break;
+            case 2:
+                cell.textLabel.text = @"New Profile";
+                break;
+            case 3:
+                cell.textLabel.text = @"Duplicate Profile";
+                break;
+            default:
+                break;
+        }
+    }
     return cell;
 }
-*/
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    iNDSEmulationProfile * currentProfile = emulationController.profile;
+    if (!inEditingMode) {
+        if (indexPath.row == 0) {
+            self.navigationItem.hidesBackButton = YES;
+            [emulationController enterEditMode];
+            inEditingMode = YES;
+        } else if (indexPath.row == 1) {
+            [currentProfile deleteProfile];
+            [currentProfile saveProfileWithCancel:NO];
+        } else if (indexPath.row == 2) {
+            self.navigationItem.hidesBackButton = YES;
+            iNDSEmulationProfile * defaultProfile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+            [emulationController loadProfile:defaultProfile];
+            [emulationController enterEditMode];
+            inEditingMode = YES;
+        } else if (indexPath.row == 3) {
+            [currentProfile saveProfileWithCancel:YES];
+        }
+    } else {
+        if (indexPath.row == 0 ) {
+            self.navigationItem.hidesBackButton = NO;
+            [emulationController.profile saveProfileWithCancel:NO];
+            inEditingMode = NO;
+        } else {
+            //Just reload from file
+            NSString * profilePath = [iNDSEmulationProfile pathForProfileName:currentProfile.name];
+            iNDSEmulationProfile * reloadedProfile = [iNDSEmulationProfile profileWithPath:profilePath];
+            [emulationController loadProfile:reloadedProfile];
+            inEditingMode = NO;
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        
+    }
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [tableView reloadData];
 }
-*/
 
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
+#pragma mark - Table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (inEditingMode) return 2;
+    return 4;
 }
-*/
 
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

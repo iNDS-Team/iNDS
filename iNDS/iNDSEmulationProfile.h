@@ -38,7 +38,7 @@
 - (void)handlePan:(UIView *)currentView Location:(CGPoint) location state:(UIGestureRecognizerState) state;
 - (void)sizeChanged:(UISlider *)sender;
 - (void)exitEditMode;
-- (void)saveProfile;
+- (void)saveProfileWithCancel:(BOOL)showCancel;
 - (BOOL)deleteProfile;
 + (NSString*)pathForProfileName:(NSString *)name;
 @end
