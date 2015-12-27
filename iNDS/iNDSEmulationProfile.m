@@ -302,21 +302,18 @@
     
     CGRect viewFrame = selectedView.frame;
     CGFloat ratio = viewFrame.size.height/ MAX(viewFrame.size.width, 1);
-    CGFloat currentSize = MAX(viewFrame.size.width, viewFrame.size.height);
     if (screenSize.width * ratio < screenSize.height / ratio) { //Width is limiting this view
         viewFrame.size.width = (screenSize.width * MAX(sender.value, 0.1));
         viewFrame.size.height = viewFrame.size.width * ratio;
     } else {
         viewFrame.size.height = (screenSize.height * MAX(sender.value, 0.1));
-        viewFrame.size.width = viewFrame.size.width / ratio;
+        viewFrame.size.width = viewFrame.size.height / ratio;
     }
-    
-    CGPoint oldCenter = selectedView.center;
-    
     //Keep center after editing size
+    /*CGPoint oldCenter = selectedView.center;
     selectedView.frame = viewFrame;
     selectedView.center = oldCenter;
-    viewFrame = selectedView.frame;
+    viewFrame = selectedView.frame;*/
     
     if (viewFrame.origin.x < 0) {
         viewFrame.origin.x = 0;
@@ -333,6 +330,7 @@
     NSLog(@"is %f", ratio);
     selectedView.frame = viewFrame;
     [selectedView setNeedsLayout];
+    [self removeSnapLines];
     [self drawSnapLines];
 }
 

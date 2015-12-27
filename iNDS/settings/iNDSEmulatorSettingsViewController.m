@@ -9,7 +9,7 @@
 #import "AppDelegate.h"
 #import "iNDSEmulatorSettingsViewController.h"
 #import <DropboxSDK/DropboxSDK.h>
-#import "OLGhostAlertView.h"
+#import "SCLAlertView.h"
 #import "CHBgDropboxSync.h"
 
 @interface iNDSEmulatorSettingsViewController ()
@@ -23,13 +23,10 @@
 @property (weak, nonatomic) IBOutlet UISwitch *disableSoundSwitch;
 
 @property (weak, nonatomic) IBOutlet UILabel *controlPadStyleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *controlPositionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *controlOpacityLabel;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *controlPadStyleControl;
-@property (weak, nonatomic) IBOutlet UISegmentedControl *controlPositionControl;
 @property (weak, nonatomic) IBOutlet UISlider *controlOpacitySlider;
-@property (weak, nonatomic) IBOutlet UISlider *controlSizeSlider;
 
 @property (weak, nonatomic) IBOutlet UILabel *showFPSLabel;
 @property (weak, nonatomic) IBOutlet UILabel *autoSaveLabel;
@@ -78,7 +75,6 @@
     //self.showPixelGridLabel.text = NSLocalizedString(@"OVERLAY_PIXEL_GRID", nil);
 
     self.controlPadStyleLabel.text = NSLocalizedString(@"CONTROL_PAD_STYLE", nil);
-    self.controlPositionLabel.text = NSLocalizedString(@"CONTROL_POSITION_PORTRAIT", nil);
     self.controlOpacityLabel.text = NSLocalizedString(@"CONTROL_OPACITY_PORTRAIT", nil);
     
     self.dropboxLabel.text = NSLocalizedString(@"ENABLE_DROPBOX", nil);
@@ -91,9 +87,6 @@
 
     [self.controlPadStyleControl setTitle:NSLocalizedString(@"DPAD", nil) forSegmentAtIndex:0];
     [self.controlPadStyleControl setTitle:NSLocalizedString(@"JOYSTICK", nil) forSegmentAtIndex:1];
-
-    [self.controlPositionControl setTitle:NSLocalizedString(@"TOP", nil) forSegmentAtIndex:0];
-    [self.controlPositionControl setTitle:NSLocalizedString(@"BOTTOM", nil) forSegmentAtIndex:1];
     
     
     UIView *hiddenSettingsTapView = [[UIView alloc] initWithFrame:CGRectMake(245, 0, 75, 44)];
@@ -115,9 +108,7 @@
     self.disableSoundSwitch.on = [defaults boolForKey:@"disableSound"];
     
     self.controlPadStyleControl.selectedSegmentIndex = [defaults integerForKey:@"controlPadStyle"];
-    self.controlPositionControl.selectedSegmentIndex = [defaults integerForKey:@"controlPosition"];
     self.controlOpacitySlider.value = [defaults floatForKey:@"controlOpacity"];
-    self.controlSizeSlider.value = [defaults floatForKey:@"controlSize"];
     
     self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
     self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];
@@ -209,12 +200,8 @@
         [defaults setBool:self.autoSaveSwitch.on forKey:@"periodicSave"];
     } else if (sender == self.controlPadStyleControl) {
         [defaults setInteger:self.controlPadStyleControl.selectedSegmentIndex forKey:@"controlPadStyle"];
-    } else if (sender == self.controlPositionControl) {
-        [defaults setInteger:self.controlPositionControl.selectedSegmentIndex forKey:@"controlPosition"];
     } else if (sender == self.controlOpacitySlider) {
         [defaults setFloat:self.controlOpacitySlider.value forKey:@"controlOpacity"];
-    } else if (sender == self.controlSizeSlider) {
-        [defaults setFloat:self.controlSizeSlider.value forKey:@"controlSize"];
     } else if (sender == self.showFPSSwitch) {
         [defaults setBool:self.showFPSSwitch.on forKey:@"showFPS"];
     } else if (sender == self.enableJITSwitch) {
@@ -225,12 +212,11 @@
         if ([defaults boolForKey:@"enableDropbox"] == false) {
             [[DBSession sharedSession] linkFromController:self];
         } else {
-            NSLog(@"unlink");
             [CHBgDropboxSync forceStopIfRunning];
             [CHBgDropboxSync clearLastSyncData];
             [[DBSession sharedSession] unlinkAll];
-            OLGhostAlertView *unlinkAlert = [[OLGhostAlertView alloc] initWithTitle:NSLocalizedString(@"UNLINKED", nil) message:NSLocalizedString(@"UNLINKED_DETAIL", nil) timeout:10 dismissible:YES];
-            [unlinkAlert show];
+            SCLAlertView * alert = [[SCLAlertView alloc] init];
+            [alert showInfo:self title:NSLocalizedString(@"UNLINKED", nil) subTitle:NSLocalizedString(@"UNLINKED_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
             
             [defaults setBool:false forKey:@"enableDropbox"];
             self.accountLabel.text = NSLocalizedString(@"NOT_LINKED", nil);

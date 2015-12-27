@@ -10,7 +10,6 @@
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
-#import "OLGhostAlertView.h"
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
@@ -139,8 +138,7 @@
         NSLog(@"DB");
         if ([[DBSession sharedSession] handleOpenURL:url]) {
             if ([[DBSession sharedSession] isLinked]) {
-                OLGhostAlertView *linkSuccess = [[OLGhostAlertView alloc] initWithTitle:NSLocalizedString(@"SUCCESS", nil) message:NSLocalizedString(@"SUCCESS_DETAIL", nil) timeout:5 dismissible:YES];
-                [linkSuccess show];
+                [self.alertView showInfo:NSLocalizedString(@"SUCCESS", nil) subTitle:NSLocalizedString(@"SUCCESS_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"enableDropbox"];
                 [CHBgDropboxSync clearLastSyncData];
                 [CHBgDropboxSync start];

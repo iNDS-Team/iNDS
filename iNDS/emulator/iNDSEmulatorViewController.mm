@@ -180,7 +180,7 @@ const float textureVert[] =
     self.gameContainer.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, -10, 10, self.gameContainer.frame.size.height+20)].CGPath;
     
     CGRect settingsRect = self.settingsContainer.frame;
-    settingsRect.size.width = MIN(400, self.view.frame.size.width - 70);
+    settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
     settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
     self.settingsContainer.frame = settingsRect;
     self.settingsContainer.center = self.view.center;
@@ -276,14 +276,28 @@ const float textureVert[] =
     //[self.view setNeedsLayout];
 }
 
+-(BOOL) isPortrait
+{
+    return UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
+}
+
 - (void)viewWillLayoutSubviews
 {
-    if (!settingsShown) {
-        self.gameContainer.frame = self.view.frame;
-        self.controllerContainerView.frame = self.view.frame;
-        [self.profile ajustLayout];
-        settingsShown = NO;
+    self.gameContainer.frame = self.view.frame;
+    self.controllerContainerView.frame = self.view.frame;
+    [self.profile ajustLayout];
+    CGRect settingsRect = self.settingsContainer.frame;
+    if ([self isPortrait]) { //Portrait
+        settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
+        settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+    } else {
+        settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
+        settingsRect.size.height = MIN(600, self.view.frame.size.height - 60);
     }
+    
+    self.settingsContainer.frame = settingsRect;
+    self.settingsContainer.center = self.view.center;
+    self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
 }
 
 
