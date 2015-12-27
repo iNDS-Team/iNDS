@@ -253,7 +253,7 @@
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.williamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:nil];
-        latestVersion = @"2.0.0";//[latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        latestVersion = [latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         
         if ([latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending && ![[NSUserDefaults standardUserDefaults] objectForKey:myVersion]) {
@@ -321,14 +321,19 @@
 {
     [[Crashlytics sharedInstance] setObjectValue:game.title forKey:@"GameTitle"];
     [[Crashlytics sharedInstance] setIntValue:(int)savedState forKey:@"SavedState"];
-    // TODO: check if resuming current game, also call EMU_closeRom maybe
-    iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
-    emulatorViewController.game = game;
-    emulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
-    [AppDelegate sharedInstance].currentEmulatorViewController = emulatorViewController;
-    iNDSInitialViewController *rootViewController = (iNDSInitialViewController*)[self topMostController];
-    //[rootViewController doSlideIn:nil];
-    [rootViewController presentViewController:emulatorViewController animated:YES completion:nil];
+    if (!self.currentEmulatorViewController) {
+        iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
+        emulatorViewController.game = game;
+        emulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
+        [AppDelegate sharedInstance].currentEmulatorViewController = emulatorViewController;
+        iNDSInitialViewController *rootViewController = (iNDSInitialViewController*)[self topMostController];
+        //[rootViewController doSlideIn:nil];
+        [rootViewController presentViewController:emulatorViewController animated:YES completion:nil];
+    } else {
+        self.currentEmulatorViewController.game = game;
+        self.currentEmulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
+        [self.currentEmulatorViewController changeGame];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

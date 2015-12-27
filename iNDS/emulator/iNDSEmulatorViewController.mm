@@ -5,19 +5,7 @@
 //  Created by iNDS on 6/11/13.
 //  Copyright (c) 2014 iNDS. All rights reserved.
 //
-/*settings notes
-Change Rom
-  List of roms
-Profile
-  List of profiles
-Edit Layout
-Speed
-  Speed switcher
-Cheats
-  List of cheats and switches to enable
-    Text area to type cheats in
- 
-*/
+
 
 #import "AppDelegate.h"
 #import "iNDSEmulatorViewController.h"
@@ -197,7 +185,7 @@ const float textureVert[] =
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self pauseEmulation];
-    [self saveStateWithName:nil];
+    [self saveStateWithName:@"Pause"];
     [UIApplication sharedApplication].statusBarHidden = NO;
 }
 
@@ -223,6 +211,7 @@ const float textureVert[] =
 
 - (void)changeGame
 {
+    [self pauseEmulation];
     [self shutdownGL];
     [self loadROM];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -273,7 +262,7 @@ const float textureVert[] =
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
     
-    //[self.view setNeedsLayout];
+    [self.view setNeedsLayout];
 }
 
 -(BOOL) isPortrait
@@ -298,6 +287,8 @@ const float textureVert[] =
     self.settingsContainer.frame = settingsRect;
     self.settingsContainer.center = self.view.center;
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
+    
+    self.controllerContainerView.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
 }
 
 
@@ -496,8 +487,7 @@ const float textureVert[] =
 
 - (void)saveStateWithName:(NSString*)saveStateName
 {
-    if (self.saveState == nil || saveStateName != nil) self.saveState = [self.game pathForSaveStateWithName:saveStateName ? saveStateName : @"Pause"];
-    EMU_saveState(self.saveState.fileSystemRepresentation);
+    EMU_saveState([self.game pathForSaveStateWithName:saveStateName].fileSystemRepresentation);
     [self.game reloadSaveStates];
 }
 
