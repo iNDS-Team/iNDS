@@ -250,6 +250,8 @@
             view.layer.borderWidth = 0;
         }
     }
+    [self removeSnapLines];
+    [self deselectView];
     self.sizeSlider.hidden = YES;
 }
 

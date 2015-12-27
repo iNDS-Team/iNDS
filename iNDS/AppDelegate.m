@@ -369,7 +369,7 @@ void HandleExceptions(NSException *exception) {
 }
 
 
-//THis could be used later to save a game state on crash
+//Maybe this could be used later to save a game state on crash
 - (void)handleException:(NSException *)exception
 {
     

@@ -209,6 +209,9 @@ const float textureVert[] =
     EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
     EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
     EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        EMU_add_AR("223ce2e10000007f", "MK All Courses", YES);
+    });
     [self.profile ajustLayout];
 }
 
