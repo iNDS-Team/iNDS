@@ -24,6 +24,8 @@
 	<false/>
 	<key>enableDropboxCellular</key>
 	<false/>
+	<key>currentProfile</key>
+	<string>Default</string>
 	<key>dbAppKey</key>
 	<string>ks1ulr086qvvy1k</string>
 	<key>dbAppSecret</key>

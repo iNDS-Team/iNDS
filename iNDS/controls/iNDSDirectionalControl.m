@@ -50,6 +50,14 @@
     self.buttonImageView.center = self.backgroundImageView.center;
 }
 
+
+
+- (void) layoutSubviews
+{
+    [super layoutSubviews];
+    [self frameUpdated];
+}
+
 - (iNDSDirectionalControlDirection)directionForTouch:(UITouch *)touch
 {
     // convert coords to based on center of control

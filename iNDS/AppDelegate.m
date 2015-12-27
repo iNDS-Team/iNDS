@@ -10,12 +10,14 @@
 #import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
-#import "OLGhostAlertView.h"
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
 #import <UnrarKit/UnrarKit.h>
+
+#include <libkern/OSAtomic.h>
+#include <execinfo.h>
 
 #import "iNDSInitialViewController.h"
 #import "SCLAlertView.h"
@@ -32,7 +34,6 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
     [Fabric with:@[[Crashlytics class]]];
     
     self.alertView = [[SCLAlertView alloc] init];
@@ -54,7 +55,7 @@
         if (error) {
             NSLog(@"Unable to create documents");
             [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to create iNDS folder in documents" closeButtonTitle:@"OK" duration:0.0];
-            } else {
+        } else {
             //Move Battery
             if ([[NSFileManager defaultManager] fileExistsAtPath:self.oldBatteryDir]) {
                 [[NSFileManager defaultManager] moveItemAtPath:self.oldBatteryDir toPath:self.batteryDir error:nil];
@@ -71,7 +72,6 @@
                                                  isDirectory: &isDirectory];
                 if (!isDirectory)
                 {
-                    
                     if ([fullPath.pathExtension isEqualToString:@"nds"]) {
                         //NSLog(@"Moving %@", fullPath);
                         //NSLog(@"TO: %@", [self.documentsPath stringByAppendingPathComponent:file]);
@@ -112,8 +112,24 @@
 	}
     
     [self checkForUpdates];
+    /*
+    NSSetUncaughtExceptionHandler(&HandleException);
+    signal(SIGABRT, SignalHandler);
+    signal(SIGILL, SignalHandler);
+    signal(SIGSEGV, SignalHandler);
+    signal(SIGFPE, SignalHandler);
+    signal(SIGBUS, SignalHandler);
+    signal(SIGPIPE, SignalHandler);
+    [self performSelector:@selector(badAccess) withObject:nil afterDelay:3.0];*/
     
     return YES;
+}
+
+- (void)badAccess
+{
+    void (*nullFunction)() = NULL;
+    
+    nullFunction();
 }
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -122,10 +138,8 @@
         NSLog(@"DB");
         if ([[DBSession sharedSession] handleOpenURL:url]) {
             if ([[DBSession sharedSession] isLinked]) {
-                OLGhostAlertView *linkSuccess = [[OLGhostAlertView alloc] initWithTitle:NSLocalizedString(@"SUCCESS", nil) message:NSLocalizedString(@"SUCCESS_DETAIL", nil) timeout:15 dismissible:YES];
-                [linkSuccess show];
+                [self.alertView showInfo:NSLocalizedString(@"SUCCESS", nil) subTitle:NSLocalizedString(@"SUCCESS_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"enableDropbox"];
-                
                 [CHBgDropboxSync clearLastSyncData];
                 [CHBgDropboxSync start];
             }
@@ -334,6 +348,11 @@
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
+void HandleExceptions(NSException *exception) {
+    NSLog(@"The app has encountered an unhandled exception: %@", [exception debugDescription]);
+    
+}
+
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     [CHBgDropboxSync start];
@@ -342,6 +361,57 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+
+//THis could be used later to save a game state on crash
+- (void)handleException:(NSException *)exception
+{
+    
+    UIAlertView *alert =
+    [[UIAlertView alloc] initWithTitle:@"A" message:@"B" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
+    
+    NSSetUncaughtExceptionHandler(NULL);
+    signal(SIGABRT, SIG_DFL);
+    signal(SIGILL, SIG_DFL);
+    signal(SIGSEGV, SIG_DFL);
+    signal(SIGFPE, SIG_DFL);
+    signal(SIGBUS, SIG_DFL);
+    signal(SIGPIPE, SIG_DFL);
+    
+    [exception raise];
+    
+}
+
+void HandleException(NSException *exception)
+{
+    //[exception raise];
+    
+    NSSetUncaughtExceptionHandler(NULL);
+    signal(SIGABRT, SIG_DFL);
+    signal(SIGILL, SIG_DFL);
+    signal(SIGSEGV, SIG_DFL);
+    signal(SIGFPE, SIG_DFL);
+    signal(SIGBUS, SIG_DFL);
+    signal(SIGPIPE, SIG_DFL);
+    NSLog(@"Uncaught Exception");
+}
+
+void SignalHandler(int sig)
+{
+    NSSetUncaughtExceptionHandler(NULL);
+    signal(SIGABRT, SIG_DFL);
+    signal(SIGILL, SIG_DFL);
+    signal(SIGSEGV, SIG_DFL);
+    signal(SIGFPE, SIG_DFL);
+    signal(SIGBUS, SIG_DFL);
+    signal(SIGPIPE, SIG_DFL);
+    /*UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+    SCLAlertView * alert = [[SCLAlertView alloc] init];
+    [alert showError:topController title:@"Crash!" subTitle:@"S.O.S" closeButtonTitle:@"Bye" duration:0.0];*/
 }
 
 @end

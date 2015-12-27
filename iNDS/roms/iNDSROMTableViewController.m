@@ -98,7 +98,7 @@
         [self.tableView reloadData];
     } else {
         // reload single row
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadData];
     }
 }
 
@@ -158,12 +158,11 @@
         cell.imageView.image = game.icon;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
+        if (indexPath.row > activeDownloads.count - 1) return [UITableViewCell new];
         iNDSRomDownload * download = activeDownloads[indexPath.row];
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;
         cell.detailTextLabel.text = @"Waiting...";
-        CALayer * progressLayer = [[CALayer alloc] init];
-        progressLayer.frame = CGRectMake(0, 0, 0, 5);
         cell.imageView.image = nil;
     }
     return cell;
