@@ -103,9 +103,10 @@
 			errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
 		}
 	}
-    
-    DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
-    [DBSession setSharedSession:dbSession];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
+        [DBSession setSharedSession:dbSession];
+    }); //I think this might be crashing the app on startup, if so it will allow me to get a bug report
     
     if (errorMsg != nil) {
         [self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
@@ -280,7 +281,6 @@
                     }];
                     UIImage * twitterImage = [[UIImage imageNamed:@"Twitter.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
                     [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
-                    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"TwitterAlert"];
                 });
             }
         }

@@ -521,17 +521,6 @@ const float textureVert[] =
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-#pragma mark - Cheats
-
-- (IBAction)showCheats:(id)sender
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Cheats not implemented"
-                                                message:@"Cheats have not been implemented yet but they'll be here soon!"
-                                               delegate:nil 
-                                      cancelButtonTitle:@"OK"
-                                      otherButtonTitles:nil];
-    [alert show];
-}
 
 #pragma mark - Controls
 
