@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface iNDSSettingsTableViewController : UITableViewController
+@interface iNDSSettingsTableViewController : UITableViewController <UINavigationControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UILabel * romName;
 @property (strong, nonatomic) IBOutlet UILabel * layoutLabel;

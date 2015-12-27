@@ -179,6 +179,7 @@
 
 - (void)saveProfile
 {
+    
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     
     UITextField *textField = [alert addTextField:@""];
@@ -188,6 +189,7 @@
         self.name = textField.text;
         NSString * savePath = [[AppDelegate.sharedInstance.batteryDir stringByAppendingPathComponent:self.name] stringByAppendingPathExtension:@"ips"];
         [NSKeyedArchiver archiveRootObject:self toFile:savePath];
+        [AppDelegate.sharedInstance.currentEmulatorViewController exitEditMode];
     }];
     
     [alert showEdit:[AppDelegate sharedInstance].currentEmulatorViewController title:@"Save Profile" subTitle:@"Name for save profile:\n" closeButtonTitle:@"Cancel" duration:0.0f];
@@ -225,25 +227,113 @@
 
 - (void)enterEditMode
 {
-    NSArray * views = @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl, self.settingsButton, self.fpsLabel];
-    for (UIView * view in views) {
+    for (UIView * view in [self editableViews]) {
         NSLog(@"%@", view);
         UIPanGestureRecognizer * pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+        pan.maximumNumberOfTouches = 1;
         [view addGestureRecognizer:pan];
         
-        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
+        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+        tap.numberOfTapsRequired = 1;
+        tap.numberOfTouchesRequired = 1;
         [view addGestureRecognizer:tap];
+        
     }
 }
 
 - (void)exitEditMode
 {
-    NSArray * views = @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl, self.settingsButton, self.fpsLabel];
-    for (UIView * view in views) {
+    for (UIView * view in [self editableViews]) {
         for (UIGestureRecognizer *recognizer in view.gestureRecognizers) {
             [view removeGestureRecognizer:recognizer];
+            view.layer.borderWidth = 0;
         }
     }
+    self.sizeSlider.hidden = YES;
+}
+
+-(NSArray *) editableViews
+{
+    return @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl, self.fpsLabel]; //Maybe add settings later
+}
+
+
+- (void)selectNewView:(UIView *)view;
+{
+    view.layer.borderWidth = 1;
+    //view.layer.borderColor = [UIColor colorWithRed:147/255.0 green:205/255.0 blue:1 alpha:1].CGColor;
+    view.layer.borderColor = [UIColor greenColor].CGColor;
+    selectedView.layer.borderWidth = 0;
+    selectedView = view;
+    
+    self.sizeSlider.hidden = NO;
+    CGSize screenSize = [self currentScreenSize];
+    CGFloat ratio = selectedView.frame.size.height/selectedView.frame.size.width;
+    if (screenSize.width * ratio < screenSize.height / ratio) { //Width is limiting this view
+        self.sizeSlider.value = selectedView.frame.size.width / screenSize.width;
+    } else {
+        self.sizeSlider.value = selectedView.frame.size.height / screenSize.height;
+    }
+    
+}
+
+- (void)deselectView
+{
+    selectedView.layer.borderWidth = 0;
+    selectedView = nil;
+    self.sizeSlider.hidden = YES;
+}
+
+- (void)tap:(UITapGestureRecognizer *)sender
+{
+    UIView *currentView = sender.view;
+    if (currentView != selectedView) {
+        [self selectNewView:currentView];
+    } else {
+        [self deselectView];
+    }
+}
+
+- (void)sizeChanged:(UISlider *)sender
+{
+    NSLog(@"Size %f", sender.value);
+    
+    CGSize screenSize = [self currentScreenSize];
+    
+    CGRect viewFrame = selectedView.frame;
+    CGFloat ratio = viewFrame.size.height/ MAX(viewFrame.size.width, 1);
+    CGFloat currentSize = MAX(viewFrame.size.width, viewFrame.size.height);
+    if (screenSize.width * ratio < screenSize.height / ratio) { //Width is limiting this view
+        viewFrame.size.width = (screenSize.width * MAX(sender.value, 0.1));
+        viewFrame.size.height = viewFrame.size.width * ratio;
+    } else {
+        viewFrame.size.height = (screenSize.height * MAX(sender.value, 0.1));
+        viewFrame.size.width = viewFrame.size.width / ratio;
+    }
+    
+    CGPoint oldCenter = selectedView.center;
+    
+    //Keep center after editing size
+    selectedView.frame = viewFrame;
+    selectedView.center = oldCenter;
+    viewFrame = selectedView.frame;
+    
+    if (viewFrame.origin.x < 0) {
+        viewFrame.origin.x = 0;
+    } else if (viewFrame.origin.x + viewFrame.size.width > screenSize.width) {
+        viewFrame.origin.x = screenSize.width - viewFrame.size.width;
+    }
+    
+    if (viewFrame.origin.y < 0) {
+        viewFrame.origin.y = 0;
+    } else if (viewFrame.origin.y + viewFrame.size.height > screenSize.height) {
+        viewFrame.origin.y = screenSize.height - viewFrame.size.height;
+    }
+    NSLog(@"R %@", NSStringFromCGRect(viewFrame));
+    NSLog(@"is %f", ratio);
+    selectedView.frame = viewFrame;
+    [selectedView setNeedsLayout];
+    [self drawSnapLines];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)sender
@@ -258,11 +348,9 @@
     if (state == UIGestureRecognizerStateBegan) {
         offsetX = translatedPoint.x - currentView.frame.origin.x;
         offsetY = translatedPoint.y - currentView.frame.origin.y;
-        currentView.layer.borderWidth = 1;
-        currentView.layer.borderColor = [UIColor colorWithRed:147/255.0 green:205/255.0 blue:1 alpha:1].CGColor;
-        
-        selectedView.layer.borderWidth = 0;
-        selectedView = currentView;
+        if (currentView != selectedView) {
+            [self selectNewView:currentView];
+        }
     }
     if (state == UIGestureRecognizerStateChanged) {
         [self removeSnapLines];
@@ -320,54 +408,6 @@
             }
         }
         viewFrame = destinationFrame;
-        // Draw snap lines after snapping is finished
-        for (UIView * otherView in views) {
-            if (otherView != currentView) {
-                //Snap X
-                if (viewFrame.origin.x == otherView.frame.origin.x) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.x Direction:VERTICAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if (viewFrame.origin.x == (otherView.frame.origin.x + otherView.frame.size.width)) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.x Direction:VERTICAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if ((viewFrame.origin.x + viewFrame.size.width) == otherView.frame.origin.x) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.x + viewFrame.size.width Direction:VERTICAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if ((viewFrame.origin.x + viewFrame.size.width) == (otherView.frame.origin.x + otherView.frame.size.width)) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.x + viewFrame.size.width Direction:VERTICAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                
-                //Snap Y
-                if (viewFrame.origin.y == otherView.frame.origin.y) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.y Direction:HORIZONTAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if (viewFrame.origin.y == (otherView.frame.origin.y + otherView.frame.size.height)) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.y Direction:HORIZONTAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if ((viewFrame.origin.y + viewFrame.size.height) == otherView.frame.origin.y) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.y + viewFrame.size.height Direction:HORIZONTAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-                if ((viewFrame.origin.y + viewFrame.size.height) == (otherView.frame.origin.y + otherView.frame.size.height)) {
-                    [self drawSnapLineAtPosition:viewFrame.origin.y + viewFrame.size.height Direction:HORIZONTAL];
-                    otherView.layer.borderWidth = 1;
-                    otherView.layer.borderColor = [UIColor yellowColor].CGColor;
-                }
-            }
-        }
         
         if (viewFrame.origin.x < 0) {
             viewFrame.origin.x = 0;
@@ -381,6 +421,9 @@
             viewFrame.origin.y = screenSize.height - viewFrame.size.height;
         }
         currentView.frame = viewFrame;
+        
+        // Draw snap lines after snapping is finished
+        [self drawSnapLines];
     }
     
     if (state == UIGestureRecognizerStateEnded) {
@@ -391,6 +434,56 @@
         }
         [self removeSnapLines];
         [self updateLayout];
+    }
+}
+
+- (void)drawSnapLines
+{
+    CGRect viewFrame = selectedView.frame;
+    for (UIView * otherView in [self editableViews]) {
+        if (otherView != selectedView) {
+            if (viewFrame.origin.x == otherView.frame.origin.x) {
+                [self drawSnapLineAtPosition:viewFrame.origin.x Direction:VERTICAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if (viewFrame.origin.x == (otherView.frame.origin.x + otherView.frame.size.width)) {
+                [self drawSnapLineAtPosition:viewFrame.origin.x Direction:VERTICAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if ((viewFrame.origin.x + viewFrame.size.width) == otherView.frame.origin.x) {
+                [self drawSnapLineAtPosition:viewFrame.origin.x + viewFrame.size.width Direction:VERTICAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if ((viewFrame.origin.x + viewFrame.size.width) == (otherView.frame.origin.x + otherView.frame.size.width)) {
+                [self drawSnapLineAtPosition:viewFrame.origin.x + viewFrame.size.width Direction:VERTICAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            
+            if (viewFrame.origin.y == otherView.frame.origin.y) {
+                [self drawSnapLineAtPosition:viewFrame.origin.y Direction:HORIZONTAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if (viewFrame.origin.y == (otherView.frame.origin.y + otherView.frame.size.height)) {
+                [self drawSnapLineAtPosition:viewFrame.origin.y Direction:HORIZONTAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if ((viewFrame.origin.y + viewFrame.size.height) == otherView.frame.origin.y) {
+                [self drawSnapLineAtPosition:viewFrame.origin.y + viewFrame.size.height Direction:HORIZONTAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+            if ((viewFrame.origin.y + viewFrame.size.height) == (otherView.frame.origin.y + otherView.frame.size.height)) {
+                [self drawSnapLineAtPosition:viewFrame.origin.y + viewFrame.size.height Direction:HORIZONTAL];
+                otherView.layer.borderWidth = 1;
+                otherView.layer.borderColor = [UIColor yellowColor].CGColor;
+            }
+        }
     }
 }
 

@@ -19,6 +19,7 @@
 
 @property (weak, nonatomic) IBOutlet UIView *gameContainer;
 @property (weak, nonatomic) IBOutlet UIView *settingsContainer;
+@property (weak, nonatomic) IBOutlet UIView *darkenView;
 
 - (void)pauseEmulation;
 - (void)resumeEmulation;
@@ -27,6 +28,7 @@
 - (void)enterEditMode;
 - (void)exitEditMode;
 - (IBAction)toggleSettings:(id)sender;
+- (void) setSettingsHeight:(CGFloat) height;
 - (void)loadProfile:(iNDSEmulationProfile *)profile;
 - (void)newSaveState;
 @end

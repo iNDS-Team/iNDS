@@ -92,6 +92,7 @@ const float textureVert[] =
     GLint texUniform;
     
     GLKView *glkView[2];
+    GLKView *movingView;
     
     iNDSButtonControlButton _previousButtons;
     iNDSDirectionalControlDirection _previousDirection;
@@ -111,6 +112,7 @@ const float textureVert[] =
 @property (strong, nonatomic) GLProgram *program;
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) IBOutlet UIView *controllerContainerView;
+@property (strong, nonatomic) IBOutlet UISlider *sizeSlider;
 
 @property (weak, nonatomic) IBOutlet iNDSDirectionalControl *directionalControl;
 @property (weak, nonatomic) IBOutlet iNDSButtonControl *buttonControl;
@@ -177,10 +179,13 @@ const float textureVert[] =
     self.gameContainer.layer.rasterizationScale = UIScreen.mainScreen.scale;
     self.gameContainer.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, -10, 10, self.gameContainer.frame.size.height+20)].CGPath;
     
-    CGRect settingsContainerFrame = self.settingsContainer.frame;
-    settingsContainerFrame.size.width = MIN(self.view.frame.size.width - 60, 400);
-    self.settingsContainer.frame = settingsContainerFrame;
+    CGRect settingsRect = self.settingsContainer.frame;
+    settingsRect.size.width = MIN(400, self.view.frame.size.width - 70);
+    settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+    self.settingsContainer.frame = settingsRect;
+    self.settingsContainer.center = self.view.center;
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
+    self.settingsContainer.layer.cornerRadius = 7;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -252,6 +257,9 @@ const float textureVert[] =
     self.profile.fpsLabel = self.fpsLabel;
     self.profile.mainScreen = glkView[0];
     self.profile.touchScreen = glkView[1];
+    self.profile.sizeSlider = self.sizeSlider;
+    [self.sizeSlider addTarget:self.profile action:@selector(sizeChanged:) forControlEvents:UIControlEventValueChanged];
+    
 }
 
 - (void)defaultsChanged:(NSNotification*)notification
@@ -630,7 +638,17 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         return;
     } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+        if (extWindow) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
+        } else {
+            if (CGRectContainsPoint(glkView[0].frame, location)) {
+                [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+                movingView = glkView[0];
+            } else if (CGRectContainsPoint(glkView[1].frame, location)) {
+                [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
+                movingView = glkView[1];
+            }
+        }
     } else {
         [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
     }
@@ -638,9 +656,13 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+    if (inEditingMode) { // promatically adding gesture recognizers to glkviews doesn't work
         CGPoint location = [touches.anyObject locationInView:self.view];
-        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
+        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
+        } 
     } else {
         [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
     }
@@ -650,7 +672,12 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
+        if (CGRectContainsPoint(glkView[0].frame, location)) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
+        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateEnded];
+        }
+        movingView = nil;
     } else {
         EMU_touchScreenRelease();
     }
@@ -678,43 +705,46 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 - (IBAction)toggleSettings:(id)sender
 {
     if (!settingsShown) { //About to show settings
-        self.gameContainer.layer.shadowOpacity = 0.8;
         
         [self.settingsContainer setHidden:NO];
         [self pauseEmulation];
         
-        CGRect gameContainerFrame = self.gameContainer.frame;
-        gameContainerFrame.origin.x = MIN(400, self.view.frame.size.width - 60);
-        
-        CGRect settingsContainerFrame = self.settingsContainer.frame;
-        settingsContainerFrame.origin.x = 0;
         
         [UIView animateWithDuration:0.3 animations:^{
-            self.gameContainer.frame = gameContainerFrame;
-            self.settingsContainer.frame = settingsContainerFrame;
+            self.darkenView.hidden = NO;
+            self.darkenView.alpha = 0.6;
+            self.settingsContainer.alpha = 1;
         } completion:^(BOOL finished) {
             settingsShown = YES;
         }];
     } else {
-        CGRect gameContainerFrame = self.gameContainer.frame;
-        gameContainerFrame.origin.x = 0;
-        
-        CGRect settingsContainerFrame = self.settingsContainer.frame;
-        settingsContainerFrame.origin.x = -60;
-        
         [UIView animateWithDuration:0.3 animations:^{
-            self.gameContainer.frame = gameContainerFrame;
-            self.settingsContainer.frame = settingsContainerFrame;
+            self.darkenView.alpha = 0.0;
+            self.settingsContainer.alpha = 0;
         } completion:^(BOOL finished) {
-            self.gameContainer.layer.shadowOpacity = 0;
             settingsShown = NO;
-            [self.settingsContainer setHidden:YES];
+            self.settingsContainer.hidden = YES;
             [self resumeEmulation];
+            self.darkenView.hidden = YES;
         }];
+        
     }
+    
+}
+
+- (void) setSettingsHeight:(CGFloat) height
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        CGRect settingsRect = self.settingsContainer.frame;
+        settingsRect.size.height = MAX(MIN(height, self.view.frame.size.height - 100), 300);
+        self.settingsContainer.frame = settingsRect;
+        self.settingsContainer.center = self.view.center;
+        self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
+    }];
     
     
 }
+
 #pragma mark - Saving
 
 - (void)newSaveState
@@ -730,7 +760,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     }];
     
     [alert addButton:@"Cancel" actionBlock:^(void) {
-        [self toggleSettings:self];
+        //[self toggleSettings:self];
     }];
     
     [alert showEdit:self title:@"Save State" subTitle:@"Name for save state:\n" closeButtonTitle:nil duration:0.0f];

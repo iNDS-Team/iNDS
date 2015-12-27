@@ -22,6 +22,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationController.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -30,6 +31,16 @@
     self.romName.text = [AppDelegate sharedInstance].currentEmulatorViewController.game.gameTitle;
     self.layoutName.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
 }
+
+
+- (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    UITableViewController * tableController = (UITableViewController *)viewController;
+    
+    //Uncomment for animation
+    //[emulationController setSettingsHeight:tableController.tableView.contentSize.height + 44];
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -59,7 +70,6 @@
                 [self.layoutLabel performSelector:@selector(setText:) withObject:@"Save Layout" afterDelay:0.3];
             } else {
                 [emulationController.profile saveProfile];
-                [emulationController exitEditMode];
                 inEditingMode = NO;
                 [self.layoutLabel performSelector:@selector(setText:) withObject:@"Edit Layout" afterDelay:0.3];
             }
@@ -71,6 +81,11 @@
             break;
     }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (IBAction)close:(id)sender
+{
+    [emulationController toggleSettings:self];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

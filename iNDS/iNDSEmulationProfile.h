@@ -27,6 +27,8 @@
 @property (weak, nonatomic) iNDSDirectionalControl *directionalControl;
 @property (weak, nonatomic) iNDSButtonControl *buttonControl;
 
+@property (weak, nonatomic) UISlider *sizeSlider;
+
 
 - (id)initWithProfileName:(NSString*) name;
 + (NSArray*)profilesAtPath:(NSString*)profilesPath;
@@ -34,6 +36,7 @@
 - (void)ajustLayout;
 - (void)enterEditMode;
 - (void)handlePan:(UIView *)currentView Location:(CGPoint) location state:(UIGestureRecognizerState) state;
+- (void)sizeChanged:(UISlider *)sender;
 - (void)exitEditMode;
 - (void)saveProfile;
 - (BOOL)deleteProfile;

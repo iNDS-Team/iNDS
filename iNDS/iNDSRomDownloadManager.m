@@ -119,6 +119,7 @@
 
 - (void)removeDownload:(iNDSRomDownload *)download
 {
+    if (![_activeDownloads containsObject:download]) return;
     [_activeDownloads removeObject:download];
     [download stop];
     if (_activeDownloads.count == 0) {

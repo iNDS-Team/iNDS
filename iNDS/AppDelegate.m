@@ -73,7 +73,6 @@
                                                  isDirectory: &isDirectory];
                 if (!isDirectory)
                 {
-                    
                     if ([fullPath.pathExtension isEqualToString:@"nds"]) {
                         //NSLog(@"Moving %@", fullPath);
                         //NSLog(@"TO: %@", [self.documentsPath stringByAppendingPathComponent:file]);

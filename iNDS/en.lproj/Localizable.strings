@@ -1,6 +1,6 @@
 ROM_LIST = "ROM List";
 ABOUT_INDS = "About iNDS";
-SETTINGS = "Settings";
+SETTINGS = "Emulation Settings";
 DONATE = "Donate";
 
 SHARE = "Share";

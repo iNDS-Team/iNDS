@@ -20,7 +20,13 @@
 -(void) viewDidLoad
 {
     [super viewDidLoad];
+    //[self tableView:self.tableView numberOfRowsInSection:0]
     profiles = [iNDSEmulationProfile profilesAtPath:AppDelegate.sharedInstance.batteryDir];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
 #pragma mark - Table View
@@ -62,7 +68,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Hey");
     UITableViewCell* cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"Cell"];
     if (indexPath.section == 0) {
         cell.textLabel.text = @"Default";

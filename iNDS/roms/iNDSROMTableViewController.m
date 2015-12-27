@@ -76,9 +76,8 @@
 }
 
 - (void)viewDiddAppear:(BOOL)animated {
-    [CHBgDropboxSync start];
     [super viewWillAppear:animated];
-    
+    [CHBgDropboxSync start];
 }
 
 - (void)reloadGames:(NSNotification*)aNotification
@@ -94,7 +93,7 @@
         [self.tableView reloadData];
     } else {
         // reload single row
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self.tableView reloadData];
     }
 }
 
@@ -114,6 +113,7 @@
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
         } else {  // Del DL
+            if (indexPath.row > activeDownloads.count - 1) return;
             iNDSRomDownload * download = activeDownloads[indexPath.row];
             [[iNDSRomDownloadManager sharedManager] removeDownload:download];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -152,6 +152,7 @@
         cell.imageView.image = game.icon;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
+        if (indexPath.row > activeDownloads.count - 1) return [UITableViewCell new];
         iNDSRomDownload * download = activeDownloads[indexPath.row];
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;

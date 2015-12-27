@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 iNDS. All rights reserved.
 //
 
+#import "AppDelegate.h"
 #import "iNDSEmulatorSettingsViewController.h"
 #import <DropboxSDK/DropboxSDK.h>
 #import "OLGhostAlertView.h"
@@ -103,8 +104,37 @@
     UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(revealHiddenSettings:)];
     tapGestureRecognizer.numberOfTapsRequired = 3;
     [hiddenSettingsTapView addGestureRecognizer:tapGestureRecognizer];
-    
 }
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSInteger frameSkip = [defaults integerForKey:@"frameSkip"];
+    self.frameSkipControl.selectedSegmentIndex = frameSkip < 0 ? 5 : frameSkip;
+    self.disableSoundSwitch.on = [defaults boolForKey:@"disableSound"];
+    
+    self.controlPadStyleControl.selectedSegmentIndex = [defaults integerForKey:@"controlPadStyle"];
+    self.controlPositionControl.selectedSegmentIndex = [defaults integerForKey:@"controlPosition"];
+    self.controlOpacitySlider.value = [defaults floatForKey:@"controlOpacity"];
+    self.controlSizeSlider.value = [defaults floatForKey:@"controlSize"];
+    
+    self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
+    self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];
+    self.synchSoundSwitch.on = [defaults boolForKey:@"synchSound"];
+    
+    self.enableJITSwitch.on = [defaults boolForKey:@"enableLightningJIT"];
+    self.vibrateSwitch.on = [defaults boolForKey:@"vibrate"];
+    
+    self.dropboxSwitch.on = [defaults boolForKey:@"enableDropbox"];
+    self.cellularSwitch.on = [defaults boolForKey:@"enableDropboxCellular"];
+    
+    if ([defaults boolForKey:@"enableDropbox"] == true) {
+        self.accountLabel.text = NSLocalizedString(@"LINKED", nil);
+    }
+}
+
+
 
 - (NSString *)tableView:(UITableView *)tableView  titleForHeaderInSection:(NSInteger)section
 {
@@ -210,33 +240,6 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSInteger frameSkip = [defaults integerForKey:@"frameSkip"];
-    self.frameSkipControl.selectedSegmentIndex = frameSkip < 0 ? 5 : frameSkip;
-    self.disableSoundSwitch.on = [defaults boolForKey:@"disableSound"];
-    
-    self.controlPadStyleControl.selectedSegmentIndex = [defaults integerForKey:@"controlPadStyle"];
-    self.controlPositionControl.selectedSegmentIndex = [defaults integerForKey:@"controlPosition"];
-    self.controlOpacitySlider.value = [defaults floatForKey:@"controlOpacity"];
-    self.controlSizeSlider.value = [defaults floatForKey:@"controlSize"];
-    
-    self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
-    self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];
-    self.synchSoundSwitch.on = [defaults boolForKey:@"synchSound"];
-    
-    self.enableJITSwitch.on = [defaults boolForKey:@"enableLightningJIT"];
-    self.vibrateSwitch.on = [defaults boolForKey:@"vibrate"];
-    
-    self.dropboxSwitch.on = [defaults boolForKey:@"enableDropbox"];
-    self.cellularSwitch.on = [defaults boolForKey:@"enableDropboxCellular"];
-    
-    if ([defaults boolForKey:@"enableDropbox"] == true) {
-        self.accountLabel.text = NSLocalizedString(@"LINKED", nil);
-    }
-}
 
 - (void)appDidBecomeActive:(NSNotification *)notification
 {
