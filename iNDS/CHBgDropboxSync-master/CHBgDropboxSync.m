@@ -33,7 +33,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 #pragma mark - Showing and hiding the syncing indicator
 
 - (void)showWorking {
-    //[ZAActivityBar showWithStatus:@"Syncing save files..."];
+    [ZAActivityBar showSuccessWithStatus:@"Syncing started!" duration:3.0];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
 }
 
@@ -122,14 +122,14 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // For clean shutdowns on sync success
 - (void)internalShutdownSuccess {
     [self lastSyncCompletionRescan];
-    //[ZAActivityBar showSuccessWithStatus:@"Synced!" duration:2];
+    [ZAActivityBar showSuccessWithStatus:@"Synced Completed!" duration:2];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     [self internalCommonShutdown];
 }
 
 // For failed shutdowns
 - (void)internalShutdownFailed {
-    //[ZAActivityBar showErrorWithStatus:@"Failed to sync!" duration:4];
+    [ZAActivityBar showErrorWithStatus:@"Failed to sync!" duration:4];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     [self internalCommonShutdown];
 }
