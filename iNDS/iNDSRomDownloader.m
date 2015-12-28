@@ -83,8 +83,7 @@
         
         return NO;
     } else {
-        NSLog(@"Ignore: %@", request.URL);
-        NSLog(@"--%@", fileExtension);
+        //NSLog(@"Ignore: %@", request.URL);
     }
     return ![urlField isFirstResponder]; //Prevent leaving page while editing
 }

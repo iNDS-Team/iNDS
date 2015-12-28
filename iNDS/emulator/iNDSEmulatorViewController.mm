@@ -300,6 +300,11 @@ const float textureVert[] =
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     
     self.controllerContainerView.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
+    if ([UIScreen screens].count > 1) {
+        CGSize screenSize = [UIScreen screens][1].bounds.size;
+        CGSize viewSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333), MIN(screenSize.width, screenSize.height * 1.333) * 0.75);
+        glkView[0].frame = CGRectMake(screenSize.width/2 - viewSize.width/2, screenSize.height/2 - viewSize.height/2, viewSize.width, viewSize.height);
+    }
 }
 
 
@@ -312,6 +317,7 @@ const float textureVert[] =
 - (void)screenChanged:(NSNotification*)notification
 {
     [self pauseEmulation];
+    [self.view setNeedsLayout];
     [self performSelector:@selector(resumeEmulation) withObject:nil afterDelay:0.5];
 }
 
@@ -343,7 +349,10 @@ const float textureVert[] =
         extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
         extWindow.screen = extScreen;
         extWindow.backgroundColor = [UIColor orangeColor];
-        glkView[0] = [[GLKView alloc] initWithFrame:extWindow.bounds context:self.context];
+        CGSize screenSize = [UIScreen screens][1].bounds.size;
+        CGSize viewSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333), MIN(screenSize.width, screenSize.height * 1.333) * 0.75);
+        CGRect mainScreenRect = CGRectMake(screenSize.width/2 - viewSize.width/2, screenSize.height/2 - viewSize.height/2, viewSize.width, viewSize.height);
+        glkView[0] = [[GLKView alloc] initWithFrame:mainScreenRect context:self.context];
         glkView[1] = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context]; //4:3 ratio is all that matters
         glkView[0].delegate = self;
         glkView[1].delegate = self;

@@ -370,7 +370,6 @@
     }
     if (state == UIGestureRecognizerStateChanged) {
         [self removeSnapLines];
-        CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
         CGRect viewFrame = currentView.frame;
         
         //Snap to other views
