@@ -203,7 +203,7 @@
 - (void)saveProfileWithCancel:(BOOL)showCancel
 {
     
-    SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+    SCLAlertView *alert = [[SCLAlertView alloc] init];
     
     UITextField *textField = [alert addTextField:@""];
     textField.text = [self.name isEqualToString:@"Default"] ? @"" : self.name;

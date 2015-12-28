@@ -317,6 +317,20 @@ const float textureVert[] =
 - (void)screenChanged:(NSNotification*)notification
 {
     [self pauseEmulation];
+    if ([UIScreen screens].count > 1) {
+        NSLog(@"2 Screens");
+        UIScreen *extScreen = [UIScreen screens][1];
+        extScreen.currentMode = extScreen.availableModes[0];
+        extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
+        extWindow.screen = extScreen;
+        extWindow.backgroundColor = [UIColor orangeColor];
+        [extWindow addSubview:glkView[0]];
+        [extWindow makeKeyAndVisible];
+    } else {
+        NSLog(@"1 Screen");
+        extWindow = nil;
+        [self.gameContainer insertSubview:glkView[0] atIndex:0];
+    }
     [self.view setNeedsLayout];
     [self performSelector:@selector(resumeEmulation) withObject:nil afterDelay:0.5];
 }
@@ -651,16 +665,12 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         return;
     } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (extWindow) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && !extWindow) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+            movingView = glkView[0];
+        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
-        } else {
-            if (CGRectContainsPoint(glkView[0].frame, location)) {
-                [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
-                movingView = glkView[0];
-            } else if (CGRectContainsPoint(glkView[1].frame, location)) {
-                [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
-                movingView = glkView[1];
-            }
+            movingView = glkView[1];
         }
     } else {
         [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
@@ -671,7 +681,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     if (inEditingMode) { // promatically adding gesture recognizers to glkviews doesn't work
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0] && !extWindow) {
             [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
         } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
@@ -685,9 +695,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location)) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
             [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
-        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
+        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateEnded];
         }
         movingView = nil;
