@@ -195,6 +195,7 @@
 		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
 		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */; };
+		CABE38451C30BFDF00BE8857 /* NSString+CompareToVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -582,6 +583,9 @@
 		CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfileTableViewController.m; sourceTree = "<group>"; };
 		CABE383D1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSProfileEditorTableViewController.h; sourceTree = "<group>"; };
 		CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSProfileEditorTableViewController.m; sourceTree = "<group>"; };
+		CABE38411C30B76900BE8857 /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheats.7z; sourceTree = "<group>"; };
+		CABE38431C30BFDE00BE8857 /* NSString+CompareToVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareToVersion.h"; sourceTree = "<group>"; };
+		CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareToVersion.m"; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -745,6 +749,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38411C30B76900BE8857 /* cheats.7z */,
 				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
 				CA7079C51C08F901005A1B19 /* upgrade.png */,
@@ -802,6 +807,7 @@
 		BFAE6F8F176748CF000911CF /* Emulator View */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38401C30736D00BE8857 /* Cheats */,
 				CABE38301C27E44800BE8857 /* Settings */,
 				8BEA096C17872C320060B347 /* iNDSEmulatorViewController.h */,
 				8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */,
@@ -889,6 +895,7 @@
 				D31CC89F17927BCB0098FB9C /* Dropbox */,
 				CA908BDF1C2356DA00B2A864 /* SCLAlertView */,
 				D31CC8B617927E840098FB9C /* ZAActivityBar */,
+				CABE38421C30BFC600BE8857 /* Utilities */,
 				BFCFE0F91764FBD3000A70CF /* Supporting Files */,
 			);
 			name = Main;
@@ -1292,6 +1299,22 @@
 			name = Settings;
 			sourceTree = "<group>";
 		};
+		CABE38401C30736D00BE8857 /* Cheats */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Cheats;
+			sourceTree = "<group>";
+		};
+		CABE38421C30BFC600BE8857 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				CABE38431C30BFDE00BE8857 /* NSString+CompareToVersion.h */,
+				CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 		D31CC89F17927BCB0098FB9C /* Dropbox */ = {
 			isa = PBXGroup;
 			children = (
@@ -1595,6 +1618,7 @@
 				CA031D271BEBE1EB00EDE98D /* Delta.c in Sources */,
 				BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */,
 				BFCFE247176634EE000A70CF /* slot2_rumblepak.cpp in Sources */,
+				CABE38451C30BFDF00BE8857 /* NSString+CompareToVersion.m in Sources */,
 				CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */,
 				BFCFE26B1766379F000A70CF /* addons.cpp in Sources */,
 				BF9D514317865CD800B5864B /* SndOut.cpp in Sources */,

@@ -9,10 +9,12 @@
 #import "iNDSEmulationProfile.h"
 #import "AppDelegate.h"
 #import "SCLAlertView.h"
+#import "NSString+CompareToVersion.h"
+
 #define HORIZONTAL 1
 #define VERTICAL 2
 
-#define VERSION @"1.0.0"
+#define VERSION @"1.0.1"
 
 @interface iNDSEmulationProfile()
 {
@@ -42,6 +44,7 @@
 {
     if (self = [super init]) {
         self.name = name;
+        self.screenSize = [self currentScreenSizeAlwaysPortrait:YES];
         profileVersion = VERSION;
         for (int i = 0; i < 2; i++) { //initialize frames
             settingsButtonRects[i] = CGRectMake(0, 0, 40, 40);
@@ -104,7 +107,7 @@
     self = [self initWithProfileName:[coder decodeObjectForKey:@"iNDSProfileName"]];
     if (self) {
         NSString * thisVersion = [coder decodeObjectForKey:@"iNDSProfileVersion"];
-        if (!([thisVersion compare:VERSION options:NSNumericSearch] == NSOrderedDescending)) { //VERSION >= thisVersion
+        if ([VERSION isEqualOrNewerThanVersion:thisVersion]) { //VERSION >= thisVersion
             //Probably a better way to do this but I wanted to have support for later versions
             mainScreenRects[0] = [coder decodeCGRectForKey:@"iNDSProfileMainScreenRectPortrait"];
             mainScreenRects[1] = [coder decodeCGRectForKey:@"iNDSProfileMainScreenRectLandscape"];
@@ -126,8 +129,27 @@
             settingsButtonRects[1] = [coder decodeCGRectForKey:@"iNDSSettingsButtonRectLandscape"];
             fpsLabelRects[0] = [coder decodeCGRectForKey:@"iNDSfpsLabelRectPortrait"];
             fpsLabelRects[1] = [coder decodeCGRectForKey:@"iNDSfpsLabelRectLandscape"];
+            //after everyone has updated you can remove the conditionals and just make then default
+            if ([thisVersion isEqualOrNewerThanVersion:@"1.0.1"]) {
+                if (!CGSizeEqualToSize([self currentScreenSizeAlwaysPortrait:YES], [coder decodeCGSizeForKey:@"iNDSScreenSize"])) {
+                    return nil; //This profile was created on a device of different size
+                }
+            }
+            if ([VERSION isNewerThanVersion:thisVersion]) { //The loaded version is less, we should resave it and get it up to date
+                NSLog(@"Updating Profile %@ from %@ to %@", self.name, thisVersion, VERSION);
+                NSString * savePath = [iNDSEmulationProfile pathForProfileName:self.name];
+                [NSKeyedArchiver archiveRootObject:self toFile:savePath];
+            }
         } else {
             NSLog(@"Oh no, %@ was created with a newer version of iNDS", self.name);
+            //Use this to alert every once and awhile that out of date profiles were not loaded.
+            CFTimeInterval lastVersionAlert = [[NSUserDefaults standardUserDefaults] integerForKey:@"iNDSLastOutOfDateProfileAlert"];
+            if (CACurrentMediaTime() - lastVersionAlert > 120) {
+                SCLAlertView * alert = [[SCLAlertView alloc] init];
+                [alert showInfo:emulationView title:@"Unable to load Profiles" subTitle:@"Some profiles were used with a later version of iNDS. These profiles will be hidded until you upgrade iNDS." closeButtonTitle:@"Thanks.. I guess" duration:0.0];
+                [[NSUserDefaults standardUserDefaults] setInteger:CACurrentMediaTime() forKey:@"iNDSLastOutOfDateProfileAlert"];
+            }
+            return nil;
         }
     }
     return self;
@@ -135,7 +157,7 @@
 
 -(void)encodeWithCoder:(NSCoder *)coder{
     [coder encodeObject:self.name forKey:@"iNDSProfileName"];
-    [coder encodeObject:profileVersion forKey:@"iNDSProfileVersion"];
+    [coder encodeObject:VERSION forKey:@"iNDSProfileVersion"];
     [coder encodeCGRect:mainScreenRects[0] forKey:@"iNDSProfileMainScreenRectPortrait"];
     [coder encodeCGRect:mainScreenRects[1] forKey:@"iNDSProfileMainScreenRectLandscape"];
     [coder encodeCGRect:touchScreenRects[0] forKey:@"iNDSProfileTouchScreenRectPortrait"];
@@ -156,6 +178,7 @@
     [coder encodeCGRect:settingsButtonRects[1] forKey:@"iNDSSettingsButtonRectLandscape"];
     [coder encodeCGRect:fpsLabelRects[0] forKey:@"iNDSfpsLabelRectPortrait"];
     [coder encodeCGRect:fpsLabelRects[1] forKey:@"iNDSfpsLabelRectLandscape"];
+    [coder encodeCGSize:self.screenSize forKey:@"iNDSScreenSize"];
 }
 
 + (NSArray*)profilesAtPath:(NSString*)profilesPath
@@ -237,6 +260,7 @@
         tap.numberOfTapsRequired = 1;
         tap.numberOfTouchesRequired = 1;
         [view addGestureRecognizer:tap];
+        view.frame = [self boundInScreen:view.frame];
     }
     [emulationView.view setNeedsLayout];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didRotate:) name:UIDeviceOrientationDidChangeNotification object:nil];
@@ -305,9 +329,7 @@
 
 - (void)sizeChanged:(UISlider *)sender
 {
-    NSLog(@"Size %f", sender.value);
-    
-    CGSize screenSize = [self currentScreenSizeAlwaysPortrait:YES];
+    CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
     
     CGRect viewFrame = selectedView.frame;
     CGFloat ratio = viewFrame.size.height/ MAX(viewFrame.size.width, 1);
@@ -324,18 +346,7 @@
     selectedView.center = oldCenter;
     viewFrame = selectedView.frame;*/
     
-    if (viewFrame.origin.x < 0) {
-        viewFrame.origin.x = 0;
-    } else if (viewFrame.origin.x + viewFrame.size.width > screenSize.width) {
-        viewFrame.origin.x = screenSize.width - viewFrame.size.width;
-    }
-    
-    if (viewFrame.origin.y < 0) {
-        viewFrame.origin.y = 0;
-    } else if (viewFrame.origin.y + viewFrame.size.height > screenSize.height) {
-        viewFrame.origin.y = screenSize.height - viewFrame.size.height;
-    }
-    selectedView.frame = viewFrame;
+    selectedView.frame = [self boundInScreen:viewFrame];
     [selectedView setNeedsLayout];
     [self removeSnapLines];
     [self drawSnapLines];
@@ -363,7 +374,6 @@
         CGRect viewFrame = currentView.frame;
         
         //Snap to other views
-        
         
         viewFrame.origin.x = translatedPoint.x - offsetX;
         viewFrame.origin.y = translatedPoint.y - offsetY;
@@ -414,18 +424,7 @@
         }
         viewFrame = destinationFrame;
         
-        if (viewFrame.origin.x < 0) {
-            viewFrame.origin.x = 0;
-        } else if (viewFrame.origin.x + viewFrame.size.width > screenSize.width) {
-            viewFrame.origin.x = screenSize.width - viewFrame.size.width;
-        }
-        
-        if (viewFrame.origin.y < 0) {
-            viewFrame.origin.y = 0;
-        } else if (viewFrame.origin.y + viewFrame.size.height > screenSize.height) {
-            viewFrame.origin.y = screenSize.height - viewFrame.size.height;
-        }
-        currentView.frame = viewFrame;
+        currentView.frame = [self boundInScreen:viewFrame];
         
         // Draw snap lines after snapping is finished
         [self drawSnapLines];
@@ -440,6 +439,23 @@
         [self removeSnapLines];
         [self updateLayout];
     }
+}
+
+- (CGRect)boundInScreen:(CGRect)viewFrame
+{
+    CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
+    if (viewFrame.origin.x < 0) {
+        viewFrame.origin.x = 0;
+    } else if (viewFrame.origin.x + viewFrame.size.width > screenSize.width) {
+        viewFrame.origin.x = screenSize.width - viewFrame.size.width;
+    }
+    
+    if (viewFrame.origin.y < 0) {
+        viewFrame.origin.y = 0;
+    } else if (viewFrame.origin.y + viewFrame.size.height > screenSize.height) {
+        viewFrame.origin.y = screenSize.height - viewFrame.size.height;
+    }
+    return viewFrame;
 }
 
 - (void)drawSnapLines

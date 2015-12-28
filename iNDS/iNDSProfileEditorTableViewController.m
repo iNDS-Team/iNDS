@@ -46,7 +46,7 @@
     } else {
         switch (indexPath.row) {
             case 0:
-                cell.textLabel.text = @"Edit Profile";
+                cell.textLabel.text = @"Edit Profile Layout";
                 break;
             case 1:
                 cell.textLabel.text = @"Rename Profile";
@@ -68,34 +68,35 @@
 {
     iNDSEmulationProfile * currentProfile = emulationController.profile;
     if (!inEditingMode) {
-        if (indexPath.row == 0) {
+        if (indexPath.row == 0) { //Edit profile
             self.navigationItem.hidesBackButton = YES;
             [emulationController enterEditMode];
             inEditingMode = YES;
-        } else if (indexPath.row == 1) {
+        } else if (indexPath.row == 1) {//Rename
             [currentProfile deleteProfile];
             [currentProfile saveProfileWithCancel:NO];
-        } else if (indexPath.row == 2) {
+        } else if (indexPath.row == 2) {//New
             self.navigationItem.hidesBackButton = YES;
             iNDSEmulationProfile * defaultProfile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
             [emulationController loadProfile:defaultProfile];
             [emulationController enterEditMode];
             inEditingMode = YES;
-        } else if (indexPath.row == 3) {
+        } else if (indexPath.row == 3) {//Duplicate
             [currentProfile saveProfileWithCancel:YES];
         }
     } else {
-        if (indexPath.row == 0 ) {
+        if (indexPath.row == 0 ) {//Save
             self.navigationItem.hidesBackButton = NO;
             [emulationController.profile saveProfileWithCancel:NO];
             inEditingMode = NO;
-        } else {
+        } else { //Discare
             //Just reload from file
             NSString * profilePath = [iNDSEmulationProfile pathForProfileName:currentProfile.name];
             iNDSEmulationProfile * reloadedProfile = [iNDSEmulationProfile profileWithPath:profilePath];
             [emulationController loadProfile:reloadedProfile];
             inEditingMode = NO;
             [self.navigationController popViewControllerAnimated:YES];
+            [emulationController exitEditMode];
         }
         
     }

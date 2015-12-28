@@ -768,7 +768,7 @@ void CHEATS::process()
 			} //end case 0 internal cheat system
 
 			case 1:		// Action Replay
-                printf("AR Code %s\n", list[i].description);
+                //printf("AR Code %s\n", list[i].description);
 				ARparser(list[i]);
 				break;
 			case 2:		// Codebreaker - looks like this doesn't work
