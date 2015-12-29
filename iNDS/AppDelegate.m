@@ -348,7 +348,6 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -359,7 +358,6 @@
 
 //Maybe this could be used later to save a game state on crash
 /*
- 
  void HandleExceptions(NSException *exception) {
  NSLog(@"The app has encountered an unhandled exception: %@", [exception debugDescription]);
  

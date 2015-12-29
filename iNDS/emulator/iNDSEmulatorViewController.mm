@@ -25,6 +25,8 @@
 #import "iNDSMFIControllerSupport.h"
 #import "iNDSEmulationProfile.h"
 
+#import "iCadeReaderView.h"
+
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
 #define SHADER_STRING(text) @ STRINGIZE2(text)
@@ -71,7 +73,7 @@ const float textureVert[] =
     1.0f, 1.0f
 };
 
-@interface iNDSEmulatorViewController () <GLKViewDelegate> {
+@interface iNDSEmulatorViewController () <GLKViewDelegate, iCadeEventDelegate> {
     int fps;
     
     GLuint texHandle[2];
@@ -180,6 +182,11 @@ const float textureVert[] =
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     self.settingsContainer.layer.cornerRadius = 7;
     
+    // ICade
+    iCadeReaderView *control = [[iCadeReaderView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:control];
+    control.active = YES;
+    control.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -792,4 +799,132 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         settingsNav = segue.destinationViewController;
     }
 }
+
+
+#pragma mark - iCade Mode
+- (void)setState:(BOOL)state forButton:(iCadeState)button {
+    if (state) {
+        switch (button) {
+            case iCadeButtonA:
+                [self oniCadeButtonDown:BUTTON_SELECT];
+                break;
+            case iCadeButtonB:
+                [self oniCadeButtonDown:BUTTON_L];
+                break;
+            case iCadeButtonC:
+                [self oniCadeButtonDown:BUTTON_START];
+                break;
+            case iCadeButtonD:
+                [self oniCadeButtonDown:BUTTON_R];
+                break;
+            case iCadeButtonE:
+                [self pressediCadeABXY:iNDSButtonControlButtonY];
+                break;
+            case iCadeButtonF:
+                [self pressediCadeABXY:iNDSButtonControlButtonX];
+                break;
+            case iCadeButtonG:
+                [self pressediCadeABXY:iNDSButtonControlButtonB];
+                break;
+            case iCadeButtonH:
+                [self pressediCadeABXY:iNDSButtonControlButtonA];
+                break;
+                
+            case iCadeJoystickUp:
+                [self pressediCadePad:iNDSDirectionalControlDirectionUp];
+                break;
+            case iCadeJoystickRight:
+                [self pressediCadePad:iNDSDirectionalControlDirectionRight];
+                break;
+            case iCadeJoystickDown:
+                [self pressediCadePad:iNDSDirectionalControlDirectionDown];
+                break;
+            case iCadeJoystickLeft:
+                [self pressediCadePad:iNDSDirectionalControlDirectionLeft];
+                break;
+            default:
+                break;
+        }
+    }
+    else {
+        switch (button) {
+            case iCadeButtonE:
+                [self pressediCadeABXY:0];
+                break;
+            case iCadeButtonF:
+                [self pressediCadeABXY:0];
+                break;
+            case iCadeButtonG:
+                [self pressediCadeABXY:0];
+                break;
+            case iCadeButtonH:
+                [self pressediCadeABXY:0];
+                break;
+                
+            case iCadeJoystickUp:
+                [self pressediCadePad:0];
+                break;
+            case iCadeJoystickRight:
+                [self pressediCadePad:0];
+                break;
+            case iCadeJoystickDown:
+                [self pressediCadePad:0];
+                break;
+            case iCadeJoystickLeft:
+                [self pressediCadePad:0];
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+- (void)pressediCadePad:(iNDSDirectionalControlDirection)state {
+    if (state != _previousDirection && state != 0)
+    {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+        {
+            [self vibrate];
+        }
+    }
+    
+    EMU_setDPad(state & iNDSDirectionalControlDirectionUp, state & iNDSDirectionalControlDirectionDown, state & iNDSDirectionalControlDirectionLeft, state & iNDSDirectionalControlDirectionRight);
+    
+    _previousDirection = state;
+}
+
+- (void)pressediCadeABXY:(iNDSButtonControlButton)state {
+    if (state != _previousButtons && state != 0)
+    {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+        {
+            [self vibrate];
+        }
+    }
+    
+    EMU_setABXY(state & iNDSButtonControlButtonA, state & iNDSButtonControlButtonB, state & iNDSButtonControlButtonX, state & iNDSButtonControlButtonY);
+    
+    _previousButtons = state;
+}
+
+- (void)oniCadeButtonUp:(BUTTON_ID)buttonId {
+    EMU_buttonUp(buttonId);
+}
+
+- (void)oniCadeButtonDown:(BUTTON_ID)buttonId {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"]) {
+        [self vibrate];
+    }
+    EMU_buttonDown(buttonId);
+}
+
+#pragma mark - iCadeDelegate
+- (void)buttonDown:(iCadeState)button {
+    [self setState:YES forButton:button];
+}
+
+- (void)buttonUp:(iCadeState)button {
+    [self setState:NO forButton:button];
+}
 @end
+
