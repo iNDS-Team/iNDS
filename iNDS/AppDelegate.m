@@ -22,10 +22,6 @@
 #import "iNDSInitialViewController.h"
 #import "SCLAlertView.h"
 
-#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
-#define kCFCoreFoundationVersionNumber_iOS_7_0 847.20
-#endif
-
 @implementation AppDelegate
 
 + (AppDelegate*)sharedInstance
@@ -35,15 +31,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [Fabric with:@[[Crashlytics class]]];
-    
     self.alertView = [[SCLAlertView alloc] init];
     self.alertView.shouldDismissOnTapOutside = YES;
     
-    if (kCFCoreFoundationVersionNumber >= kCFCoreFoundationVersionNumber_iOS_7_0) {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    } else {
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
-    }
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
@@ -87,30 +78,31 @@
     }
     
     //Dropbox DBSession Auth
-    
-    NSString* errorMsg = nil;
-	if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
-		errorMsg = @"You must set the App Key correctly for Dropbox to work!";
-	} else if ([[self appSecret] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
-		errorMsg = @"You must set the App Secret correctly for Dropbox to work!";
-	} else {
-		NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
-		NSData *plistData = [NSData dataWithContentsOfFile:plistPath];
-		NSDictionary *loadedPlist =
-        [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:0 format:NULL errorDescription:NULL];
-		NSString *scheme = [[[[loadedPlist objectForKey:@"CFBundleURLTypes"] objectAtIndex:0] objectForKey:@"CFBundleURLSchemes"] objectAtIndex:0];
-		if ([scheme isEqual:@"db-APP_KEY"]) {
-			errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
-		}
-	}
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString* errorMsg = nil;
+        if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
+            errorMsg = @"You must set the App Key correctly for Dropbox to work!";
+        } else if ([[self appSecret] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
+            errorMsg = @"You must set the App Secret correctly for Dropbox to work!";
+        } else {
+            NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
+            NSData *plistData = [NSData dataWithContentsOfFile:plistPath];
+            NSDictionary *loadedPlist =
+            [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:0 format:NULL errorDescription:NULL];
+            NSString *scheme = [[[[loadedPlist objectForKey:@"CFBundleURLTypes"] objectAtIndex:0] objectForKey:@"CFBundleURLSchemes"] objectAtIndex:0];
+            if ([scheme isEqual:@"db-APP_KEY"]) {
+                errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
+            }
+        }
+    
         DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
         [DBSession setSharedSession:dbSession];
-    }); //I think this might be crashing the app on startup, if so it will allow me to get a bug report
+        //I think this might be crashing the app on startup, if so it will allow me to get a bug report
     
-    if (errorMsg != nil) {
-        [self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
-	}
+        if (errorMsg != nil) {
+            [self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
+        }
+    });
     
     [self checkForUpdates];
     /*
@@ -126,12 +118,7 @@
     return YES;
 }
 
-- (void)badAccess
-{
-    void (*nullFunction)() = NULL;
-    
-    nullFunction();
-}
+
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@"Opening: %@", url);
@@ -360,7 +347,9 @@ void HandleExceptions(NSException *exception) {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [CHBgDropboxSync start];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [CHBgDropboxSync start];
+    });
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -369,7 +358,15 @@ void HandleExceptions(NSException *exception) {
 }
 
 
-//THis could be used later to save a game state on crash
+//Maybe this could be used later to save a game state on crash
+/*
+- (void)badAccess
+{
+    void (*nullFunction)() = NULL;
+    
+    nullFunction();
+}
+
 - (void)handleException:(NSException *)exception
 {
     
@@ -416,7 +413,7 @@ void SignalHandler(int sig)
         topController = topController.presentedViewController;
     }
     SCLAlertView * alert = [[SCLAlertView alloc] init];
-    [alert showError:topController title:@"Crash!" subTitle:@"S.O.S" closeButtonTitle:@"Bye" duration:0.0];*/
+    [alert showError:topController title:@"Crash!" subTitle:@"S.O.S" closeButtonTitle:@"Bye" duration:0.0];/
 }
-
+*/
 @end

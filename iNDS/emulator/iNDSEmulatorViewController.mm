@@ -141,6 +141,9 @@ const float textureVert[] =
         profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
     } else {
         profile = [iNDSEmulationProfile profileWithPath:[iNDSEmulationProfile pathForProfileName:currentProfile]];
+        if (!profile) {
+            profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+        }
     }
     [self loadProfile:profile];
     
@@ -209,6 +212,10 @@ const float textureVert[] =
     EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
     EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
     EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //EMU_add_AR("223ce2e10000007f", "MK All Courses", YES);
+        EMU_add_AR("6217acf800000000b217acf800000000000000bc00002000000000c000002000000000c400002000d200000000000000", "XL", YES);
+    });
     [self.profile ajustLayout];
 }
 
@@ -275,6 +282,7 @@ const float textureVert[] =
 
 - (void)viewWillLayoutSubviews
 {
+    [super viewWillLayoutSubviews];
     self.gameContainer.frame = self.view.frame;
     self.controllerContainerView.frame = self.view.frame;
     [self.profile ajustLayout];
@@ -292,6 +300,11 @@ const float textureVert[] =
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     
     self.controllerContainerView.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
+    if ([UIScreen screens].count > 1) {
+        CGSize screenSize = [UIScreen screens][1].bounds.size;
+        CGSize viewSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333), MIN(screenSize.width, screenSize.height * 1.333) * 0.75);
+        glkView[0].frame = CGRectMake(screenSize.width/2 - viewSize.width/2, screenSize.height/2 - viewSize.height/2, viewSize.width, viewSize.height);
+    }
 }
 
 
@@ -304,6 +317,21 @@ const float textureVert[] =
 - (void)screenChanged:(NSNotification*)notification
 {
     [self pauseEmulation];
+    if ([UIScreen screens].count > 1) {
+        NSLog(@"2 Screens");
+        UIScreen *extScreen = [UIScreen screens][1];
+        extScreen.currentMode = extScreen.availableModes[0];
+        extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
+        extWindow.screen = extScreen;
+        extWindow.backgroundColor = [UIColor orangeColor];
+        [extWindow addSubview:glkView[0]];
+        [extWindow makeKeyAndVisible];
+    } else {
+        NSLog(@"1 Screen");
+        extWindow = nil;
+        [self.gameContainer insertSubview:glkView[0] atIndex:0];
+    }
+    [self.view setNeedsLayout];
     [self performSelector:@selector(resumeEmulation) withObject:nil afterDelay:0.5];
 }
 
@@ -335,7 +363,10 @@ const float textureVert[] =
         extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
         extWindow.screen = extScreen;
         extWindow.backgroundColor = [UIColor orangeColor];
-        glkView[0] = [[GLKView alloc] initWithFrame:extWindow.bounds context:self.context];
+        CGSize screenSize = [UIScreen screens][1].bounds.size;
+        CGSize viewSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333), MIN(screenSize.width, screenSize.height * 1.333) * 0.75);
+        CGRect mainScreenRect = CGRectMake(screenSize.width/2 - viewSize.width/2, screenSize.height/2 - viewSize.height/2, viewSize.width, viewSize.height);
+        glkView[0] = [[GLKView alloc] initWithFrame:mainScreenRect context:self.context];
         glkView[1] = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context]; //4:3 ratio is all that matters
         glkView[0].delegate = self;
         glkView[1].delegate = self;
@@ -634,16 +665,12 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         return;
     } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (extWindow) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && !extWindow) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+            movingView = glkView[0];
+        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
-        } else {
-            if (CGRectContainsPoint(glkView[0].frame, location)) {
-                [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
-                movingView = glkView[0];
-            } else if (CGRectContainsPoint(glkView[1].frame, location)) {
-                [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
-                movingView = glkView[1];
-            }
+            movingView = glkView[1];
         }
     } else {
         [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
@@ -654,7 +681,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     if (inEditingMode) { // promatically adding gesture recognizers to glkviews doesn't work
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0] && !extWindow) {
             [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
         } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
@@ -668,9 +695,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location)) {
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
             [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
-        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
+        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateEnded];
         }
         movingView = nil;
@@ -705,8 +732,6 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         
         [self.settingsContainer setHidden:NO];
         [self pauseEmulation];
-        
-        
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.hidden = NO;
             self.darkenView.alpha = 0.6;

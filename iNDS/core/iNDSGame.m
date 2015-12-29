@@ -4,7 +4,7 @@
 //
 //  Created by Zydeco on 16/7/2013.
 //  Copyright (c) 2013 iNDS. All rights reserved.
-//
+//  http://problemkaputt.de/gbatek.htm
 
 #import "iNDSGame.h"
 
@@ -13,6 +13,7 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 @implementation iNDSGame
 {
     NSArray     *saveStates;
+    NSString    *rawTitle;
     NSData      *iconTitleData;
     NSString    *title;
     UIImage     *icon;
@@ -246,12 +247,18 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     
     NSData *data = nil;
     @try {
+        // read rawTitle
+        [fh seekToFileOffset:0xC];
+        data = [fh readDataOfLength:4];
+        if (data.length != 4) return;
+        rawTitle = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+        
         // read location of icon+title
         [fh seekToFileOffset:0x68];
         data = [fh readDataOfLength:4];
         if (data.length != 4) return;
         uint32_t iconOffset = OSReadLittleInt32(data.bytes, 0);
-        if (iconOffset == 0) return;
+        if (iconOffset == 0) return; //No header
         
         // read icon+title data
         [fh seekToFileOffset:iconOffset];

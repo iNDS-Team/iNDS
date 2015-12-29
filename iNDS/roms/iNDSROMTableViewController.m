@@ -112,9 +112,9 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         if (indexPath.section == 0) {  // Del game
+            CLS_LOG(@"Removeing Game");
             iNDSGame *game = games[indexPath.row];
             if ([[NSFileManager defaultManager] removeItemAtPath:game.path error:NULL]) {
-                CLS_LOG(@"Removeing Game");
                 games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
@@ -144,6 +144,7 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (indexPath.section == 0) { // Game
+        if (indexPath.row >= games.count) return [UITableViewCell new];
         iNDSGame *game = games[indexPath.row];
         if (game.gameTitle) {
             // use title from ROM
@@ -155,11 +156,10 @@
             cell.textLabel.text = game.title;
             cell.detailTextLabel.text = nil;
         }
-        
         cell.imageView.image = game.icon;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
-        if (indexPath.row > activeDownloads.count - 1) return [UITableViewCell new];
+        if (indexPath.row >= activeDownloads.count) return [UITableViewCell new];
         iNDSRomDownload * download = activeDownloads[indexPath.row];
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;

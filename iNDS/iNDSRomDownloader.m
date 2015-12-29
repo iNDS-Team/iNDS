@@ -69,7 +69,7 @@
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
     NSString *fileExtension = request.URL.pathExtension.lowercaseString;
-    if (navigationType == UIWebViewNavigationTypeLinkClicked && ([fileExtension isEqualToString:@"ds"] || [fileExtension isEqualToString:@"rar"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]))
+    if ([fileExtension isEqualToString:@"ds"] || [fileExtension isEqualToString:@"rar"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"])
     {
         NSLog(@"Downloading %@", request.URL);
         lastProgress = 0.0;
