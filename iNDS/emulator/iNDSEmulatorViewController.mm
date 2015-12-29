@@ -73,7 +73,7 @@ const float textureVert[] =
     1.0f, 1.0f
 };
 
-@interface iNDSEmulatorViewController () <GLKViewDelegate> {
+@interface iNDSEmulatorViewController () <GLKViewDelegate, iCadeEventDelegate> {
     int fps;
     
     GLuint texHandle[2];
