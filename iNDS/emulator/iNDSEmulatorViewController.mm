@@ -899,7 +899,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         }
     }
     
-    EMU_setABXY(state & NitrogenButtonControlButtonA, state & NitrogenButtonControlButtonB, state & NitrogenButtonControlButtonX, state & NitrogenButtonControlButtonY);
+    EMU_setABXY(state & iNDSButtonControlButtonA, state & iNDSButtonControlButtonB, state & iNDSButtonControlButtonX, state & iNDSButtonControlButtonY);
     
     _previousButtons = state;
 }
