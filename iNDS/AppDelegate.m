@@ -30,22 +30,19 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [Fabric with:@[[Crashlytics class]]];
     self.alertView = [[SCLAlertView alloc] init];
     self.alertView.shouldDismissOnTapOutside = YES;
     
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
-    
-    
     //Create iNDS folder and move old stuff
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         NSError* error;
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:&error];
         if (error) {
             NSLog(@"Unable to create documents");
-            [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to create iNDS folder in documents" closeButtonTitle:@"OK" duration:0.0];
+            //[self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to create iNDS folder in documents" closeButtonTitle:@"OK" duration:0.0];
         } else {
             //Move Battery
             if ([[NSFileManager defaultManager] fileExistsAtPath:self.oldBatteryDir]) {
@@ -78,7 +75,8 @@
     }
     
     //Dropbox DBSession Auth
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [Fabric with:@[[Crashlytics class]]];
         NSString* errorMsg = nil;
         if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
             errorMsg = @"You must set the App Key correctly for Dropbox to work!";
@@ -100,7 +98,8 @@
         //I think this might be crashing the app on startup, if so it will allow me to get a bug report
     
         if (errorMsg != nil) {
-            [self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
+            //[self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
+            NSLog(@"%@", errorMsg);
         }
     });
     
@@ -213,7 +212,7 @@
             NSLog(@"%@", url.pathExtension.lowercaseString);
         }
         // remove inbox (shouldn't be needed)
-        [fm removeItemAtPath:[self.documentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+        [fm removeItemAtPath:[self.oldDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
         // Clear temp
         NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
         for (NSString *file in tmpDirectory) {
@@ -272,6 +271,11 @@
             }
         }
     });
+}
+
+- (NSString *)cheatsDir
+{
+    return [self.documentsPath stringByAppendingPathComponent:@"Cheats"];
 }
 
 - (NSString *)batteryDir
@@ -340,16 +344,11 @@
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
-void HandleExceptions(NSException *exception) {
-    NSLog(@"The app has encountered an unhandled exception: %@", [exception debugDescription]);
-    
-}
+
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        [CHBgDropboxSync start];
-    });
+
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -360,6 +359,12 @@ void HandleExceptions(NSException *exception) {
 
 //Maybe this could be used later to save a game state on crash
 /*
+
+ void HandleExceptions(NSException *exception) {
+ NSLog(@"The app has encountered an unhandled exception: %@", [exception debugDescription]);
+ 
+ }
+ 
 - (void)badAccess
 {
     void (*nullFunction)() = NULL;

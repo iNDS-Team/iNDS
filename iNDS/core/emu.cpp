@@ -570,7 +570,7 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
 #pragma mark - Cheats
 
 //Will
-bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled)
+/*bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled)
 {
     if (cheats->add(size, address, val, description, enabled)) {
         printf("Cheat Added!");
@@ -588,7 +588,6 @@ bool EMU_update(u8 size, u32 address, u32 val, char *description, bool enabled, 
 bool EMU_add_AR(const char *code, const char *description, bool enabled)
 {
     if (cheats->add_AR(code, description, enabled)) {
-        printf("AR Cheat Added!-----------------\n");
         return true;
     } else {
         printf("Error, unable to add AR cheat-----------------\n");
@@ -598,7 +597,7 @@ bool EMU_add_AR(const char *code, const char *description, bool enabled)
 bool EMU_update_AR(const char *code, const char *description, bool enabled, u32 pos)
 {
     return false;
-}
+}*/
 
 const char* EMU_version()
 {

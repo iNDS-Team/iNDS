@@ -52,7 +52,7 @@ class CHEATS
 {
 private:
 	std::vector<CHEATS_LIST> list;
-	u8					filename[MAX_PATH];
+	//u8					filename[MAX_PATH];
 	u32					currentGet;
 
 	void	clear();
@@ -66,7 +66,7 @@ public:
 		memset(filename, 0, sizeof(filename));
 	}
 	~CHEATS() {}
-
+    u8					filename[MAX_PATH]; //Will
 	void	init(char *path);
 	BOOL	add(u8 size, u32 address, u32 val, char *description, BOOL enabled);
 	BOOL	update(u8 size, u32 address, u32 val, char *description, BOOL enabled, u32 pos);

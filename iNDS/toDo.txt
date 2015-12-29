@@ -1,3 +1,8 @@
-Rename Saves 
+Fix layout screens max size
+Fix joystick
+Change home page to google
+Fix extension association errors
+Rename Saves
 Cheat Codes
 Color Change
+

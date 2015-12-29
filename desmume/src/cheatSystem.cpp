@@ -40,7 +40,7 @@ void CHEATS::init(char *path)
 {
 	clear();
 	strcpy((char *)filename, path);
-
+    printf("Loading cheatfile at path: %s\n", path);
 	load();
 }
 

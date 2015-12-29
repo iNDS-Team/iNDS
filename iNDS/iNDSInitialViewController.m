@@ -16,11 +16,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"Loaded");
 }
 
 -(void) viewDidAppear:(BOOL)animated
 {
+    NSLog(@"Appeared");
     [self performSegueWithIdentifier:@"ToRoot" sender:self];
+}
+
+- (UIStatusBarStyle) preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)didReceiveMemoryWarning {

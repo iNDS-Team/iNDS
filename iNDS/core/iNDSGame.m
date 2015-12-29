@@ -92,6 +92,10 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 {
     return self.path.lastPathComponent.stringByDeletingPathExtension;
 }
+- (NSString*)rawTitle
+{
+    return rawTitle;
+}
 
 + (int)preferredLanguage
 {
