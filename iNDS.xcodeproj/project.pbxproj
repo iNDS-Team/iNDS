@@ -22,6 +22,7 @@
 		28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6ED1787D110003A9C5B /* Defaults.plist */; };
 		28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F31787D8D5003A9C5B /* HideEmulator.png */; };
 		28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */; };
+		4651B9C81C323B3300857FB6 /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4651B9C61C323B3300857FB6 /* iCadeReaderView.m */; };
 		4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3F2AEC178E017600AE10B8 /* Twitter.framework */; };
 		8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */; };
 		8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */; };
@@ -245,6 +246,9 @@
 		28E7A6ED1787D110003A9C5B /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = iNDS/settings/Defaults.plist; sourceTree = SOURCE_ROOT; };
 		28E7A6F31787D8D5003A9C5B /* HideEmulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HideEmulator.png; path = Resources/HideEmulator.png; sourceTree = "<group>"; };
 		28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HideEmulator@2x.png"; path = "Resources/HideEmulator@2x.png"; sourceTree = "<group>"; };
+		4651B9C51C323B3300857FB6 /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
+		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
+		4651B9C71C323B3300857FB6 /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
 		4C3F2AEC178E017600AE10B8 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		8B283069178DDC7F00E92785 /* iNDSDonationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSDonationViewController.h; path = iNDS/donation/iNDSDonationViewController.h; sourceTree = SOURCE_ROOT; };
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
@@ -655,6 +659,16 @@
 			name = "math-neon";
 			sourceTree = "<group>";
 		};
+		4651B9C41C323B3300857FB6 /* iCade */ = {
+			isa = PBXGroup;
+			children = (
+				4651B9C51C323B3300857FB6 /* iCadeReaderView.h */,
+				4651B9C61C323B3300857FB6 /* iCadeReaderView.m */,
+				4651B9C71C323B3300857FB6 /* iCadeState.h */,
+			);
+			path = iCade;
+			sourceTree = "<group>";
+		};
 		8B283062178DDC4B00E92785 /* Donation */ = {
 			isa = PBXGroup;
 			children = (
@@ -810,6 +824,7 @@
 		BFAE6FAB17675623000911CF /* Controls */ = {
 			isa = PBXGroup;
 			children = (
+				4651B9C41C323B3300857FB6 /* iCade */,
 				C345B67018906BB40065A795 /* iNDSMFIControllerSupport.h */,
 				C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */,
 				8BEA096617872C190060B347 /* iNDSButtonControl.h */,
@@ -1516,6 +1531,7 @@
 				BFCFE19A17650FB0000A70CF /* path.cpp in Sources */,
 				BFCFE19B17650FB0000A70CF /* rasterize.cpp in Sources */,
 				BFCFE19C17650FB0000A70CF /* readwrite.cpp in Sources */,
+				4651B9C81C323B3300857FB6 /* iCadeReaderView.m in Sources */,
 				BFCFE19D17650FB0000A70CF /* render3D.cpp in Sources */,
 				CA031D2E1BEBE1EB00EDE98D /* Ppmd8Dec.c in Sources */,
 				BFCFE19E17650FB0000A70CF /* ROMReader.cpp in Sources */,

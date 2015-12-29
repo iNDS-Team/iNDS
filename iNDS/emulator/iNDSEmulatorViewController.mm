@@ -25,6 +25,8 @@
 #import "iNDSMFIControllerSupport.h"
 #import "iNDSEmulationProfile.h"
 
+#import "iCadeReaderView.h"
+
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
 #define SHADER_STRING(text) @ STRINGIZE2(text)
