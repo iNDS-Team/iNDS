@@ -182,6 +182,11 @@ const float textureVert[] =
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     self.settingsContainer.layer.cornerRadius = 7;
     
+    // ICade
+    iCadeReaderView *control = [[iCadeReaderView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:control];
+    control.active = YES;
+    control.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
