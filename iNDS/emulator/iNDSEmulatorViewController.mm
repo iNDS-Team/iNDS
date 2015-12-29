@@ -890,7 +890,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     _previousDirection = state;
 }
 
-- (void)pressediCadeABXY:(iNDSnButtonControlButton)state {
+- (void)pressediCadeABXY:(iNDSButtonControlButton)state {
     if (state != _previousButtons && state != 0)
     {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
@@ -924,4 +924,4 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     [self setState:NO forButton:button];
 }
 @end
-@end
+
