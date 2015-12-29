@@ -7508,17 +7508,25 @@ uint32_t *p;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
+    /*ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
+    if (!opfun) {
+        opfun = armcpu_compile<PROCNUM>();
+        printf("No Opfun!\n");
+    }
+    
+    return opfun();*/
+    
     int pagesize = getpagesize();
     
     printf("Before Execution\n");
     
     if (!p)
     {
-        posix_memalign((void **)&p, pagesize, 1024);
+        posix_memalign((void **)&p, pagesize, 1024 * 4);
     }
     else
     {
-        if (mprotect(p, 1024, PROT_READ | PROT_WRITE)) {
+        if (mprotect(p, 1024 * 4, PROT_READ | PROT_WRITE)) {
             perror("Couldn't mprotect");
             exit(errno);
         }
@@ -7540,7 +7548,7 @@ TEMPLATE static u32 cpuExecuteLJIT()
     
     printf("After Compiling\n");
     
-    if (mprotect(p, 1024, PROT_READ | PROT_EXEC)) {
+    if (mprotect(p, 1024 * 4, PROT_READ | PROT_EXEC)) {
         perror("Couldn't mprotect");
         exit(errno);
     }

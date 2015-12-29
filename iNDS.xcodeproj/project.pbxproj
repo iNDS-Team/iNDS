@@ -174,7 +174,6 @@
 		CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */; };
 		CA4748E51C100178006F1438 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; };
 		CA4748E61C100178006F1438 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CA7079C61C08F901005A1B19 /* upgrade.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079C51C08F901005A1B19 /* upgrade.png */; };
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
 		CA7079CD1C095147005A1B19 /* toDo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CC1C095147005A1B19 /* toDo.txt */; };
@@ -195,6 +194,9 @@
 		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */; };
 		CABE38451C30BFDF00BE8857 /* NSString+CompareToVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */; };
+		CABE38981C30FA9800BE8857 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CABE38971C30FA9800BE8857 /* libsqlite3.tbd */; };
+		CABE389B1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */; };
+		CABE38A41C32201000BE8857 /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CABE38A31C321F0200BE8857 /* cheats.rar */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -547,7 +549,6 @@
 		CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
 		CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnrarKit.framework; path = iNDS/frameworks/UnrarKit.framework; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
-		CA7079C51C08F901005A1B19 /* upgrade.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = upgrade.png; path = iNDS/upgrade.png; sourceTree = "<group>"; };
 		CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSInitialViewController.h; sourceTree = "<group>"; };
 		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
 		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
@@ -580,9 +581,12 @@
 		CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfileTableViewController.m; sourceTree = "<group>"; };
 		CABE383D1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSProfileEditorTableViewController.h; sourceTree = "<group>"; };
 		CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSProfileEditorTableViewController.m; sourceTree = "<group>"; };
-		CABE38411C30B76900BE8857 /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheats.7z; sourceTree = "<group>"; };
 		CABE38431C30BFDE00BE8857 /* NSString+CompareToVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareToVersion.h"; sourceTree = "<group>"; };
 		CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareToVersion.m"; sourceTree = "<group>"; };
+		CABE38971C30FA9800BE8857 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		CABE38991C30FB2900BE8857 /* iNDSCheatsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSCheatsTableViewController.h; sourceTree = "<group>"; };
+		CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSCheatsTableViewController.mm; sourceTree = "<group>"; };
+		CABE38A31C321F0200BE8857 /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheats.rar; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -619,6 +623,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CABE38981C30FA9800BE8857 /* libsqlite3.tbd in Frameworks */,
 				CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */,
 				CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */,
 				9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */,
@@ -737,10 +742,9 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38411C30B76900BE8857 /* cheats.7z */,
+				CABE38A31C321F0200BE8857 /* cheats.rar */,
 				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
-				CA7079C51C08F901005A1B19 /* upgrade.png */,
 				D325821017A1D69B0009C84B /* pixelgrid.png */,
 				D325821117A1D69B0009C84B /* pixelgrid@2x.png */,
 				BF9D517017867F8200B5864B /* Controls */,
@@ -795,7 +799,6 @@
 		BFAE6F8F176748CF000911CF /* Emulator View */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38401C30736D00BE8857 /* Cheats */,
 				CABE38301C27E44800BE8857 /* Settings */,
 				8BEA096C17872C320060B347 /* iNDSEmulatorViewController.h */,
 				8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */,
@@ -841,6 +844,7 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38971C30FA9800BE8857 /* libsqlite3.tbd */,
 				CA908C161C239D0000B2A864 /* Fabric.framework */,
 				CA908C171C239D0000B2A864 /* Crashlytics.framework */,
 				CA908C0E1C235AA000B2A864 /* Accelerate.framework */,
@@ -1282,15 +1286,10 @@
 				CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */,
 				CABE383D1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.h */,
 				CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */,
+				CABE38991C30FB2900BE8857 /* iNDSCheatsTableViewController.h */,
+				CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */,
 			);
 			name = Settings;
-			sourceTree = "<group>";
-		};
-		CABE38401C30736D00BE8857 /* Cheats */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Cheats;
 			sourceTree = "<group>";
 		};
 		CABE38421C30BFC600BE8857 /* Utilities */ = {
@@ -1421,6 +1420,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CABE38A41C32201000BE8857 /* cheats.rar in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
 				28DA4A52178802FB002236A4 /* RTrigger.png in Resources */,
 				28DA4A491787FD7F002236A4 /* Select@2x.png in Resources */,
@@ -1430,7 +1430,6 @@
 				CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */,
 				28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */,
 				CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */,
-				CA7079C61C08F901005A1B19 /* upgrade.png in Resources */,
 				28DA4A53178802FB002236A4 /* RTrigger@2x.png in Resources */,
 				CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */,
 				28DA4A50178802FB002236A4 /* LTrigger.png in Resources */,
@@ -1505,6 +1504,7 @@
 				BFCFE19317650FB0000A70CF /* GPU.cpp in Sources */,
 				BFCFE19417650FB0000A70CF /* JitCommon.cpp in Sources */,
 				BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */,
+				CABE389B1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm in Sources */,
 				CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */,
 				BFCFE19517650FB0000A70CF /* matrix.cpp in Sources */,
 				BFCFE19617650FB0000A70CF /* mc.cpp in Sources */,
@@ -1784,7 +1784,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.2.1;
+				CURRENT_PROJECT_VERSION = 1.3.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -1837,7 +1837,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.2.1;
+				CURRENT_PROJECT_VERSION = 1.3.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",

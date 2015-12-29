@@ -28,6 +28,7 @@
     [super viewDidLoad];
     
     self.navigationItem.title = @"Roms";
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     
     BOOL isDir;
     NSFileManager* fm = [NSFileManager defaultManager];
@@ -36,19 +37,7 @@
     {
         [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:NO attributes:nil error:nil];
         NSLog(@"Created Battery");
-    } else {
-        // move saved states from documents into battery directory
-        for (NSString *file in [fm contentsOfDirectoryAtPath:AppDelegate.sharedInstance.documentsPath error:NULL]) {
-            if ([file.pathExtension isEqualToString:@"dsv"]) {
-                NSError *err = nil;
-                [fm moveItemAtPath:[AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:file]
-                            toPath:[AppDelegate.sharedInstance.batteryDir stringByAppendingPathComponent:file]
-                             error:&err];
-                if (err) NSLog(@"Could not move %@ to battery dir: %@", file, err);
-            }
-        }
-    }
-    
+    }     
     // Localize the title
     romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
     
@@ -85,6 +74,11 @@
     
 }
 
+- (UIStatusBarStyle) preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)reloadGames:(NSNotification*)aNotification
 {
     NSUInteger row = [aNotification.object isKindOfClass:[iNDSGame class]] ? [games indexOfObject:aNotification.object] : NSNotFound;
@@ -101,6 +95,7 @@
         [self.tableView reloadData];
     }
 }
+
 
 #pragma mark - Table View
 

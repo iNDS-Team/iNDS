@@ -214,7 +214,7 @@ const float textureVert[] =
     EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         //EMU_add_AR("223ce2e10000007f", "MK All Courses", YES);
-        EMU_add_AR("6217acf800000000b217acf800000000000000bc00002000000000c000002000000000c400002000d200000000000000", "XL", YES);
+        //EMU_add_AR("6217acf800000000b217acf800000000000000bc00002000000000c000002000000000c400002000d200000000000000", "XL", YES);
     });
     [self.profile ajustLayout];
 }
@@ -318,7 +318,6 @@ const float textureVert[] =
 {
     [self pauseEmulation];
     if ([UIScreen screens].count > 1) {
-        NSLog(@"2 Screens");
         UIScreen *extScreen = [UIScreen screens][1];
         extScreen.currentMode = extScreen.availableModes[0];
         extWindow = [[UIWindow alloc] initWithFrame:extScreen.bounds];
@@ -327,7 +326,6 @@ const float textureVert[] =
         [extWindow addSubview:glkView[0]];
         [extWindow makeKeyAndVisible];
     } else {
-        NSLog(@"1 Screen");
         extWindow = nil;
         [self.gameContainer insertSubview:glkView[0] atIndex:0];
     }

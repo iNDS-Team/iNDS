@@ -22,6 +22,7 @@
 
 + (AppDelegate *)sharedInstance;
 
+- (NSString *)cheatsDir;
 - (NSString *)batteryDir;
 - (NSString *)documentsPath;
 - (NSString *)oldBatteryDir;

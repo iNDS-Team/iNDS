@@ -76,7 +76,7 @@
     else if (indexPath.section == 1) {
         iNDSEmulationProfile * profile = profiles[indexPath.row];
         cell.textLabel.text = profile.name;
-        if (profile == AppDelegate.sharedInstance.currentEmulatorViewController.profile) { //Current profile
+        if ([profile.name isEqualToString:AppDelegate.sharedInstance.currentEmulatorViewController.profile.name]) { //Current profile
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
