@@ -13,7 +13,6 @@
 #import "ConciseKit.h"
 #import "AppDelegate.h"
 #import "ZAActivityBar.h"
-
 #define lastSyncDefaultsKey @"CHBgDropboxSyncLastSyncFiles"
 
 // Privates

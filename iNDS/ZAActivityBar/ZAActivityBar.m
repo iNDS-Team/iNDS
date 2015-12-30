@@ -216,7 +216,7 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         if(!self.superview)
             [self.overlayWindow addSubview:self];
-        
+        if ([UIApplication sharedApplication].statusBarHidden) return; //Don't show if in game
         // Add the action
         [self addAction:action withStatus:status];
 

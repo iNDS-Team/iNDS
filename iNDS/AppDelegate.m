@@ -30,10 +30,7 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.alertView = [[SCLAlertView alloc] init];
-    self.alertView.shouldDismissOnTapOutside = YES;
     
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     //Create iNDS folder and move old stuff
@@ -75,7 +72,7 @@
     }
     
     //Dropbox DBSession Auth
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [Fabric with:@[[Crashlytics class]]];
         [[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
         NSString* errorMsg = nil;
@@ -96,11 +93,12 @@
     
         DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
         [DBSession setSharedSession:dbSession];
-        //I think this might be crashing the app on startup, if so it will allow me to get a bug report
     
         if (errorMsg != nil) {
             //[self.alertView showError:[self topMostController] title:NSLocalizedString(@"DROPBOX_CFG_ERROR", nil) subTitle:errorMsg closeButtonTitle:@"OK" duration:0.0];
             NSLog(@"%@", errorMsg);
+        } else {
+             [CHBgDropboxSync start];
         }
     });
     
@@ -126,7 +124,8 @@
         NSLog(@"DB");
         if ([[DBSession sharedSession] handleOpenURL:url]) {
             if ([[DBSession sharedSession] isLinked]) {
-                [self.alertView showInfo:NSLocalizedString(@"SUCCESS", nil) subTitle:NSLocalizedString(@"SUCCESS_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
+                SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
+                [alert showInfo:NSLocalizedString(@"SUCCESS", nil) subTitle:NSLocalizedString(@"SUCCESS_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"enableDropbox"];
                 [CHBgDropboxSync clearLastSyncData];
                 [CHBgDropboxSync start];
@@ -215,7 +214,6 @@
         // remove inbox (shouldn't be needed)
         [fm removeItemAtPath:[self.oldDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
         // Clear temp
-        NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
         
         return YES;
     } else {
@@ -228,7 +226,9 @@
 - (void)showError:(NSString *)error
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.alertView showError:[self topMostController] title:@"Error!" subTitle:error closeButtonTitle:@"Okay" duration:0.0];
+        SCLAlertView * alertView = [[SCLAlertView alloc] init];
+        alertView.shouldDismissOnTapOutside = YES;
+        [alertView showError:[self topMostController] title:@"Error!" subTitle:error closeButtonTitle:@"Okay" duration:0.0];
     });
 }
 

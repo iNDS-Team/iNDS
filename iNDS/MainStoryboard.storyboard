@@ -1341,7 +1341,9 @@
                             <outlet property="delegate" destination="bLZ-RD-lRc" id="zou-SB-TDs"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="xl1-YY-f7l"/>
+                    <navigationItem key="navigationItem" id="xl1-YY-f7l">
+                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="add" id="cXf-GX-t2i"/>
+                    </navigationItem>
                     <connections>
                         <segue destination="u1h-1S-nZg" kind="push" identifier="OpenCheatFolder" id="Omu-Qw-vhe"/>
                     </connections>

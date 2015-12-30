@@ -23,12 +23,9 @@
 {
     NSLog(@"Appeared");
     [self performSegueWithIdentifier:@"ToRoot" sender:self];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
 }
 
-- (UIStatusBarStyle) preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

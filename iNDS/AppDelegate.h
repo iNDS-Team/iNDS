@@ -17,7 +17,6 @@
 @property (strong, nonatomic) iNDSGame *currentGame;
 @property (strong, nonatomic) iNDSEmulatorViewController *currentEmulatorViewController;
 @property (strong, nonatomic) NSURL *lastUrl;
-@property (strong, atomic) SCLAlertView * alertView;
 
 
 + (AppDelegate *)sharedInstance;
