@@ -152,7 +152,7 @@ const float textureVert[] =
     self.view.multipleTouchEnabled = YES;
     
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(pauseEmulation) name:UIApplicationWillResignActiveNotification object:nil];
+    [notificationCenter addObserver:self selector:@selector(suspendEmulation) name:UIApplicationWillResignActiveNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(resumeEmulation) name:UIApplicationDidBecomeActiveNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(screenChanged:) name:UIScreenDidConnectNotification object:nil];
@@ -228,6 +228,7 @@ const float textureVert[] =
 
 - (void)changeGame
 {
+    [self saveStateWithName:@"Pause"];
     [self pauseEmulation];
     [self shutdownGL];
     [self loadROM];
@@ -460,6 +461,15 @@ const float textureVert[] =
     return image;
 }
 
+- (void)suspendEmulation
+{
+    NSLog(@"Suspending Emulation");
+    EMU_pause(true);
+    [emuLoopLock lock]; // make sure emulator loop has ended
+    [emuLoopLock unlock];
+    [self shutdownGL];
+}
+
 - (void)pauseEmulation
 {
     if (!execute) return;
@@ -476,7 +486,7 @@ const float textureVert[] =
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
     [emuLoopLock unlock];
-    //[self shutdownGL];
+    
 }
 
 - (void)resumeEmulation
@@ -487,7 +497,8 @@ const float textureVert[] =
     self.snapshotView.hidden = YES;
     
     // resume emulation
-    //[self initGL];
+    if (!glkView[0])
+        [self initGL];
     EMU_pause(false);
     //[self.profile ajustLayout];
     [self startEmulatorLoop];

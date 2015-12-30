@@ -244,7 +244,7 @@
 - (void)checkForUpdates
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSError * error;
+        /*NSError * error;
         NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.willamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:&error];
         NSLog(@"%@", latestVersion);
         latestVersion = [latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
@@ -257,7 +257,7 @@
                 [alert showInfo:[self topMostController] title:@"Update" subTitle:[NSString stringWithFormat:@"A newer version of iNDS is now avaliable: %@", latestVersion] closeButtonTitle:@"Thanks!" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setBool:YES forKey:myVersion];
             });
-        } else {
+        } else {*/
             //Show Twitter alert
             if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
                 [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
@@ -276,7 +276,7 @@
                     [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
                 });
             }
-        }
+        //}
     });
 }
 

@@ -66,7 +66,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     self.settingsTitle.title = NSLocalizedString(@"SETTINGS", nil);
     
@@ -102,6 +101,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSInteger frameSkip = [defaults integerForKey:@"frameSkip"];
     self.frameSkipControl.selectedSegmentIndex = frameSkip < 0 ? 5 : frameSkip;
@@ -123,12 +124,10 @@
     if ([defaults boolForKey:@"enableDropbox"] == true) {
         self.accountLabel.text = NSLocalizedString(@"LINKED", nil);
     }
+    [self appDidBecomeActive];
 }
 
-- (UIStatusBarStyle) preferredStatusBarStyle
-{
-    return UIStatusBarStyleLightContent;
-}
+
 
 - (NSString *)tableView:(UITableView *)tableView  titleForHeaderInSection:(NSInteger)section
 {
@@ -234,7 +233,7 @@
 }
 
 
-- (void)appDidBecomeActive:(NSNotification *)notification
+- (void)appDidBecomeActive
 {
     self.dropboxSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"enableDropbox"];
     

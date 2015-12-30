@@ -63,14 +63,13 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [CHBgDropboxSync start];
     [super viewWillAppear:animated];
-    
-    
 }
 
 - (UIStatusBarStyle) preferredStatusBarStyle
