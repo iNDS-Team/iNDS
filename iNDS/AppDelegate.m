@@ -282,7 +282,7 @@
 
 - (NSString *)cheatsDir
 {
-    return [self.batteryDir stringByAppendingPathComponent:@"Cheats"];
+    return [self batteryDir]; //Changed this because of dropbox sync troubles
 }
 
 - (NSString *)batteryDir

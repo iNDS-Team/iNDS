@@ -35,8 +35,6 @@
     
     if (![fm fileExistsAtPath:AppDelegate.sharedInstance.batteryDir isDirectory:&isDir])
         [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:NO attributes:nil error:nil];
-    if (![fm fileExistsAtPath:AppDelegate.sharedInstance.cheatsDir isDirectory:&isDir])
-        [fm createDirectoryAtPath:AppDelegate.sharedInstance.cheatsDir withIntermediateDirectories:NO attributes:nil error:nil];
     
     // Localize the title
     romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
