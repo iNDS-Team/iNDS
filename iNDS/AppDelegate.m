@@ -77,6 +77,7 @@
     //Dropbox DBSession Auth
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [Fabric with:@[[Crashlytics class]]];
+        [[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
         NSString* errorMsg = nil;
         if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
             errorMsg = @"You must set the App Key correctly for Dropbox to work!";
@@ -144,7 +145,7 @@
             if ([fm createDirectoryAtPath:dstDir withIntermediateDirectories:YES attributes:nil error:&err] == NO) {
                 NSLog(@"Could not create directory to expand zip: %@ %@", dstDir, err);
                 [fm removeItemAtURL:url error:NULL];
-                [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .zip file." closeButtonTitle:@"OK" duration:0.0];
+                [self showError:@"Unable to extract .zip file."];
                 return NO;
             }
             
@@ -156,7 +157,7 @@
             } else if ([url.pathExtension.lowercaseString isEqualToString:@"7z"]) {
                 if (![LZMAExtractor extract7zArchive:url.path tmpDirName:[@"extract" stringByAppendingPathComponent:url.path.lastPathComponent]]) {
                     NSLog(@"Unable to extract 7z");
-                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .7z file." closeButtonTitle:@"OK" duration:0.0];
+                    [self showError:@"Unable to extract .7z file."];
                     return NO;
                 }
             } else { //Rar
@@ -164,7 +165,7 @@
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
                     NSLog(@"Unable to open rar: %@", archiveError);
-                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to read extract .rar file." closeButtonTitle:@"OK" duration:0.0];
+                    [self showError:@"Unable to read .rar file."];
                     return NO;
                 }
                 //Extract
@@ -172,8 +173,7 @@
                 [archive extractFilesTo:dstDir overwrite:YES progress:nil error:&error];
                 if (error) {
                     NSLog(@"Unable to extract rar: %@", archiveError);
-                    [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"Unable to extract .rar file." closeButtonTitle:@"OK" duration:0.0];
-                    return NO;
+                    [self showError:@"Unable to extract .rar file."];
                 }
                 
             }
@@ -191,10 +191,11 @@
                     [foundItems addObject:path.lastPathComponent];
                 } else {
                     NSLog(@"Discarding: %@", path);
+                    [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
                 }
             }
             if (foundItems.count == 0) {
-                [self.alertView showError:[self topMostController] title:@"Error!" subTitle:@"No roms or saves found in archive." closeButtonTitle:@"OK" duration:0.0];
+                [self showError:@"No roms or saves found in archive."];
             }
             else if (foundItems.count == 1) {
                 [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added: %@", foundItems[0]] duration:3];
@@ -215,16 +216,20 @@
         [fm removeItemAtPath:[self.oldDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
         // Clear temp
         NSArray* tmpDirectory = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:NSTemporaryDirectory() error:NULL];
-        for (NSString *file in tmpDirectory) {
-            [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
-        }
         
         return YES;
     } else {
-        [self.alertView showError:[self topMostController] title:@"Error!" subTitle:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url] closeButtonTitle:@"OK" duration:0.0];
+        [self showError:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url]];
         
     }
     return NO;
+}
+
+- (void)showError:(NSString *)error
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.alertView showError:[self topMostController] title:@"Error!" subTitle:error closeButtonTitle:@"Okay" duration:0.0];
+    });
 }
 
 - (UIViewController*) topMostController
@@ -239,11 +244,13 @@
 - (void)checkForUpdates
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.williamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:nil];
+        NSError * error;
+        NSString *latestVersion = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://www.willamlcobb.com/iNDS/latest.txt"] encoding:NSUTF8StringEncoding error:&error];
+        NSLog(@"%@", latestVersion);
         latestVersion = [latestVersion stringByReplacingOccurrencesOfString:@"\n" withString:@""];
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         
-        if ([latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending && ![[NSUserDefaults standardUserDefaults] objectForKey:myVersion]) {
+        if (!error && [latestVersion compare:myVersion options:NSNumericSearch] == NSOrderedDescending && ![[NSUserDefaults standardUserDefaults] objectForKey:myVersion]) {
             NSLog(@"Upgrade Needed lastest<%@> mine<%@>", latestVersion, myVersion);
             dispatch_async(dispatch_get_main_queue(), ^{
                 SCLAlertView * alert = [[SCLAlertView alloc] init];
@@ -275,7 +282,7 @@
 
 - (NSString *)cheatsDir
 {
-    return [self.documentsPath stringByAppendingPathComponent:@"Cheats"];
+    return [self.batteryDir stringByAppendingPathComponent:@"Cheats"];
 }
 
 - (NSString *)batteryDir

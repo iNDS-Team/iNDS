@@ -482,7 +482,7 @@ const float textureVert[] =
 - (void)resumeEmulation
 {
     if (self.presentingViewController.presentedViewController != self) return;
-    if (execute || inEditingMode) return;
+    if (execute || inEditingMode || settingsShown) return;
     // remove snapshot
     self.snapshotView.hidden = YES;
     
@@ -791,6 +791,18 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     }];
     
     [alert showEdit:self title:@"Save State" subTitle:@"Name for save state:\n" closeButtonTitle:nil duration:0.0f];
+}
+
+- (void)reloadEmulator
+{
+    [self pauseEmulation];
+    [self shutdownGL];
+    [self loadROM];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.profile ajustLayout];
+        [self toggleSettings:self];
+    });
+    [self saveStateWithName:@"iNDSReloadState"];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

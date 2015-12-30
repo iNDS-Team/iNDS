@@ -64,6 +64,9 @@
         case 3: //Save State
             [emulationController newSaveState]; //Request that the controller save
             break;
+        case 8: //Reload
+            [emulationController reloadEmulator]; //Request that the controller save
+            break;
         default:
             break;
     }

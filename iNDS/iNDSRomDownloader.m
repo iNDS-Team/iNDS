@@ -30,6 +30,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    CGRect urlFieldRect = urlField.frame;
+    urlFieldRect.size.width = self.view.frame.size.width - 80;
+    urlField.frame = urlFieldRect;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -41,10 +44,10 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.emuparadise.me/Nintendo_DS_ROMs/32"]]];
-    //[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://10.20.51.95:8000"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.google.com/search?q=Nintendo+DS+Roms"]]];
+    //[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://10.0.1.20:8000"]]];
     webView.scrollView.delegate = self;
-    urlField.text = @"http://www.emuparadise.me/Nintendo_DS_ROMs/32";
+    urlField.text = @"http://www.google.com/search?q=Nintendo+DS+Roms";
     lastURL = urlField.text;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
@@ -93,11 +96,12 @@
 
 -(IBAction)go:(id)sender
 {
-    NSLog(@"GO");
+    [self.view endEditing:YES];
     NSString * location = urlField.text;
-    if (![location hasPrefix:@"http://"] || ![location hasPrefix:@"https://"]) {
+    if (!([location hasPrefix:@"http://"] || [location hasPrefix:@"https://"])) {
         location = [NSString stringWithFormat:@"http://%@", location];
     }
+    NSLog(@"GO to %@", location);
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:location]]];
 }
 - (IBAction)hide:(id)sender

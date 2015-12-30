@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface iNDSCheatsTableViewController : UITableViewController
+@interface iNDSCheatsTableViewController : UITableViewController <NSXMLParserDelegate>
 
 @end

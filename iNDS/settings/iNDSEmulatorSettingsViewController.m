@@ -125,7 +125,10 @@
     }
 }
 
-
+- (UIStatusBarStyle) preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
 
 - (NSString *)tableView:(UITableView *)tableView  titleForHeaderInSection:(NSInteger)section
 {

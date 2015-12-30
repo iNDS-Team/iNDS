@@ -1342,10 +1342,42 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="xl1-YY-f7l"/>
+                    <connections>
+                        <segue destination="u1h-1S-nZg" kind="push" identifier="OpenCheatFolder" id="Omu-Qw-vhe"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6S0-fS-Zhf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1950" y="1611"/>
+        </scene>
+        <!--Cheats Folder Table View Controller-->
+        <scene sceneID="8n3-OK-fuP">
+            <objects>
+                <tableViewController id="u1h-1S-nZg" customClass="iNDSCheatsFolderTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="LYm-hy-91l">
+                        <rect key="frame" x="0.0" y="0.0" width="260" height="400"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="iNh-1y-Pge">
+                                <rect key="frame" x="0.0" y="72" width="260" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iNh-1y-Pge" id="JXH-qC-G6S">
+                                    <rect key="frame" x="0.0" y="0.0" width="260" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="u1h-1S-nZg" id="MYn-Xa-cmE"/>
+                            <outlet property="delegate" destination="u1h-1S-nZg" id="YS3-M9-TW7"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="mfd-DJ-IlN"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="d0A-jp-DXK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2365" y="1611"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="JGM-G4-YhU">

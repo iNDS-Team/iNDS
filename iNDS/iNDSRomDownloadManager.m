@@ -86,8 +86,9 @@
     //[ZAActivityBar showWithStatus:@"Download Complete, Opening"];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [AppDelegate.sharedInstance application:nil openURL:escapedPath sourceApplication:nil annotation:nil];
+        [_delegate removeDownload:self];
     });
-    [_delegate removeDownload:self];
+    
 }
 @end
 

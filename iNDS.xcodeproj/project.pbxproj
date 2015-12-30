@@ -198,6 +198,9 @@
 		CABE38981C30FA9800BE8857 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CABE38971C30FA9800BE8857 /* libsqlite3.tbd */; };
 		CABE389B1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */; };
 		CABE38A41C32201000BE8857 /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CABE38A31C321F0200BE8857 /* cheats.rar */; };
+		CABE38A81C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */; };
+		CABE38AC1C344BB000BE8857 /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38AA1C344BB000BE8857 /* Folder.png */; };
+		CABE38AD1C344BB000BE8857 /* Folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38AB1C344BB000BE8857 /* Folder@2x.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -252,7 +255,6 @@
 		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		4651B9C71C323B3300857FB6 /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
 		4C3F2AEC178E017600AE10B8 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		8B283069178DDC7F00E92785 /* iNDSDonationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSDonationViewController.h; path = iNDS/donation/iNDSDonationViewController.h; sourceTree = SOURCE_ROOT; };
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSROMTableViewController.h; path = iNDS/roms/iNDSROMTableViewController.h; sourceTree = SOURCE_ROOT; };
@@ -591,6 +593,10 @@
 		CABE38991C30FB2900BE8857 /* iNDSCheatsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSCheatsTableViewController.h; sourceTree = "<group>"; };
 		CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSCheatsTableViewController.mm; sourceTree = "<group>"; };
 		CABE38A31C321F0200BE8857 /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheats.rar; sourceTree = "<group>"; };
+		CABE38A61C34460B00BE8857 /* iNDSCheatsFolderTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSCheatsFolderTableViewController.h; sourceTree = "<group>"; };
+		CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSCheatsFolderTableViewController.mm; sourceTree = "<group>"; };
+		CABE38AA1C344BB000BE8857 /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
+		CABE38AB1C344BB000BE8857 /* Folder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Folder@2x.png"; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -747,6 +753,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38A91C344BA500BE8857 /* Icons */,
 				CABE38A31C321F0200BE8857 /* cheats.rar */,
 				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
@@ -804,7 +811,6 @@
 		BFAE6F8F176748CF000911CF /* Emulator View */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38401C30736D00BE8857 /* Cheats */,
 				CABE38301C27E44800BE8857 /* Settings */,
 				8BEA096C17872C320060B347 /* iNDSEmulatorViewController.h */,
 				8BEA096D17872C320060B347 /* iNDSEmulatorViewController.mm */,
@@ -883,7 +889,6 @@
 				9C8DDCCD19FDD8D500D03AB2 /* App Init */,
 				BFCFE12F17650ED0000A70CF /* DeSmuME */,
 				BF9D51751786A60E00B5864B /* Settings */,
-				8B283062178DDC4B00E92785 /* Donation */,
 				BFAE6FAB17675623000911CF /* Controls */,
 				BFAE6F8F176748CF000911CF /* Emulator View */,
 				BFCFE12E17650D3F000A70CF /* DocWatchHelper */,
@@ -1293,8 +1298,7 @@
 				CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */,
 				CABE383D1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.h */,
 				CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */,
-				CABE38991C30FB2900BE8857 /* iNDSCheatsTableViewController.h */,
-				CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */,
+				CABE38A51C3445C300BE8857 /* Cheats */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1306,6 +1310,26 @@
 				CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */,
 			);
 			name = Utilities;
+			sourceTree = "<group>";
+		};
+		CABE38A51C3445C300BE8857 /* Cheats */ = {
+			isa = PBXGroup;
+			children = (
+				CABE38991C30FB2900BE8857 /* iNDSCheatsTableViewController.h */,
+				CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */,
+				CABE38A61C34460B00BE8857 /* iNDSCheatsFolderTableViewController.h */,
+				CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */,
+			);
+			name = Cheats;
+			sourceTree = "<group>";
+		};
+		CABE38A91C344BA500BE8857 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				CABE38AA1C344BB000BE8857 /* Folder.png */,
+				CABE38AB1C344BB000BE8857 /* Folder@2x.png */,
+			);
+			name = Icons;
 			sourceTree = "<group>";
 		};
 		D31CC89F17927BCB0098FB9C /* Dropbox */ = {
@@ -1429,6 +1453,7 @@
 			files = (
 				CABE38A41C32201000BE8857 /* cheats.rar in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
+				CABE38AD1C344BB000BE8857 /* Folder@2x.png in Resources */,
 				28DA4A52178802FB002236A4 /* RTrigger.png in Resources */,
 				28DA4A491787FD7F002236A4 /* Select@2x.png in Resources */,
 				28DA4A4A1787FD7F002236A4 /* Start.png in Resources */,
@@ -1451,6 +1476,7 @@
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
 				BF9D516F17867F7D00B5864B /* JoystickButton@2x.png in Resources */,
 				AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */,
+				CABE38AC1C344BB000BE8857 /* Folder.png in Resources */,
 				D3B8BB961794ACEF0061D1D8 /* ZAActivityBar.bundle in Resources */,
 				CA7079CD1C095147005A1B19 /* toDo.txt in Resources */,
 				D325821217A1D69B0009C84B /* pixelgrid.png in Resources */,
@@ -1527,6 +1553,7 @@
 				BFCFE19D17650FB0000A70CF /* render3D.cpp in Sources */,
 				CA031D2E1BEBE1EB00EDE98D /* Ppmd8Dec.c in Sources */,
 				BFCFE19E17650FB0000A70CF /* ROMReader.cpp in Sources */,
+				CABE38A81C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm in Sources */,
 				BFCFE19F17650FB0000A70CF /* rtc.cpp in Sources */,
 				BFCFE1A017650FB0000A70CF /* saves.cpp in Sources */,
 				8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */,

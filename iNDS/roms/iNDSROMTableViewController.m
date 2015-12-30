@@ -34,10 +34,10 @@
     NSFileManager* fm = [NSFileManager defaultManager];
     
     if (![fm fileExistsAtPath:AppDelegate.sharedInstance.batteryDir isDirectory:&isDir])
-    {
         [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:NO attributes:nil error:nil];
-        NSLog(@"Created Battery");
-    }     
+    if (![fm fileExistsAtPath:AppDelegate.sharedInstance.cheatsDir isDirectory:&isDir])
+        [fm createDirectoryAtPath:AppDelegate.sharedInstance.cheatsDir withIntermediateDirectories:NO attributes:nil error:nil];
+    
     // Localize the title
     romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
     
@@ -63,7 +63,6 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.tableView reloadData];
 }
 
@@ -115,7 +114,7 @@
             }
         } else {
             CLS_LOG(@"Removeing Download");
-            if (indexPath.row > activeDownloads.count - 1) return;
+            if (indexPath.row >= activeDownloads.count) return;
             iNDSRomDownload * download = activeDownloads[indexPath.row];
             [[iNDSRomDownloadManager sharedManager] removeDownload:download];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];

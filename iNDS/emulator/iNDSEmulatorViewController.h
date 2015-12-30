@@ -31,4 +31,5 @@
 - (void) setSettingsHeight:(CGFloat) height;
 - (void)loadProfile:(iNDSEmulationProfile *)profile;
 - (void)newSaveState;
+- (void)reloadEmulator;
 @end
