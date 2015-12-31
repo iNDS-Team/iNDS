@@ -54,9 +54,12 @@
     emulationController = AppDelegate.sharedInstance.currentEmulatorViewController;
     cheatsArchivePath = [[NSBundle mainBundle] pathForResource:@"cheats" ofType:@"rar"];
     currentGameId = emulationController.game.rawTitle;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
     NSString *cheatSavePath = [NSString stringWithUTF8String:(char *)cheats->filename];
-    
-    //Eventually we might want to create our own NSInput stream to parse XML on the fly to reduce memory overhead. This will work for now though
+    //Eventually we might want to create our own NSInput stream to parse XML on the fly to reduce memory overhead and increase speed. This will work fine for now though
     if (![[NSFileManager defaultManager] fileExistsAtPath:cheatSavePath]) {
         NSLog(@"Loading DB Cheats");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -71,6 +74,7 @@
         });
     } else {
         [self indexCheats];
+        [self.tableView reloadData];
     }
 }
 
@@ -107,14 +111,16 @@
         NSString *folder = [description componentsSeparatedByString:@"||"][0];
         if (folder.length == 0) {
             [noFolderCodes addObject:[NSNumber numberWithInt:i]];
-        } else if (!cheatDict[folder]) {
-            cheatDict[folder] = [NSMutableArray array];
+        } else {
+            if (!cheatDict[folder]) {
+                cheatDict[folder] = [NSMutableArray array];
+            }
             [cheatDict[folder] addObject:[NSNumber numberWithInt:i]];
         }
         
     }
     cheatsLoaded = YES;
-    [self.tableView reloadData];
+    
 }
 
 #pragma mark - XML
@@ -162,9 +168,26 @@
 - (void)parserDidEndDocument:(NSXMLParser *)parser {
     cheats->save();
     [self indexCheats];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return indexPath.section == 0;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if (indexPath.section == 0) {  // Del game
+            u32 index = (u32)[noFolderCodes[indexPath.row] integerValue];
+            cheats->remove(index);
+            [self indexCheats];
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -497,8 +497,10 @@ const float textureVert[] =
     self.snapshotView.hidden = YES;
     
     // resume emulation
-    if (!glkView[0])
+    if (!glkView[0]){
         [self initGL];
+        [self.view setNeedsDisplay];
+    }
     EMU_pause(false);
     //[self.profile ajustLayout];
     [self startEmulatorLoop];
@@ -506,6 +508,7 @@ const float textureVert[] =
 
 - (void)startEmulatorLoop
 {
+    [self.view endEditing:YES];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];

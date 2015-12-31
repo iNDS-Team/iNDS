@@ -1223,7 +1223,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="icl-SK-thg" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1531" y="1248"/>
+            <point key="canvasLocation" x="1527" y="1238"/>
         </scene>
         <!--Layout Settings-->
         <scene sceneID="ABs-8K-Ybg">
@@ -1318,6 +1318,81 @@
             </objects>
             <point key="canvasLocation" x="1950" y="1157"/>
         </scene>
+        <!--New Cheat-->
+        <scene sceneID="E8J-eb-rAr">
+            <objects>
+                <tableViewController id="dn4-mu-Gdr" customClass="iNDSAddCheatTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="9Oc-yH-Blr">
+                        <rect key="frame" x="0.0" y="0.0" width="260" height="400"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <sections>
+                            <tableViewSection headerTitle="Name" id="42X-Aw-BBz">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="XWQ-gT-69i">
+                                        <rect key="frame" x="0.0" y="94" width="260" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="XWQ-gT-69i" id="RcL-GX-mDX">
+                                            <rect key="frame" x="0.0" y="0.0" width="260" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Cheat Name" textAlignment="natural" minimumFontSize="13" id="MCG-cT-CwN">
+                                                    <rect key="frame" x="8" y="7" width="244" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                                </textField>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="Code" id="ZGH-jB-Jsf">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="202" id="bpK-c9-tc9">
+                                        <rect key="frame" x="0.0" y="189" width="260" height="202"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bpK-c9-tc9" id="SZS-Nf-12Q">
+                                            <rect key="frame" x="0.0" y="0.0" width="260" height="201"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="UBT-eB-dld">
+                                                    <rect key="frame" x="10" y="1" width="240" height="200"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="22"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="dn4-mu-Gdr" id="TMx-nT-JYC"/>
+                                                    </connections>
+                                                </textView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="dn4-mu-Gdr" id="XeC-DC-5GI"/>
+                            <outlet property="delegate" destination="dn4-mu-Gdr" id="7WV-kp-2Q9"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="New Cheat" id="pBZ-dv-s3c">
+                        <barButtonItem key="rightBarButtonItem" title="Save" style="done" id="FkX-0g-MMi">
+                            <connections>
+                                <action selector="saveCheat:" destination="dn4-mu-Gdr" id="vWo-ej-fbD"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="cheatCode" destination="UBT-eB-dld" id="YY5-P2-FK2"/>
+                        <outlet property="cheatName" destination="MCG-cT-CwN" id="hEr-7G-lDb"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MZy-I6-YCg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2307" y="1366"/>
+        </scene>
         <!--Cheats Table View Controller-->
         <scene sceneID="Lkc-0K-c0c">
             <objects>
@@ -1342,7 +1417,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="xl1-YY-f7l">
-                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="add" id="cXf-GX-t2i"/>
+                        <barButtonItem key="rightBarButtonItem" title="Item" systemItem="add" id="cXf-GX-t2i">
+                            <connections>
+                                <segue destination="dn4-mu-Gdr" kind="push" id="sWY-PS-mQ5"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="u1h-1S-nZg" kind="push" identifier="OpenCheatFolder" id="Omu-Qw-vhe"/>
@@ -1379,7 +1458,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="d0A-jp-DXK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2365" y="1611"/>
+            <point key="canvasLocation" x="2307" y="1813"/>
         </scene>
         <!--Profiles-->
         <scene sceneID="JGM-G4-YhU">

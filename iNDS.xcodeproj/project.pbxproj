@@ -199,8 +199,10 @@
 		CABE389B1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */; };
 		CABE38A41C32201000BE8857 /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CABE38A31C321F0200BE8857 /* cheats.rar */; };
 		CABE38A81C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */; };
-		CABE38AC1C344BB000BE8857 /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38AA1C344BB000BE8857 /* Folder.png */; };
-		CABE38AD1C344BB000BE8857 /* Folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38AB1C344BB000BE8857 /* Folder@2x.png */; };
+		CABE38B31C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE38B21C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm */; };
+		CABE38B61C34921A00BE8857 /* UIViewController+BackButtonHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */; };
+		CABE38B91C34ADDE00BE8857 /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38B71C34ADDE00BE8857 /* Folder.png */; };
+		CABE38BA1C34ADDE00BE8857 /* Folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38B81C34ADDE00BE8857 /* Folder@2x.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -595,8 +597,12 @@
 		CABE38A31C321F0200BE8857 /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; path = cheats.rar; sourceTree = "<group>"; };
 		CABE38A61C34460B00BE8857 /* iNDSCheatsFolderTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSCheatsFolderTableViewController.h; sourceTree = "<group>"; };
 		CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSCheatsFolderTableViewController.mm; sourceTree = "<group>"; };
-		CABE38AA1C344BB000BE8857 /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
-		CABE38AB1C344BB000BE8857 /* Folder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Folder@2x.png"; sourceTree = "<group>"; };
+		CABE38B11C348B1E00BE8857 /* iNDSAddCheatTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSAddCheatTableViewController.h; sourceTree = "<group>"; };
+		CABE38B21C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSAddCheatTableViewController.mm; sourceTree = "<group>"; };
+		CABE38B41C34921A00BE8857 /* UIViewController+BackButtonHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BackButtonHandler.h"; sourceTree = "<group>"; };
+		CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BackButtonHandler.m"; sourceTree = "<group>"; };
+		CABE38B71C34ADDE00BE8857 /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
+		CABE38B81C34ADDE00BE8857 /* Folder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Folder@2x.png"; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -1306,6 +1312,8 @@
 		CABE38421C30BFC600BE8857 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CABE38B41C34921A00BE8857 /* UIViewController+BackButtonHandler.h */,
+				CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */,
 				CABE38431C30BFDE00BE8857 /* NSString+CompareToVersion.h */,
 				CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */,
 			);
@@ -1319,6 +1327,8 @@
 				CABE389A1C30FB2900BE8857 /* iNDSCheatsTableViewController.mm */,
 				CABE38A61C34460B00BE8857 /* iNDSCheatsFolderTableViewController.h */,
 				CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */,
+				CABE38B11C348B1E00BE8857 /* iNDSAddCheatTableViewController.h */,
+				CABE38B21C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm */,
 			);
 			name = Cheats;
 			sourceTree = "<group>";
@@ -1326,8 +1336,8 @@
 		CABE38A91C344BA500BE8857 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38AA1C344BB000BE8857 /* Folder.png */,
-				CABE38AB1C344BB000BE8857 /* Folder@2x.png */,
+				CABE38B71C34ADDE00BE8857 /* Folder.png */,
+				CABE38B81C34ADDE00BE8857 /* Folder@2x.png */,
 			);
 			name = Icons;
 			sourceTree = "<group>";
@@ -1452,8 +1462,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE38A41C32201000BE8857 /* cheats.rar in Resources */,
+				CABE38BA1C34ADDE00BE8857 /* Folder@2x.png in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
-				CABE38AD1C344BB000BE8857 /* Folder@2x.png in Resources */,
 				28DA4A52178802FB002236A4 /* RTrigger.png in Resources */,
 				28DA4A491787FD7F002236A4 /* Select@2x.png in Resources */,
 				28DA4A4A1787FD7F002236A4 /* Start.png in Resources */,
@@ -1476,8 +1486,8 @@
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
 				BF9D516F17867F7D00B5864B /* JoystickButton@2x.png in Resources */,
 				AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */,
-				CABE38AC1C344BB000BE8857 /* Folder.png in Resources */,
 				D3B8BB961794ACEF0061D1D8 /* ZAActivityBar.bundle in Resources */,
+				CABE38B91C34ADDE00BE8857 /* Folder.png in Resources */,
 				CA7079CD1C095147005A1B19 /* toDo.txt in Resources */,
 				D325821217A1D69B0009C84B /* pixelgrid.png in Resources */,
 				D325821317A1D69B0009C84B /* pixelgrid@2x.png in Resources */,
@@ -1558,6 +1568,7 @@
 				BFCFE1A017650FB0000A70CF /* saves.cpp in Sources */,
 				8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */,
 				8BEA097E17872C5E0060B347 /* main.m in Sources */,
+				CABE38B61C34921A00BE8857 /* UIViewController+BackButtonHandler.m in Sources */,
 				BFCFE1A117650FB0000A70CF /* slot1.cpp in Sources */,
 				BFCFE1A217650FB0000A70CF /* SPU.cpp in Sources */,
 				CA031D201BEBE1EB00EDE98D /* 7zBuf2.c in Sources */,
@@ -1640,6 +1651,7 @@
 				CA031D271BEBE1EB00EDE98D /* Delta.c in Sources */,
 				BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */,
 				BFCFE247176634EE000A70CF /* slot2_rumblepak.cpp in Sources */,
+				CABE38B31C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm in Sources */,
 				CABE38451C30BFDF00BE8857 /* NSString+CompareToVersion.m in Sources */,
 				CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */,
 				BFCFE26B1766379F000A70CF /* addons.cpp in Sources */,

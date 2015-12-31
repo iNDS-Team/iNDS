@@ -33,6 +33,27 @@
 
 #pragma mark - Table view data source
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return indexPath.section == 0;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if (indexPath.section == 0) {  // Del game
+            u32 index = (u32)[self.folderCheats[indexPath.row] integerValue];
+            cheats->remove(index);
+            [self.folderCheats removeObjectAtIndex:indexPath.row];
+            for (NSInteger i = 0; i < self.folderCheats.count; i++) {
+                if ([self.folderCheats[i] integerValue] > index) { //We need to decrement the index of cheats past the one we deleted
+                    self.folderCheats[i] = [NSNumber numberWithInt:[self.folderCheats[i] intValue]- 1];
+                }
+            }
+            [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }

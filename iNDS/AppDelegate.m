@@ -31,8 +31,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
+    
+    [self.window setTintColor:[UIColor greenColor]];
+    
     //Create iNDS folder and move old stuff
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         NSError* error;
