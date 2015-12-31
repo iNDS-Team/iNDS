@@ -189,10 +189,9 @@
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:NULL];
                     [foundItems addObject:path.lastPathComponent];
                 } else {
-                    NSLog(@"Discarding: %@", path);
+                    NSLog(@"Removing %@", [dstDir stringByAppendingPathComponent:path]);
+                    [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
                 }
-                NSLog(@"Removing %@", [dstDir stringByAppendingPathComponent:path]);
-                [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
             }
             if (foundItems.count == 0) {
                 [self showError:@"No roms or saves found in archive."];
