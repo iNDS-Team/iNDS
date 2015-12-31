@@ -291,6 +291,7 @@ const float textureVert[] =
 
 - (void)viewWillLayoutSubviews
 {
+    NSLog(@"Laying Out Subviews");
     [super viewWillLayoutSubviews];
     self.gameContainer.frame = self.view.frame;
     self.controllerContainerView.frame = self.view.frame;
@@ -361,6 +362,7 @@ const float textureVert[] =
 
 - (void)initGL
 {
+    NSLog(@"Initiaizing GL");
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
     
@@ -465,15 +467,14 @@ const float textureVert[] =
 - (void)suspendEmulation
 {
     NSLog(@"Suspending Emulation");
-    EMU_pause(true);
-    [emuLoopLock lock]; // make sure emulator loop has ended
-    [emuLoopLock unlock];
+    [self pauseEmulation];
     [self shutdownGL];
 }
 
 - (void)pauseEmulation
 {
     if (!execute) return;
+    NSLog(@"Pausing Emulation");
     // save snapshot of screen
     /*if (self.snapshotView == nil) {
         self.snapshotView = [[UIImageView alloc] initWithFrame:glkView[extWindow?1:0].frame];
@@ -501,8 +502,9 @@ const float textureVert[] =
     if (!self.program){
         NSLog(@"Resuming from suspend");
         [self initGL];
-        [self.view setNeedsDisplay];
+        [self.view setNeedsLayout];
     }
+    NSLog(@"Unpausing");
     EMU_pause(false);
     //[self.profile ajustLayout];
     [self startEmulatorLoop];
@@ -511,7 +513,9 @@ const float textureVert[] =
 - (void)startEmulatorLoop
 {
     [self.view endEditing:YES];
+    [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@"Loop Started");
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
@@ -550,7 +554,7 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS",fps];
+        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS",MAX(fps, 60)];
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);

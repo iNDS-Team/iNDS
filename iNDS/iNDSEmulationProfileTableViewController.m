@@ -44,7 +44,7 @@
             if ([profile deleteProfile]) {
                 profiles = [iNDSEmulationProfile profilesAtPath:AppDelegate.sharedInstance.batteryDir];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                if ([profile.name isEqualToString:AppDelegate.sharedInstance.currentEmulatorViewController.profile]) { //Just deleted current profile
+                if ([profile.name isEqualToString:AppDelegate.sharedInstance.currentEmulatorViewController.profile.name]) { //Just deleted current profile
                     //Load default
                     [AppDelegate.sharedInstance.currentEmulatorViewController loadProfile:[[iNDSEmulationProfile alloc] initWithProfileName:@"Default"]];
                 }
