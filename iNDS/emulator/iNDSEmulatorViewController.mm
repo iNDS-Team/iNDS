@@ -13,6 +13,7 @@
 #import "UIScreen+Widescreen.h"
 #import "iNDSDirectionalControl.h"
 #import "iNDSButtonControl.h"
+#import "CHBgDropboxSync.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
@@ -497,7 +498,8 @@ const float textureVert[] =
     self.snapshotView.hidden = YES;
     
     // resume emulation
-    if (!glkView[0]){
+    if (!self.program){
+        NSLog(@"Resuming from suspend");
         [self initGL];
         [self.view setNeedsDisplay];
     }
@@ -757,6 +759,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             self.settingsContainer.alpha = 1;
         } completion:^(BOOL finished) {
             settingsShown = YES;
+            [CHBgDropboxSync start];
         }];
     } else {
         [UIView animateWithDuration:0.3 animations:^{

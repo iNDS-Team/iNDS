@@ -201,8 +201,10 @@
 		CABE38A81C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE38A71C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm */; };
 		CABE38B31C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CABE38B21C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm */; };
 		CABE38B61C34921A00BE8857 /* UIViewController+BackButtonHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */; };
-		CABE38B91C34ADDE00BE8857 /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38B71C34ADDE00BE8857 /* Folder.png */; };
-		CABE38BA1C34ADDE00BE8857 /* Folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38B81C34ADDE00BE8857 /* Folder@2x.png */; };
+		CABE38C21C34B8B800BE8857 /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38C01C34B8B800BE8857 /* Folder.png */; };
+		CABE38C31C34B8B800BE8857 /* Folder@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38C11C34B8B800BE8857 /* Folder@2x.png */; };
+		CABE38C61C34B8C600BE8857 /* Sync.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38C41C34B8C600BE8857 /* Sync.png */; };
+		CABE38C71C34B8C600BE8857 /* Sync@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CABE38C51C34B8C600BE8857 /* Sync@2x.png */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -601,8 +603,10 @@
 		CABE38B21C348B1E00BE8857 /* iNDSAddCheatTableViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSAddCheatTableViewController.mm; sourceTree = "<group>"; };
 		CABE38B41C34921A00BE8857 /* UIViewController+BackButtonHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BackButtonHandler.h"; sourceTree = "<group>"; };
 		CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BackButtonHandler.m"; sourceTree = "<group>"; };
-		CABE38B71C34ADDE00BE8857 /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
-		CABE38B81C34ADDE00BE8857 /* Folder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Folder@2x.png"; sourceTree = "<group>"; };
+		CABE38C01C34B8B800BE8857 /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
+		CABE38C11C34B8B800BE8857 /* Folder@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Folder@2x.png"; sourceTree = "<group>"; };
+		CABE38C41C34B8C600BE8857 /* Sync.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sync.png; sourceTree = "<group>"; };
+		CABE38C51C34B8C600BE8857 /* Sync@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sync@2x.png"; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -759,7 +763,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38A91C344BA500BE8857 /* Icons */,
+				CABE38BF1C34B8B800BE8857 /* Icons */,
 				CABE38A31C321F0200BE8857 /* cheats.rar */,
 				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
@@ -1333,13 +1337,16 @@
 			name = Cheats;
 			sourceTree = "<group>";
 		};
-		CABE38A91C344BA500BE8857 /* Icons */ = {
+		CABE38BF1C34B8B800BE8857 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
-				CABE38B71C34ADDE00BE8857 /* Folder.png */,
-				CABE38B81C34ADDE00BE8857 /* Folder@2x.png */,
+				CABE38C41C34B8C600BE8857 /* Sync.png */,
+				CABE38C51C34B8C600BE8857 /* Sync@2x.png */,
+				CABE38C01C34B8B800BE8857 /* Folder.png */,
+				CABE38C11C34B8B800BE8857 /* Folder@2x.png */,
 			);
 			name = Icons;
+			path = Resources/Icons;
 			sourceTree = "<group>";
 		};
 		D31CC89F17927BCB0098FB9C /* Dropbox */ = {
@@ -1462,11 +1469,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				CABE38A41C32201000BE8857 /* cheats.rar in Resources */,
-				CABE38BA1C34ADDE00BE8857 /* Folder@2x.png in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
 				28DA4A52178802FB002236A4 /* RTrigger.png in Resources */,
 				28DA4A491787FD7F002236A4 /* Select@2x.png in Resources */,
 				28DA4A4A1787FD7F002236A4 /* Start.png in Resources */,
+				CABE38C31C34B8B800BE8857 /* Folder@2x.png in Resources */,
 				28DA4A4B1787FD7F002236A4 /* Start@2x.png in Resources */,
 				28DA4A51178802FB002236A4 /* LTrigger@2x.png in Resources */,
 				CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */,
@@ -1479,15 +1486,17 @@
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
 				28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */,
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
+				CABE38C21C34B8B800BE8857 /* Folder.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
+				CABE38C71C34B8C600BE8857 /* Sync@2x.png in Resources */,
+				CABE38C61C34B8C600BE8857 /* Sync.png in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
 				BF9D516D17867F7D00B5864B /* JoystickBackground@2x.png in Resources */,
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
 				BF9D516F17867F7D00B5864B /* JoystickButton@2x.png in Resources */,
 				AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */,
 				D3B8BB961794ACEF0061D1D8 /* ZAActivityBar.bundle in Resources */,
-				CABE38B91C34ADDE00BE8857 /* Folder.png in Resources */,
 				CA7079CD1C095147005A1B19 /* toDo.txt in Resources */,
 				D325821217A1D69B0009C84B /* pixelgrid.png in Resources */,
 				D325821317A1D69B0009C84B /* pixelgrid@2x.png in Resources */,
