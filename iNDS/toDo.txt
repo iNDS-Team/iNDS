@@ -2,7 +2,7 @@ XFix layout screens max size
 Fix joystick
 XChange home page to google
 XFix extension association errors
-Rename Saves
+XRename Saves
 XCheat Codes
 Color Change
 Single Screen Layout

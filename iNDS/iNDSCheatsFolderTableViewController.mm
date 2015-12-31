@@ -7,6 +7,7 @@
 //
 
 #import "iNDSCheatsFolderTableViewController.h"
+#import "AppDelegate.h"
 #include "emu.h"
 #include "cheatSystem.h"
 @interface iNDSCheatsFolderTableViewController ()
@@ -17,7 +18,15 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    
+    
+    UIBarButtonItem * xButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:AppDelegate.sharedInstance.currentEmulatorViewController action:@selector(toggleSettings:)];
+    xButton.imageInsets = UIEdgeInsetsMake(7, 3, 7, 0);
+    self.navigationItem.rightBarButtonItem = xButton;
+    UITapGestureRecognizer* tapRecon = [[UITapGestureRecognizer alloc] initWithTarget:AppDelegate.sharedInstance.currentEmulatorViewController action:@selector(toggleSettings:)];
+    tapRecon.numberOfTapsRequired = 2;
+    tapRecon.delaysTouchesBegan= NO;
+    //[self.navigationController.navigationBar addGestureRecognizer:tapRecon];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

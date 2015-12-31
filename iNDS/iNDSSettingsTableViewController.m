@@ -47,16 +47,36 @@
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(0, 0, 30, 30);
     [button addSubview:syncImageView];
-    [button addTarget:self action:@selector(animate) forControlEvents:UIControlEventTouchUpInside];
     syncImageView.center = button.center;
     barItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-    self.navigationItem.rightBarButtonItem = barItem;
+    self.navigationItem.leftBarButtonItem = barItem;
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showSync) name:@"iNDSDropboxSyncStarted" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(hideSync) name:@"iNDSDropboxSyncEnded" object:nil];
     
+    UIBarButtonItem * xButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:emulationController action:@selector(toggleSettings:)];
+    xButton.imageInsets = UIEdgeInsetsMake(7, 3, 7, 0);
+    self.navigationItem.rightBarButtonItem = xButton;
+    UITapGestureRecognizer* tapRecon = [[UITapGestureRecognizer alloc] initWithTarget:emulationController action:@selector(toggleSettings:)];
+    tapRecon.numberOfTapsRequired = 2;
+    tapRecon.delegate = self;
+    tapRecon.cancelsTouchesInView = NO;
+    //[self.navigationController.navigationBar addGestureRecognizer:tapRecon];
+    
 }
 
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    /*if ((touch.view == self.navigationItem.titleView)) {
+        NSLog(@"YES!");
+        return YES;
+    }
+    NSLog(@"NO");
+    return NO;*/
+    //NSLog(@"%@\n", touch.view);
+    //return ![touch.view isKindOfClass:[UIButton class]];
+    return (![[[touch view] class] isSubclassOfClass:[UIControl class]]);
+}
 
 - (void)showSync
 {

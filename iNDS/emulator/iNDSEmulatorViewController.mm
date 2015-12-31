@@ -167,21 +167,19 @@ const float textureVert[] =
     [self defaultsChanged:nil];
     
     self.speed = 1;
-    
-    self.gameContainer.layer.shadowColor = [UIColor blackColor].CGColor;
-    self.gameContainer.layer.shadowRadius = 5;
-    self.gameContainer.layer.shadowOffset = CGSizeMake(-3, 0);
-    self.gameContainer.layer.shouldRasterize = YES;
-    self.gameContainer.layer.rasterizationScale = UIScreen.mainScreen.scale;
-    self.gameContainer.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, -10, 10, self.gameContainer.frame.size.height+20)].CGPath;
+
     
     CGRect settingsRect = self.settingsContainer.frame;
-    settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
-    settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+        settingsRect = self.view.frame;
+    } else {
+        settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
+        settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+        self.settingsContainer.layer.cornerRadius = 7;
+    }
     self.settingsContainer.frame = settingsRect;
     self.settingsContainer.center = self.view.center;
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
-    self.settingsContainer.layer.cornerRadius = 7;
     
     // ICade
     iCadeReaderView *control = [[iCadeReaderView alloc] initWithFrame:CGRectZero];
@@ -206,7 +204,8 @@ const float textureVert[] =
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [self loadROM];
+    if (!settingsShown)
+        [self loadROM];
     [self defaultsChanged:nil];
     
     //NSString * testCheat = @"9208B3F4FFFD0002920CA88000000000021B6ABO00004000D2000000000000009208B3F4FFFE0001920CA88000000000021B6AB000004000D200000000000000";
@@ -229,6 +228,7 @@ const float textureVert[] =
 
 - (void)changeGame:(iNDSGame *)newGame
 {
+    NSLog(@"Changing Game");
     [self saveStateWithName:@"Pause"];
     [self pauseEmulation];
     [self shutdownGL];
@@ -297,13 +297,20 @@ const float textureVert[] =
     self.controllerContainerView.frame = self.view.frame;
     [self.profile ajustLayout];
     CGRect settingsRect = self.settingsContainer.frame;
-    if ([self isPortrait]) { //Portrait
-        settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
-        settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+        settingsRect = self.view.frame;
+        self.settingsContainer.layer.cornerRadius = 0;
     } else {
-        settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
-        settingsRect.size.height = MIN(600, self.view.frame.size.height - 60);
+        if ([self isPortrait]) { //Portrait
+            settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
+            settingsRect.size.height = MIN(600, self.view.frame.size.height - 140);
+        } else {
+            settingsRect.size.width = MIN(500, self.view.frame.size.width - 70);
+            settingsRect.size.height = MIN(600, self.view.frame.size.height - 60);
+        }
+        self.settingsContainer.layer.cornerRadius = 7;
     }
+    
     
     self.settingsContainer.frame = settingsRect;
     self.settingsContainer.center = self.view.center;
@@ -346,6 +353,7 @@ const float textureVert[] =
 #pragma mark - Playing ROM
 
 - (void)loadROM {
+    NSLog(@"Loading ROM %@", self.game.path);
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
     EMU_init([iNDSGame preferredLanguage]);
     EMU_setCPUMode(1);//[[NSUserDefaults standardUserDefaults] boolForKey:@"enableLightningJIT"] ? 2 : 1);
@@ -466,6 +474,7 @@ const float textureVert[] =
 
 - (void)suspendEmulation
 {
+    NSLog(@"Suspending");
     [self pauseEmulation];
     //Shutting down while editing causes a mess of problems.
     //So We'll just not shutdown while editing... :/
@@ -477,6 +486,7 @@ const float textureVert[] =
 
 - (void)pauseEmulation
 {
+    NSLog(@"Pausing");
     if (!execute) return;
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
@@ -486,10 +496,12 @@ const float textureVert[] =
 
 - (void)resumeEmulation
 {
+    NSLog(@"Resuming");
     if (self.presentingViewController.presentedViewController != self) return;
     if (execute) return;
     
     if (!self.program){
+        NSLog(@"Resuming From Suspend");
         [self initGL];
         [self.view setNeedsLayout];
     }
@@ -744,14 +756,21 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (IBAction)toggleSettings:(id)sender
 {
+    UIView * statusBar = [self statuBarView];
     if (!settingsShown) { //About to show settings
-        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+           [[UIApplication sharedApplication] setStatusBarHidden:NO];
+            statusBar.alpha = 0;
+        }
         [self.settingsContainer setHidden:NO];
         [self pauseEmulation];
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.hidden = NO;
             self.darkenView.alpha = 0.6;
             self.settingsContainer.alpha = 1;
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+                statusBar.alpha = 1;
+            }
         } completion:^(BOOL finished) {
             settingsShown = YES;
             if (!inEditingMode)
@@ -761,7 +780,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.alpha = 0.0;
             self.settingsContainer.alpha = 0;
+            statusBar.alpha = 0;
         } completion:^(BOOL finished) {
+            [[UIApplication sharedApplication] setStatusBarHidden:YES];
             settingsShown = NO;
             self.settingsContainer.hidden = YES;
             [self resumeEmulation];
@@ -783,6 +804,17 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     }];
     
     
+}
+
+- (UIView *)statuBarView
+{
+    NSString *key = @"statusBar";
+    id object = [UIApplication sharedApplication];
+    UIView *statusBar = nil;
+    if ([object respondsToSelector:NSSelectorFromString(key)]) {
+        statusBar = [object valueForKey:key];
+    }
+    return statusBar;
 }
 
 #pragma mark - Saving
@@ -808,6 +840,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)reloadEmulator
 {
+    NSLog(@"Reloading");
     [self pauseEmulation];
     [self shutdownGL];
     [self loadROM];

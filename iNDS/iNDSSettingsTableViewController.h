@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface iNDSSettingsTableViewController : UITableViewController <UINavigationControllerDelegate>
+@interface iNDSSettingsTableViewController : UITableViewController <UINavigationControllerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) IBOutlet UILabel * romName;
 @property (strong, nonatomic) IBOutlet UILabel * layoutLabel;
