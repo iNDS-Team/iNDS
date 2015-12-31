@@ -128,8 +128,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
+    UITableViewCell *cell;
     if (indexPath.section == 0) { // Game
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSGame"];
         if (indexPath.row >= games.count) return [UITableViewCell new];
         iNDSGame *game = games[indexPath.row];
         if (game.gameTitle) {
@@ -145,6 +146,7 @@
         cell.imageView.image = game.icon;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSDownload"];
         if (indexPath.row >= activeDownloads.count) return [UITableViewCell new];
         iNDSRomDownload * download = activeDownloads[indexPath.row];
         cell.textLabel.text = download.name;

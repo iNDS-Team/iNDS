@@ -190,8 +190,8 @@
                     [foundItems addObject:path.lastPathComponent];
                 } else {
                     NSLog(@"Discarding: %@", path);
-                    [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
                 }
+                [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
             }
             if (foundItems.count == 0) {
                 [self showError:@"No roms or saves found in archive."];

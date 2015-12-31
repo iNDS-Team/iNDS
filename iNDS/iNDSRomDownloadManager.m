@@ -76,7 +76,8 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.progressLabel.text = [NSString stringWithFormat:@"Opening"];
+        if (self.progressLabel)
+            self.progressLabel.text = [NSString stringWithFormat:@"Opening"];
     });
     NSError * error;
     
