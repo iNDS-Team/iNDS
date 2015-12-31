@@ -7,6 +7,7 @@
 //
 
 #import "iNDSAddCheatTableViewController.h"
+#import "AppDelegate.h"
 #import "SCLAlertView.h"
 #import "emu.h"
 #import "cheatSystem.h"
@@ -77,6 +78,15 @@
     showConfirmation = NO;
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    if (section == 0) {
+        return [NSString stringWithFormat:@"Game ID: %@", AppDelegate.sharedInstance.currentEmulatorViewController.game.rawTitle];
+    }
+    return @"";
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

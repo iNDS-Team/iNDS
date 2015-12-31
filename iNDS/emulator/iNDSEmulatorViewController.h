@@ -24,7 +24,7 @@
 - (void)pauseEmulation;
 - (void)resumeEmulation;
 - (void)saveStateWithName:(NSString*)saveStateName;
-- (void)changeGame;
+- (void)changeGame:(iNDSGame *)newGame;
 - (void)enterEditMode;
 - (void)exitEditMode;
 - (IBAction)toggleSettings:(id)sender;

@@ -328,9 +328,8 @@
         //[rootViewController doSlideIn:nil];
         [rootViewController presentViewController:emulatorViewController animated:YES completion:nil];
     } else {
-        self.currentEmulatorViewController.game = game;
         self.currentEmulatorViewController.saveState = [game pathForSaveStateAtIndex:savedState];
-        [self.currentEmulatorViewController changeGame];
+        [self.currentEmulatorViewController changeGame:game];
     }
 }
 

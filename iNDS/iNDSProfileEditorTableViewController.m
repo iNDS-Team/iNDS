@@ -77,7 +77,7 @@
             [currentProfile saveProfileWithCancel:NO];
         } else if (indexPath.row == 2) {//New
             self.navigationItem.hidesBackButton = YES;
-            iNDSEmulationProfile * defaultProfile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+            iNDSEmulationProfile * defaultProfile = [[iNDSEmulationProfile alloc] initWithProfileName:@"iNDSDefaultProfile"];
             [emulationController loadProfile:defaultProfile];
             [emulationController enterEditMode];
             inEditingMode = YES;
@@ -89,14 +89,14 @@
             self.navigationItem.hidesBackButton = NO;
             [emulationController.profile saveProfileWithCancel:NO];
             inEditingMode = NO;
-        } else { //Discare
+        } else { //Discard
             //Just reload from file
             NSString * profilePath = [iNDSEmulationProfile pathForProfileName:currentProfile.name];
             iNDSEmulationProfile * reloadedProfile = [iNDSEmulationProfile profileWithPath:profilePath];
             [emulationController loadProfile:reloadedProfile];
             inEditingMode = NO;
-            [self.navigationController popViewControllerAnimated:YES];
             [emulationController exitEditMode];
+            [self.navigationController popViewControllerAnimated:YES];
         }
         
     }

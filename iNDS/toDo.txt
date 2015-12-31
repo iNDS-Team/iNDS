@@ -3,6 +3,11 @@ Fix joystick
 XChange home page to google
 XFix extension association errors
 Rename Saves
-Cheat Codes
+XCheat Codes
 Color Change
+Single Screen Layout
+Keep Music playing when sound disables
+Add game recording
+Use volume buttons as bumpers
+
 

@@ -13,5 +13,4 @@
 + (void)start;
 + (void)forceStopIfRunning;
 + (void)clearLastSyncData;
-
 @end

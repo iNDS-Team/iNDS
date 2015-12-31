@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "SCLAlertView.h"
 #import "NSString+CompareToVersion.h"
+#import "CHBgDropboxSync.h"
 
 #define HORIZONTAL 1
 #define VERTICAL 2
@@ -206,7 +207,7 @@
     SCLAlertView *alert = [[SCLAlertView alloc] init];
     
     UITextField *textField = [alert addTextField:@""];
-    textField.text = [self.name isEqualToString:@"Default"] ? @"" : self.name;
+    textField.text = [self.name isEqualToString:@"iNDSDefaultProfile"] ? @"" : self.name;
     
     [alert addButton:@"Save" actionBlock:^(void) {
         self.name = textField.text;
@@ -281,7 +282,7 @@
 
 -(NSArray *) editableViews
 {
-    return @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl, self.fpsLabel]; //Maybe add settings later
+    return @[self.mainScreen, self.touchScreen, self.startButton, self.selectButton, self.leftTrigger, self.rightTrigger, self.directionalControl, self.buttonControl];//, self.fpsLabel]; //Maybe add settings later too
 }
 
 - (void) didRotate:(NSNotification *)notification
@@ -331,13 +332,20 @@
 {
     CGSize screenSize = [self currentScreenSizeAlwaysPortrait:NO];
     
+    CGFloat minSize;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        minSize = 0.1;
+    } else { //Allow for smaller buttons on ipad
+        minSize = 0.04;
+    }
+    
     CGRect viewFrame = selectedView.frame;
     CGFloat ratio = viewFrame.size.height/ MAX(viewFrame.size.width, 1);
     if (screenSize.width * ratio < screenSize.height / ratio) { //Width is limiting this view
-        viewFrame.size.width = (screenSize.width * MAX(sender.value, 0.1));
+        viewFrame.size.width = (screenSize.width * MAX(sender.value, minSize));
         viewFrame.size.height = viewFrame.size.width * ratio;
     } else {
-        viewFrame.size.height = (screenSize.height * MAX(sender.value, 0.1));
+        viewFrame.size.height = (screenSize.height * MAX(sender.value, minSize));
         viewFrame.size.width = viewFrame.size.height / ratio;
     }
     //Keep center after editing size
@@ -562,6 +570,7 @@
 {
     NSString * path = [iNDSEmulationProfile pathForProfileName:self.name];
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [CHBgDropboxSync forceStopIfRunning];
         NSError *error;
         BOOL success = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
         if (!success) {

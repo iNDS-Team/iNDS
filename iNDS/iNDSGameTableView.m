@@ -9,6 +9,7 @@
 #import "iNDSGameTableView.h"
 #import "iNDSEmulatorViewController.h"
 #import "SCLAlertView.h"
+#import "CHBgDropboxSync.h"
 @interface iNDSGameTableView() {
     
 }
@@ -53,18 +54,28 @@
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
-        SCLAlertView * alert = [[SCLAlertView alloc] init];
+        SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
         NSLog(@"Save %@", _game.saveStates[indexPath.row]);
-        UITextField *textField = [alert addTextField:@"Hey"];
+        UITextField *textField = [alert addTextField:@""];
+        textField.text = [_game nameOfSaveStateAtIndex:indexPath.row];
         
-        [alert addButton:@"Show Name" actionBlock:^(void) {
-            NSLog(@"Text value: %@", textField.text);
+        [alert addButton:@"Rename" actionBlock:^(void) {
+            NSString *savePath = [_game pathForSaveStateAtIndex:indexPath.row];
+            NSString *rootPath = savePath.stringByDeletingPathExtension.stringByDeletingPathExtension;
+            NSString *dstPath = [NSString stringWithFormat:@"%@.%@.dsv", rootPath, textField.text];
+            NSLog(@"%@ - \n%@", savePath, dstPath);
+            
+            [[NSFileManager defaultManager] moveItemAtPath:savePath toPath:dstPath error:nil];
+            [CHBgDropboxSync forceStopIfRunning]; //If we delete while syncing this shitty thing crashes
+            [_game reloadSaveStates];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }];
-        //[alert showEdit:self title:@"Edit View" subTitle:@"This alert view shows a text box" closeButtonTitle:@"Done" duration:0.0f];
+        [alert showEdit:self title:@"Rename" subTitle:@"Rename Save State" closeButtonTitle:@"Cancel" duration:0.0f];
     }];
     renameAction.backgroundColor = [UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        [CHBgDropboxSync forceStopIfRunning];
         if ([_game deleteSaveStateAtIndex:indexPath.row]) {
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         } else {

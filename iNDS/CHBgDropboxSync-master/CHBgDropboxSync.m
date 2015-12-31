@@ -20,6 +20,7 @@
     UILabel* workingLabel;
     DBRestClient* client;
     BOOL anyLocalChanges;
+    BOOL syncing;
 }
 - (NSDictionary*)getLocalStatus;
 @end

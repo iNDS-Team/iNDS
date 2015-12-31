@@ -32,6 +32,9 @@
     emulationController = [AppDelegate sharedInstance].currentEmulatorViewController;
     self.romName.text = [AppDelegate sharedInstance].currentEmulatorViewController.game.gameTitle;
     self.layoutName.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
+    if ([self.layoutName.text isEqualToString:@"iNDSDefaultProfile"]) {
+        self.layoutName.text = @"Default";
+    }
     
     //Sync Image
     UIImage *syncImage = [[UIImage imageNamed:@"Sync.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
@@ -42,7 +45,7 @@
     [syncImageView setHidden:YES];
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(0, 0, 40, 40);
+    button.frame = CGRectMake(0, 0, 30, 30);
     [button addSubview:syncImageView];
     [button addTarget:self action:@selector(animate) forControlEvents:UIControlEventTouchUpInside];
     syncImageView.center = button.center;

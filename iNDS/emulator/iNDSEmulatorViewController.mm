@@ -140,12 +140,12 @@ const float textureVert[] =
 	
     NSString * currentProfile = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
     iNDSEmulationProfile * profile;
-    if ([currentProfile isEqualToString:@"Default"]) {
-        profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+    if ([currentProfile isEqualToString:@"iNDSDefaultProfile"]) {
+        profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"iNDSDefaultProfile"];
     } else {
         profile = [iNDSEmulationProfile profileWithPath:[iNDSEmulationProfile pathForProfileName:currentProfile]];
         if (!profile) {
-            profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"Default"];
+            profile = [[iNDSEmulationProfile alloc] initWithProfileName:@"iNDSDefaultProfile"];
         }
     }
     [self loadProfile:profile];
@@ -227,11 +227,12 @@ const float textureVert[] =
     [self.profile ajustLayout];
 }
 
-- (void)changeGame
+- (void)changeGame:(iNDSGame *)newGame
 {
     [self saveStateWithName:@"Pause"];
     [self pauseEmulation];
     [self shutdownGL];
+    self.game = newGame;
     [self loadROM];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.profile ajustLayout];
@@ -291,7 +292,6 @@ const float textureVert[] =
 
 - (void)viewWillLayoutSubviews
 {
-    NSLog(@"Laying Out Subviews");
     [super viewWillLayoutSubviews];
     self.gameContainer.frame = self.view.frame;
     self.controllerContainerView.frame = self.view.frame;
@@ -466,25 +466,18 @@ const float textureVert[] =
 
 - (void)suspendEmulation
 {
-    NSLog(@"Suspending Emulation");
     [self pauseEmulation];
-    [self shutdownGL];
+    //Shutting down while editing causes a mess of problems.
+    //So We'll just not shutdown while editing... :/
+    if (!inEditingMode) { //Discard the changes
+        [self shutdownGL];
+    }
+    
 }
 
 - (void)pauseEmulation
 {
     if (!execute) return;
-    NSLog(@"Pausing Emulation");
-    // save snapshot of screen
-    /*if (self.snapshotView == nil) {
-        self.snapshotView = [[UIImageView alloc] initWithFrame:glkView[extWindow?1:0].frame];
-        [self.view insertSubview:self.snapshotView aboveSubview:glkView[extWindow?1:0]];
-    } else {
-        self.snapshotView.hidden = NO;
-    }
-    self.snapshotView.image = [self screenSnapshot:extWindow?1:-1];
-    NSLog(@"%@", self.snapshotView.image);*/
-    // pause emulation
     EMU_pause(true);
     [emuLoopLock lock]; // make sure emulator loop has ended
     [emuLoopLock unlock];
@@ -494,17 +487,15 @@ const float textureVert[] =
 - (void)resumeEmulation
 {
     if (self.presentingViewController.presentedViewController != self) return;
-    if (execute || inEditingMode || settingsShown) return;
-    // remove snapshot
-    self.snapshotView.hidden = YES;
+    if (execute) return;
     
-    // resume emulation
     if (!self.program){
-        NSLog(@"Resuming from suspend");
         [self initGL];
         [self.view setNeedsLayout];
     }
-    NSLog(@"Unpausing");
+    
+    if (inEditingMode || settingsShown) return; //Rebuild GL but don't start just yet
+    
     EMU_pause(false);
     //[self.profile ajustLayout];
     [self startEmulatorLoop];
@@ -515,7 +506,6 @@ const float textureVert[] =
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSLog(@"Loop Started");
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
@@ -531,10 +521,6 @@ const float textureVert[] =
             EMU_copyMasterBuffer();
             [self updateDisplay];
             if (CACurrentMediaTime() - lastAutosave > 180) {
-                NSString *lastAutosavePath = [self.game pathForSaveStateWithName:@"Auto Save"];
-                if ([[NSFileManager defaultManager] fileExistsAtPath:lastAutosavePath]) {
-                    [[NSFileManager defaultManager] removeItemAtPath:lastAutosavePath error:nil];
-                }
                 [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 lastAutosave = CACurrentMediaTime();
             }
@@ -546,6 +532,10 @@ const float textureVert[] =
 
 - (void)saveStateWithName:(NSString*)saveStateName
 {
+    NSString *savePath = [self.game pathForSaveStateWithName:saveStateName];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:savePath]) {
+        [[NSFileManager defaultManager] removeItemAtPath:savePath error:nil];
+    }
     EMU_saveState([self.game pathForSaveStateWithName:saveStateName].fileSystemRepresentation);
     [self.game reloadSaveStates];
 }
@@ -554,7 +544,7 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS",MAX(fps, 60)];
+        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS", MIN(fps, 60)];
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
@@ -744,11 +734,12 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)exitEditMode
 {
+    [self.profile exitEditMode];
     inEditingMode = NO;
     settingsShown = YES;
     [self toggleSettings:self];
     [settingsNav popToRootViewControllerAnimated:YES];
-    [self.profile exitEditMode];
+    
 }
 
 - (IBAction)toggleSettings:(id)sender
@@ -763,7 +754,8 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             self.settingsContainer.alpha = 1;
         } completion:^(BOOL finished) {
             settingsShown = YES;
-            [CHBgDropboxSync start];
+            if (!inEditingMode)
+                [CHBgDropboxSync start];
         }];
     } else {
         [UIView animateWithDuration:0.3 animations:^{
@@ -893,7 +885,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             case iCadeButtonH:
                 [self pressediCadeABXY:0];
                 break;
-                
+
             case iCadeJoystickUp:
                 [self pressediCadePad:0];
                 break;
