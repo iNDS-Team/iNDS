@@ -7442,125 +7442,66 @@ TEMPLATE static void cpuClear(u32 Addr, u32 Size)
 	}
 }
 
-// Comment out the following line to test Riley's attempts at JIT.
-//#define USE_TEST_JIT
-
-#ifdef USE_TEST_JIT
 
 typedef int (*inc_t)(int temp);
 inc_t _inc = NULL;
-uint32_t *p;
+u32 *p;
+bool ready;
+
+#define iNDS_JIT_SIZE 1024
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
-    int pagesize = getpagesize();
-    
-    uint32_t code[] = {
-		0xe2800001, // add	r0, r0, #1
-		0xe12fff1e, // bx	lr
-	};
-    
-    printf("Before Execution\n");
-    
-    if (!p)
-    {
-        posix_memalign((void **)&p, pagesize, 1024);
-    }
-    else
-    {
-        if (mprotect(p, 1024, PROT_READ | PROT_WRITE)) {
-            perror("Couldn't mprotect");
-            exit(errno);
-        }
-    }
-    if (!p) {
-        perror("Couldn't malloc(1024)");
-        exit(errno);
-    }
-    
-    printf("Malloced\n");
-    
-    printf("Before Compiling\n");
-    
-    // copy instructions to function
-    memcpy(p, code, sizeof(code));
-    
-    printf("After Compiling\n");
-    
-    if (mprotect(p, 1024, PROT_READ | PROT_EXEC)) {
-        perror("Couldn't mprotect");
-        exit(errno);
-    }
-    
-    printf("About to JIT\n");
-    
-    int a = 1;
-    inc_t opfun = (inc_t)p;
+
+    printf("Time to execute JIT\n");
+    ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
+    if (!opfun) { //We need to compile a new set of instructions
+        //opfun = armcpu_compile<PROCNUM>(); //This is how they do it in android
+        //but we need to make sure we have execution privalleges
+        printf("Compiling new JIT\n");
+        int pagesize = getpagesize(); //4096
         
-	return opfun(a);
-}
-
-#else
-
-typedef int (*inc_t)(int temp);
-inc_t _inc = NULL;
-uint32_t *p;
-
-TEMPLATE static u32 cpuExecuteLJIT()
-{
-    /*ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
-    if (!opfun) {
-        opfun = armcpu_compile<PROCNUM>();
-        printf("No Opfun!\n");
-    }
-    
-    return opfun();*/
-    
-    int pagesize = getpagesize();
-    
-    printf("Before Execution\n");
-    
-    if (!p)
-    {
-        posix_memalign((void **)&p, pagesize, 1024 * 4);
-    }
-    else
-    {
-        if (mprotect(p, 1024 * 4, PROT_READ | PROT_WRITE)) {
-            perror("Couldn't mprotect");
+        if (!p)
+        {
+            printf("Assigning Protection\n");
+            posix_memalign((void **)&p, pagesize, iNDS_JIT_SIZE); //malloc and align
+            if (mprotect(p, iNDS_JIT_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC)) {
+                perror("Couldn't mprotect");
+                exit(errno);
+            }
+        }
+        if (!p) {
+            perror("Couldn't malloc(1024)\n");
             exit(errno);
         }
-    }
-    if (!p) {
-        perror("Couldn't malloc(1024)");
-        exit(errno);
-    }
-    
-    printf("Malloced\n");
-    
-    printf("Before Compiling\n");
-    
-	*p = (uint32_t)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
-    if (!*p) {
-        uint32_t *result = (uint32_t *)armcpu_compile<PROCNUM>();
-        *p = *result;
-    }
-    
-    printf("After Compiling\n");
-    
-    if (mprotect(p, 1024 * 4, PROT_READ | PROT_EXEC)) {
-        perror("Couldn't mprotect");
-        exit(errno);
-    }
-    
-    printf("About to JIT\n");
-    
-    ArmOpCompiled opfun = (ArmOpCompiled)p;
-    
-	return opfun();
-}
+        //memset(p, 0, 1024); //Clear memory
+        
+        u32 *result = (uint32_t *)armcpu_compile<PROCNUM>();
+        
+        //*p = *result; //Store compiled JIT (Wrong: only stores 4 bytes!)
+        memcpy(p, result, iNDS_JIT_SIZE);
+        printf("JIT Compiled to address: %p\n", p);
+        
+        opfun = (ArmOpCompiled)p;
 
-#endif
+    } else {
+        printf("Executing same JIT block\n");
+        // Even though we're executing an address very far from p,
+        // it still manages to have execution protection
+        
+        /*if (mprotect(&opfun, iNDS_JIT_SIZE, PROT_READ | PROT_EXEC)) {
+            perror("Couldn't mprotect\n");
+            exit(errno);
+        }*/
+    }
+    //Execute the instructions stored in memory
+    //return opfun();
+    printf("Executing code at address: %p\n", opfun);
+    u32 r = opfun(); // I think this is the number of cycles
+    printf("Successful execution with result: %d\n", r);
+    return r;
+    
+}
 
 static u32 cpuGetCacheReserve()
 {

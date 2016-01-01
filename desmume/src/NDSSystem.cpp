@@ -1991,6 +1991,7 @@ template<bool doarm9, bool doarm7, int cpuMode>
 static /*donotinline*/ std::pair<s32,s32> armInnerLoop(
 	const u64 nds_timer_base, const s32 s32next, s32 arm9, s32 arm7)
 {
+	printf("Starting inner loop\n");
 	s32 timer = minarmtime<doarm9,doarm7>(arm9,arm7);
 	if(nds_timer_base == 0)
 	{
@@ -2057,6 +2058,7 @@ void NDS_debug_step()
 template<bool FORCE>
 void NDS_exec(s32 nb)
 {
+	printf("Starting exec\n");
 	LagFrameFlag=1;
 
 	if((currFrameCounter&63) == 0)
@@ -2146,7 +2148,9 @@ void NDS_exec(s32 nb)
 			switch(CommonSettings.CpuMode)
 			{
 				case 1: arm9arm7 = armInnerLoop<true,true,1>(nds_timer_base,s32next,arm9,arm7); break;
-				case 2: arm9arm7 = armInnerLoop<true,true,2>(nds_timer_base,s32next,arm9,arm7); break;
+				case 2: arm9arm7 = armInnerLoop<true,true,2>(nds_timer_base,s32next,arm9,arm7);
+						//arm9arm7 = armInnerLoop<true,false,2>(nds_timer_base,s32next,arm9,arm7);
+						break;
 				default: arm9arm7 = armInnerLoop<true,true,0>(nds_timer_base,s32next,arm9,arm7); break;
 					
 			}

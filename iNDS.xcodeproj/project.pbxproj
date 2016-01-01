@@ -1851,7 +1851,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iNDS/support/iNDS-Prefix.pch";
 				GCC_UNROLL_LOOPS = NO;
@@ -1904,7 +1904,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iNDS/support/iNDS-Prefix.pch";
 				GCC_UNROLL_LOOPS = NO;

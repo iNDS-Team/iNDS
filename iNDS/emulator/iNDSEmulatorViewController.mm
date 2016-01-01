@@ -207,22 +207,6 @@ const float textureVert[] =
     if (!settingsShown)
         [self loadROM];
     [self defaultsChanged:nil];
-    
-    //NSString * testCheat = @"9208B3F4FFFD0002920CA88000000000021B6ABO00004000D2000000000000009208B3F4FFFE0001920CA88000000000021B6AB000004000D200000000000000";
-    //NSLog(@"Adding Cheat: %@", testCheat);
-    //EMU_add_AR("9208B3F4FFFD0002920CA88000000000021B6ABO00004000D2000000000000009208B3F4FFFE0001920CA88000000000021B6AB000004000D200000000000000", "Big Jump", YES);
-    //EMU_add_AR("03807D40EBAFD8AF", "Master Code", true);
-    //EMU_add_AR("221B6ACD00000000221B6AD100000000221B6AD500000000", "Tiny Mario", YES);
-    //EMU_add_AR("1208b3340000027c2208b32400000003", "Giant Mario", true);
-    /*EMU_addCheat(3, 0x620c2b54, 0x00000000, "Master Code", true);
-    EMU_addCheat(3, 0xb20c2b54, 0x00000000, "A", true);
-    EMU_addCheat(3, 0x1000015c, 0x00000001, "B", true);
-    EMU_addCheat(3, 0x10000160, 0x000003e7, "C", true);
-    EMU_addCheat(3, 0xd2000000, 0x00000000, "D", true);*/
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //EMU_add_AR("223ce2e10000007f", "MK All Courses", YES);
-        //EMU_add_AR("6217acf800000000b217acf800000000000000bc00002000000000c000002000000000c400002000d200000000000000", "XL", YES);
-    });
     [self.profile ajustLayout];
 }
 
@@ -517,6 +501,7 @@ const float textureVert[] =
 {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
+    //CGFloat leftOverFrames;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
