@@ -518,11 +518,9 @@ const float textureVert[] =
             EMU_copyMasterBuffer();
             [self updateDisplay];
             fps = EMU_runOther(); // Shouldn't we throttle after updating the display...?
-            if (CACurrentMediaTime() - lastAutosave > 180) {
-                [self pauseEmulation];
+            if (CACurrentMediaTime() - lastAutosave > 180 && [[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
                 [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 lastAutosave = CACurrentMediaTime();
-                [self resumeEmulation];
             }
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
