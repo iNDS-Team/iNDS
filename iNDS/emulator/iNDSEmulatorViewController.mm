@@ -655,7 +655,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 - (void)vibrate
 {
     // If force touch is avaliable we can assume taptic vibration is too
-    if ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
         [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
     } else {
         AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
