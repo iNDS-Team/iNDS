@@ -196,6 +196,7 @@ const float textureVert[] =
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    NSLog(@"View Disappearing");
     [super viewWillDisappear:animated];
     [self pauseEmulation];
     [self saveStateWithName:@"Pause"];
@@ -605,14 +606,6 @@ const float textureVert[] =
 - (IBAction)pressedDPad:(iNDSDirectionalControl *)sender
 {
     iNDSDirectionalControlDirection state = sender.direction;
-    
-    if (state != _previousDirection && state != 0)
-    {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"] && ![[NSUserDefaults standardUserDefaults] boolForKey: @"controlPadStyle"])
-        {
-            [self vibrate];
-        }
-    }
     
     EMU_setDPad(state & iNDSDirectionalControlDirectionUp, state & iNDSDirectionalControlDirectionDown, state & iNDSDirectionalControlDirectionLeft, state & iNDSDirectionalControlDirectionRight);
     

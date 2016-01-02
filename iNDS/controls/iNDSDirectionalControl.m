@@ -8,13 +8,15 @@
 
 #import "iNDSDirectionalControl.h"
 
-@interface iNDSDirectionalControl()
+@interface iNDSDirectionalControl() {
+    CALayer *buttonImage;
+    CFTimeInterval lastMove;
+}
 
 @property (readwrite, nonatomic) iNDSDirectionalControlDirection direction;
 @property (assign, nonatomic) CGSize deadZone; // dead zone in the middle of the control
 @property (strong, nonatomic) UIImageView *backgroundImageView;
 @property (assign, nonatomic) CGRect deadZoneRect;
-@property (strong, nonatomic) UIImageView *buttonImageView;
 
 @end
 
@@ -29,10 +31,13 @@
         _backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         [self addSubview:_backgroundImageView];
         
-        _buttonImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 56, 56)];
-        _buttonImageView.image = [UIImage imageNamed:@"JoystickButton"];
-        _buttonImageView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
-        [self addSubview:_buttonImageView];
+        buttonImage = [[CALayer alloc] init];
+        buttonImage.frame = CGRectMake(0, 0, self.frame.size.width/2.2, self.frame.size.width/2.2);
+        buttonImage.contents = (id)[UIImage imageNamed:@"JoystickButton"].CGImage;
+        buttonImage.anchorPoint = CGPointMake(0.5, 0.5);
+        //NSMutableDictionary *newActions = [[NSMutableDictionary alloc] initWithObjectsAndKeys: [NSNull null], @"position", nil];
+        buttonImage.actions = @{@"position": [NSNull null]};
+        [self.layer addSublayer:buttonImage];
         
         self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
         self.direction = iNDSDirectionalControlDirectionDown;
@@ -46,8 +51,8 @@
 {
     self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
     self.deadZoneRect = CGRectMake((self.bounds.size.width - self.deadZone.width)/2, (self.bounds.size.height - self.deadZone.height)/2, self.deadZone.width, self.deadZone.height);
-    self.buttonImageView.frame = CGRectMake(0, 0, self.frame.size.width/2, self.frame.size.width/2);
-    self.buttonImageView.center = self.backgroundImageView.center;
+    buttonImage.frame = CGRectMake(0, 0, self.frame.size.width/2.2, self.frame.size.width/2.2);
+    buttonImage.position = self.backgroundImageView.center;
 }
 
 
@@ -81,9 +86,9 @@
     
     if (self.style == iNDSDirectionalControlStyleJoystick) {
         CGPoint loc = [touch locationInView:self];
-        self.buttonImageView.center = loc;
+        buttonImage.position = loc;
+        lastMove = CACurrentMediaTime();
     }
-    
     return YES;
 }
 
@@ -93,8 +98,6 @@
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     
     if (self.style == iNDSDirectionalControlStyleJoystick) {
-        if (![super continueTrackingWithTouch:touch withEvent:event]) return NO;
-        
         // keep button inside
         CGPoint loc = [touch locationInView:self];
         loc.x -= self.bounds.size.width/2;
@@ -109,8 +112,10 @@
         }
         loc.x += self.bounds.size.width/2;
         loc.y += self.bounds.size.height/2;
-        self.buttonImageView.center = loc;
-        
+        if (CACurrentMediaTime() - lastMove > 0.033) { // increasing this value reduces refresh rate and greatly increases performance
+            buttonImage.position = loc;
+            lastMove = CACurrentMediaTime();
+        }
     }
     return YES;
 }
@@ -121,7 +126,7 @@
     [self sendActionsForControlEvents:UIControlEventValueChanged];
     
     if (self.style == iNDSDirectionalControlStyleJoystick) {
-        self.buttonImageView.center = self.backgroundImageView.center;
+        buttonImage.position = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
     }
 }
 
@@ -130,18 +135,17 @@
 - (void)setStyle:(iNDSDirectionalControlStyle)style {
     switch (style) {
         case iNDSDirectionalControlStyleDPad: {
-            self.buttonImageView.hidden = YES;
+            buttonImage.hidden = YES;
             self.backgroundImageView.image = [UIImage imageNamed:@"DPad"];
             break;
         }
             
         case iNDSDirectionalControlStyleJoystick: {
-            self.buttonImageView.hidden = NO;
+            buttonImage.hidden = NO;
             self.backgroundImageView.image = [UIImage imageNamed:@"JoystickBackground"];
             break;
         }
     }
-    
     _style = style;
 }
 
