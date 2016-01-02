@@ -178,6 +178,7 @@
 		CA7079C91C08FA64005A1B19 /* iNDSInitialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */; };
 		CA7079CB1C08FB47005A1B19 /* AppIcon-Transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */; };
 		CA7079CD1C095147005A1B19 /* toDo.txt in Resources */ = {isa = PBXBuildFile; fileRef = CA7079CC1C095147005A1B19 /* toDo.txt */; };
+		CA8EA13D1C375D870082A3F8 /* UIDevice+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8EA13C1C375D870082A3F8 /* UIDevice+Private.m */; };
 		CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */; };
 		CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF91C2356F700B2A864 /* SCLAlertView.m */; };
 		CA908C071C2356F700B2A864 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFB1C2356F700B2A864 /* SCLButton.m */; };
@@ -563,6 +564,9 @@
 		CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSInitialViewController.m; sourceTree = "<group>"; };
 		CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "AppIcon-Transparent.png"; path = "Resources/required/AppIcon-Transparent.png"; sourceTree = "<group>"; };
 		CA7079CC1C095147005A1B19 /* toDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = toDo.txt; sourceTree = "<group>"; };
+		CA8EA13A1C375D860082A3F8 /* UITapticEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITapticEngine.h; sourceTree = "<group>"; };
+		CA8EA13B1C375D870082A3F8 /* UIDevice+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Private.h"; sourceTree = "<group>"; };
+		CA8EA13C1C375D870082A3F8 /* UIDevice+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Private.m"; sourceTree = "<group>"; };
 		CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		CA908BF81C2356F700B2A864 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
@@ -1316,6 +1320,9 @@
 		CABE38421C30BFC600BE8857 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CA8EA13A1C375D860082A3F8 /* UITapticEngine.h */,
+				CA8EA13B1C375D870082A3F8 /* UIDevice+Private.h */,
+				CA8EA13C1C375D870082A3F8 /* UIDevice+Private.m */,
 				CABE38B41C34921A00BE8857 /* UIViewController+BackButtonHandler.h */,
 				CABE38B51C34921A00BE8857 /* UIViewController+BackButtonHandler.m */,
 				CABE38431C30BFDE00BE8857 /* NSString+CompareToVersion.h */,
@@ -1667,6 +1674,7 @@
 				BF9D514317865CD800B5864B /* SndOut.cpp in Sources */,
 				CA031D231BEBE1EB00EDE98D /* 7zIn.c in Sources */,
 				CA031D341BEBE36200EDE98D /* 7zMain.c in Sources */,
+				CA8EA13D1C375D870082A3F8 /* UIDevice+Private.m in Sources */,
 				CA031D221BEBE1EB00EDE98D /* 7zFile.c in Sources */,
 				CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */,
 				8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */,
@@ -1851,7 +1859,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iNDS/support/iNDS-Prefix.pch";
 				GCC_UNROLL_LOOPS = NO;
@@ -1904,7 +1912,7 @@
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iNDS/support/iNDS-Prefix.pch";
 				GCC_UNROLL_LOOPS = NO;
