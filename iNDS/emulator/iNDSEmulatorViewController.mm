@@ -14,6 +14,7 @@
 #import "iNDSDirectionalControl.h"
 #import "iNDSButtonControl.h"
 #import "CHBgDropboxSync.h"
+#import "UIDevice+Private.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
@@ -653,15 +654,20 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)vibrate
 {
-    AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
-    
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    NSArray *pattern = @[@YES, @20, @NO, @1];
-    
-    dictionary[@"VibePattern"] = pattern;
-    dictionary[@"Intensity"] = @1;
-    
-    AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    // If force touch is avaliable we can assume taptic vibration is too
+    if ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+        [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
+    } else {
+        AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+        
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        NSArray *pattern = @[@YES, @20, @NO, @1];
+        
+        dictionary[@"VibePattern"] = pattern;
+        dictionary[@"Intensity"] = @1;
+        
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    }
 }
 
 - (void)touchScreenAtPoint:(CGPoint)point
