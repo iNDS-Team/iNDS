@@ -15,6 +15,7 @@
 #import "iNDSButtonControl.h"
 #import "CHBgDropboxSync.h"
 #import "UIDevice+Private.h"
+#import "RBVolumeButtons.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
@@ -99,6 +100,8 @@ const float textureVert[] =
     BOOL inEditingMode;
     
     UINavigationController * settingsNav;
+    
+    RBVolumeButtons *volumeStealer;
 }
 
 
@@ -165,6 +168,33 @@ const float textureVert[] =
     if ([[GCController controllers] count] > 0) {
         [self controllerActivated:nil];
     }
+    
+    //Volume Button Bumpers
+    // This works pretty well but there's a 0.5 second delay when
+    // the user holds down a volume button
+    // If we could intercept the actualy event, timing would be a lot more accurate
+    volumeStealer = [[RBVolumeButtons alloc] init];
+    __block CFTimeInterval lastButtonUp = 0;
+    __block CFTimeInterval lastButtonDown = 0;
+    volumeStealer.upBlock = ^{
+        EMU_buttonDown((BUTTON_ID)11); //R
+        lastButtonUp = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.18), dispatch_get_main_queue(), ^(void){
+            if (CACurrentMediaTime() > lastButtonUp + 0.1) {//Another volume button intercept hasn't fired
+                EMU_buttonUp((BUTTON_ID)11);
+            }
+        });
+    };
+    volumeStealer.downBlock = ^{
+        EMU_buttonDown((BUTTON_ID)10); //L
+        lastButtonDown = CACurrentMediaTime();
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 0.18), dispatch_get_main_queue(), ^(void){
+            if (CACurrentMediaTime() > lastButtonDown + 0.1) {
+                EMU_buttonUp((BUTTON_ID)10);
+            }
+        });
+    };
+    
     [self defaultsChanged:nil];
     
     self.speed = 1;
@@ -187,6 +217,8 @@ const float textureVert[] =
     [self.view addSubview:control];
     control.active = YES;
     control.delegate = self;
+    
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -196,10 +228,8 @@ const float textureVert[] =
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    NSLog(@"View Disappearing");
     [super viewWillDisappear:animated];
     [self pauseEmulation];
-    [self saveStateWithName:@"Pause"];
     [UIApplication sharedApplication].statusBarHidden = NO;
 }
 
@@ -267,6 +297,11 @@ const float textureVert[] =
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
+    if ([defaults integerForKey:@"volumeBumper"]) {
+        [volumeStealer startStealingVolumeButtonEvents];
+    } else {
+        [volumeStealer stopStealingVolumeButtonEvents];
+    }
     
     [self.view setNeedsLayout];
 }
@@ -461,9 +496,10 @@ const float textureVert[] =
 - (void)suspendEmulation
 {
     NSLog(@"Suspending");
+    [self saveStateWithName:@"Pause"];
     [self pauseEmulation];
-    //Shutting down while editing causes a mess of problems.
-    //So We'll just not shutdown while editing... :/
+    // Shutting down while editing a layout causes a ton of problems.
+    // So We'll just not shutdown while editing... :/
     if (!inEditingMode) { //Discard the changes
         [self shutdownGL];
     }
