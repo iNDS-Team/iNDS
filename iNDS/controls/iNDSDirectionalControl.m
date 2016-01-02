@@ -45,7 +45,7 @@
 - (void) frameUpdated
 {
     self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
-        
+    self.deadZoneRect = CGRectMake((self.bounds.size.width - self.deadZone.width)/2, (self.bounds.size.height - self.deadZone.height)/2, self.deadZone.width, self.deadZone.height);
     self.buttonImageView.frame = CGRectMake(0, 0, self.frame.size.width/2, self.frame.size.width/2);
     self.buttonImageView.center = self.backgroundImageView.center;
 }
@@ -58,11 +58,12 @@
     [self frameUpdated];
 }
 
+
 - (iNDSDirectionalControlDirection)directionForTouch:(UITouch *)touch
 {
     // convert coords to based on center of control
     CGPoint loc = [touch locationInView:self];
-    if (!CGRectContainsPoint(self.bounds, loc)) return 0;
+    //if (!CGRectContainsPoint(self.bounds, loc)) return 0;
     iNDSDirectionalControlDirection direction = 0;
     
     if (loc.x > (self.bounds.size.width + self.deadZone.width)/2) direction |= iNDSDirectionalControlDirectionRight;
@@ -80,8 +81,6 @@
     
     if (self.style == iNDSDirectionalControlStyleJoystick) {
         CGPoint loc = [touch locationInView:self];
-        self.deadZoneRect = CGRectMake((self.bounds.size.width - self.deadZone.width)/2, (self.bounds.size.height - self.deadZone.height)/2, self.deadZone.width, self.deadZone.height);
-        if (!CGRectContainsPoint(self.deadZoneRect, loc)) return NO;
         self.buttonImageView.center = loc;
     }
     
@@ -105,9 +104,8 @@
         if (radius > maxRadius) {
             double angle = atan(loc.y/loc.x);
             if (loc.x < 0) angle += M_PI;
-            radius = maxRadius;
-            loc.x = radius * cos(angle);
-            loc.y = radius * sin(angle);
+            loc.x = maxRadius * cos(angle);
+            loc.y = maxRadius * sin(angle);
         }
         loc.x += self.bounds.size.width/2;
         loc.y += self.bounds.size.height/2;
