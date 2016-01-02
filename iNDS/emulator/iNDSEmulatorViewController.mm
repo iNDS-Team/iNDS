@@ -515,12 +515,14 @@ const float textureVert[] =
                     EMU_runCore();
                 //}
             }
-            fps = EMU_runOther();
             EMU_copyMasterBuffer();
             [self updateDisplay];
+            fps = EMU_runOther(); // Shouldn't we throttle after updating the display...?
             if (CACurrentMediaTime() - lastAutosave > 180) {
+                [self pauseEmulation];
                 [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 lastAutosave = CACurrentMediaTime();
+                [self resumeEmulation];
             }
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
@@ -542,7 +544,7 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS", MIN(fps, 60)];
+        self.fpsLabel.text = [NSString stringWithFormat:@"%ld FPS", MIN(fps * self.speed, 60)];
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);

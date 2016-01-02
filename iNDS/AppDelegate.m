@@ -144,7 +144,7 @@
             if ([fm createDirectoryAtPath:dstDir withIntermediateDirectories:YES attributes:nil error:&err] == NO) {
                 NSLog(@"Could not create directory to expand zip: %@ %@", dstDir, err);
                 [fm removeItemAtURL:url error:NULL];
-                [self showError:@"Unable to extract .zip file."];
+                [self showError:@"Unable to extract archive file."];
                 return NO;
             }
             
@@ -178,23 +178,35 @@
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];
+            NSError *error;
             // move .iNDS to documents and .dsv to battery
             for (NSString *path in [fm subpathsAtPath:dstDir]) {
                 if ([path.pathExtension.lowercaseString isEqualToString:@"nds"] && ![[path.lastPathComponent substringToIndex:1] isEqualToString:@"."]) {
                     NSLog(@"found ROM in zip: %@", path);
-                    [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.documentsPath stringByAppendingPathComponent:path.lastPathComponent] error:NULL];
+                    [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.documentsPath stringByAppendingPathComponent:path.lastPathComponent] error:&error];
+                    if (error) NSLog(@"%@", error);
                    [foundItems addObject:path.lastPathComponent];
                 } else if ([path.pathExtension.lowercaseString isEqualToString:@"dsv"]) {
                     NSLog(@"found save in zip: %@", path);
-                    [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:NULL];
+                    [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:&error];
+                    if (error) NSLog(@"%@", error);
                     [foundItems addObject:path.lastPathComponent];
                 } else {
-                    NSLog(@"Removing %@", [dstDir stringByAppendingPathComponent:path]);
-                    [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
+                    BOOL isDirectory;
+                    BOOL fileExistsAtPath = [[NSFileManager defaultManager] fileExistsAtPath:[dstDir stringByAppendingPathComponent:path] isDirectory:&isDirectory];
+                    if (fileExistsAtPath) {
+                        if (isDirectory) {
+                            //NSLog(@"Tried to remove a directory: %@", [dstDir stringByAppendingPathComponent:path]);
+                        } else {
+                            //NSLog(@"Removing %@", [dstDir stringByAppendingPathComponent:path]);
+                            [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
+                        }
+                    }
+                    
                 }
             }
             if (foundItems.count == 0) {
-                [self showError:@"No roms or saves found in archive."];
+                [self showError:@"No roms or saves found in archive. Make sure the zip contains a .nds file or a .dsv file"];
             }
             else if (foundItems.count == 1) {
                 [ZAActivityBar showSuccessWithStatus:[NSString stringWithFormat:@"Added: %@", foundItems[0]] duration:3];
