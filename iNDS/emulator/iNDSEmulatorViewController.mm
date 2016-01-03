@@ -47,9 +47,8 @@ NSString *const kVertShader = SHADER_STRING
      gl_Position = position;
  }
  );
-
-NSString *const kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
-/*SHADER_STRING (
+//[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
+NSString *const kFragShader = SHADER_STRING (
  uniform sampler2D inputImageTexture;
  varying highp vec2 texCoord;
  
@@ -58,7 +57,7 @@ NSString *const kFragShader = [NSString stringWithContentsOfFile:[[NSBundle main
      highp vec4 color = texture2D(inputImageTexture, texCoord);
      gl_FragColor = color;
  }
- );*/
+ );
 
 const float positionVert[] =
 {
