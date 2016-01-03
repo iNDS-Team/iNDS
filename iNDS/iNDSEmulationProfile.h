@@ -37,6 +37,8 @@
 - (void)enterEditMode;
 - (void)handlePan:(UIView *)currentView Location:(CGPoint) location state:(UIGestureRecognizerState) state;
 - (void)sizeChanged:(UISlider *)sender;
+- (void)deselectView;
+
 - (void)exitEditMode;
 - (void)saveProfileWithCancel:(BOOL)showCancel;
 - (BOOL)deleteProfile;

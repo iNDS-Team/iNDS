@@ -1928,7 +1928,7 @@ static INLINE u16 read_timer(int proc, int timerIndex)
 
 	//for unchained timers, we do not keep the timer up to date. its value will need to be calculated here
 	s32 diff = (s32)(nds.timerCycle[proc][timerIndex] - nds_timer);
-	assert(diff>=0);
+	//assert(diff>=0);
 	if(diff<0) 
 		printf("NEW EMULOOP BAD NEWS PLEASE REPORT: TIME READ DIFF < 0 (%d) (%d) (%d)\n",diff,timerIndex,MMU.timerMODE[proc][timerIndex]);
 	

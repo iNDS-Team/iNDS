@@ -289,6 +289,7 @@ const float textureVert[] =
 
 - (void)defaultsChanged:(NSNotification*)notification
 {
+    NSLog(@"DFC");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (emuLoopLock) { //Only update these is the core has loaded
         EMU_setFrameSkip((int)[defaults integerForKey:@"frameSkip"]);
@@ -297,7 +298,7 @@ const float textureVert[] =
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
-    if ([defaults integerForKey:@"volumeBumper"]) {
+    if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
         [volumeStealer startStealingVolumeButtonEvents];
     } else {
         [volumeStealer stopStealingVolumeButtonEvents];
@@ -580,7 +581,7 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%ld FPS", MIN(fps * self.speed, 60)];
+        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS", MIN(fps, 60)];
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
@@ -684,6 +685,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)vibrate
 {
+    if (settingsShown || inEditingMode) return;
     // If force touch is avaliable we can assume taptic vibration is too
     if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
         [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
@@ -719,6 +721,8 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         } else if (CGRectContainsPoint(glkView[1].frame, location)) {
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
             movingView = glkView[1];
+        } else {
+            [self.profile deselectView];
         }
     } else {
         [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
@@ -779,6 +783,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     UIView * statusBar = [self statuBarView];
     if (!settingsShown) { //About to show settings
+        [volumeStealer performSelector:@selector(stopStealingVolumeButtonEvents) withObject:nil afterDelay:0.1]; //Non blocking
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
            [[UIApplication sharedApplication] setStatusBarHidden:NO];
             statusBar.alpha = 0;
@@ -798,6 +803,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
                 [CHBgDropboxSync start];
         }];
     } else {
+        if ([[NSUserDefaults standardUserDefaults] integerForKey:@"volumeBumper"]) {
+            [volumeStealer performSelector:@selector(startStealingVolumeButtonEvents) withObject:nil afterDelay:0.1];
+        }
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.alpha = 0.0;
             self.settingsContainer.alpha = 0;
