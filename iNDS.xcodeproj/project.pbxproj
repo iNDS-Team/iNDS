@@ -181,7 +181,7 @@
 		CA8EA13D1C375D870082A3F8 /* UIDevice+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8EA13C1C375D870082A3F8 /* UIDevice+Private.m */; };
 		CA8EA1401C37C3FB0082A3F8 /* RBVolumeButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */; };
-		CA8EBCF31C39BCE50082A3F8 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */; };
+		CA8EBCF31C39BCE50082A3F8 /* FShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = CA8EBCF21C39BCE50082A3F8 /* FShader.fsh */; };
 		CA8EBCF41C39C0D10082A3F8 /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CA8EA1431C3850D50082A3F8 /* cheats.rar */; };
 		CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */; };
 		CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF91C2356F700B2A864 /* SCLAlertView.m */; };
@@ -574,7 +574,7 @@
 		CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBVolumeButtons.m; sourceTree = "<group>"; };
 		CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		CA8EA1431C3850D50082A3F8 /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
-		CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
+		CA8EBCF21C39BCE50082A3F8 /* FShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = FShader.fsh; sourceTree = "<group>"; };
 		CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		CA908BF81C2356F700B2A864 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
@@ -840,7 +840,7 @@
 				8BEA096F17872C320060B347 /* GLProgram.m */,
 				CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */,
 				CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */,
-				CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */,
+				CA8EBCF21C39BCE50082A3F8 /* FShader.fsh */,
 			);
 			name = "Emulator View";
 			sourceTree = "<group>";
@@ -1505,7 +1505,7 @@
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
 				28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */,
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
-				CA8EBCF31C39BCE50082A3F8 /* Shader.fsh in Resources */,
+				CA8EBCF31C39BCE50082A3F8 /* FShader.fsh in Resources */,
 				CABE38C21C34B8B800BE8857 /* Folder.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
