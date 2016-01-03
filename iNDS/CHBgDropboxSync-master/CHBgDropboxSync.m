@@ -21,6 +21,7 @@
     DBRestClient* client;
     BOOL anyLocalChanges;
     BOOL syncing;
+    NSMutableArray *deletedFiles;
 }
 - (NSDictionary*)getLocalStatus;
 @end
@@ -53,6 +54,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     client.delegate = self;
     
     // Start getting the remote file list
+    deletedFiles = [NSMutableArray new];
     [client loadMetadata:@"/"];
 }
 
@@ -142,14 +144,13 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // This re-starts the 'check the metadata' step again, which will then check for any syncing that needs doing, and then kick it off
 - (void)stepComplete {
     // Kick off the check the metadata with a little delay so we don't overdo things
-    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.05];
+    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.15];
 }
 
 #pragma mark - The async dropbox steps
 
 - (void)startTaskLocalDelete:(NSString*)file {
     NSLog(@"Sync: Deleting local file %@", file);
-    //[ZAActivityBar showWithStatus:[NSString stringWithFormat:@"Removing file %@", file]];
     [[NSFileManager defaultManager] removeItemAtPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file] error:nil];
     [self stepComplete];
     anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
@@ -158,7 +159,6 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // Upload
 - (void)startTaskUpload:(NSString*)file rev:(NSString*)rev {
     NSLog(@"Sync: Uploading file %@, %@", file, rev?@"overwriting":@"new");
-    //[ZAActivityBar showWithStatus:[NSString stringWithFormat:@"Uploading file %@, %@", file, rev?@"overwriting":@"new"]];
     [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
 }
 - (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
@@ -175,9 +175,12 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 
 // Download
 - (void)startTaskDownload:(NSString*)file {
-    NSLog(@"Sync: Downloading file %@", file);
-    //[ZAActivityBar showWithStatus:[NSString stringWithFormat:@"Downloading file %@", file]];
-    [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+    if (![deletedFiles containsObject:file]) {
+        NSLog(@"Sync: Downloading file %@", file);
+        [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+    } else {
+        NSLog(@"Prevented DB Crash. Trying to DL deleted file");
+    }
 }
 - (void)restClient:(DBRestClient*)client loadedFile:(NSString*)destPath contentType:(NSString*)contentType metadata:(DBMetadata*)metadata {
     // Now the file has downloaded, we need to set its 'last modified' date locally to match the date on dropbox
@@ -195,7 +198,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // Remote delete
 - (void)startTaskRemoteDelete:(NSString*)file {
     NSLog(@"Sync: Deleting remote file %@", file);
-    //[ZAActivityBar showWithStatus:[NSString stringWithFormat:@"Removing remote file %@", file]];
+    [deletedFiles addObject:file];
     [client deletePath:$str(@"/%@", file)];
     [self stepComplete];
 }
@@ -252,11 +255,13 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
                 if (local.timeIntervalSinceReferenceDate > remote.timeIntervalSinceReferenceDate) {
                     // Local is newer
                     // So send the local file to dropbox, overwriting the existing one with the given 'rev'
+                    //NSLog(@"UL1");
                     [self startTaskUpload:file rev:[remoteRevs objectForKey:file]];
                     return NO;
                 } else {
                     // Remote is newer
                     // So download the file
+                    //NSLog(@"DL1");
                     [self startTaskDownload:file];
                     return NO;
                 }
@@ -270,11 +275,13 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
                 // If never been synced, it won't be in our sync list, so add it locally
                 if (lastSyncExists) {
                     // Remove from dropbox
+                    //NSLog(@"RD1");
                     [self lastSyncRemove:file]; // Clear the 'last sync' for just this file, so we don't try deleting it again
                     [self startTaskRemoteDelete:file];
                     return NO;
                 } else {
                     // Download it
+                    //NSLog(@"DL2: %@", remote);
                     [self startTaskDownload:file];
                     return NO;
                 }
@@ -285,11 +292,13 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
                 // If it was deleted from db since last sync, it will be in our sync list, so delete it locally
                 // If never synced, it won't be in our sync list, so upload it
                 if (lastSyncExists) {
+                    //NSLog(@"RD2");
                     [self lastSyncRemove:file]; // Clear the 'last sync' for just this file, so we don't try deleting it again
                     [self startTaskLocalDelete:file]; // Delete locally
                     return NO;
                 } else {
                     // Upload it. 'rev' should be nil here anyway.
+                    //NSLog(@"UL2");
                     [self startTaskUpload:file rev:[remoteRevs objectForKey:file]];
                     return NO;
                 }

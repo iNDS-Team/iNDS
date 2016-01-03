@@ -377,6 +377,7 @@ const float textureVert[] =
     NSLog(@"Loading ROM %@", self.game.path);
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
     EMU_init([iNDSGame preferredLanguage]);
+    //2 for JIT
     EMU_setCPUMode(1);//[[NSUserDefaults standardUserDefaults] boolForKey:@"enableLightningJIT"] ? 2 : 1);
     EMU_loadRom([self.game.path fileSystemRepresentation]);
     EMU_change3D(1);
@@ -707,7 +708,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (settingsShown) {
+    if (settingsShown && !inEditingMode) {
         [self toggleSettings:self];
         return;
     } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually

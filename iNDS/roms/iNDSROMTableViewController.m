@@ -72,17 +72,12 @@
 
 - (void)reloadGames:(NSNotification*)aNotification
 {
-    NSUInteger row = [aNotification.object isKindOfClass:[iNDSGame class]] ? [games indexOfObject:aNotification.object] : NSNotFound;
     if (aNotification.object == docWatchHelper) {
         // do it later, the file may not be written yet
         [self performSelector:_cmd withObject:nil afterDelay:2.5];
-    }
-    if (aNotification == nil || row == NSNotFound) {
+    } else  {
         // reload all games
         games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
-        [self.tableView reloadData];
-    } else {
-        // reload single row
         [self.tableView reloadData];
     }
 }
