@@ -87,7 +87,7 @@ bool frameAdvance = false;
 bool FrameLimit = true;
 int emu_paused = 0;
 volatile bool paused = false;
-bool enableMicrophone = false;
+bool enableMicrophone = true;
 volatile bool pausedByMinimize = false;
 volatile bool soundEnabled = true;
 
@@ -207,7 +207,7 @@ void EMU_loadSettings()
 	CommonSettings.hud.ShowLagFrameCounter = false;
 	CommonSettings.hud.ShowMicrophone = false;
 	CommonSettings.hud.ShowRTC = false;
-    CommonSettings.micMode = TCommonSettings::InternalNoise;
+    CommonSettings.micMode = TCommonSettings::Physical;
 	video.screengap = 0;
 	CommonSettings.showGpu.main = 1;
 	CommonSettings.showGpu.sub = 1;
@@ -219,8 +219,8 @@ void EMU_loadSettings()
     autoframeskipenab = true;
 	frameskiprate = 2;
     CommonSettings.CpuMode = 1;
-	CommonSettings.spuInterpolationMode = SPUInterpolation_None;
-	CommonSettings.GFX3D_HighResolutionInterpolateColor = 0;
+	CommonSettings.spuInterpolationMode = SPUInterpolation_Cosine; //Will
+	CommonSettings.GFX3D_HighResolutionInterpolateColor = 1;
 	CommonSettings.GFX3D_EdgeMark = 0;
 	CommonSettings.GFX3D_Fog = 1;
 	CommonSettings.GFX3D_Texture = 1;

@@ -48,8 +48,8 @@ NSString *const kVertShader = SHADER_STRING
  }
  );
 
-NSString *const kFragShader = SHADER_STRING
-(
+NSString *const kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
+/*SHADER_STRING (
  uniform sampler2D inputImageTexture;
  varying highp vec2 texCoord;
  
@@ -58,7 +58,7 @@ NSString *const kFragShader = SHADER_STRING
      highp vec4 color = texture2D(inputImageTexture, texCoord);
      gl_FragColor = color;
  }
- );
+ );*/
 
 const float positionVert[] =
 {
@@ -141,7 +141,7 @@ const float textureVert[] =
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
+    NSLog(@"%@", kFragShader);
     NSString * currentProfile = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
     iNDSEmulationProfile * profile;
     if ([currentProfile isEqualToString:@"iNDSDefaultProfile"]) {
@@ -289,7 +289,6 @@ const float textureVert[] =
 
 - (void)defaultsChanged:(NSNotification*)notification
 {
-    NSLog(@"DFC");
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (emuLoopLock) { //Only update these is the core has loaded
         EMU_setFrameSkip((int)[defaults integerForKey:@"frameSkip"]);

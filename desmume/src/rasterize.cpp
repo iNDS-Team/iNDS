@@ -776,10 +776,10 @@ public:
 
 		//CONSIDER: in case some other math is wrong (shouldve been clipped OK), we might go out of bounds here.
 		//better check the Y value.
-		if(RENDERER && (pLeft->Y<0 || pLeft->Y>191)) {
+		/*if(RENDERER && (pLeft->Y<0 || pLeft->Y>191)) {
 			printf("rasterizer rendering at y=%d! oops!\n",pLeft->Y);
 			return;
-		}
+		}*/
 		if(!RENDERER && (pLeft->Y<0 || pLeft->Y>=engine->height)) {
 			printf("rasterizer rendering at y=%d! oops!\n",pLeft->Y);
 			return;
@@ -809,7 +809,7 @@ public:
 		{
 			if(RENDERER && !lineHack)
 			{
-				printf("rasterizer rendering at x=%d! oops!\n",x+width-1);
+				printf("rasterizer rendering at x=%d! RENDERER: %d oops!\n",x+width-1, RENDERER);
 				return;
 			}
 			width = (RENDERER?256:engine->width)-x;
@@ -1659,11 +1659,11 @@ static void SoftRastRender()
 	if(gfx3d.renderState.enableFog)
 		mainSoftRasterizer.updateFogTable();
 	
-	mainSoftRasterizer.initFramebuffer(256,192,gfx3d.renderState.enableClearImage?true:false);
+	mainSoftRasterizer.initFramebuffer(256, 192, gfx3d.renderState.enableClearImage?true:false);
 	mainSoftRasterizer.updateToonTable();
 	mainSoftRasterizer.updateFloatColors();
 	mainSoftRasterizer.performClipping(CommonSettings.GFX3D_HighResolutionInterpolateColor);
-	mainSoftRasterizer.performViewportTransforms<false>(256,192);
+	mainSoftRasterizer.performViewportTransforms<false>(256, 192);
 	mainSoftRasterizer.performBackfaceTests();
 	mainSoftRasterizer.performCoordAdjustment(true);
 	mainSoftRasterizer.setupTextures(true);

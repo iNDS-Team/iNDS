@@ -318,7 +318,7 @@
 }
 
 -(BOOL)isSystemApplication {
-    return [[[[NSBundle mainBundle] executablePath] pathComponents][1] isEqualToString:@"db"];
+    return [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] pathComponents].count == 4;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
