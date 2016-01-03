@@ -24,8 +24,7 @@
 - (NSString *)cheatsDir;
 - (NSString *)batteryDir;
 - (NSString *)documentsPath;
-- (NSString *)oldBatteryDir;
-- (NSString *)oldDocumentsPath;
+- (NSString *)rootDocumentsPath;
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState;
