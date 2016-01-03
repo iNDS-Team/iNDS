@@ -191,7 +191,7 @@
             NSLog(@"%@", url.pathExtension.lowercaseString);
         }
         // remove inbox (shouldn't be needed)
-        [fm removeItemAtPath:[self.oldDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+        [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
         // Clear temp
         
         return YES;
