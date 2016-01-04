@@ -2146,9 +2146,7 @@ void NDS_exec(s32 nb)
 			switch(CommonSettings.CpuMode)
 			{
 				case 1: arm9arm7 = armInnerLoop<true,true,1>(nds_timer_base,s32next,arm9,arm7); break;
-				case 2: arm9arm7 = armInnerLoop<true,true,2>(nds_timer_base,s32next,arm9,arm7);
-						//arm9arm7 = armInnerLoop<true,false,2>(nds_timer_base,s32next,arm9,arm7);
-						break;
+				case 2: arm9arm7 = armInnerLoop<true,true,2>(nds_timer_base,s32next,arm9,arm7); break;
 				default: arm9arm7 = armInnerLoop<true,true,0>(nds_timer_base,s32next,arm9,arm7); break;
 					
 			}

@@ -1,13 +1,17 @@
-XFix layout screens max size
-Fix joystick
-XChange home page to google
-XFix extension association errors
-XRename Saves
-XCheat Codes
-Color Change
-Single Screen Layout
 Keep Music playing when sound disables
+Single Screen Layout
 Add game recording
-Use volume buttons as bumpers
+Simulate physical actions (Lid Close)
+Color Change
+Overhaul layout once everything is done
+
+Done:
+X Use volume buttons as bumpers
+X Fix layout screens max size
+X Fix joystick
+X Change home page to google
+X Fix extension association errors
+X Rename Saves
+X Cheat Codes
 
 

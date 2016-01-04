@@ -7389,7 +7389,7 @@ static void cpuReserve()
 
 	u32 HostRegCount = LOCALREG_INIT();
 	InitializeCodeBuffer();
-
+    printf("Reserving CPU\n");
 	s_pArmAnalyze = new ArmAnalyze(CommonSettings.jit_max_block_size);
 	s_pRegisterMap = new RegisterMapImp(HostRegCount);
 
@@ -7456,10 +7456,13 @@ TEMPLATE static u32 cpuExecuteLJIT()
     printf("Time to execute JIT\n");
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) { //We need to compile a new set of instructions
-        //opfun = armcpu_compile<PROCNUM>(); //This is how they do it in android
-        //but we need to make sure we have execution privalleges
         printf("Compiling new JIT\n");
-        int pagesize = getpagesize(); //4096
+        opfun = armcpu_compile<PROCNUM>(); //This is how they do it in android
+        // The above magically started working... I'm not sure what changed protecting below isn't needed anymore like is was a few days ago...
+        
+        //but we need to make sure we have execution privalleges
+        
+        /*int pagesize = getpagesize(); //4096
         
         if (!p)
         {
@@ -7482,7 +7485,8 @@ TEMPLATE static u32 cpuExecuteLJIT()
         memcpy(p, result, iNDS_JIT_SIZE);
         printf("JIT Compiled to address: %p\n", p);
         
-        opfun = (ArmOpCompiled)p;
+        opfun = (ArmOpCompiled)p;*/
+        
 
     } else {
         printf("Executing same JIT block\n");
@@ -7497,9 +7501,9 @@ TEMPLATE static u32 cpuExecuteLJIT()
     //Execute the instructions stored in memory
     //return opfun();
     printf("Executing code at address: %p\n", opfun);
-    u32 r = opfun(); // I think this is the number of cycles
-    printf("Successful execution with result: %d\n", r);
-    return r;
+    u32 cycles = opfun(); // Number of cycles
+    printf("Successful execution with cycles: %d\n", cycles);
+    return cycles;
     
 }
 

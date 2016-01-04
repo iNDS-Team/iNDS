@@ -181,7 +181,7 @@ static void volumeListenerCallback (
     [self.volumeView removeFromSuperview];
     self.volumeView = nil;
 
-    AudioSessionSetActive(NO);
+    //AudioSessionSetActive(NO);
 
     self.isStealingVolumeButtons = NO;
 }

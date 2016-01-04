@@ -175,8 +175,8 @@ void EMU_init(int lang)
 	
 	fw_config.language = lang < 0 ? NDS_FW_LANG_ENG : lang;
 	fw_config.fav_colour = 15;
-	fw_config.birth_month = 1;
-	fw_config.birth_day = 23;
+	fw_config.birth_month = 2;
+	fw_config.birth_day = 17;
 	fw_config.ds_type = NDS_CONSOLE_TYPE_LITE;
     
 	video.setfilter(video.NONE); //figure out why this doesn't seem to work (also add to cfg)
@@ -361,7 +361,7 @@ void iNDS_user()
 		mainLoopData.fpsticks = GetTickCount();
 	}
     
-    //Don't think this is actually does anything
+    //Don't think this does very much
 	return;
     if(nds.idleFrameCounter==0 || oneSecond)
 	{
@@ -567,37 +567,6 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
     NDS_setPad(all_button, false, false);
 }
 
-#pragma mark - Cheats
-
-//Will
-/*bool EMU_addCheat(u8 size, u32 address, u32 val, char *description, bool enabled)
-{
-    if (cheats->add(size, address, val, description, enabled)) {
-        printf("Cheat Added!");
-        return true;
-    } else {
-        printf("Error, unable to add cheat");
-        return false;
-    }
-}
-
-bool EMU_update(u8 size, u32 address, u32 val, char *description, bool enabled, u32 pos)
-{
-    return false;
-}
-bool EMU_add_AR(const char *code, const char *description, bool enabled)
-{
-    if (cheats->add_AR(code, description, enabled)) {
-        return true;
-    } else {
-        printf("Error, unable to add AR cheat-----------------\n");
-        return false;
-    }
-}
-bool EMU_update_AR(const char *code, const char *description, bool enabled, u32 pos)
-{
-    return false;
-}*/
 
 const char* EMU_version()
 {

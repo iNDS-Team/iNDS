@@ -168,10 +168,10 @@ const float textureVert[] =
         [self controllerActivated:nil];
     }
     
-    //Volume Button Bumpers
+    // Volume Button Bumpers
     // This works pretty well but there's a 0.5 second delay when
     // the user holds down a volume button
-    // If we could intercept the actualy event, timing would be a lot more accurate
+    // If we could intercept the actual event instead of just listening for the notification, timing would be a lot more accurate
     volumeStealer = [[RBVolumeButtons alloc] init];
     __block CFTimeInterval lastButtonUp = 0;
     __block CFTimeInterval lastButtonDown = 0;
@@ -245,8 +245,8 @@ const float textureVert[] =
 {
     NSLog(@"Changing Game");
     [self saveStateWithName:@"Pause"];
-    [self pauseEmulation];
-    [self shutdownGL];
+    [self suspendEmulation];
+    //EMU_closeRom();
     self.game = newGame;
     [self loadROM];
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -539,7 +539,7 @@ const float textureVert[] =
 {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
-    //CGFloat leftOverFrames;
+    //CGFloat framesToRender = 0;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
