@@ -299,8 +299,15 @@
 
 - (void)moveFolderAtPath:(NSString *)oldDirectory toPath:(NSString *)newDirectory
 {
+    NSLog(@"Moving %@ to %@", oldDirectory, newDirectory);
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error;
+    if (![fm fileExistsAtPath:newDirectory]) {
+        [fm createDirectoryAtPath:newDirectory withIntermediateDirectories:NO attributes:nil error:&error];
+        if (error) {
+            NSLog(@"%@", error);
+        }
+    }
     NSArray *files = [fm contentsOfDirectoryAtPath:oldDirectory error:&error];
     if (error) NSLog(@"%@", error);
     for (NSString *file in files) {
@@ -314,7 +321,9 @@
             if (error) NSLog(@"%@", error);
         }
     }
-    [fm removeItemAtPath:oldDirectory error:nil];
+    if (!error) {
+        [fm removeItemAtPath:oldDirectory error:nil];
+    }
 }
 
 -(BOOL)isSystemApplication {
