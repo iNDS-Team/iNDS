@@ -47,8 +47,7 @@ NSString *const kVertShader = SHADER_STRING
      gl_Position = position;
  }
  );
-//NSString *const kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
-NSString *const kFragShader = SHADER_STRING (
+NSString * kFragShader = SHADER_STRING (
  uniform sampler2D inputImageTexture;
  varying highp vec2 texCoord;
  
@@ -140,7 +139,6 @@ const float textureVert[] =
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSLog(@"%@", kFragShader);
     NSString * currentProfile = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];
     iNDSEmulationProfile * profile;
     if ([currentProfile isEqualToString:@"iNDSDefaultProfile"]) {
@@ -196,7 +194,7 @@ const float textureVert[] =
     
     [self defaultsChanged:nil];
     
-    self.speed = 1;
+    _speed = 1;
 
     
     CGRect settingsRect = self.settingsContainer.frame;
@@ -424,6 +422,23 @@ const float textureVert[] =
     self.profile.mainScreen = glkView[0];
     self.profile.touchScreen = glkView[1];
     
+    //ToDo: make this better
+    BOOL bicubic = [[NSUserDefaults standardUserDefaults] boolForKey:@"highresGraphics"];
+    if (bicubic) {
+        kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
+    } else {
+        kFragShader = SHADER_STRING (
+                       uniform sampler2D inputImageTexture;
+                       varying highp vec2 texCoord;
+                       
+                       void main()
+                       {
+                           highp vec4 color = texture2D(inputImageTexture, texCoord);
+                           gl_FragColor = color;
+                       }
+                       );
+    }
+    
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
     
     [self.program addAttribute:@"position"];
@@ -447,7 +462,7 @@ const float textureVert[] =
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, bicubic ? GL_NEAREST : GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
@@ -455,7 +470,7 @@ const float textureVert[] =
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, bicubic ? GL_NEAREST : GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
@@ -615,7 +630,13 @@ const float textureVert[] =
 
 - (void) setSpeed:(CGFloat)speed
 {
+    if (!self.program) return;
     int userFrameSkip = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"];
+    if (speed < 1) { //Force this. Audio sounds so bad < 1 when synched
+        EMU_setSynchMode(0);
+    } else {
+        EMU_setSynchMode([[NSUserDefaults standardUserDefaults] boolForKey:@"synchSound"]);
+    }
     if (speed <= 1.0) {
         EMU_setFrameSkip(userFrameSkip);
     } else {

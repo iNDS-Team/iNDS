@@ -34,6 +34,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *showFPSSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *fullScreenSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *bicubicSwitch;
 
 @property (weak, nonatomic) IBOutlet UILabel *synchSoundLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *synchSoundSwitch;
@@ -117,6 +118,7 @@
     self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
     self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];
     self.fullScreenSwitch.on = [defaults boolForKey:@"fullScreenSettings"];
+    self.bicubicSwitch.on = [defaults boolForKey:@"highresGraphics"];
     self.synchSoundSwitch.on = [defaults boolForKey:@"synchSound"];
     
     self.enableJITSwitch.on = [defaults boolForKey:@"enableLightningJIT"];
@@ -211,6 +213,8 @@
         [defaults setBool:self.autoSaveSwitch.on forKey:@"periodicSave"];
     } else if (sender == self.fullScreenSwitch) {
         [defaults setBool:self.fullScreenSwitch.on forKey:@"fullScreenSettings"];
+    } else if (sender == self.bicubicSwitch) {
+        [defaults setBool:self.bicubicSwitch.on forKey:@"highresGraphics"];
     } else if (sender == self.controlPadStyleControl) {
         [defaults setInteger:self.controlPadStyleControl.selectedSegmentIndex forKey:@"controlPadStyle"];
     } else if (sender == self.controlOpacitySlider) {
