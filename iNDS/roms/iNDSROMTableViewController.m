@@ -14,9 +14,11 @@
 #import "iNDSRomDownloadManager.h"
 #import "SCLAlertView.h"
 #import <Crashlytics/Crashlytics.h>
+#import "MHWDirectoryWatcher.h"
 
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
+    MHWDirectoryWatcher * docWatchHelper;
 }
 
 @end
@@ -40,12 +42,14 @@
     romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
     
     // watch for changes in documents folder
-    docWatchHelper = [DocWatchHelper watcherForPath:AppDelegate.sharedInstance.documentsPath];
+    docWatchHelper = [MHWDirectoryWatcher directoryWatcherAtPath:AppDelegate.sharedInstance.documentsPath
+                                                                                callback:^{
+                                                                                    [self reloadGames:self];
+                                                                                }];
     
     // register for notifications
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(reloadGames:) name:iNDSGameSaveStatesChangedNotification object:nil];
-    [nc addObserver:self selector:@selector(reloadGames:) name:kDocumentChanged object:docWatchHelper];
     
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
     
@@ -70,9 +74,9 @@
 }
 
 
-- (void)reloadGames:(NSNotification*)aNotification
+- (void)reloadGames:(id)sender
 {
-    if (aNotification.object == docWatchHelper) {
+    if (sender == self) {
         // do it later, the file may not be written yet
         [self performSelector:_cmd withObject:nil afterDelay:2.5];
     } else  {

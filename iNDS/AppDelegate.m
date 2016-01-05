@@ -37,6 +37,7 @@
     //Create documents folder
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:nil];
+        [CHBgDropboxSync clearLastSyncData];
     }
     
     // Move iNDS to documents for non-jailbroken phones. Delete later once everyone is >=1.3.3

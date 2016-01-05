@@ -8,16 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <DropboxSDK/DropboxSDK.h>
-#import "DocWatchHelper.h"
 
 @interface iNDSROMTableViewController : UITableViewController <UIAlertViewDelegate>
 {
     NSArray *games;
-    DocWatchHelper *docWatchHelper;
     
     IBOutlet UINavigationItem *romListTitle;
 }
 
-- (void)reloadGames:(NSNotification*)aNotification;
+- (void)reloadGames:(id)sender;
 
 @end
