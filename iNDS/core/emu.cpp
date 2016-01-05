@@ -219,7 +219,7 @@ void EMU_loadSettings()
     autoframeskipenab = true;
 	frameskiprate = 2;
     CommonSettings.CpuMode = 1;
-	CommonSettings.spuInterpolationMode = SPUInterpolation_Cosine; //Will
+	CommonSettings.spuInterpolationMode = SPUInterpolation_None; //Will
 	CommonSettings.GFX3D_HighResolutionInterpolateColor = 1;
 	CommonSettings.GFX3D_EdgeMark = 0;
 	CommonSettings.GFX3D_Fog = 1;
@@ -392,7 +392,7 @@ void iNDS_user()
 	//Hud.cpuloopIterationCount = nds.cpuloopIterationCount;
 }
 
-static void iNDS_throttle(bool allowSleep = true, int forceFrameSkip = -1)
+void iNDS_throttle(bool allowSleep, int forceFrameSkip)
 {
 	int skipRate = (forceFrameSkip < 0) ? frameskiprate : forceFrameSkip;
 	int ffSkipRate = (forceFrameSkip < 0) ? 9 : forceFrameSkip;

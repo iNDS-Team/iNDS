@@ -112,7 +112,7 @@
 
 - (IBAction)speedChanged:(UISegmentedControl*) control
 {
-    int translation[] = {1, 2, 4};
+    float translation[] = {0.5, 1, 2, 4};
     emulationController.speed = translation[control.selectedSegmentIndex];
     [emulationController toggleSettings:self];
 }

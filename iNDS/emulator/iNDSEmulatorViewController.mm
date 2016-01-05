@@ -47,8 +47,8 @@ NSString *const kVertShader = SHADER_STRING
      gl_Position = position;
  }
  );
-//[NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
-NSString *const kFragShader = SHADER_STRING (
+NSString *const kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
+/*NSString *const kFragShader = SHADER_STRING (
  uniform sampler2D inputImageTexture;
  varying highp vec2 texCoord;
  
@@ -57,7 +57,7 @@ NSString *const kFragShader = SHADER_STRING (
      highp vec4 color = texture2D(inputImageTexture, texCoord);
      gl_FragColor = color;
  }
- );
+ );*/
 
 const float positionVert[] =
 {
@@ -447,7 +447,7 @@ const float textureVert[] =
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
@@ -455,7 +455,7 @@ const float textureVert[] =
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
@@ -539,26 +539,31 @@ const float textureVert[] =
 {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
-    //CGFloat framesToRender = 0;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
         while (execute) {
-            for (int i = 0; i < MAX(self.speed, 1); i++) {
-                //Enabling this can provide full emulation speed on most devices but will reduce fps
-                
-                //for (int j = 0; j < MIN(MAX(60 / fps, 6), 1); j++) { //10 - 60 fps
-                    EMU_runCore();
-                //}
+            framesToRender += self.speed;
+            //framesToRender += MIN(MAX(60 / fps, 6), 1) * self.speed; //Will run game at full speed but lower FPS
+            BOOL runOther = framesToRender >= 1;
+            for (int i = 1; i <= framesToRender; i++) {
+                EMU_runCore();
             }
-            EMU_copyMasterBuffer();
-            [self updateDisplay];
-            fps = EMU_runOther(); // Shouldn't we throttle after updating the display...?
-            if (CACurrentMediaTime() - lastAutosave > 180 && [[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
-                [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
-                lastAutosave = CACurrentMediaTime();
+            framesToRender -= (int)framesToRender; //Keep decimal
+            if (runOther) {
+                fps = EMU_runOther(); // Shouldn't we throttle after updating the display...?
+                EMU_copyMasterBuffer();
+                [self updateDisplay];
+                if (CACurrentMediaTime() - lastAutosave > 180 && [[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
+                    [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
+                    lastAutosave = CACurrentMediaTime();
+                }
+            } else {
+                iNDS_throttle();
             }
+            
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -608,21 +613,13 @@ const float textureVert[] =
 
 #pragma mark - Controls
 
-- (void) setSpeed:(NSInteger)speed
+- (void) setSpeed:(CGFloat)speed
 {
     int userFrameSkip = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"];
-    switch (speed) {
-      case 2:
-        EMU_setFrameSkip(MAX(2, userFrameSkip));
-        break;
-      
-      case 4:
-        EMU_setFrameSkip(MAX(4, userFrameSkip));
-        break;
-    
-      case 1:
+    if (speed <= 1.0) {
         EMU_setFrameSkip(userFrameSkip);
-        break;
+    } else {
+        EMU_setFrameSkip(MAX((int)speed, userFrameSkip));
     }
     _speed = speed;
 }

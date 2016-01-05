@@ -14,8 +14,8 @@
 
 @property (strong, nonatomic) iNDSGame *game;
 @property (strong, nonatomic) iNDSEmulationProfile * profile;
-@property (copy, nonatomic) NSString *saveState;
-@property (assign, nonatomic) NSInteger speed;
+@property (copy, nonatomic)   NSString *saveState;
+@property (assign, nonatomic) CGFloat speed;
 
 @property (weak, nonatomic) IBOutlet UIView *gameContainer;
 @property (weak, nonatomic) IBOutlet UIView *settingsContainer;
