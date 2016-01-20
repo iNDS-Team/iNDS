@@ -23,6 +23,7 @@
 		28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F31787D8D5003A9C5B /* HideEmulator.png */; };
 		28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */; };
 		4651B9C81C323B3300857FB6 /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4651B9C61C323B3300857FB6 /* iCadeReaderView.m */; };
+		46C587631C502F9F00CE47BD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */; };
 		4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3F2AEC178E017600AE10B8 /* Twitter.framework */; };
 		8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */; };
 		8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */; };
@@ -38,7 +39,6 @@
 		8BEA098D17872CF40060B347 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA098817872CF40060B347 /* throttle.cpp */; };
 		9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C4DD2851891E5390075B66C /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
-		AE2F3B6718EF82F1007A4BA0 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B6618EF82F1007A4BA0 /* MainStoryboard.storyboard */; };
 		BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */; };
 		BF9D514317865CD800B5864B /* SndOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9D514117865CD800B5864B /* SndOut.cpp */; };
 		BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF9D516017867F7D00B5864B /* ABXYPad.png */; };
@@ -262,6 +262,8 @@
 		4651B9C51C323B3300857FB6 /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		4651B9C71C323B3300857FB6 /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
+		46C587641C502F9F00CE47BD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		46C587661C50303500CE47BD /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		4C3F2AEC178E017600AE10B8 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
@@ -310,7 +312,6 @@
 		AE2F3B6318EF7F75007A4BA0 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = iNDS/ja.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		AE2F3B6418EF7F7F007A4BA0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "iNDS/zh-Hans.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
-		AE2F3B6618EF82F1007A4BA0 /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = MainStoryboard.storyboard; path = iNDS/MainStoryboard.storyboard; sourceTree = SOURCE_ROOT; };
 		BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArmLJit.cpp; path = desmume/src/ArmLJit.cpp; sourceTree = SOURCE_ROOT; };
 		BF2AC476177FF06600D3CF93 /* ArmLJit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArmLJit.h; path = desmume/src/ArmLJit.h; sourceTree = SOURCE_ROOT; };
 		BF2AC47A177FF29000D3CF93 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asm.h; path = desmume/src/utils/lightning/arm/asm.h; sourceTree = "<group>"; };
@@ -721,7 +722,7 @@
 		9C8DDCCD19FDD8D500D03AB2 /* App Init */ = {
 			isa = PBXGroup;
 			children = (
-				AE2F3B6618EF82F1007A4BA0 /* MainStoryboard.storyboard */,
+				46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */,
 				BFCFE1011764FBD3000A70CF /* AppDelegate.h */,
 				BFCFE1021764FBD3000A70CF /* AppDelegate.m */,
 				8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */,
@@ -1520,7 +1521,7 @@
 				CA7079CD1C095147005A1B19 /* toDo.txt in Resources */,
 				D325821217A1D69B0009C84B /* pixelgrid.png in Resources */,
 				D325821317A1D69B0009C84B /* pixelgrid@2x.png in Resources */,
-				AE2F3B6718EF82F1007A4BA0 /* MainStoryboard.storyboard in Resources */,
+				46C587631C502F9F00CE47BD /* MainStoryboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1715,6 +1716,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				46C587641C502F9F00CE47BD /* en */,
+				46C587661C50303500CE47BD /* es */,
+			);
+			name = MainStoryboard.storyboard;
+			path = iNDS;
+			sourceTree = SOURCE_ROOT;
+		};
 		AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
