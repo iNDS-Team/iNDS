@@ -16,7 +16,7 @@ Due to the need to mmap the entire ROM into memory, older devices with only 256M
 
 Installing iNDS
 ------------------------
-All Instructions on Building and Installing INDS can be found [here](https://github.com/WilliamLCobb/iNDS/wiki)
+All Instructions on building and installing iNDS can be found [here](https://github.com/WilliamLCobb/iNDS/wiki)
 
 Reporting Bugs
 ------------------------
