@@ -32,18 +32,18 @@ CONTROL_OPACITY_PORTRAIT = "Opacidad de Controles (Vertical)";
 
 ENABLE_DROPBOX = "Sincronización";
 NOT_LINKED = "No Vinculado";
-LINKED = "Linked";
-UNLINKED = "Unlinked!";
-UNLINKED_DETAIL = "Dropbox has been unlinked. Your save files will no longer be synced.";
-SUCCESS = "Success";
-SUCCESS_DETAIL = "Dropbox was linked successfully! iNDS will now start syncing your saves to a Dropbox folder called 'iNDS' located in the root directory of your Dropbox folder.";
-DROPBOX_CFG_ERROR = "Error Configuring Dropbox";
+LINKED = "vinculado";
+UNLINKED = "desvinculado!";
+UNLINKED_DETAIL = "Dropbox ha sido desvinculado. Sus archivos ya no se sincronizan.";
+SUCCESS = "éxito";
+SUCCESS_DETAIL = "Dropbox se vinculó con éxito! Inds ahora comenzará a sincronizar tus archivos en una carpeta de Dropbox llamada 'inds' ubicado en el directorio raíz de Dropbox.";
+DROPBOX_CFG_ERROR = "Error al configurar Dropbox";
 
 SHOW_FPS = "Mostrar FPS";
 VIBRATION = "Vibración";
 
-LAUNCH_GAME = "Launch Game";
-LAUNCH_GAME_DETAIL = "Boots the game normally";
-RESUME_AUTOSAVE = "Resume from Autosave";
+LAUNCH_GAME = "Iniciar Juego";
+LAUNCH_GAME_DETAIL = "Iniciando el juego normalmente";
+RESUME_AUTOSAVE = "Reanudar desde autoguardado";
 
 ARMLJIT = "GNU Lightning JIT";
