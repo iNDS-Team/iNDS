@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
+//#import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
@@ -30,8 +30,7 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [Fabric with:@[[Crashlytics class]]];
-    [[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
+    
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
     //Create documents folder
@@ -48,7 +47,11 @@
     
     
     //Dropbox DBSession Auth
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //I think this is crashing the app...
+        //[Fabric with:@[[Crashlytics class]]];
+        //[[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
+        
         NSString* errorMsg = nil;
         if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
             errorMsg = @"You must set the App Key correctly for Dropbox to work!";
@@ -282,8 +285,8 @@
 
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState
 {
-    [[Crashlytics sharedInstance] setObjectValue:game.title forKey:@"GameTitle"];
-    [[Crashlytics sharedInstance] setIntValue:(int)savedState forKey:@"SavedState"];
+    //[[Crashlytics sharedInstance] setObjectValue:game.title forKey:@"GameTitle"];
+    //[[Crashlytics sharedInstance] setIntValue:(int)savedState forKey:@"SavedState"];
     if (!self.currentEmulatorViewController) {
         iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
         emulatorViewController.game = game;

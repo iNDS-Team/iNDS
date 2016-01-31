@@ -1,4 +1,5 @@
-Keep Music playing when sound disables
+Microphone
+Keep Music playing when sound is disabled
 Single Screen Layout
 Add game recording
 Simulate physical actions (Lid Close)
