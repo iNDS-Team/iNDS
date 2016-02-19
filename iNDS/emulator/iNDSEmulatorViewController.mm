@@ -96,6 +96,7 @@ const float textureVert[] =
     
     BOOL settingsShown;
     BOOL inEditingMode;
+    BOOL disableTouchScreen;
     
     UINavigationController * settingsNav;
     
@@ -215,7 +216,7 @@ const float textureVert[] =
     control.active = YES;
     control.delegate = self;
     
-    
+    disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -720,8 +721,10 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)touchScreenAtPoint:(CGPoint)point
 {
-    point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
-    EMU_touchScreenTouch(point.x, point.y);
+    if (!disableTouchScreen) {
+        point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
+        EMU_touchScreenTouch(point.x, point.y);
+    }
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -729,7 +732,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     if (settingsShown && !inEditingMode) {
         [self toggleSettings:self];
         return;
-    } else if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+    } else if (inEditingMode) { // gesture recognizers don't work on glkviews so we need to do it manually
         CGPoint location = [touches.anyObject locationInView:self.view];
         if (CGRectContainsPoint(glkView[0].frame, location) && !extWindow) {
             [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
@@ -833,7 +836,8 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             [self resumeEmulation];
             self.darkenView.hidden = YES;
         }];
-        
+
+        disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
     }
     
 }

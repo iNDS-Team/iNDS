@@ -45,6 +45,8 @@
 @property (weak, nonatomic) IBOutlet UISwitch *vibrateSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *bumperSwitch;
 
+@property (weak, nonatomic) IBOutlet UISwitch *disableTouchScreenSwitch;
+
 @property (weak, nonatomic) IBOutlet UILabel *dropboxLabel;
 
 @property (weak, nonatomic) IBOutlet UISwitch *dropboxSwitch;
@@ -124,6 +126,8 @@
     self.enableJITSwitch.on = [defaults boolForKey:@"enableLightningJIT"];
     self.vibrateSwitch.on = [defaults boolForKey:@"vibrate"];
     self.bumperSwitch.on = [defaults boolForKey:@"volumeBumper"];
+    
+    self.disableTouchScreenSwitch.on = [defaults boolForKey:@"disableTouchScreen"];
     
     self.dropboxSwitch.on = [defaults boolForKey:@"enableDropbox"];
     self.cellularSwitch.on = [defaults boolForKey:@"enableDropboxCellular"];
@@ -227,6 +231,8 @@
         [defaults setBool:self.vibrateSwitch.on forKey:@"vibrate"];
     } else if (sender == self.bumperSwitch) {
         [defaults setBool:self.bumperSwitch.on forKey:@"volumeBumper"];
+    } else if (sender == self.disableTouchScreenSwitch) {
+        [defaults setBool:self.disableTouchScreenSwitch.on forKey:@"disableTouchScreen"];
     } else if (sender == self.dropboxSwitch) {//i'll use a better more foolproof method later. <- lol yeah right
         if ([defaults boolForKey:@"enableDropbox"] == false) {
             [[DBSession sharedSession] linkFromController:self];
