@@ -34,5 +34,7 @@
 	<string>ks1ulr086qvvy1k</string>
 	<key>dbAppSecret</key>
 	<string>cd15jte9slez9wu</string>
+	<key>disableTouchScreen</key>
+	<false/>
 </dict>
 </plist>
