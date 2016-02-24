@@ -79,16 +79,6 @@
     });
     
     [self checkForUpdates];
-    /*
-    NSSetUncaughtExceptionHandler(&HandleException);
-    signal(SIGABRT, SignalHandler);
-    signal(SIGILL, SignalHandler);
-    signal(SIGSEGV, SignalHandler);
-    signal(SIGFPE, SignalHandler);
-    signal(SIGBUS, SignalHandler);
-    signal(SIGPIPE, SignalHandler);
-    [self performSelector:@selector(badAccess) withObject:nil afterDelay:3.0];*/
-    
     return YES;
 }
 
@@ -355,6 +345,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -362,68 +353,4 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
-
-//Maybe this could be used later to save a game state on crash
-/*
- void HandleExceptions(NSException *exception) {
- NSLog(@"The app has encountered an unhandled exception: %@", [exception debugDescription]);
- 
- }
- 
-- (void)badAccess
-{
-    void (*nullFunction)() = NULL;
-    
-    nullFunction();
-}
-
-- (void)handleException:(NSException *)exception
-{
-    
-    UIAlertView *alert =
-    [[UIAlertView alloc] initWithTitle:@"A" message:@"B" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:nil];
-    
-    NSSetUncaughtExceptionHandler(NULL);
-    signal(SIGABRT, SIG_DFL);
-    signal(SIGILL, SIG_DFL);
-    signal(SIGSEGV, SIG_DFL);
-    signal(SIGFPE, SIG_DFL);
-    signal(SIGBUS, SIG_DFL);
-    signal(SIGPIPE, SIG_DFL);
-    
-    [exception raise];
-    
-}
-
-void HandleException(NSException *exception)
-{
-    //[exception raise];
-    
-    NSSetUncaughtExceptionHandler(NULL);
-    signal(SIGABRT, SIG_DFL);
-    signal(SIGILL, SIG_DFL);
-    signal(SIGSEGV, SIG_DFL);
-    signal(SIGFPE, SIG_DFL);
-    signal(SIGBUS, SIG_DFL);
-    signal(SIGPIPE, SIG_DFL);
-    NSLog(@"Uncaught Exception");
-}
-
-void SignalHandler(int sig)
-{
-    NSSetUncaughtExceptionHandler(NULL);
-    signal(SIGABRT, SIG_DFL);
-    signal(SIGILL, SIG_DFL);
-    signal(SIGSEGV, SIG_DFL);
-    signal(SIGFPE, SIG_DFL);
-    signal(SIGBUS, SIG_DFL);
-    signal(SIGPIPE, SIG_DFL);
-    /*UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
-    while (topController.presentedViewController) {
-        topController = topController.presentedViewController;
-    }
-    SCLAlertView * alert = [[SCLAlertView alloc] init];
-    [alert showError:topController title:@"Crash!" subTitle:@"S.O.S" closeButtonTitle:@"Bye" duration:0.0];/
-}
-*/
 @end
