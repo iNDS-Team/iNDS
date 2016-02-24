@@ -243,6 +243,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		17DAE2A31C76F0FC00FD74E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		17DAE2A61C76F18600FD74E6 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainStoryboard.strings; sourceTree = "<group>"; };
 		2838715C17950B2A009B8E84 /* math_neon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = math_neon.h; path = "desmume/src/android/math-neon/math_neon.h"; sourceTree = SOURCE_ROOT; };
 		2838715D17950B69009B8E84 /* math_mat4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_mat4.c; path = "desmume/src/android/math-neon/math_mat4.c"; sourceTree = SOURCE_ROOT; };
 		2838715E17950B69009B8E84 /* math_sqrtf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_sqrtf.c; path = "desmume/src/android/math-neon/math_sqrtf.c"; sourceTree = SOURCE_ROOT; };
@@ -262,8 +264,6 @@
 		4651B9C51C323B3300857FB6 /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		4651B9C71C323B3300857FB6 /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
-		46C587641C502F9F00CE47BD /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		46C587661C50303500CE47BD /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		4C3F2AEC178E017600AE10B8 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
@@ -1472,6 +1472,7 @@
 				de,
 				ko,
 				vi,
+				Base,
 			);
 			mainGroup = BFCFE0E61764FBD3000A70CF;
 			productRefGroup = BFCFE0F01764FBD3000A70CF /* Products */;
@@ -1719,8 +1720,8 @@
 		46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				46C587641C502F9F00CE47BD /* en */,
-				46C587661C50303500CE47BD /* es */,
+				17DAE2A31C76F0FC00FD74E6 /* Base */,
+				17DAE2A61C76F18600FD74E6 /* es */,
 			);
 			name = MainStoryboard.storyboard;
 			path = iNDS;
