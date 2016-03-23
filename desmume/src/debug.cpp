@@ -115,7 +115,6 @@ DebugStatistics DEBUG_statistics;
 
 DebugStatistics::DebugStatistics()
 {
-	memset(&blockCompileCounters,0,sizeof(blockCompileCounters));
 }
 
 DebugStatistics::InstructionHits::InstructionHits()
@@ -192,36 +191,24 @@ void DebugStatistics::print()
 	std::sort(sorts[1].arm, sorts[1].arm+4096, debugStatsSort<1,0>);
 	std::sort(sorts[1].thumb, sorts[1].thumb+1024, debugStatsSort<1,1>);
 
-	int count[2] = {0};
 	for(int i=0;i<2;i++) {
-		INFO("Block Compiled: %d:\n",blockCompileCounters[i]);
-		INFO("Top arm instructions for ARM%d:\n",9-i*2);
-		for(int j=0;j<15;j++) {
+		printf("Top arm instructions for ARM%d:\n",7+i*2);
+		for(int j=0;j<10;j++) {
 			int val = sorts[i].arm[j];
-			if (combinedHits[i].arm[val] > 0)
-			{
-				INFO("%010d: %s\n", combinedHits[i].arm[val], arm_instruction_names[val]);
-				count[i] += combinedHits[i].arm[val];
-			}
+			printf("%08d: %s\n", combinedHits[i].arm[val], arm_instruction_names[val]);
 		}
-		printf("Top thumb instructions for ARM%d:\n",9-i*2);
-		for(int j=0;j<15;j++) {
+		printf("Top thumb instructions for ARM%d:\n",7+i*2);
+		for(int j=0;j<10;j++) {
 			int val = sorts[i].thumb[j];
-			if (combinedHits[i].thumb[val] > 0)
-			{
-				INFO("%010d: %s\n", combinedHits[i].thumb[val], thumb_instruction_names[val]);
-				count[i] += combinedHits[i].thumb[val];
-			}
+			printf("%08d: %s\n", combinedHits[i].thumb[val], thumb_instruction_names[val]);
 		}
 	}
-
-	INFO("%d, %d, %d\n", count[0], count[1], count[0]+count[1]);
 }
 
 void DebugStatistics::printSequencerExecutionCounters()
 {
-	for(int i=0;i<21;i++) INFO("%06d ",sequencerExecutionCounters[i]);
-	INFO("\n");
+	for(int i=0;i<21;i++) printf("%06d ",sequencerExecutionCounters[i]);
+	printf("\n");
 }
 
 void DEBUG_reset()
@@ -335,11 +322,6 @@ void Logger::log(unsigned int channel, const char * file, unsigned int line, voi
 	fixSize(channel);
 
 	channels[channel]->setCallback(callback);
-}
-
-void Logger::setCallbackAll(void (*cback)(const Logger& logger, const char * message)) {
-	for(std::vector<Logger*>::iterator it = Logger::channels.begin() ; it != Logger::channels.end() ; ++it)
-		(*it)->setCallback(cback);
 }
 
 void IdeasLog(armcpu_t* cpu)

@@ -1,6 +1,6 @@
 /*	
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2008-2013 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,13 +28,18 @@
 //if they do, then we need to copy them out in doFlush!!!
 //---------------
 
-#include <algorithm>
+#include "gfx3d.h"
+
 #include <assert.h>
 #include <math.h>
 #include <string.h>
+#include <algorithm>
+#include <queue>
+
 #include "armcpu.h"
 #include "debug.h"
-#include "gfx3d.h"
+#include "driver.h"
+#include "emufile.h"
 #include "matrix.h"
 #include "bits.h"
 #include "MMU.h"
@@ -46,7 +51,6 @@
 #include "readwrite.h"
 #include "FIFO.h"
 #include "movie.h" //only for currframecounter which really ought to be moved into the core emu....
-#include <queue>
 
 //#define _SHOW_VTX_COUNTERS	// show polygon/vertex counters on screen
 #ifdef _SHOW_VTX_COUNTERS
@@ -98,135 +102,135 @@ static const u8 gfx3d_commandTypes[] = {
 class GXF_Hardware
 {
 public:
+
 	GXF_Hardware()
 	{
 		reset();
 	}
-	void reset() {
-		countdown = 0;
-		commandCursor = 4;
-		for(int i=0;i<4;i++) {
-			commandsPending[i].command = 0;
-			commandsPending[i].countdown = 0;
-		}
-		size = 0;
+
+	void reset()
+	{
+		shiftCommand = 0;
+		paramCounter = 0;
 	}
 
 	void receive(u32 val) 
 	{
-		if (size > 0)
-		{
-			GFX_FIFOsend(front().command, val);
-			front().countdown--;
-			if (front().countdown == 0) 
-			{
-				size--; 
-				if (size == 0) return;
-				dequeue();
+		//so, it seems as if the dummy values and restrictions on the highest-order command in the packed command set 
+		//is solely about some unknown internal timing quirk, and not about the logical behaviour of the state machine.
+		//it's possible that writing some values too quickly can result in the gxfifo not being ready. 
+		//this would be especially troublesome when they're getting DMA'd nonstop with no delay.
+		//so, since the timing is not emulated rigorously here, and only the logic, we shouldn't depend on or expect the dummy values.
+		//indeed, some games aren't issuing them, and will break if they are expected.
+		//however, since the dummy values seem to be 0x00000000 always, theyre benign to the state machine, even if the HW timing doesnt require them.
+		//the actual logical rule seem to be:
+		//1. commands with no arguments are executed as soon as possible; when the packed command is first received, or immediately after the preceding N-arg command.
+		//1a. for example, a 0-arg command following an N-arg command doesn't require a dummy value
+		//1b. for example, two 0-arg commands constituting a packed command will execute immediately when the packed command is received.
+		//
+		//as an example, DQ6 entity rendering will issue:
+		//0x00151110
+		//0x00000000
+		//0x00171012 (next packed command)
+		//this 0 param is meant for the 0x10 mtxMode command. dummy args aren't supplied for the 0x11 or 0x15.
+		//but other times, the game will issue dummy parameters.
+		//Either this is because the rules are more complex (do only certain 0-arg commands require dummies?),
+		//or the game made a mistake in applying the rules, which didnt seem to irritate the hypothetical HW timing quirk.
+		//yet, another time, it will issue the dummy:
+		//0x00004123 (XYZ vertex)
+		//0x0c000400 (arg1)
+		//0x00000000 (arg2)
+		//0x00000000 (dummy for 0x41)
+		//0x00000017 (next packed command)
 
-				while (gfx3d_commandTypes[front().command] == GFX_NOARG_COMMAND)
-				{
-					GFX_FIFOsend(front().command, 0);
-					size--; 
-					if (size == 0) break;
-					dequeue();
-				}
-			}
+		u8 currCommand = shiftCommand & 0xFF;
+		u8 currCommandType = gfx3d_commandTypes[currCommand];
+
+		//if the current command is invalid, receive a new packed command.
+		if(currCommandType == GFX_INVALID_COMMAND)
+		{
+			shiftCommand = val;
 		}
-		else
+
+		//finish receiving args
+		if(paramCounter>0)
 		{
-			if (val == 0) return;	// nop
+			GFX_FIFOsend(currCommand, val);
+			paramCounter--;
+			if(paramCounter <= 0)
+				shiftCommand >>= 8;
+			else return;
+		}
 
-			const u8 commands[] = { val&0xFF, (val>>8)&0xFF, (val>>16)&0xFF, (val>>24)&0xFF };
-			const u8 commandTypes[] = { gfx3d_commandTypes[commands[0]], gfx3d_commandTypes[commands[1]], gfx3d_commandTypes[commands[2]], gfx3d_commandTypes[commands[3]] };
+		//analyze current packed commands
+		for(;;)
+		{
+			currCommand = shiftCommand & 0xFF;
+			currCommandType = gfx3d_commandTypes[currCommand];
 
-			commandCursor = 0;
-			size = 0;
-
-			// A "command without parameters" is one of the four following commands:
-			// - PushMatrix
-			// - LoadIdentity
-			// - End
-			// - Commands undefined within the region between 0x10 and 0xFF
-
-			for (u8 i = 0; i < 4; i++)
+			if(currCommandType == GFX_UNDEFINED_COMMAND)
+				shiftCommand >>= 8;
+			else if(currCommandType == GFX_NOARG_COMMAND)
 			{
-				if (commandTypes[i] == GFX_INVALID_COMMAND)
-				{
-					//printf("gfx3D: invalid command (%02X)\n", commands[i]);
-					continue;
-				}
-
-				if (commandTypes[i] == GFX_UNDEFINED_COMMAND)
-				{
-					//printf("gfx3D: undefined command (%02X)\n", commands[i]);
-					continue;
-				}
-				commandsPending[size].command = commands[i];
-				commandsPending[size].countdown = commandTypes[i];
-				//printf("%i: CMD %02X size %i\n", i, commands[i], commandsPending[size].countdown);
-				if ((commandsPending[size].countdown == 0) && (size == 0)) // cmd 0x11, 0x15, 0x41 - no params
-				{
-					GFX_FIFOsend(commands[i], 0);
-
-					while ((i < 3) && commands[i+1] != 0 && gfx3d_commandTypes[commands[i+1]] == GFX_NOARG_COMMAND)
-						GFX_FIFOsend(commands[++i], 0);
-				}
-				else
-					size++;
+				GFX_FIFOsend(currCommand, 0);
+				shiftCommand >>= 8;
+			}
+			else if(currCommandType == GFX_INVALID_COMMAND)
+				break;
+			else 
+			{
+				paramCounter = currCommandType;
+				break;
 			}
 		}
 	}
 
-	struct CommandItem {
-		u8 command, countdown;
-	} commandsPending[4];
-
-	u32 commandCursor;
-	u8 countdown;
-
 private:
-	void dequeue() { commandCursor++; }
-	CommandItem& front() { return commandsPending[commandCursor]; }
-	u32 size;
+
+	u32 shiftCommand;
+	u32 paramCounter;
+
 public:
 
 	void savestate(EMUFILE *f)
 	{
-		//TODO - next time we invalidate savestates, simplify this format.
-		write32le(1,f); //version
-		write32le(size,f);
-		write32le(commandCursor,f);
-		for(u32 i=0;i<4;i++) write8le(commandsPending[i].command,f);
-		for(u32 i=0;i<4;i++) write8le(commandsPending[i].countdown,f);
-		write8le(countdown,f);
+		write32le(2,f); //version
+		write32le(shiftCommand,f);
+		write32le(paramCounter,f);
 	}
 	
 	bool loadstate(EMUFILE *f)
 	{
 		u32 version;
 		if(read32le(&version,f) != 1) return false;
-		if(version > 1) return false;
+
+		u8 junk8;
+		u32 junk32;
 
 		if (version == 0)
 		{
-			read32le(&size,f);
-			commandCursor = 4-size;
-			for(u32 i=commandCursor;i<4;i++) read8le(&commandsPending[i-commandCursor].command,f);
-			read32le(&size,f);
-			size = 4-commandCursor;
-			for(u32 i=commandCursor;i<4;i++) read8le(&commandsPending[i-commandCursor].countdown,f);
+			//untested
+			read32le(&junk32,f);
+			int commandCursor = 4-junk32;
+			for(u32 i=commandCursor;i<4;i++) read8le(&junk8,f);
+			read32le(&junk32,f);
+			for(u32 i=commandCursor;i<4;i++) read8le(&junk8,f);
+			read8le(&junk8,f);
 		}
-		else
-		if (version == 1)
+		else if (version == 1)
 		{
-			read32le(&size,f);
-			read32le(&commandCursor,f);
-			for(u32 i=0;i<4;i++) read8le(&commandsPending[i].command,f);
-			for(u32 i=0;i<4;i++) read8le(&commandsPending[i].countdown,f);
+			//untested
+			read32le(&junk32,f);
+			read32le(&junk32,f);
+			for(u32 i=0;i<4;i++) read8le(&junk8,f);
+			for(u32 i=0;i<4;i++) read8le(&junk8,f);
+			read8le(&junk8,f);
 		}
-
-		read8le(&countdown,f);
+		else if(version == 2)
+		{
+			read32le(&shiftCommand,f);
+			read32le(&paramCounter,f);
+		}
 
 		return true;
 	}
@@ -304,7 +308,7 @@ static float normalTable[1024];
 #define fix2float(v)    (((float)((s32)(v))) / (float)(1<<12))
 #define fix10_2float(v) (((float)((s32)(v))) / (float)(1<<9))
 
-CACHE_ALIGN u8 gfx3d_convertedScreen[256*192*4];
+CACHE_ALIGN u8 gfx3d_convertedScreen[GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT*4];
 
 // Matrix stack handling
 CACHE_ALIGN MatrixStack	mtxStack[4] = {
@@ -316,13 +320,8 @@ CACHE_ALIGN MatrixStack	mtxStack[4] = {
 
 int _hack_getMatrixStackLevel(int which) { return mtxStack[which].position; }
 
-#ifdef GFX3D_USE_FLOAT
-static CACHE_ALIGN float	mtxCurrent [4][16];
-static CACHE_ALIGN float	mtxTemporal[16];
-#else
 static CACHE_ALIGN s32		mtxCurrent [4][16];
 static CACHE_ALIGN s32		mtxTemporal[16];
-#endif
 static u32 mode = 0;
 
 // Indexes for matrix loading/multiplication
@@ -339,28 +338,15 @@ static u32 vtxFormat = GFX3D_TRIANGLES;
 static BOOL inBegin = FALSE;
 
 // Data for basic transforms
-#ifdef GFX3D_USE_FLOAT
-static CACHE_ALIGN float	trans[4] = {0, 0, 0, 0};
-#else
 static CACHE_ALIGN s32	trans[4] = {0, 0, 0, 0};
-#endif
 static int		transind = 0;
-#ifdef GFX3D_USE_FLOAT
-static CACHE_ALIGN float	scale[4] = {0, 0, 0, 0};
-#else
 static CACHE_ALIGN s32	scale[4] = {0, 0, 0, 0};
-#endif
 static int		scaleind = 0;
 static u32 viewport = 0;
 
 //various other registers
-#ifdef GFX3D_USE_FLOAT
-static float _t=0, _s=0;
-static float last_t, last_s;
-#else
 static s32 _t=0, _s=0;
 static s32 last_t, last_s;
-#endif
 static u32 clCmd = 0;
 static u32 clInd = 0;
 
@@ -397,13 +383,8 @@ static u32 envMode=0;
 static u32 lightMask=0;
 //other things:
 static int texCoordinateTransform = 0;
-#ifdef GFX3D_USE_FLOAT
-static CACHE_ALIGN float cacheLightDirection[4][4];
-static CACHE_ALIGN float cacheHalfVector[4][4];
-#else
 static CACHE_ALIGN s32 cacheLightDirection[4][4];
 static CACHE_ALIGN s32 cacheHalfVector[4][4];
-#endif
 //------------------
 
 #define RENDER_FRONT_SURFACE 0x80
@@ -482,6 +463,44 @@ static void makeTables() {
 			}
 }
 
+#define OSWRITE(x) os->fwrite((char*)&(x),sizeof((x)));
+#define OSREAD(x) is->fread((char*)&(x),sizeof((x)));
+
+void POLY::save(EMUFILE* os)
+{
+	OSWRITE(type);
+	OSWRITE(vertIndexes[0]); OSWRITE(vertIndexes[1]); OSWRITE(vertIndexes[2]); OSWRITE(vertIndexes[3]);
+	OSWRITE(polyAttr); OSWRITE(texParam); OSWRITE(texPalette);
+	OSWRITE(viewport);
+	OSWRITE(miny);
+	OSWRITE(maxy);
+}
+
+void POLY::load(EMUFILE* is)
+{
+	OSREAD(type);
+	OSREAD(vertIndexes[0]); OSREAD(vertIndexes[1]); OSREAD(vertIndexes[2]); OSREAD(vertIndexes[3]);
+	OSREAD(polyAttr); OSREAD(texParam); OSREAD(texPalette);
+	OSREAD(viewport);
+	OSREAD(miny);
+	OSREAD(maxy);
+}
+
+void VERT::save(EMUFILE* os)
+{
+	OSWRITE(x); OSWRITE(y); OSWRITE(z); OSWRITE(w);
+	OSWRITE(u); OSWRITE(v);
+	OSWRITE(color[0]); OSWRITE(color[1]); OSWRITE(color[2]);
+	OSWRITE(fcolor[0]); OSWRITE(fcolor[1]); OSWRITE(fcolor[2]);
+}
+void VERT::load(EMUFILE* is)
+{
+	OSREAD(x); OSREAD(y); OSREAD(z); OSREAD(w);
+	OSREAD(u); OSREAD(v);
+	OSREAD(color[0]); OSREAD(color[1]); OSREAD(color[2]);
+	OSREAD(fcolor[0]); OSREAD(fcolor[1]); OSREAD(fcolor[2]);
+}
+
 void gfx3d_init()
 {
 	gxf_hardware.reset();
@@ -502,16 +521,24 @@ void gfx3d_init()
 
 	//printf("SPEED TEST %d %d\n",diff,diff2);
 
-	if(polylists == NULL) { polylists = new POLYLIST[2]; polylist = &polylists[0]; }
-	if(vertlists == NULL) { vertlists = new VERTLIST[2]; vertlist = &vertlists[0]; }
+	// Use malloc() instead of new because, for some unknown reason, GCC 4.9 has a bug
+	// that causes a std::bad_alloc exception on certain memory allocations. Right now,
+	// POLYLIST and VERTLIST are POD-style structs, so malloc() can substitute for new
+	// in this case.
+	if(polylists == NULL)
+	{
+		polylists = (POLYLIST *)malloc(sizeof(POLYLIST)*2);
+		polylist = &polylists[0];
+	}
+	
+	if(vertlists == NULL)
+	{
+		vertlists = (VERTLIST *)malloc(sizeof(VERTLIST)*2);
+		vertlist = &vertlists[0];
+	}
+	
 	makeTables();
 	gfx3d_reset();
-
-/*#ifdef GFX3D_USE_FLOAT
-	INFO("GFX3D: USE_FLOAT\n");
-#else
-	INFO("GFX3D: USE_FIXEDPOINT\n");
-#endif*/
 }
 
 void gfx3d_reset()
@@ -602,7 +629,7 @@ void gfx3d_reset()
 //=================================================================================
 //=================================================================================
 
-FORCEINLINE float vec3dot(float* a, float* b) {
+inline float vec3dot(float* a, float* b) {
 	return (((a[0]) * (b[0])) + ((a[1]) * (b[1])) + ((a[2]) * (b[2])));
 }
 
@@ -619,15 +646,6 @@ FORCEINLINE s32 vec3dot_fixed32(const s32* a, const s32* b) {
 //Submit a vertex to the GE
 static void SetVertex()
 {
-#ifdef GFX3D_USE_FLOAT
-	float coord[3] = {
-			float16table[(u16)s16coord[0]],
-			float16table[(u16)s16coord[1]],
-			float16table[(u16)s16coord[2]]
-	};
-
-	DS_ALIGN(16) float coordTransformed[4] = { coord[0], coord[1], coord[2], 1.f };
-#else
 	s32 coord[3] = {
 		s16coord[0],
 		s16coord[1],
@@ -635,17 +653,9 @@ static void SetVertex()
 	};
 
 	DS_ALIGN(16) s32 coordTransformed[4] = { coord[0], coord[1], coord[2], (1<<12) };
-#endif
+
 	if (texCoordinateTransform == 3)
 	{
-#ifdef GFX3D_USE_FLOAT
-		last_s =((coord[0]*mtxCurrent[3][0] +
-					coord[1]*mtxCurrent[3][4] +
-					coord[2]*mtxCurrent[3][8]) + _s * 16.0f) / 16.0f;
-		last_t =((coord[0]*mtxCurrent[3][1] +
-					coord[1]*mtxCurrent[3][5] +
-					coord[2]*mtxCurrent[3][9]) + _t * 16.0f) / 16.0f;
-#else
 		//Tested by: Eledees The Adventures of Kai and Zero (E) [title screen and frontend menus]
 		last_s = (s32)(((s64)s16coord[0] * mtxCurrent[3][0] + 
 								(s64)s16coord[1] * mtxCurrent[3][4] + 
@@ -655,7 +665,6 @@ static void SetVertex()
 								(s64)s16coord[1] * mtxCurrent[3][5] + 
 								(s64)s16coord[2] * mtxCurrent[3][9] + 
 								(((s64)(_t))<<24))>>24);
-#endif
 	}
 
 	//refuse to do anything if we have too many verts or polys
@@ -704,21 +713,12 @@ static void SetVertex()
 	//	//MatrixPrint(mtxCurrent[1]);
 	//}
 
-#ifdef GFX3D_USE_FLOAT
-	vert.texcoord[0] = last_s;
-	vert.texcoord[1] = last_t;
-	vert.coord[0] = coordTransformed[0];
-	vert.coord[1] = coordTransformed[1];
-	vert.coord[2] = coordTransformed[2];
-	vert.coord[3] = coordTransformed[3];
-#else
 	vert.texcoord[0] = last_s/16.0f;
 	vert.texcoord[1] = last_t/16.0f;
 	vert.coord[0] = coordTransformed[0]/4096.0f;
 	vert.coord[1] = coordTransformed[1]/4096.0f;
 	vert.coord[2] = coordTransformed[2]/4096.0f;
 	vert.coord[3] = coordTransformed[3]/4096.0f;
-#endif
 	vert.color[0] = GFX3D_5TO6(colorRGB[0]);
 	vert.color[1] = GFX3D_5TO6(colorRGB[1]);
 	vert.color[2] = GFX3D_5TO6(colorRGB[2]);
@@ -853,25 +853,6 @@ static void gfx3d_glTexImage_cache()
 
 static void gfx3d_glLightDirection_cache(int index)
 {
-#ifdef GFX3D_USE_FLOAT
-	s32 v = lightDirection[index];
-
-	// Convert format into floating point value
-	cacheLightDirection[index][0] = normalTable[v&1023];
-	cacheLightDirection[index][1] = normalTable[(v>>10)&1023];
-	cacheLightDirection[index][2] = normalTable[(v>>20)&1023];
-	cacheLightDirection[index][3] = 0;
-
-	/* Multiply the vector by the directional matrix */
-	MatrixMultVec3x3(mtxCurrent[2], cacheLightDirection[index]);
-
-	/* Calculate the half vector */
-	float lineOfSight[4] = {0.0f, 0.0f, -1.0f, 0.0f};
-	for(int i = 0; i < 4; i++)
-	{
-		cacheHalfVector[index][i] = ((cacheLightDirection[index][i] + lineOfSight[i]) / 2.0f);
-	}
-#else
 	s32 v = lightDirection[index];
 
 	s16 x = ((v<<22)>>22)<<3;
@@ -909,7 +890,6 @@ static void gfx3d_glLightDirection_cache(int index)
 			cacheHalfVector[index][i] = temp;
 		}
 	}
-#endif
 }
 
 
@@ -1028,11 +1008,7 @@ static void gfx3d_glLoadIdentity()
 
 static BOOL gfx3d_glLoadMatrix4x4(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	mtxCurrent[mode][ML4x4ind] = (float)((v<<4)>>4);
-#else
 	mtxCurrent[mode][ML4x4ind] = v;
-#endif
 
 	++ML4x4ind;
 	if(ML4x4ind<16) return FALSE;
@@ -1040,9 +1016,7 @@ static BOOL gfx3d_glLoadMatrix4x4(s32 v)
 
 	GFX_DELAY(19);
 
-#ifdef GFX3D_USE_FLOAT
-	vector_fix2float<4>(mtxCurrent[mode], 4096.f);
-#endif
+	//vector_fix2float<4>(mtxCurrent[mode], 4096.f);
 
 	if (mode == 2)
 		MatrixCopy (mtxCurrent[1], mtxCurrent[2]);
@@ -1053,28 +1027,18 @@ static BOOL gfx3d_glLoadMatrix4x4(s32 v)
 
 static BOOL gfx3d_glLoadMatrix4x3(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	mtxCurrent[mode][ML4x3ind] = (float)((v<<4)>>4);
-#else
 	mtxCurrent[mode][ML4x3ind] = v;
-#endif
 
 	ML4x3ind++;
 	if((ML4x3ind & 0x03) == 3) ML4x3ind++;
 	if(ML4x3ind<16) return FALSE;
 	ML4x3ind = 0;
 
-#ifdef GFX3D_USE_FLOAT
-	vector_fix2float<4>(mtxCurrent[mode], 4096.f);
-#endif
+	//vector_fix2float<4>(mtxCurrent[mode], 4096.f);
 
 	//fill in the unusued matrix values
 	mtxCurrent[mode][3] = mtxCurrent[mode][7] = mtxCurrent[mode][11] = 0;
-#ifdef GFX3D_USE_FLOAT
-	mtxCurrent[mode][15] = 1.f;
-#else
 	mtxCurrent[mode][15] = (1<<12);
-#endif
 
 	GFX_DELAY(30);
 
@@ -1086,11 +1050,7 @@ static BOOL gfx3d_glLoadMatrix4x3(s32 v)
 
 static BOOL gfx3d_glMultMatrix4x4(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	mtxTemporal[MM4x4ind] = (float)((v<<4)>>4);
-#else
 	mtxTemporal[MM4x4ind] = v;
-#endif
 
 	MM4x4ind++;
 	if(MM4x4ind<16) return FALSE;
@@ -1098,9 +1058,7 @@ static BOOL gfx3d_glMultMatrix4x4(s32 v)
 
 	GFX_DELAY(35);
 
-#ifdef GFX3D_USE_FLOAT
-	vector_fix2float<4>(mtxTemporal, 4096.f);
-#endif
+	//vector_fix2float<4>(mtxTemporal, 4096.f);
 
 	MatrixMultiply (mtxCurrent[mode], mtxTemporal);
 
@@ -1118,11 +1076,7 @@ static BOOL gfx3d_glMultMatrix4x4(s32 v)
 
 static BOOL gfx3d_glMultMatrix4x3(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	mtxTemporal[MM4x3ind] = (float)((v<<4)>>4);
-#else
 	mtxTemporal[MM4x3ind] = v;
-#endif
 
 	MM4x3ind++;
 	if((MM4x3ind & 0x03) == 3) MM4x3ind++;
@@ -1131,17 +1085,11 @@ static BOOL gfx3d_glMultMatrix4x3(s32 v)
 
 	GFX_DELAY(31);
 
-#ifdef GFX3D_USE_FLOAT
-	vector_fix2float<4>(mtxTemporal, 4096.f);
-#endif
+	//vector_fix2float<4>(mtxTemporal, 4096.f);
 
 	//fill in the unusued matrix values
 	mtxTemporal[3] = mtxTemporal[7] = mtxTemporal[11] = 0;
-#ifdef GFX3D_USE_FLOAT
-	mtxTemporal[15] = 1.f;
-#else
 	mtxTemporal[15] = 1<<12;
-#endif
 
 	MatrixMultiply (mtxCurrent[mode], mtxTemporal);
 
@@ -1160,11 +1108,8 @@ static BOOL gfx3d_glMultMatrix4x3(s32 v)
 
 static BOOL gfx3d_glMultMatrix3x3(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	mtxTemporal[MM3x3ind] = (float)((v<<4)>>4);
-#else
 	mtxTemporal[MM3x3ind] = v;
-#endif
+
 
 	MM3x3ind++;
 	if((MM3x3ind & 0x03) == 3) MM3x3ind++;
@@ -1173,17 +1118,11 @@ static BOOL gfx3d_glMultMatrix3x3(s32 v)
 
 	GFX_DELAY(28);
 
-#ifdef GFX3D_USE_FLOAT
-	vector_fix2float<3>(mtxTemporal, 4096.f);
-#endif
+	//vector_fix2float<3>(mtxTemporal, 4096.f);
 
 	//fill in the unusued matrix values
 	mtxTemporal[3] = mtxTemporal[7] = mtxTemporal[11] = 0;
-#ifdef GFX3D_USE_FLOAT
-	mtxTemporal[15] = 1;
-#else
 	mtxTemporal[15] = 1<<12;
-#endif
 	mtxTemporal[12] = mtxTemporal[13] = mtxTemporal[14] = 0;
 
 	MatrixMultiply (mtxCurrent[mode], mtxTemporal);
@@ -1204,11 +1143,8 @@ static BOOL gfx3d_glMultMatrix3x3(s32 v)
 
 static BOOL gfx3d_glScale(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	scale[scaleind] = fix2float(v);
-#else
 	scale[scaleind] = v;
-#endif
+
 	++scaleind;
 
 	if(scaleind<3) return FALSE;
@@ -1229,11 +1165,8 @@ static BOOL gfx3d_glScale(s32 v)
 
 static BOOL gfx3d_glTranslate(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	trans[transind] = fix2float(v);
-#else
 	trans[transind] = v;
-#endif
+
 	++transind;
 
 	if(transind<3) return FALSE;
@@ -1264,38 +1197,21 @@ static void gfx3d_glColor3b(u32 v)
 
 static void gfx3d_glNormal(s32 v)
 {
-#ifdef GFX3D_USE_FLOAT
-	DS_ALIGN(16) float normal[4] = { normalTable[v&1023],
-						normalTable[(v>>10)&1023],
-						normalTable[(v>>20)&1023],
-						1};
-#else
 	s16 nx = ((v<<22)>>22)<<3;
 	s16 ny = ((v<<12)>>22)<<3;
 	s16 nz = ((v<<2)>>22)<<3;
 
 	CACHE_ALIGN s32 normal[4] =  { nx,ny,nz,(1<<12) };
-#endif
+
 	if (texCoordinateTransform == 2)
 	{
-#ifdef GFX3D_USE_FLOAT
-		last_s =(	(normal[0] *mtxCurrent[3][0] + normal[1] *mtxCurrent[3][4] +
-					 normal[2] *mtxCurrent[3][8]) + (_s*16.0f)) / 16.0f;
-		last_t =(	(normal[0] *mtxCurrent[3][1] + normal[1] *mtxCurrent[3][5] +
-					 normal[2] *mtxCurrent[3][9]) + (_t*16.0f)) / 16.0f;
-#else
 		//SM64 highlight rendered star in main menu tests this
 		//also smackdown 2010 player textures tested this (needed cast on _s and _t)
 		last_s = (s32)(((s64)normal[0] * mtxCurrent[3][0] + (s64)normal[1] * mtxCurrent[3][4] + (s64)normal[2] * mtxCurrent[3][8] + (((s64)_s)<<24))>>24);
 		last_t = (s32)(((s64)normal[0] * mtxCurrent[3][1] + (s64)normal[1] * mtxCurrent[3][5] + (s64)normal[2] * mtxCurrent[3][9] + (((s64)_t)<<24))>>24);
-#endif
 	}
 
-#ifdef GFX3D_USE_FLOAT
-	MatrixMultVec3x3 (mtxCurrent[2], normal);
-#else
 	MatrixMultVec3x3_fixed(mtxCurrent[2],normal);
-#endif
 
 	//apply lighting model
 	u8 diffuse[3] = {
@@ -1329,12 +1245,6 @@ static void gfx3d_glNormal(s32 v)
 			(lightColor[i]>>5)&0x1F,
 			(lightColor[i]>>10)&0x1F };
 
-#ifdef GFX3D_USE_FLOAT
-		float diffuseLevel = std::max(0.0f, -vec3dot(cacheLightDirection[i], normal));
-
-		float tempNegativeHalf[] = {-cacheHalfVector[i][0],-cacheHalfVector[i][1],-cacheHalfVector[i][2],-cacheHalfVector[i][3]};
-		float shininessLevel = pow(std::max(0.0f, vec3dot(tempNegativeHalf, normal)), 2);
-#else
 		//This formula is the one used by the DS
 		//Reference : http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters
 		s32 fixed_diffuse = std::max(0,-vec3dot_fixed32(cacheLightDirection[i],normal));
@@ -1357,35 +1267,21 @@ static void gfx3d_glNormal(s32 v)
 		//even without a table, failure to saturate is bad news
 		fixedshininess = std::min(fixedshininess,4095);
 		fixedshininess = std::max(fixedshininess,0);
-#endif
+		
 		if(dsSpecular & 0x8000)
 		{
-#ifdef GFX3D_USE_FLOAT
-			int shininessIndex = (int)(shininessLevel * 128);
-			if(shininessIndex >= (int)ARRAY_SIZE(gfx3d.state.shininessTable)) {
-				shininessIndex = 0;
-			}
-			shininessLevel = gfx3d.state.shininessTable[shininessIndex];
-#else
 			//shininess is 20.12 fixed point, so >>5 gives us .7 which is 128 entries
 			//the entries are 8bits each so <<4 gives us .12 again, compatible with the lighting formulas below
 			//(according to other normal nds procedures, we might should fill the bottom bits with 1 or 0 according to rules...)
 			fixedshininess = gfx3d.state.shininessTable[fixedshininess>>5]<<4;
-#endif
 		}
 
 		for(int c = 0; c < 3; c++)
 		{
-#ifdef GFX3D_USE_FLOAT
-			vertexColor[c] += (int)(((specular[c] * _lightColor[c] * shininessLevel)
-				+ (diffuse[c] * _lightColor[c] * diffuseLevel)
-				+ (ambient[c] * _lightColor[c])) / 31.0f);
-#else
 			s32 specComp = ((specular[c] * _lightColor[c] * fixedshininess)>>17);  //5 bits for color*color and 12 bits for the shininess
 			s32 diffComp = ((diffuse[c] * _lightColor[c] * fixed_diffuse)>>17); //5bits for the color*color and 12 its for the diffuse
 			s32 ambComp = ((ambient[c] * _lightColor[c])>>5); //5bits for color*color
 			vertexColor[c] += specComp + diffComp + ambComp;
-#endif
 		}
 	}
 
@@ -1403,28 +1299,14 @@ static void gfx3d_glNormal(s32 v)
 
 static void gfx3d_glTexCoord(s32 val)
 {
-#ifdef GFX3D_USE_FLOAT
 	_s = ((val<<16)>>16);
 	_t = (val>>16);
 
-	_s /= 16.0f;
-	_t /= 16.0f;
-#else
-	_s = ((val<<16)>>16);
-	_t = (val>>16);
-#endif
 	if (texCoordinateTransform == 1)
 	{
-#ifdef GFX3D_USE_FLOAT
-		last_s =_s*mtxCurrent[3][0] + _t*mtxCurrent[3][4] +
-				0.0625f*mtxCurrent[3][8] + 0.0625f*mtxCurrent[3][12];
-		last_t =_s*mtxCurrent[3][1] + _t*mtxCurrent[3][5] +
-				0.0625f*mtxCurrent[3][9] + 0.0625f*mtxCurrent[3][13];
-#else
 		//dragon quest 4 overworld will test this
 		last_s = (s32)(((s64)(_s<<12) * mtxCurrent[3][0] + (s64)(_t<<12) * mtxCurrent[3][4] + ((s64)mtxCurrent[3][8]<<12) + ((s64)mtxCurrent[3][12]<<12))>>24);
 		last_t = (s32)(((s64)(_s<<12) * mtxCurrent[3][1] + (s64)(_t<<12) * mtxCurrent[3][5] + ((s64)mtxCurrent[3][9]<<12) + ((s64)mtxCurrent[3][13]<<12))>>24);
-#endif
 	}
 	else if(texCoordinateTransform == 0)
 	{
@@ -1569,17 +1451,11 @@ static void gfx3d_glLightColor (u32 v)
 
 static BOOL gfx3d_glShininess (u32 val)
 {
-#ifdef GFX3D_USE_FLOAT
-	gfx3d.state.shininessTable[shininessInd++] = ((val & 0xFF) / 256.0f);
-	gfx3d.state.shininessTable[shininessInd++] = (((val >> 8) & 0xFF) / 256.0f);
-	gfx3d.state.shininessTable[shininessInd++] = (((val >> 16) & 0xFF) / 256.0f);
-	gfx3d.state.shininessTable[shininessInd++] = (((val >> 24) & 0xFF) / 256.0f);
-#else
 	gfx3d.state.shininessTable[shininessInd++] = ((val & 0xFF));
 	gfx3d.state.shininessTable[shininessInd++] = (((val >> 8) & 0xFF));
 	gfx3d.state.shininessTable[shininessInd++] = (((val >> 16) & 0xFF));
 	gfx3d.state.shininessTable[shininessInd++] = (((val >> 24) & 0xFF));
-#endif
+
 	if (shininessInd < 128) return FALSE;
 	shininessInd = 0;
 	GFX_DELAY(32);
@@ -1660,7 +1536,7 @@ static BOOL gfx3d_glBoxTest(u32 v)
 	float zd = float16table[(uz+ud)&0xFFFF];
 
 	//eight corners of cube
-	VERT verts[8];
+	CACHE_ALIGN VERT verts[8];
 	verts[0].set_coord(x,y,z,1);
 	verts[1].set_coord(xw,y,z,1);
 	verts[2].set_coord(xw,yh,z,1);
@@ -1709,18 +1585,19 @@ static BOOL gfx3d_glBoxTest(u32 v)
 	////---------------------
 
 	//transform all coords
-	for(int i=0;i<8;i++) {
+	for(int i=0;i<8;i++)
+	{
+		//this cant work. its left as a reminder that we could (and probably should) do the boxtest in all fixed point values
 		//MatrixMultVec4x4_M2(mtxCurrent[0], verts[i].coord);
 
-#ifdef GFX3D_USE_FLOAT
-		_NOSSE_MatrixMultVec4x4(mtxCurrent[1],verts[i].coord);
-		_NOSSE_MatrixMultVec4x4(mtxCurrent[0],verts[i].coord);
-#else
+		//but change it all to floating point and do it that way instead
 		CACHE_ALIGN float temp1[16] = {mtxCurrent[1][0]/4096.0f,mtxCurrent[1][1]/4096.0f,mtxCurrent[1][2]/4096.0f,mtxCurrent[1][3]/4096.0f,mtxCurrent[1][4]/4096.0f,mtxCurrent[1][5]/4096.0f,mtxCurrent[1][6]/4096.0f,mtxCurrent[1][7]/4096.0f,mtxCurrent[1][8]/4096.0f,mtxCurrent[1][9]/4096.0f,mtxCurrent[1][10]/4096.0f,mtxCurrent[1][11]/4096.0f,mtxCurrent[1][12]/4096.0f,mtxCurrent[1][13]/4096.0f,mtxCurrent[1][14]/4096.0f,mtxCurrent[1][15]/4096.0f};
 		CACHE_ALIGN float temp0[16] = {mtxCurrent[0][0]/4096.0f,mtxCurrent[0][1]/4096.0f,mtxCurrent[0][2]/4096.0f,mtxCurrent[0][3]/4096.0f,mtxCurrent[0][4]/4096.0f,mtxCurrent[0][5]/4096.0f,mtxCurrent[0][6]/4096.0f,mtxCurrent[0][7]/4096.0f,mtxCurrent[0][8]/4096.0f,mtxCurrent[0][9]/4096.0f,mtxCurrent[0][10]/4096.0f,mtxCurrent[0][11]/4096.0f,mtxCurrent[0][12]/4096.0f,mtxCurrent[0][13]/4096.0f,mtxCurrent[0][14]/4096.0f,mtxCurrent[0][15]/4096.0f};
+
+		DS_ALIGN(16) VERT_POS4f vert = { verts[i].x, verts[i].y, verts[i].z, verts[i].w };
+
 		_NOSSE_MatrixMultVec4x4(temp1,verts[i].coord);
 		_NOSSE_MatrixMultVec4x4(temp0,verts[i].coord);
-#endif
 	}
 
 	//clip each poly
@@ -1768,16 +1645,12 @@ static BOOL gfx3d_glPosTest(u32 v)
 	
 	PTcoords[3] = 1.0f;
 
-#ifdef GFX3D_USE_FLOAT
-	MatrixMultVec4x4(mtxCurrent[1], PTcoords);
-	MatrixMultVec4x4(mtxCurrent[0], PTcoords);
-#else
 	CACHE_ALIGN float temp1[16] = {mtxCurrent[1][0]/4096.0f,mtxCurrent[1][1]/4096.0f,mtxCurrent[1][2]/4096.0f,mtxCurrent[1][3]/4096.0f,mtxCurrent[1][4]/4096.0f,mtxCurrent[1][5]/4096.0f,mtxCurrent[1][6]/4096.0f,mtxCurrent[1][7]/4096.0f,mtxCurrent[1][8]/4096.0f,mtxCurrent[1][9]/4096.0f,mtxCurrent[1][10]/4096.0f,mtxCurrent[1][11]/4096.0f,mtxCurrent[1][12]/4096.0f,mtxCurrent[1][13]/4096.0f,mtxCurrent[1][14]/4096.0f,mtxCurrent[1][15]/4096.0f};
 	CACHE_ALIGN float temp0[16] = {mtxCurrent[0][0]/4096.0f,mtxCurrent[0][1]/4096.0f,mtxCurrent[0][2]/4096.0f,mtxCurrent[0][3]/4096.0f,mtxCurrent[0][4]/4096.0f,mtxCurrent[0][5]/4096.0f,mtxCurrent[0][6]/4096.0f,mtxCurrent[0][7]/4096.0f,mtxCurrent[0][8]/4096.0f,mtxCurrent[0][9]/4096.0f,mtxCurrent[0][10]/4096.0f,mtxCurrent[0][11]/4096.0f,mtxCurrent[0][12]/4096.0f,mtxCurrent[0][13]/4096.0f,mtxCurrent[0][14]/4096.0f,mtxCurrent[0][15]/4096.0f};
 
 	MatrixMultVec4x4(temp1, PTcoords);
 	MatrixMultVec4x4(temp0, PTcoords);
-#endif
+
 	MMU_new.gxstat.tb = 0;
 
 	GFX_DELAY(9);
@@ -1799,12 +1672,9 @@ static void gfx3d_glVecTest(u32 v)
 						normalTable[(v>>20)&1023],
 						0};
 
-#ifdef GFX3D_USE_FLOAT
-	MatrixMultVec4x4(mtxCurrent[2], normal);
-#else
 	CACHE_ALIGN float temp[16] = {mtxCurrent[2][0]/4096.0f,mtxCurrent[2][1]/4096.0f,mtxCurrent[2][2]/4096.0f,mtxCurrent[2][3]/4096.0f,mtxCurrent[2][4]/4096.0f,mtxCurrent[2][5]/4096.0f,mtxCurrent[2][6]/4096.0f,mtxCurrent[2][7]/4096.0f,mtxCurrent[2][8]/4096.0f,mtxCurrent[2][9]/4096.0f,mtxCurrent[2][10]/4096.0f,mtxCurrent[2][11]/4096.0f,mtxCurrent[2][12]/4096.0f,mtxCurrent[2][13]/4096.0f,mtxCurrent[2][14]/4096.0f,mtxCurrent[2][15]/4096.0f};
 	MatrixMultVec4x4(temp, normal);
-#endif
+
 	s16 x = (s16)(normal[0]*4096);
 	s16 y = (s16)(normal[1]*4096);
 	s16 z = (s16)(normal[2]*4096);
@@ -1878,13 +1748,8 @@ void gfx3d_UpdateToonTable(u8 offset, u32 val)
 
 s32 gfx3d_GetClipMatrix (unsigned int index)
 {
-#ifdef GFX3D_USE_FLOAT
-	float val = MatrixGetMultipliedIndex (index, mtxCurrent[0], mtxCurrent[1]);
-
-	val *= (1<<12);
-#else
 	s32 val = MatrixGetMultipliedIndex (index, mtxCurrent[0], mtxCurrent[1]);
-#endif
+
 	//printf("reading clip matrix: %d\n",index);
 
 	return (s32)val;
@@ -1894,11 +1759,8 @@ s32 gfx3d_GetDirectionalMatrix (unsigned int index)
 {
 	int _index = (((index / 3) * 4) + (index % 3));
 
-#ifdef GFX3D_USE_FLOAT
-	return (s32)(mtxCurrent[2][_index]*(1<<12));
-#else
+	//return (s32)(mtxCurrent[2][_index]*(1<<12));
 	return mtxCurrent[2][_index];
-#endif
 }
 
 void gfx3d_glAlphaFunc(u32 v)
@@ -2176,8 +2038,7 @@ void gfx3d_execute3D()
 	//without this batch size the emuloop will escape way too often to run fast.
 	const int HACK_FIFO_BATCH_SIZE = 64;
 
-	int i;
-	for(i=0;i<HACK_FIFO_BATCH_SIZE;i++) {
+	for(int i=0;i<HACK_FIFO_BATCH_SIZE;i++) {
 		if(GFX_PIPErecv(&cmd, &param))
 		{
 			//if (isSwapBuffers) printf("Executing while swapbuffers is pending: %d:%08X\n",cmd,param);
@@ -2185,27 +2046,22 @@ void gfx3d_execute3D()
 			//since we did anything at all, incur a pipeline motion cost.
 			//also, we can't let gxfifo sequencer stall until the fifo is empty.
 			//see...
-			//GFX_DELAY(1); 
+			GFX_DELAY(1); 
 
 			//..these guys will ordinarily set a delay, but multi-param operations won't
 			//for the earlier params.
 			//printf("%05d:%03d:%12lld: executed 3d: %02X %08X\n",currFrameCounter, nds.VCount, nds_timer , cmd, param);
 			gfx3d_execute(cmd, param);
 
+			//this is a COMPATIBILITY HACK.
+			//this causes 3d to take virtually no time whatsoever to execute.
+			//this was done for marvel nemesis, but a similar family of 
+			//hacks for ridiculously fast 3d execution has proven necessary for a number of games.
+			//the true answer is probably dma bus blocking.. but lets go ahead and try this and
+			//check the compatibility, at the very least it will be nice to know if any games suffer from
+			//3d running too fast
+			MMU.gfx3dCycles = nds_timer+1;
 		} else break;
-	}
-	
-	if(i > 0)
-	{
-		//this is a COMPATIBILITY HACK.
-		//this causes 3d to take virtually no time whatsoever to execute.
-		//this was done for marvel nemesis, but a similar family of 
-		//hacks for ridiculously fast 3d execution has proven necessary for a number of games.
-		//the true answer is probably dma bus blocking.. but lets go ahead and try this and
-		//check the compatibility, at the very least it will be nice to know if any games suffer from
-		//3d running too fast
-		MMU.gfx3dCycles = nds_timer+1;
-		NDS_Reschedule();
 	}
 
 }
@@ -2234,16 +2090,26 @@ void gfx3d_glFlush(u32 v)
 	GFX_DELAY(1);
 }
 
-static bool gfx3d_ysort_compare(int num1, int num2)
+static inline bool gfx3d_ysort_compare_orig(int num1, int num2)
+{
+	const POLY &poly1 = polylist->list[num1];
+	const POLY &poly2 = polylist->list[num2];
+
+	if(poly1.maxy != poly2.maxy) 
+		return poly1.maxy < poly2.maxy; 
+	if(poly1.miny != poly2.miny) 
+		return poly1.miny < poly2.miny; 
+
+	return num1 < num2;
+}
+
+static inline bool gfx3d_ysort_compare_kalven(int num1, int num2)
 {
 	const POLY &poly1 = polylist->list[num1];
 	const POLY &poly2 = polylist->list[num2];
 
 	//this may be verified by checking the game create menus in harvest moon island of happiness
 	//also the buttons in the knights in the nightmare frontend depend on this and the perspective division
-    //Added by Will
-    if (num1 > polylist->count || num2 > polylist->count || num1 < 0 || num2 < 0) return false;
-    //
 	if (poly1.maxy < poly2.maxy) return true;
 	if (poly1.maxy > poly2.maxy) return false;
 	if (poly1.miny < poly2.miny) return true;
@@ -2256,8 +2122,15 @@ static bool gfx3d_ysort_compare(int num1, int num2)
 	//make sure we respect the game's ordering in cases of complete ties
 	//this makes it a stable sort.
 	//this must be a stable sort or else advance wars DOR will flicker in the main map mode
-	if (num1 < num2) return true;
-	else return false;
+	return (num1 < num2);
+}
+
+static bool gfx3d_ysort_compare(int num1, int num2)
+{
+	bool original = gfx3d_ysort_compare_orig(num1,num2);
+	bool kalven = gfx3d_ysort_compare_kalven(num1,num2);
+	assert(original == kalven);
+	return original;
 }
 
 static void gfx3d_doFlush()
@@ -2312,16 +2185,20 @@ static void gfx3d_doFlush()
 	//also the buttons in the knights in the nightmare frontend depend on this
 	for(int i=0; i<polycount; i++)
 	{
+		// TODO: Possible divide by zero with the w-coordinate.
+		// Is the vertex being read correctly? Is 0 a valid value for w?
+		// If both of these questions answer to yes, then how does the NDS handle a NaN?
+		// For now, simply prevent w from being zero.
 		POLY &poly = polylist->list[i];
 		float verty = vertlist->list[poly.vertIndexes[0]].y;
-		float vertw = vertlist->list[poly.vertIndexes[0]].w;
+		float vertw = (vertlist->list[poly.vertIndexes[0]].w != 0.0f) ? vertlist->list[poly.vertIndexes[0]].w : 0.00000001f;
 		verty = 1.0f-(verty+vertw)/(2*vertw);
 		poly.miny = poly.maxy = verty;
 
 		for(int j=1; j<poly.type; j++)
 		{
 			verty = vertlist->list[poly.vertIndexes[j]].y;
-			vertw = vertlist->list[poly.vertIndexes[j]].w;
+			vertw = (vertlist->list[poly.vertIndexes[j]].w != 0.0f) ? vertlist->list[poly.vertIndexes[j]].w : 0.00000001f;
 			verty = 1.0f-(verty+vertw)/(2*vertw);
 			poly.miny = min(poly.miny, verty);
 			poly.maxy = max(poly.maxy, verty);
@@ -2344,23 +2221,23 @@ static void gfx3d_doFlush()
 		if(poly.isTranslucent())
 			gfx3d.indexlist.list[ctr++] = i;
 	}
+	
+	//NOTE: the use of the stable_sort below must be here as a workaround for some compilers on osx and linux.
+	//we're hazy on the exact behaviour of the resulting bug, all thats known is the list gets mangled somehow.
+	//it should not in principle be relevant since the predicate results in no ties.
+	//perhaps the compiler is buggy. perhaps the predicate is wrong.
 
 	//now we have to sort the opaque polys by y-value.
 	//(test case: harvest moon island of happiness character cretor UI)
 	//should this be done after clipping??
-    
-    //This causes a ton of crashing and disabling has no apparent effects that I've seen - Will
-    BOOL shouldSort = false;
-    if (shouldSort) {
-        std::sort(gfx3d.indexlist.list, gfx3d.indexlist.list + opaqueCount, gfx3d_ysort_compare);
-        
-        if(!gfx3d.state.sortmode)
-        {
-            //if we are autosorting translucent polys, we need to do this also
-            //TODO - this is unverified behavior. need a test case
-            std::sort(gfx3d.indexlist.list + opaqueCount, gfx3d.indexlist.list + polycount, gfx3d_ysort_compare);
-        }
-    }
+	std::stable_sort(gfx3d.indexlist.list, gfx3d.indexlist.list + opaqueCount, gfx3d_ysort_compare);
+	
+	if(!gfx3d.state.sortmode)
+	{
+		//if we are autosorting translucent polys, we need to do this also
+		//TODO - this is unverified behavior. need a test case
+		std::stable_sort(gfx3d.indexlist.list + opaqueCount, gfx3d.indexlist.list + polycount, gfx3d_ysort_compare);
+	}
 
 	//switch to the new lists
 	twiddleLists();
@@ -2487,22 +2364,19 @@ void gfx3d_Control(u32 v)
 //other misc stuff
 void gfx3d_glGetMatrix(unsigned int m_mode, int index, float* dest)
 {
-#ifdef GFX3D_USE_FLOAT
-	if(index == -1)
-	{
-		MatrixCopy(dest, mtxCurrent[m_mode]);
-		return;
-	}
+	//if(index == -1)
+	//{
+	//	MatrixCopy(dest, mtxCurrent[m_mode]);
+	//	return;
+	//}
 
-	MatrixCopy(dest, MatrixStackGetPos(&mtxStack[m_mode], index));
-#else
+	//MatrixCopy(dest, MatrixStackGetPos(&mtxStack[m_mode], index));
 	s32* src;
 	if(index==-1)
 		src = mtxCurrent[m_mode];
 	else src=MatrixStackGetPos(&mtxStack[m_mode],index);
 	for(int i=0;i<16;i++)
 		dest[i] = src[i]/4096.0f;
-#endif
 }
 
 void gfx3d_glGetLightDirection(unsigned int index, unsigned int* dest)
@@ -2524,12 +2398,12 @@ void gfx3d_GetLineData(int line, u8** dst)
 void gfx3d_GetLineData15bpp(int line, u16** dst)
 {
 	//TODO - this is not very thread safe!!!
-	static u16 buf[256];
+	static u16 buf[GFX3D_FRAMEBUFFER_WIDTH];
 	*dst = buf;
 
 	u8* lineData;
 	gfx3d_GetLineData(line, &lineData);
-	for(int i=0;i<256;i++)
+	for(int i=0; i<GFX3D_FRAMEBUFFER_WIDTH; i++)
 	{
 		const u8 r = lineData[i*4+0];
 		const u8 g = lineData[i*4+1];
@@ -2617,11 +2491,7 @@ SFORMAT SF_GFX3D[]={
 	{ "GSFC", 4, 4, &gfx3d.state.fogColor},
 	{ "GSFO", 4, 1, &gfx3d.state.fogOffset},
 	{ "GST4", 2, 32, gfx3d.state.u16ToonTable},
-#ifdef GFX3D_USE_FLOAT
-	{ "GSSU", 4, 128, &gfx3d.state.shininessTable[0]},
-#else
 	{ "GSSU", 1, 128, &gfx3d.state.shininessTable[0]},
-#endif
 	{ "GSSI", 4, 1, &shininessInd},
 	{ "GSAF", 4, 1, &gfx3d.state.activeFlushCommand},
 	{ "GSPF", 4, 1, &gfx3d.state.pendingFlushCommand},
@@ -2630,7 +2500,7 @@ SFORMAT SF_GFX3D[]={
 	{ "GTVC", 4, 1, &tempVertInfo.count},
 	{ "GTVM", 4, 4, tempVertInfo.map},
 	{ "GTVF", 4, 1, &tempVertInfo.first},
-	{ "G3CX", 1, 4*256*192, gfx3d_convertedScreen},
+	{ "G3CX", 1, 4*GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT, gfx3d_convertedScreen},
 	{ 0 }
 };
 

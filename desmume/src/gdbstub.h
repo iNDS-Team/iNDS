@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 Ben Jaques
-	Copyright (C) 2008-2009 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,6 +22,13 @@
 #include "types.h"
 
 typedef void *gdbstub_handle_t;
+struct armcpu_t;
+struct armcpu_memory_iface;
+
+void gdbstub_mutex_init();
+void gdbstub_mutex_destroy();
+void gdbstub_mutex_lock();
+void gdbstub_mutex_unlock();
 
 /*
  * The function interface
@@ -29,15 +36,14 @@ typedef void *gdbstub_handle_t;
 
 gdbstub_handle_t
 createStub_gdb( u16 port,
-                struct armcpu_memory_iface **cpu_memio,
-                struct armcpu_memory_iface *direct_memio);
+                armcpu_t *theCPU,
+                const armcpu_memory_iface *direct_memio);
 
 void
 destroyStub_gdb( gdbstub_handle_t stub);
 
 void
-activateStub_gdb( gdbstub_handle_t stub,
-                  struct armcpu_ctrl_iface *cpu_ctrl);
+activateStub_gdb( gdbstub_handle_t stub);
 
   /*
    * An implementation of the following functions is required

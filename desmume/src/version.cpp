@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2012 DeSmuME team
+	Copyright (C) 2009-2013 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -32,13 +32,12 @@
 #endif
 
 //todo - everyone will want to support this eventually, i suppose
-#if (defined(_WINDOWS) && !defined(WXPORT)) || defined(DESMUME_COCOA)
+#if defined(HOST_WINDOWS) || defined(DESMUME_COCOA) || defined(DESMUME_QT)
 	#include "svnrev.h"
 #else
-	#ifdef SVN_REV
-		#define SVN_REV_STR SVN_REV
-	#else
-		#define SVN_REV_STR ""
+	#ifndef SVN_REV
+		#define SVN_REV 0
+		#define SVN_REV_STR "0"
 	#endif
 #endif
 
@@ -50,8 +49,6 @@
 	#define DESMUME_PLATFORM_STRING " x86"
 #elif defined(__arm__)
 	#define DESMUME_PLATFORM_STRING " ARM"
-#elif defined(__arm64__)
-    #define DESMUME_PLATFORM_STRING " ARM64"
 #elif defined(__thumb__)
 	#define DESMUME_PLATFORM_STRING " ARM-Thumb"
 #elif defined(__ppc64__)
@@ -117,11 +114,23 @@
 	#define DESMUME_JIT ""
 #endif
 
-#define DESMUME_VERSION_NUMERIC 91000
-#define DESMUME_VERSION_STRING " " "0.9.10" DESMUME_SUBVERSION_STRING DESMUME_FEATURE_STRING DESMUME_PLATFORM_STRING DESMUME_JIT DESMUME_CPUEXT_STRING
+#ifdef PUBLIC_RELEASE
+const u32 DESMUME_SUBVERSION_NUMERIC = 0xFFFFFFFF;
+#else
+const u32 DESMUME_SUBVERSION_NUMERIC = SVN_REV;
+#endif
+
+const u8 DESMUME_VERSION_MAJOR = 0;
+const u8 DESMUME_VERSION_MINOR = 9;
+const u8 DESMUME_VERSION_BUILD = 11;
+
+#define DESMUME_VERSION_NUMERIC 91100
+#define DESMUME_VERSION_STRING " " "0.9.11" DESMUME_SUBVERSION_STRING DESMUME_FEATURE_STRING DESMUME_PLATFORM_STRING DESMUME_JIT DESMUME_CPUEXT_STRING
 #define DESMUME_NAME_AND_VERSION DESMUME_NAME DESMUME_VERSION_STRING
 
 u32 EMU_DESMUME_VERSION_NUMERIC() { return DESMUME_VERSION_NUMERIC; }
+u32 EMU_DESMUME_SUBVERSION_NUMERIC() { return DESMUME_SUBVERSION_NUMERIC; }
 const char* EMU_DESMUME_VERSION_STRING() { return DESMUME_VERSION_STRING; }
+const char* EMU_DESMUME_SUBVERSION_STRING() { return DESMUME_SUBVERSION_STRING; }
 const char* EMU_DESMUME_NAME_AND_VERSION() { return DESMUME_NAME_AND_VERSION; }
 const char* EMU_DESMUME_COMPILER_DETAIL() { return DESMUME_COMPILER_DETAIL; }

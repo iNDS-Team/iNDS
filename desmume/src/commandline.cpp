@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2012 DeSmuME team
+	Copyright (C) 2009-2013 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 #include "commandline.h"
 #include "types.h"
 #include "movie.h"
-#include "addons.h"
 #include "slot1.h"
+#include "slot2.h"
 #include "NDSSystem.h"
 #include "utils/xstring.h"
 
@@ -33,6 +33,7 @@ int _commandline_linux_nojoy = 0;
 
 CommandLine::CommandLine()
 : is_cflash_configured(false)
+, _load_to_memory(-1)
 , error(NULL)
 , ctx(g_option_context_new (""))
 , _play_movie_file(0)
@@ -43,15 +44,21 @@ CommandLine::CommandLine()
 , _bios_arm9(NULL)
 , _bios_arm7(NULL)
 , _bios_swi(0)
+, _spu_sync_mode(-1)
+, _spu_sync_method(-1)
 , _spu_advanced(0)
 , _num_cores(-1)
 , _rigorous_timing(0)
 , _advanced_timing(-1)
 , _slot1(NULL)
 , _slot1_fat_dir(NULL)
+, _slot1_fat_dir_type(false)
+#ifdef HAVE_JIT
 , _cpu_mode(-1)
 , _jit_size(-1)
+#endif
 , _console_type(NULL)
+, _advanscene_import(NULL)
 , depth_threshold(-1)
 , load_slot(-1)
 , arm9_gdb_port(0)
@@ -59,7 +66,7 @@ CommandLine::CommandLine()
 , start_paused(FALSE)
 , autodetect_method(-1)
 {
-#ifndef _MSC_VER
+#ifndef HOST_WINDOWS 
 	disable_sound = 0;
 	disable_limiter = 0;
 #endif
@@ -78,7 +85,8 @@ void CommandLine::loadCommonOptions()
 	//but also see the gtk port for an example of how to combine this with other options
 	//(you may need to use ifdefs to cause options to be entered in the desired order)
 	static const GOptionEntry options[] = {
-		{ "load-slot", 0, 0, G_OPTION_ARG_INT, &load_slot, "Loads savegame from slot NUM", "NUM"},
+		{ "load-type", 0, 0, G_OPTION_ARG_INT, &_load_to_memory, "ROM loading method, 0 - stream from disk (like an iso), 1 - load entirely to RAM (default 0)", "LOAD_TYPE"},
+		{ "load-slot", 0, 0, G_OPTION_ARG_INT, &load_slot, "Loads savestate from slot NUM", "NUM"},
 		{ "play-movie", 0, 0, G_OPTION_ARG_FILENAME, &_play_movie_file, "Specifies a dsm format movie to play", "PATH_TO_PLAY_MOVIE"},
 		{ "record-movie", 0, 0, G_OPTION_ARG_FILENAME, &_record_movie_file, "Specifies a path to a new dsm format movie", "PATH_TO_RECORD_MOVIE"},
 		{ "start-paused", 0, 0, G_OPTION_ARG_NONE, &start_paused, "Indicates that emulation should start paused", "START_PAUSED"},
@@ -88,6 +96,8 @@ void CommandLine::loadCommonOptions()
 		{ "bios-arm9", 0, 0, G_OPTION_ARG_FILENAME, &_bios_arm9, "Uses the arm9 bios provided at the specified path", "BIOS_ARM9_PATH"},
 		{ "bios-arm7", 0, 0, G_OPTION_ARG_FILENAME, &_bios_arm7, "Uses the arm7 bios provided at the specified path", "BIOS_ARM7_PATH"},
 		{ "bios-swi", 0, 0, G_OPTION_ARG_INT, &_bios_swi, "Uses SWI from the provided bios files", "BIOS_SWI"},
+		{ "spu-mode", 0, 0, G_OPTION_ARG_INT, &_spu_sync_mode, "Select SPU Synchronization Mode. 0 - Dual SPU Synch/Asynch (traditional), 1 - Synchronous (sometimes needed for streams) (default 0)", "SPU_MODE"},
+		{ "spu-method", 0, 0, G_OPTION_ARG_INT, &_spu_sync_method, "Select SPU Synchronizer Method. 0 - N, 1 - Z, 2 - P (default 0)", "SPU_SYNC_METHOD"},
 		{ "spu-advanced", 0, 0, G_OPTION_ARG_INT, &_spu_advanced, "Uses advanced SPU capture functions", "SPU_ADVANCED"},
 		{ "num-cores", 0, 0, G_OPTION_ARG_INT, &_num_cores, "Override numcores detection and use this many", "NUM_CORES"},
 		{ "scanline-filter-a", 0, 0, G_OPTION_ARG_INT, &_scanline_filter_a, "Intensity of fadeout for scanlines filter (topleft) (default 0)", "SCANLINE_FILTER_A"},
@@ -96,13 +106,16 @@ void CommandLine::loadCommonOptions()
 		{ "scanline-filter-d", 0, 0, G_OPTION_ARG_INT, &_scanline_filter_d, "Intensity of fadeout for scanlines filter (bottomright) (default 4)", "SCANLINE_FILTER_D"},
 		{ "rigorous-timing", 0, 0, G_OPTION_ARG_INT, &_rigorous_timing, "Use some rigorous timings instead of unrealistically generous (default 0)", "RIGOROUS_TIMING"},
 		{ "advanced-timing", 0, 0, G_OPTION_ARG_INT, &_advanced_timing, "Use advanced BUS-level timing (default 1)", "ADVANCED_TIMING"},
-		{ "slot1", 0, 0, G_OPTION_ARG_STRING, &_slot1, "Device to load in slot 1 (default retail)", "SLOT1"},
+		{ "slot1", 0, 0, G_OPTION_ARG_STRING, &_slot1, "Device to mount in slot 1 (default retail)", "SLOT1"},
 		{ "slot1-fat-dir", 0, 0, G_OPTION_ARG_STRING, &_slot1_fat_dir, "Directory to scan for slot 1", "SLOT1_DIR"},
 		{ "depth-threshold", 0, 0, G_OPTION_ARG_INT, &depth_threshold, "Depth comparison threshold (default 0)", "DEPTHTHRESHOLD"},
 		{ "console-type", 0, 0, G_OPTION_ARG_STRING, &_console_type, "Select console type: {fat,lite,ique,debug,dsi}", "CONSOLETYPE" },
-		{ "cpu-mode", 0, 0, G_OPTION_ARG_INT, &_cpu_mode, "ARM CPU emulation mode: 0 - interpreter, 1 - thread interpreter, 2 - dynarec (default 1)", NULL},
+		{ "advanscene-import", 0, 0, G_OPTION_ARG_STRING, &_advanscene_import, "Import advanscene, dump .ddb, and exit", "ADVANSCENE_IMPORT" },
+#ifdef HAVE_JIT
+		{ "cpu-mode", 0, 0, G_OPTION_ARG_INT, &_cpu_mode, "ARM CPU emulation mode: 0 - interpreter, 1 - dynarec (default 1)", NULL},
 		{ "jit-size", 0, 0, G_OPTION_ARG_INT, &_jit_size, "ARM JIT block size: 1..100 (1 - accuracy, 100 - faster) (default 100)", NULL},
-#ifndef _MSC_VER
+#endif
+#ifndef HOST_WINDOWS 
 		{ "disable-sound", 0, 0, G_OPTION_ARG_NONE, &disable_sound, "Disables the sound emulation", NULL},
 		{ "disable-limiter", 0, 0, G_OPTION_ARG_NONE, &disable_limiter, "Disables the 60fps limiter", NULL},
 		{ "nojoy", 0, 0, G_OPTION_ARG_INT, &_commandline_linux_nojoy, "Disables joystick support", "NOJOY"},
@@ -136,9 +149,11 @@ bool CommandLine::parse(int argc,char **argv)
 		return false;
 	}
 
+	if(_advanscene_import) CommonSettings.run_advanscene_import = _advanscene_import;
 	if(_slot1_fat_dir) slot1_fat_dir = _slot1_fat_dir;
 	if(_slot1) slot1 = _slot1; slot1 = strtoupper(slot1);
 	if(_console_type) console_type = _console_type;
+	if(_load_to_memory != -1) CommonSettings.loadToMemory = (_load_to_memory == 1)?true:false;
 	if(_play_movie_file) play_movie_file = _play_movie_file;
 	if(_record_movie_file) record_movie_file = _record_movie_file;
 	if(_cflash_image) cflash_image = _cflash_image;
@@ -148,7 +163,8 @@ bool CommandLine::parse(int argc,char **argv)
 	if(_num_cores != -1) CommonSettings.num_cores = _num_cores;
 	if(_rigorous_timing) CommonSettings.rigorous_timing = true;
 	if(_advanced_timing != -1) CommonSettings.advanced_timing = _advanced_timing==1;
-	if(_cpu_mode != -1) CommonSettings.CpuMode = _cpu_mode;
+#ifdef HAVE_JIT
+	if(_cpu_mode != -1) CommonSettings.use_jit = (_cpu_mode==1);
 	if(_jit_size != -1) 
 	{
 		if ((_jit_size < 1) || (_jit_size > 100)) 
@@ -156,6 +172,7 @@ bool CommandLine::parse(int argc,char **argv)
 		else
 			CommonSettings.jit_max_block_size = _jit_size;
 	}
+#endif
 	if(depth_threshold != -1)
 		CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = depth_threshold;
 
@@ -182,6 +199,8 @@ bool CommandLine::parse(int argc,char **argv)
 	if(_bios_arm9) { CommonSettings.UseExtBIOS = true; strcpy(CommonSettings.ARM9BIOS,_bios_arm9); }
 	if(_bios_arm7) { CommonSettings.UseExtBIOS = true; strcpy(CommonSettings.ARM7BIOS,_bios_arm7); }
 	if(_bios_swi) CommonSettings.SWIFromBIOS = true;
+	if(_spu_sync_mode != -1) CommonSettings.SPU_sync_mode = _spu_sync_mode;
+	if(_spu_sync_method != -1) CommonSettings.SPU_sync_method = _spu_sync_method;
 	if(_spu_advanced) CommonSettings.spu_advanced = true;
 
 	if (argc == 2)
@@ -194,14 +213,27 @@ bool CommandLine::parse(int argc,char **argv)
 
 bool CommandLine::validate()
 {
-
-
 	if(slot1 != "")
 	{
 		if(slot1 != "R4" && slot1 != "RETAIL" && slot1 != "NONE" && slot1 != "RETAILNAND") {
 			g_printerr("Invalid slot1 device specified.\n");
 			return false;
 		}
+	}
+
+	if (_load_to_memory < -1 || _load_to_memory > 1) {
+		g_printerr("Invalid parameter (0 - stream from disk, 1 - from RAM)\n");
+		return false;
+	}
+
+	if (_spu_sync_mode < -1 || _spu_sync_mode > 1) {
+		g_printerr("Invalid parameter\n");
+		return false;
+	}
+
+	if (_spu_sync_method < -1 || _spu_sync_method > 2) {
+		g_printerr("Invalid parameter\n");
+		return false;
 	}
 
 	if (load_slot < -1 || load_slot > 10) {
@@ -241,12 +273,14 @@ bool CommandLine::validate()
 		g_printerr("Invalid autodetect save method (0 - internal, 1 - from database)\n");
 	}
 
-	if (_cpu_mode < -1 || _cpu_mode > 2) {
-		g_printerr("Invalid cpu mode emulation (0 - interpreter, 1 - thread interpreter, 2 - dynarec)\n");
+#ifdef HAVE_JIT
+	if (_cpu_mode < -1 || _cpu_mode > 1) {
+		g_printerr("Invalid cpu mode emulation (0 - interpreter, 1 - dynarec)\n");
 	}
 	if (_jit_size < -1 && (_jit_size == 0 || _jit_size > 100)) {
 		g_printerr("Invalid jit block size [1..100]. set to 100\n");
 	}
+#endif
 
 	return true;
 }
@@ -286,13 +320,19 @@ void CommandLine::process_addonCommands()
 	}
 
 	if(slot1_fat_dir != "")
-		slot1SetFatDir(slot1_fat_dir);
+		slot1_SetFatDir(slot1_fat_dir);
 
 	if(slot1 == "RETAIL")
-		slot1Change(NDS_SLOT1_RETAIL);
+		slot1_Change(NDS_SLOT1_RETAIL_AUTO);
+	else if(slot1 == "RETAILAUTO")
+		slot1_Change(NDS_SLOT1_RETAIL_AUTO);
 	else if(slot1 == "R4")
-		slot1Change(NDS_SLOT1_R4);
+		slot1_Change(NDS_SLOT1_R4);
 	else if(slot1 == "RETAILNAND")
-		slot1Change(NDS_SLOT1_RETAIL_NAND);
+		slot1_Change(NDS_SLOT1_RETAIL_NAND);
+		else if(slot1 == "RETAILMCROM")
+			slot1_Change(NDS_SLOT1_RETAIL_MCROM);
+			else if(slot1 == "RETAILDEBUG")
+				slot1_Change(NDS_SLOT1_RETAIL_DEBUG);
 }
 
