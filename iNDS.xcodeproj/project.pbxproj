@@ -20,7 +20,6 @@
 		28DA4A52178802FB002236A4 /* RTrigger.png in Resources */ = {isa = PBXBuildFile; fileRef = 28DA4A4E178802FB002236A4 /* RTrigger.png */; };
 		28DA4A53178802FB002236A4 /* RTrigger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28DA4A4F178802FB002236A4 /* RTrigger@2x.png */; };
 		28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6ED1787D110003A9C5B /* Defaults.plist */; };
-		28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F31787D8D5003A9C5B /* HideEmulator.png */; };
 		28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */; };
 		4651B9C81C323B3300857FB6 /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4651B9C61C323B3300857FB6 /* iCadeReaderView.m */; };
 		46C587631C502F9F00CE47BD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */; };
@@ -259,7 +258,6 @@
 		28DA4A4E178802FB002236A4 /* RTrigger.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RTrigger.png; path = Resources/RTrigger.png; sourceTree = "<group>"; };
 		28DA4A4F178802FB002236A4 /* RTrigger@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "RTrigger@2x.png"; path = "Resources/RTrigger@2x.png"; sourceTree = "<group>"; };
 		28E7A6ED1787D110003A9C5B /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = iNDS/settings/Defaults.plist; sourceTree = SOURCE_ROOT; };
-		28E7A6F31787D8D5003A9C5B /* HideEmulator.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = HideEmulator.png; path = Resources/HideEmulator.png; sourceTree = "<group>"; };
 		28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HideEmulator@2x.png"; path = "Resources/HideEmulator@2x.png"; sourceTree = "<group>"; };
 		4651B9C51C323B3300857FB6 /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
@@ -807,7 +805,6 @@
 				BF9D516517867F7D00B5864B /* JoystickBackground@2x.png */,
 				BF9D516617867F7D00B5864B /* JoystickButton.png */,
 				BF9D516717867F7D00B5864B /* JoystickButton@2x.png */,
-				28E7A6F31787D8D5003A9C5B /* HideEmulator.png */,
 				28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */,
 				28DA4A4C178802FB002236A4 /* LTrigger.png */,
 				28DA4A4D178802FB002236A4 /* LTrigger@2x.png */,
@@ -964,86 +961,7 @@
 			children = (
 				8BEA095217872BB50060B347 /* iOS */,
 				BFCFE24817663521000A70CF /* JIT */,
-				BFCFE13017650FB0000A70CF /* addons.cpp */,
-				BFCFE13117650FB0000A70CF /* addons.h */,
-				BFCFE13217650FB0000A70CF /* arm_instructions.cpp */,
-				BFCFE13317650FB0000A70CF /* arm_instructions.h */,
-				BFCFE13417650FB0000A70CF /* ArmAnalyze.cpp */,
-				BFCFE13517650FB0000A70CF /* ArmAnalyze.h */,
-				BFCFE13617650FB0000A70CF /* ArmCJit.cpp */,
-				BFCFE13717650FB0000A70CF /* ArmCJit.h */,
-				BFCFE13817650FB0000A70CF /* armcpu.cpp */,
-				BFCFE13917650FB0000A70CF /* armcpu.h */,
-				BFCFE13A17650FB0000A70CF /* ArmThreadedInterpreter.cpp */,
-				BFCFE13B17650FB0000A70CF /* ArmThreadedInterpreter.h */,
-				BFCFE13C17650FB0000A70CF /* bios.cpp */,
-				BFCFE13D17650FB0000A70CF /* bios.h */,
-				BFCFE13E17650FB0000A70CF /* cheatSystem.cpp */,
-				BFCFE13F17650FB0000A70CF /* cheatSystem.h */,
-				BFCFE14017650FB0000A70CF /* common.cpp */,
-				BFCFE14117650FB0000A70CF /* common.h */,
-				BFCFE14217650FB0000A70CF /* cp15.cpp */,
-				BFCFE14317650FB0000A70CF /* cp15.h */,
-				BFCFE14417650FB0000A70CF /* CpuBase.cpp */,
-				BFCFE14517650FB0000A70CF /* CpuBase.h */,
-				BFCFE14617650FB0000A70CF /* debug.cpp */,
-				BFCFE14717650FB0000A70CF /* debug.h */,
-				BFCFE14817650FB0000A70CF /* Disassembler.cpp */,
-				BFCFE14917650FB0000A70CF /* Disassembler.h */,
-				BFCFE14A17650FB0000A70CF /* driver.cpp */,
-				BFCFE14B17650FB0000A70CF /* driver.h */,
-				BFCFE14C17650FB0000A70CF /* emufile.cpp */,
-				BFCFE14D17650FB0000A70CF /* emufile.h */,
-				BFCFE14E17650FB0000A70CF /* FIFO.cpp */,
-				BFCFE14F17650FB0000A70CF /* FIFO.h */,
-				BFCFE15017650FB0000A70CF /* firmware.cpp */,
-				BFCFE15117650FB0000A70CF /* firmware.h */,
-				BFCFE15217650FB0000A70CF /* fs-linux.cpp */,
-				BFCFE15317650FB0000A70CF /* fs.h */,
-				BFCFE15417650FB0000A70CF /* gfx3d.cpp */,
-				BFCFE15517650FB0000A70CF /* gfx3d.h */,
-				BFCFE15617650FB0000A70CF /* GPU_osd_stub.cpp */,
-				BFCFE15717650FB0000A70CF /* GPU_osd.h */,
-				BFCFE15817650FB0000A70CF /* GPU.cpp */,
-				BFCFE15917650FB0000A70CF /* GPU.h */,
-				BFCFE15A17650FB0000A70CF /* JitCommon.cpp */,
-				BFCFE15B17650FB0000A70CF /* JitCommon.h */,
-				BFCFE15C17650FB0000A70CF /* matrix.cpp */,
-				BFCFE15D17650FB0000A70CF /* matrix.h */,
-				BFCFE15E17650FB0000A70CF /* mc.cpp */,
-				BFCFE15F17650FB0000A70CF /* MMU.cpp */,
-				BFCFE16017650FB0000A70CF /* MMU.h */,
-				BFCFE16117650FB0000A70CF /* movie.cpp */,
-				BFCFE16217650FB0000A70CF /* movie.h */,
-				BFCFE16317650FB0000A70CF /* NDSSystem.cpp */,
-				BFCFE16417650FB0000A70CF /* NDSSystem.h */,
-				BFCFE16517650FB0000A70CF /* path.cpp */,
-				BFCFE16617650FB0000A70CF /* path.h */,
-				BFCFE16717650FB0000A70CF /* rasterize.cpp */,
-				BFCFE16817650FB0000A70CF /* rasterize.h */,
-				BFCFE16917650FB0000A70CF /* readwrite.cpp */,
-				BFCFE16A17650FB0000A70CF /* readwrite.h */,
-				BFCFE16B17650FB0000A70CF /* render3D.cpp */,
-				BFCFE16C17650FB0000A70CF /* render3D.h */,
-				BFCFE16D17650FB0000A70CF /* ROMReader.cpp */,
-				BFCFE16E17650FB0000A70CF /* ROMReader.h */,
-				BFCFE16F17650FB0000A70CF /* rtc.cpp */,
-				BFCFE17017650FB0000A70CF /* rtc.h */,
-				BFCFE17117650FB0000A70CF /* saves.cpp */,
-				BFCFE17217650FB0000A70CF /* saves.h */,
-				BFCFE17317650FB0000A70CF /* slot1.cpp */,
-				BFCFE17417650FB0000A70CF /* slot1.h */,
-				BFCFE17517650FB0000A70CF /* SPU.cpp */,
-				BFCFE17617650FB0000A70CF /* SPU.h */,
-				BFCFE17717650FB0000A70CF /* texcache.cpp */,
-				BFCFE17817650FB0000A70CF /* texcache.h */,
-				BFCFE17917650FB0000A70CF /* thumb_instructions.cpp */,
-				BFCFE17A17650FB0000A70CF /* thumb_instructions.h */,
-				BFCFE17B17650FB0000A70CF /* version.cpp */,
-				BFCFE17C17650FB0000A70CF /* version.h */,
-				BFCFE17D17650FB0000A70CF /* wifi.cpp */,
-				BFCFE17E17650FB0000A70CF /* wifi.h */,
-				CA0BA5401BF9712B00C93357 /* types.h */,
+				CAA59AF31CAB6B8B0084AB5D /* Emu */,
 				BFCFE22F176634E3000A70CF /* addons */,
 				BFCFE1A717650FEF000A70CF /* filter */,
 				BFCFE1BB1765101B000A70CF /* metaspu */,
@@ -1314,6 +1232,93 @@
 			name = SCLAlertView;
 			sourceTree = "<group>";
 		};
+		CAA59AF31CAB6B8B0084AB5D /* Emu */ = {
+			isa = PBXGroup;
+			children = (
+				BFCFE13017650FB0000A70CF /* addons.cpp */,
+				BFCFE13117650FB0000A70CF /* addons.h */,
+				BFCFE13217650FB0000A70CF /* arm_instructions.cpp */,
+				BFCFE13317650FB0000A70CF /* arm_instructions.h */,
+				BFCFE13417650FB0000A70CF /* ArmAnalyze.cpp */,
+				BFCFE13517650FB0000A70CF /* ArmAnalyze.h */,
+				BFCFE13617650FB0000A70CF /* ArmCJit.cpp */,
+				BFCFE13717650FB0000A70CF /* ArmCJit.h */,
+				BFCFE13817650FB0000A70CF /* armcpu.cpp */,
+				BFCFE13917650FB0000A70CF /* armcpu.h */,
+				BFCFE13A17650FB0000A70CF /* ArmThreadedInterpreter.cpp */,
+				BFCFE13B17650FB0000A70CF /* ArmThreadedInterpreter.h */,
+				BFCFE13C17650FB0000A70CF /* bios.cpp */,
+				BFCFE13D17650FB0000A70CF /* bios.h */,
+				BFCFE13E17650FB0000A70CF /* cheatSystem.cpp */,
+				BFCFE13F17650FB0000A70CF /* cheatSystem.h */,
+				BFCFE14017650FB0000A70CF /* common.cpp */,
+				BFCFE14117650FB0000A70CF /* common.h */,
+				BFCFE14217650FB0000A70CF /* cp15.cpp */,
+				BFCFE14317650FB0000A70CF /* cp15.h */,
+				BFCFE14417650FB0000A70CF /* CpuBase.cpp */,
+				BFCFE14517650FB0000A70CF /* CpuBase.h */,
+				BFCFE14617650FB0000A70CF /* debug.cpp */,
+				BFCFE14717650FB0000A70CF /* debug.h */,
+				BFCFE14817650FB0000A70CF /* Disassembler.cpp */,
+				BFCFE14917650FB0000A70CF /* Disassembler.h */,
+				BFCFE14A17650FB0000A70CF /* driver.cpp */,
+				BFCFE14B17650FB0000A70CF /* driver.h */,
+				BFCFE14C17650FB0000A70CF /* emufile.cpp */,
+				BFCFE14D17650FB0000A70CF /* emufile.h */,
+				BFCFE14E17650FB0000A70CF /* FIFO.cpp */,
+				BFCFE14F17650FB0000A70CF /* FIFO.h */,
+				BFCFE15017650FB0000A70CF /* firmware.cpp */,
+				BFCFE15117650FB0000A70CF /* firmware.h */,
+				BFCFE15217650FB0000A70CF /* fs-linux.cpp */,
+				BFCFE15317650FB0000A70CF /* fs.h */,
+				BFCFE15417650FB0000A70CF /* gfx3d.cpp */,
+				BFCFE15517650FB0000A70CF /* gfx3d.h */,
+				BFCFE15617650FB0000A70CF /* GPU_osd_stub.cpp */,
+				BFCFE15717650FB0000A70CF /* GPU_osd.h */,
+				BFCFE15817650FB0000A70CF /* GPU.cpp */,
+				BFCFE15917650FB0000A70CF /* GPU.h */,
+				BFCFE15A17650FB0000A70CF /* JitCommon.cpp */,
+				BFCFE15B17650FB0000A70CF /* JitCommon.h */,
+				BFCFE15C17650FB0000A70CF /* matrix.cpp */,
+				BFCFE15D17650FB0000A70CF /* matrix.h */,
+				BFCFE15E17650FB0000A70CF /* mc.cpp */,
+				BFCFE15F17650FB0000A70CF /* MMU.cpp */,
+				BFCFE16017650FB0000A70CF /* MMU.h */,
+				BFCFE16117650FB0000A70CF /* movie.cpp */,
+				BFCFE16217650FB0000A70CF /* movie.h */,
+				BFCFE16317650FB0000A70CF /* NDSSystem.cpp */,
+				BFCFE16417650FB0000A70CF /* NDSSystem.h */,
+				BFCFE16517650FB0000A70CF /* path.cpp */,
+				BFCFE16617650FB0000A70CF /* path.h */,
+				BFCFE16717650FB0000A70CF /* rasterize.cpp */,
+				BFCFE16817650FB0000A70CF /* rasterize.h */,
+				BFCFE16917650FB0000A70CF /* readwrite.cpp */,
+				BFCFE16A17650FB0000A70CF /* readwrite.h */,
+				BFCFE16B17650FB0000A70CF /* render3D.cpp */,
+				BFCFE16C17650FB0000A70CF /* render3D.h */,
+				BFCFE16D17650FB0000A70CF /* ROMReader.cpp */,
+				BFCFE16E17650FB0000A70CF /* ROMReader.h */,
+				BFCFE16F17650FB0000A70CF /* rtc.cpp */,
+				BFCFE17017650FB0000A70CF /* rtc.h */,
+				BFCFE17117650FB0000A70CF /* saves.cpp */,
+				BFCFE17217650FB0000A70CF /* saves.h */,
+				BFCFE17317650FB0000A70CF /* slot1.cpp */,
+				BFCFE17417650FB0000A70CF /* slot1.h */,
+				BFCFE17517650FB0000A70CF /* SPU.cpp */,
+				BFCFE17617650FB0000A70CF /* SPU.h */,
+				BFCFE17717650FB0000A70CF /* texcache.cpp */,
+				BFCFE17817650FB0000A70CF /* texcache.h */,
+				BFCFE17917650FB0000A70CF /* thumb_instructions.cpp */,
+				BFCFE17A17650FB0000A70CF /* thumb_instructions.h */,
+				BFCFE17B17650FB0000A70CF /* version.cpp */,
+				BFCFE17C17650FB0000A70CF /* version.h */,
+				BFCFE17D17650FB0000A70CF /* wifi.cpp */,
+				BFCFE17E17650FB0000A70CF /* wifi.h */,
+				CA0BA5401BF9712B00C93357 /* types.h */,
+			);
+			name = Emu;
+			sourceTree = "<group>";
+		};
 		CABE38301C27E44800BE8857 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1458,7 +1463,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */;
+			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "inds" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1505,7 +1510,6 @@
 				28DA4A50178802FB002236A4 /* LTrigger.png in Resources */,
 				BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */,
 				BF9D516917867F7D00B5864B /* ABXYPad@2x.png in Resources */,
-				28E7A6F51787D8D5003A9C5B /* HideEmulator.png in Resources */,
 				BF9D516A17867F7D00B5864B /* DPad.png in Resources */,
 				CA8EBCF31C39BCE50082A3F8 /* Shader.fsh in Resources */,
 				CABE38C21C34B8B800BE8857 /* Folder.png in Resources */,
@@ -1972,7 +1976,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */ = {
+		BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "inds" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFCFE1131764FBD3000A70CF /* Debug */,

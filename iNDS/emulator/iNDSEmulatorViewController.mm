@@ -555,7 +555,7 @@ const float textureVert[] =
 {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
@@ -577,7 +577,7 @@ const float textureVert[] =
                     lastAutosave = CACurrentMediaTime();
                 }
             } else {
-                iNDS_throttle();
+                //iNDS_throttle();
             }
             
         }

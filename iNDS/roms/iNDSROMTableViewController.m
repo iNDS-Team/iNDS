@@ -35,8 +35,9 @@
     BOOL isDir;
     NSFileManager* fm = [NSFileManager defaultManager];
     
-    if (![fm fileExistsAtPath:AppDelegate.sharedInstance.batteryDir isDirectory:&isDir])
-        [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:NO attributes:nil error:nil];
+    if (![fm fileExistsAtPath:AppDelegate.sharedInstance.batteryDir isDirectory:&isDir]) {
+        [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
     
     // Localize the title
     romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
@@ -52,8 +53,6 @@
     [nc addObserver:self selector:@selector(reloadGames:) name:iNDSGameSaveStatesChangedNotification object:nil];
     
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
-    
-    [self reloadGames:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -66,7 +65,7 @@
 {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
-    [self.tableView reloadData];
+    [self reloadGames:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import <Fabric/Fabric.h>
-//#import <Crashlytics/Crashlytics.h>
+#import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
@@ -30,28 +30,18 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [Fabric with:@[[Crashlytics class]]];
+    [[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
     //Create documents folder
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:nil];
-        [CHBgDropboxSync clearLastSyncData];
     }
-    
-    // Move iNDS to documents for non-jailbroken phones. Delete later once everyone is >=1.3.3
-    // Helps with itunes drag and drop
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[self.documentsPath stringByAppendingPathComponent:@"iNDS"]]) {
-        [self moveFolderAtPath:[self.documentsPath stringByAppendingPathComponent:@"iNDS"] toPath:self.documentsPath];
-    }
-    
-    
+
     //Dropbox DBSession Auth
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //I think this is crashing the app...
-        //[Fabric with:@[[Crashlytics class]]];
-        //[[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
-        
         NSString* errorMsg = nil;
         if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
             errorMsg = @"You must set the App Key correctly for Dropbox to work!";
@@ -216,7 +206,7 @@
 
 - (void)checkForUpdates
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         //Show Twitter alert
         if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
             [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
@@ -274,9 +264,7 @@
 }
 
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState
-{
-    //[[Crashlytics sharedInstance] setObjectValue:game.title forKey:@"GameTitle"];
-    //[[Crashlytics sharedInstance] setIntValue:(int)savedState forKey:@"SavedState"];
+{;
     if (!self.currentEmulatorViewController) {
         iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
         emulatorViewController.game = game;
