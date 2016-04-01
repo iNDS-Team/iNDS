@@ -22,6 +22,12 @@
 #import "iNDSInitialViewController.h"
 #import "SCLAlertView.h"
 
+@interface AppDelegate () {
+    BOOL    backgroundProcessesStarted;
+}
+
+@end
+
 @implementation AppDelegate
 
 + (AppDelegate*)sharedInstance
@@ -35,13 +41,23 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
-    //Create documents folder
+    //Create documents and battery folder if needed
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.batteryDir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    return YES;
+}
 
-    //Dropbox DBSession Auth
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+- (void)startBackgroundProcesses
+{
+    if (backgroundProcessesStarted) {
+        return;
+    }
+    backgroundProcessesStarted = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
         NSString* errorMsg = nil;
         if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
             errorMsg = @"You must set the App Key correctly for Dropbox to work!";
@@ -57,21 +73,34 @@
                 errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
             }
         }
-    
-        DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
-        [DBSession setSharedSession:dbSession];
-    
+        
         if (errorMsg != nil) {
             NSLog(@"%@", errorMsg);
         } else {
+            DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
+            [DBSession setSharedSession:dbSession];
             [CHBgDropboxSync start];
         }
+        
+        
+        //Show Twitter alert
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
+            [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] < 5) {
+            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] == 5) {
+            [[NSUserDefaults standardUserDefaults] setInteger:10 forKey:@"TwitterAlert"];
+            SCLAlertView * alert = [[SCLAlertView alloc] init];
+            alert.iconTintColor = [UIColor whiteColor];
+            alert.shouldDismissOnTapOutside = YES;
+            [alert addButton:@"Follow" actionBlock:^(void) {
+                [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/miniroo321"]];
+            }];
+            UIImage * twitterImage = [[UIImage imageNamed:@"Twitter.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
+        }
     });
-    
-    [self checkForUpdates];
-    return YES;
 }
-
 
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -101,6 +130,7 @@
                 NSLog(@"Could not create directory to expand zip: %@ %@", dstDir, err);
                 [fm removeItemAtURL:url error:NULL];
                 [self showError:@"Unable to extract archive file."];
+                [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                 return NO;
             }
             
@@ -113,6 +143,7 @@
                 if (![LZMAExtractor extract7zArchive:url.path tmpDirName:@"extract"]) {
                     NSLog(@"Unable to extract 7z");
                     [self showError:@"Unable to extract .7z file."];
+                    [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                     return NO;
                 }
             } else { //Rar
@@ -129,6 +160,7 @@
                 if (error) {
                     NSLog(@"Unable to extract rar: %@", archiveError);
                     [self showError:@"Unable to extract .rar file."];
+                    [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                 }
                 
             }
@@ -176,7 +208,6 @@
         }
         // remove inbox (shouldn't be needed)
         [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
-        // Clear temp
         
         return YES;
     } else {
@@ -202,31 +233,6 @@
         topController = topController.presentedViewController;
     }
     return topController;
-}
-
-- (void)checkForUpdates
-{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //Show Twitter alert
-        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
-            [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
-        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] < 5) {
-            [[NSUserDefaults standardUserDefaults] setInteger: [[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] + 1 forKey:@"TwitterAlert"];
-        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"TwitterAlert"] == 5) {
-            [[NSUserDefaults standardUserDefaults] setInteger:10 forKey:@"TwitterAlert"];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                SCLAlertView * alert = [[SCLAlertView alloc] init];
-                alert.iconTintColor = [UIColor whiteColor];
-                alert.shouldDismissOnTapOutside = YES;
-                [alert addButton:@"Follow" actionBlock:^(void) {
-                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/miniroo321"]];
-                }];
-                UIImage * twitterImage = [[UIImage imageNamed:@"Twitter.png"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-                [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
-            });
-        }
-        
-    });
 }
 
 - (NSString *)cheatsDir

@@ -29,28 +29,14 @@
 {
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
-    self.navigationItem.title = @"Roms";
+    self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
     //self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    
-    BOOL isDir;
-    NSFileManager* fm = [NSFileManager defaultManager];
-    
-    if (![fm fileExistsAtPath:AppDelegate.sharedInstance.batteryDir isDirectory:&isDir]) {
-        [fm createDirectoryAtPath:AppDelegate.sharedInstance.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
-    }
-    
-    // Localize the title
-    romListTitle.title = NSLocalizedString(@"ROM_LIST", nil);
     
     // watch for changes in documents folder
     docWatchHelper = [MHWDirectoryWatcher directoryWatcherAtPath:AppDelegate.sharedInstance.documentsPath
-                                                                                callback:^{
-                                                                                    [self reloadGames:self];
-                                                                                }];
-    
-    // register for notifications
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self selector:@selector(reloadGames:) name:iNDSGameSaveStatesChangedNotification object:nil];
+                                                        callback:^{
+                                                            [self reloadGames:self];
+                                                        }];
     
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
 }
@@ -70,6 +56,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [AppDelegate.sharedInstance startBackgroundProcesses];
 }
 
 
@@ -81,7 +68,9 @@
     } else  {
         // reload all games
         games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
-        [self.tableView reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
     }
 }
 

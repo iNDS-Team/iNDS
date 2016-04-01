@@ -185,7 +185,7 @@ void EMU_init(int lang)
 	
 	InitSpeedThrottle();
 	
-	mainLoopData.freq = 1000;
+	mainLoopData.freq = 1100;
 	mainLoopData.lastticks = GetTickCount();
 }
 
@@ -213,7 +213,7 @@ void EMU_loadSettings()
 	CommonSettings.showGpu.sub = 1;
 	CommonSettings.spu_advanced = false;
 	CommonSettings.advanced_timing = false;
-	CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = 0;
+	CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = 1;
 	CommonSettings.wifi.mode = 0;
 	CommonSettings.wifi.infraBridgeAdapter = 0;
     autoframeskipenab = true;

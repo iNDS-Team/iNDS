@@ -12,8 +12,6 @@
 @interface iNDSROMTableViewController : UITableViewController <UIAlertViewDelegate>
 {
     NSArray *games;
-    
-    IBOutlet UINavigationItem *romListTitle;
 }
 
 - (void)reloadGames:(id)sender;

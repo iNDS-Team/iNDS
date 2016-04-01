@@ -26,7 +26,11 @@
 - (NSString *)documentsPath;
 - (NSString *)rootDocumentsPath;
 
+- (void)showError:(NSString *)error;
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation;
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState;
+- (void)startBackgroundProcesses;
+
+-(BOOL)isSystemApplication;
 
 @end
