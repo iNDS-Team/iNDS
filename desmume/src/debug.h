@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 Guillaume Duhamel
-	Copyright (C) 2006-2011 DeSmuME team
+	Copyright (C) 2006-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 
 #include "types.h"
 #include "mem.h"
-#include "emufile.h"
+
+struct armcpu_t;
+class EMUFILE;
 
 struct DebugStatistics
 {
@@ -36,8 +38,6 @@ struct DebugStatistics
 		u32 thumb[1024];
 		u32 arm[4096];
 	} instructionHits[2]; //one for each cpu
-
-	u32 blockCompileCounters[2];
 
 	s32 sequencerExecutionCounters[32];
 
@@ -58,6 +58,8 @@ protected:
 	std::ostream * out;
 	unsigned int flags;
 
+	static std::vector<Logger *> channels;
+
 	static void fixSize(unsigned int channel);
 public:
 	Logger();
@@ -72,15 +74,11 @@ public:
 
 	static const int LINE = 1;
 	static const int FILE = 2;
-	
-	static std::vector<Logger *> channels;
 
 	static void log(unsigned int channel, const char * file, unsigned int line, const char * format, ...);
 	static void log(unsigned int channel, const char * file, unsigned int line, std::ostream& os);
 	static void log(unsigned int channel, const char * file, unsigned int line, unsigned int flag);
 	static void log(unsigned int channel, const char * file, unsigned int line, void (*callback)(const Logger& logger, const char * message));
-
-	static void setCallbackAll(void (*cback)(const Logger& logger, const char * message));
 };
 
 #if defined(DEBUG) || defined(GPUDEBUG) || defined(DIVDEBUG) || defined(SQRTDEBUG) || defined(DMADEBUG) || defined(DEVELOPER)
@@ -172,7 +170,6 @@ private:
 };
 
 extern DebugNotify DEBUG_Notify;
-struct armcpu_t;
 
 //information about a debug event will be stuffed into here by the generator
 struct TDebugEventData

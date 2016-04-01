@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2010-2011 DeSmuME team
+	Copyright (C) 2010-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,61 +19,122 @@
 #define __SLOT1_H__
 
 #include <string>
-#include "common.h"
+
 #include "types.h"
-#include "debug.h"
+#include "MMU.h"
 
 class EMUFILE;
 
-struct SLOT1INTERFACE
+class Slot1Info
 {
-	// The name of the plugin, this name will appear in the plugins list
-	const char * name;
+public:
+	virtual const char* name() const = 0;
+	virtual const char* descr()const  = 0;
+	virtual const u8 id() const  = 0;
+};
 
-	//called once when the plugin starts up
-	BOOL (*init)(void);
-	
-	//called when the emulator resets
-	void (*reset)(void);
-	
-	//called when the plugin shuts down
-	void (*close)(void);
-	
-	//called when the user configurating plugin
-	void (*config)(void);
+class Slot1InfoSimple : public Slot1Info
+{
+public:
+	Slot1InfoSimple(const char* _name, const char* _descr, const u8 _id)
+		: mName(_name)
+		, mDescr(_descr)
+		, mID(_id)
+	{
+	}
+	virtual const char* name() const { return mName; }
+	virtual const char* descr() const { return mDescr; }
+	virtual const u8 id() const { return mID; }
+private:
+	const char* mName, *mDescr;
+	const u8 mID;
+};
 
-	//called when the emulator write to addon
-	void (*write08)(u8 PROCNUM, u32 adr, u8 val);
-	void (*write16)(u8 PROCNUM, u32 adr, u16 val);
-	void (*write32)(u8 PROCNUM, u32 adr, u32 val);
+class ISlot1Interface
+{
+public:
+	//called to get info about device (description)
+	virtual Slot1Info const* info() = 0;
 
-	//called when the emulator read from addon
-	u8  (*read08)(u8 PROCNUM, u32 adr);
-	u16 (*read16)(u8 PROCNUM, u32 adr);
-	u32 (*read32)(u8 PROCNUM, u32 adr);
+	//called once when the emulator starts up, or when the device springs into existence
+	virtual bool init() { return true; }
 	
-	//called when the user get info about addon pak (description)
-	void (*info)(char *info);
+	//called when the emulator connects the device
+	virtual void connect() { }
+
+	//called when the emulator disconnects the device
+	virtual void disconnect() { }
+	
+	//called when the emulator shuts down, or when the device disappears from existence
+	virtual void shutdown() { }
+
+	//called then the cpu begins a new command/block on the GC bus
+	virtual void write_command(u8 PROCNUM, GC_Command command) { }
+
+	//called when the cpu writes to the GC bus
+	virtual void write_GCDATAIN(u8 PROCNUM, u32 val) { }
+
+	//called when the cpu reads from the GC bus
+	virtual u32 read_GCDATAIN(u8 PROCNUM) { return 0xFFFFFFFF; }
+
+	//transfers a byte to the slot-1 device via auxspi, and returns the incoming byte
+	//cpu is provided for diagnostic purposes only.. the slot-1 device wouldn't know which CPU it is.
+	virtual u8 auxspi_transaction(int PROCNUM, u8 value) { return 0x00; }
+
+	//called when the auxspi burst is ended (SPI chipselect in is going low)
+	virtual void auxspi_reset(int PROCNUM) {}
+    
+	//called when NDS_FakeBoot terminates, emulate in here the BIOS behaviour
+	virtual void post_fakeboot(int PROCNUM) {}
+
+	virtual void savestate(EMUFILE* os) {}
+
+	virtual void loadstate(EMUFILE* is) {}
 }; 
+
+typedef ISlot1Interface* TISlot1InterfaceConstructor();
 
 enum NDS_SLOT1_TYPE
 {
-	NDS_SLOT1_NONE,
-	NDS_SLOT1_RETAIL,
-	NDS_SLOT1_R4,
-	NDS_SLOT1_RETAIL_NAND,		// used in Made in Ore/WarioWare D.I.Y.
-	NDS_SLOT1_COUNT		// use for counter addons - MUST TO BE LAST!!!
+	NDS_SLOT1_NONE,			// 0xFF - None
+	NDS_SLOT1_RETAIL_AUTO,	// 0xFE - autodetect which kind of retail card to use 
+	NDS_SLOT1_R4,			// 0x03 - R4 flash card
+	NDS_SLOT1_RETAIL_NAND,	// 0x02 - Made in Ore/WarioWare D.I.Y.
+	NDS_SLOT1_RETAIL_MCROM,	// 0x01 - a standard MC (eeprom, flash, fram) -bearing retail card. Also supports motion, for now, because that's the way we originally coded it
+	NDS_SLOT1_RETAIL_DEBUG,	// 0x04 - for romhacking and fan-made translations
+	NDS_SLOT1_COUNT			//use to count addons - MUST BE LAST!!!
 };
 
-extern SLOT1INTERFACE slot1_device;						// current slot1 device
-extern SLOT1INTERFACE slot1List[NDS_SLOT1_COUNT];
+extern ISlot1Interface* slot1_device;						//the current slot1 device instance
+extern ISlot1Interface* slot1_List[NDS_SLOT1_COUNT];
+extern NDS_SLOT1_TYPE slot1_selected_type;
 
-BOOL slot1Init();
-void slot1Close();
-void slot1Reset();
-BOOL slot1Change(NDS_SLOT1_TYPE type);				// change current adddon
-void slot1SetFatDir(const std::string& dir);
-std::string slot1GetFatDir();
-NDS_SLOT1_TYPE slot1GetCurrentType();
-EMUFILE* slot1GetFatImage();
+void slot1_Init();
+bool slot1_Connect();
+void slot1_Disconnect();
+void slot1_Shutdown();
+void slot1_Savestate(EMUFILE* os);
+void slot1_Loadstate(EMUFILE* is);
+
+//just disconnects and reconnects the device. ideally, the disconnection and connection would be called with sensible timing
+void slot1_Reset();
+
+bool slot1_getTypeByID(u8 ID, NDS_SLOT1_TYPE &type);
+
+//change the current device
+bool slot1_Change(NDS_SLOT1_TYPE type);
+
+//change the current device by ID
+bool slot1_ChangeByID(u8 ID);
+
+//check on the current device
+NDS_SLOT1_TYPE slot1_GetCurrentType();
+NDS_SLOT1_TYPE slot1_GetSelectedType();
+
+extern bool slot1_R4_path_type;
+void slot1_SetFatDir(const std::string& dir, bool sameAsRom = false);
+std::string slot1_GetFatDir();
+EMUFILE* slot1_GetFatImage();
+
+
 #endif //__SLOT1_H__

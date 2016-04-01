@@ -1,4 +1,4 @@
- /*
+/*
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2007 shash
 	Copyright (C) 2007-2011 DeSmuME team
@@ -39,8 +39,34 @@
 // obviously, these defines don't cover all the variables or features needed,
 // and in particular, DMA or code+data access bus contention is still missing.
 
+	//disable this to prevent the advanced timing logic from ever running at all
+#define ENABLE_ADVANCED_TIMING
+
+#ifdef ENABLE_ADVANCED_TIMING
+	// makes non-sequential accesses slower than sequential ones.
+#define ACCOUNT_FOR_NON_SEQUENTIAL_ACCESS
+	//(SOMETIMES THIS IS A BIG SPEED HIT!)
+
+	// enables emulation of code fetch waits.
+#define ACCOUNT_FOR_CODE_FETCH_CYCLES
+
+	// makes access to DTCM (arm9 only) fast.
+#define ACCOUNT_FOR_DATA_TCM_SPEED
+
+	// enables simulation of cache hits and cache misses.
+#define ENABLE_CACHE_CONTROLLER_EMULATION
+
+#endif //ENABLE_ADVANCED_TIMING
+
+//
+////////////////////////////////////////////////////////////////
+
 FORCEINLINE bool USE_TIMING() { 
+#ifdef ENABLE_ADVANCED_TIMING
+	return CommonSettings.advanced_timing;
+#else
 	return false;
+#endif
 }
 
 
@@ -367,12 +393,6 @@ FORCEINLINE u32 MMU_codeFetchCycles(u32 addr)
 		return MMU_timing.armCodeFetch<PROCNUM>().template Fetch<READSIZE,MMU_AD_READ,false>((addr)&(~((READSIZE>>3)-1)));
 }
 
-u32 FORCEINLINE fastu32max( const u32 a, const u32 b )
-{
-    s32 mask = a - b;
-    return a + ( ( b - a ) & ( mask >> 31 ) );
-}
-
 // calculates the cycle contribution of ALU + MEM stages (= EXECUTE)
 // given ALU cycle time and the summation of multiple memory access cycle times.
 // this function might belong more in armcpu, but I don't think it matters.
@@ -386,7 +406,7 @@ FORCEINLINE u32 MMU_aluMemCycles(u32 aluCycles, u32 memCycles)
 		// since simply adding the cycles of each instruction together
 		// fails to take into account the parallelism of the arm pipeline
 		// and would make the emulated system unnaturally slow.
-		return fastu32max(aluCycles, memCycles);
+		return std::max(aluCycles, memCycles);
 	}
 	else
 	{

@@ -1,7 +1,7 @@
 /*
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2006-2007 shash
-	Copyright (C) 2008-2011 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "common.h"
 #include "debug.h"
 #include "gfx3d.h"
+#include "MMU.h"
 #include "NDSSystem.h"
 
 using std::min;
@@ -156,7 +157,7 @@ static MemSpan MemSpan_TexMem(u32 ofs, u32 len)
 }
 
 //creates a MemSpan in texture palette memory
-static MemSpan MemSpan_TexPalette(u32 ofs, u32 len) 
+static MemSpan MemSpan_TexPalette(u32 ofs, u32 len, bool silent) 
 {
 	MemSpan ret;
 	ret.size = len;
@@ -165,7 +166,7 @@ static MemSpan MemSpan_TexPalette(u32 ofs, u32 len)
 		MemSpan::Item &curr = ret.items[ret.numItems++];
 		curr.start = ofs&0x3FFF;
 		u32 slot = (ofs>>14)&7; //this masks to 8 slots, but there are really only 6
-		if(slot>5) {
+		if(slot>5 && !silent) {
 			PROGINFO("Texture palette overruns texture memory. Wrapping at palette slot 0.\n");
 			slot -= 5;
 		}
@@ -179,7 +180,7 @@ static MemSpan MemSpan_TexPalette(u32 ofs, u32 len)
 		u8* ptr = MMU.texInfo.texPalSlot[slot];
 		
 		//TODO - dont alert if the masterbrightnesses are max or min
-		if(ptr == MMU.blank_memory) {
+		if(ptr == MMU.blank_memory && !silent) {
 			PROGINFO("Tried to reference unmapped texture palette memory: 16k slot #%d\n",slot);
 		}
 		curr.ptr = ptr + curr.start;
@@ -205,7 +206,9 @@ class TexCache
 public:
 	TexCache()
 		: cache_size(0)
-	{}
+	{
+		memset(paletteDump,0,sizeof(paletteDump));
+	}
 
 	TTexCacheItemMultimap index;
 
@@ -271,7 +274,7 @@ public:
 		int palSize = palSizes[textureMode];
 		int texSize = (imageSize*texSizes[textureMode])>>2; //shifted because the texSizes multiplier is fixed point
 		MemSpan ms = MemSpan_TexMem((format&0xFFFF)<<3,texSize);
-		MemSpan mspal = MemSpan_TexPalette(paletteAddress,palSize*2);
+		MemSpan mspal = MemSpan_TexPalette(paletteAddress,palSize*2,false);
 
 		//determine the location for 4x4 index data
 		u32 indexBase;
@@ -318,8 +321,11 @@ public:
 			//TODO - this could be done at the entire cache level instead of checking repeatedly
 			if(curr->cacheFormat != TEXFORMAT) goto REJECT;
 
+			//if the texture is assumed invalid, reject it
+			if(curr->assumedInvalid) goto REJECT; 
+
 			//the texture matches params, but isnt suspected invalid. accept it.
-			if (!curr->suspectedInvalid) return curr;
+			if(!curr->suspectedInvalid) return curr;
 
 			//we suspect the texture may be invalid. we need to do a byte-for-byte comparison to re-establish that it is valid:
 
@@ -393,8 +399,8 @@ public:
 		//Texture conversion
 		//============================================================================ 
 
-		const u32 opaqueColor = TEXFORMAT==TexFormat_32bpp?255:31;
-		u32 palZeroTransparent = (1-((format>>29)&1))*opaqueColor;
+		const u8 opaqueColor = (TEXFORMAT == TexFormat_32bpp) ? 0xFF : 0x1F;
+		const u8 palZeroTransparent = ( 1 - ((format>>29) & 1) ) * opaqueColor;
 
 		switch (newitem->mode)
 		{
@@ -482,15 +488,13 @@ public:
 			break;
 		case TEXMODE_4X4:
 			{
-				//RGB16TO32 is used here because the other conversion macros result in broken interpolation logic
-
 				if(ms.numItems != 1) {
 					PROGINFO("Your 4x4 texture has overrun its texture slot.\n");
 				}
 				//this check isnt necessary since the addressing is tied to the texture data which will also run out:
 				//if(msIndex.numItems != 1) PROGINFO("Your 4x4 texture index has overrun its slot.\n");
 
-	#define PAL4X4(offset) ( *(u16*)( MMU.texInfo.texPalSlot[((paletteAddress + (offset)*2)>>14)&0x7] + ((paletteAddress + (offset)*2)&0x3FFF) ) )
+	#define PAL4X4(offset) LE_TO_LOCAL_16( *(u16*)( MMU.texInfo.texPalSlot[((paletteAddress + (offset)*2)>>14)&0x7] + ((paletteAddress + (offset)*2)&0x3FFF) ) )
 
 				u16* slot1;
 				u32* map = (u32*)ms.items[0].ptr;
@@ -527,91 +531,107 @@ public:
 							continue;
 						}
 
-						u32 currBlock	= map[d];
-						u16 pal1		= slot1[d];
+						u32 currBlock	= LE_TO_LOCAL_32(map[d]);
+						u16 pal1		= LE_TO_LOCAL_16(slot1[d]);
 						u16 pal1offset	= (pal1 & 0x3FFF)<<1;
 						u8  mode		= pal1>>14;
 						u32 tmp_col[4];
 						
-						tmp_col[0]=RGB16TO32(PAL4X4(pal1offset),255);
-						tmp_col[1]=RGB16TO32(PAL4X4(pal1offset+1),255);
+						tmp_col[0] = RGB15TO32( PAL4X4(pal1offset), 0xFF );
+						tmp_col[1] = RGB15TO32( PAL4X4(pal1offset+1), 0xFF );
 
 						switch (mode) 
 						{
-						case 0:
-							tmp_col[2]=RGB16TO32(PAL4X4(pal1offset+2),255);
-							tmp_col[3]=RGB16TO32(0x7FFF,0);
-							break;
-						case 1:
-							tmp_col[2]=(((tmp_col[0]&0xFF)+(tmp_col[1]&0xff))>>1)|
-								(((tmp_col[0]&(0xFF<<8))+(tmp_col[1]&(0xFF<<8)))>>1)|
-								(((tmp_col[0]&(0xFF<<16))+(tmp_col[1]&(0xFF<<16)))>>1)|
-								(0xff<<24);
-							tmp_col[3]=RGB16TO32(0x7FFF,0);
-							break;
-						case 2:
-							tmp_col[2]=RGB16TO32(PAL4X4(pal1offset+2),255);
-							tmp_col[3]=RGB16TO32(PAL4X4(pal1offset+3),255);
-							break;
-						case 3: 
+							case 0:
+								tmp_col[2] = RGB15TO32( PAL4X4(pal1offset+2), 0xFF );
+								tmp_col[3] = RGB15TO32(0x7FFF, 0x00);
+								break;
+								
+							case 1:
+#ifdef LOCAL_BE
+								tmp_col[2]	= ( (((tmp_col[0] & 0xFF000000) >> 1)+((tmp_col[1] & 0xFF000000)  >> 1)) & 0xFF000000 ) |
+											  ( (((tmp_col[0] & 0x00FF0000)      + (tmp_col[1] & 0x00FF0000)) >> 1)  & 0x00FF0000 ) |
+											  ( (((tmp_col[0] & 0x0000FF00)      + (tmp_col[1] & 0x0000FF00)) >> 1)  & 0x0000FF00 ) |
+											  0x000000FF;
+								tmp_col[3]	= 0xFFFFFF00;
+#else
+								tmp_col[2]	= ( (((tmp_col[0] & 0x00FF00FF) + (tmp_col[1] & 0x00FF00FF)) >> 1) & 0x00FF00FF ) |
+											  ( (((tmp_col[0] & 0x0000FF00) + (tmp_col[1] & 0x0000FF00)) >> 1) & 0x0000FF00 ) |
+											  0xFF000000;
+								tmp_col[3]	= 0x00FFFFFF;
+#endif
+								break;
+								
+							case 2:
+								tmp_col[2] = RGB15TO32( PAL4X4(pal1offset+2), 0xFF );
+								tmp_col[3] = RGB15TO32( PAL4X4(pal1offset+3), 0xFF );
+								break;
+								
+							case 3:
 							{
-								u32 red1, red2;
-								u32 green1, green2;
-								u32 blue1, blue2;
-								u16 tmp1, tmp2;
+#ifdef LOCAL_BE
+								const u32 r0	= (tmp_col[0]>>24) & 0x000000FF;
+								const u32 r1	= (tmp_col[1]>>24) & 0x000000FF;
+								const u32 g0	= (tmp_col[0]>>16) & 0x000000FF;
+								const u32 g1	= (tmp_col[1]>>16) & 0x000000FF;
+								const u32 b0	= (tmp_col[0]>> 8) & 0x000000FF;
+								const u32 b1	= (tmp_col[1]>> 8) & 0x000000FF;
+#else
+								const u32 r0	=  tmp_col[0]      & 0x000000FF;
+								const u32 r1	=  tmp_col[1]      & 0x000000FF;
+								const u32 g0	= (tmp_col[0]>> 8) & 0x000000FF;
+								const u32 g1	= (tmp_col[1]>> 8) & 0x000000FF;
+								const u32 b0	= (tmp_col[0]>>16) & 0x000000FF;
+								const u32 b1	= (tmp_col[1]>>16) & 0x000000FF;
+#endif
 
-								red1=tmp_col[0]&0xff;
-								green1=(tmp_col[0]>>8)&0xff;
-								blue1=(tmp_col[0]>>16)&0xff;
-								red2=tmp_col[1]&0xff;
-								green2=(tmp_col[1]>>8)&0xff;
-								blue2=(tmp_col[1]>>16)&0xff;
+								const u16 tmp1	= (  (r0*5 + r1*3)>>6) |
+												  ( ((g0*5 + g1*3)>>6) <<  5 ) |
+												  ( ((b0*5 + b1*3)>>6) << 10 );
+								const u16 tmp2	= (  (r0*3 + r1*5)>>6) |
+												  ( ((g0*3 + g1*5)>>6) <<  5 ) |
+												  ( ((b0*3 + b1*5)>>6) << 10 );
 
-								tmp1=((red1*5+red2*3)>>6)|
-									(((green1*5+green2*3)>>6)<<5)|
-									(((blue1*5+blue2*3)>>6)<<10);
-								tmp2=((red2*5+red1*3)>>6)|
-									(((green2*5+green1*3)>>6)<<5)|
-									(((blue2*5+blue1*3)>>6)<<10);
-
-								tmp_col[2]=RGB16TO32(tmp1,255);
-								tmp_col[3]=RGB16TO32(tmp2,255);
+								tmp_col[2] = RGB15TO32(tmp1, 0xFF);
+								tmp_col[3] = RGB15TO32(tmp2, 0xFF);
 								break;
 							}
 						}
 
 						if(TEXFORMAT==TexFormat_15bpp)
 						{
-							for(int i=0;i<4;i++)
+							for (size_t i = 0; i < 4; i++)
 							{
+#ifdef LOCAL_BE
+								const u32 a = (tmp_col[i] >> 3) & 0x0000001F;
 								tmp_col[i] >>= 2;
-								tmp_col[i] &= 0x3F3F3F3F;
-								u32 a = tmp_col[i]>>24;
-								tmp_col[i] &= 0x00FFFFFF;
-								tmp_col[i] |= (a>>1)<<24;
+								tmp_col[i] &= 0x3F3F3F00;
+								tmp_col[i] |= a;
+#else
+								const u32 a = (tmp_col[i] >> 3) & 0x1F000000;
+								tmp_col[i] >>= 2;
+								tmp_col[i] &= 0x003F3F3F;
+								tmp_col[i] |= a;
+#endif
 							}
 						}
 
 						//TODO - this could be more precise for 32bpp mode (run it through the color separation table)
 
 						//set all 16 texels
-						for (int sy = 0; sy < 4; sy++)
+						for (size_t sy = 0; sy < 4; sy++)
 						{
 							// Texture offset
 							u32 currentPos = (x<<2) + tmpPos[sy];
 							u8 currRow = (u8)((currBlock>>(sy<<3))&0xFF);
 
-							dwdst[currentPos] = tmp_col[currRow&3];
+							dwdst[currentPos  ] = tmp_col[ currRow    &3];
 							dwdst[currentPos+1] = tmp_col[(currRow>>2)&3];
 							dwdst[currentPos+2] = tmp_col[(currRow>>4)&3];
 							dwdst[currentPos+3] = tmp_col[(currRow>>6)&3];
 						}
-
-
 					}
 				}
-
-
 				break;
 			}
 		case TEXMODE_A5I3:
@@ -654,10 +674,33 @@ public:
 		return newitem;
 	} //scan()
 
+	static const int PALETTE_DUMP_SIZE = (64+16+16)*1024;
+	u8 paletteDump[PALETTE_DUMP_SIZE];
+
 	void invalidate()
 	{
+		//check whether the palette memory changed
+		//TODO - we should handle this instead by setting dirty flags in the vram memory mapping and noting whether palette memory was dirty.
+		//but this will work for now
+		MemSpan mspal = MemSpan_TexPalette(0,PALETTE_DUMP_SIZE,true);
+		bool paletteDirty = mspal.memcmp(paletteDump);
+		if(paletteDirty)
+		{
+			mspal.dump(paletteDump);
+		}
+
 		for(TTexCacheItemMultimap::iterator it(index.begin()); it != index.end(); ++it)
+		{
 			it->second->suspectedInvalid = true;
+			
+			//when the palette changes, we assume all 4x4 textures are dirty.
+			//this is because each 4x4 item doesnt carry along with it a copy of the entire palette, for verification
+			//instead, we just use the one paletteDump for verifying of all 4x4 textures; and if paletteDirty is set, verification has failed
+			if(it->second->getTextureMode() == TEXMODE_4X4 && paletteDirty)
+			{
+				it->second->assumedInvalid = true;
+			}
+		}
 	}
 
 	void evict(u32 target = kMaxCacheSize)

@@ -3729,7 +3729,7 @@ static char * OP_LDMIA_THUMB(u32 adr, u32 i, char * txt)
 
 static char * OP_B_COND(u32 adr, u32 i, char * txt)
 {
-     sprintf(txt, "B%s #%08X", Condition[(i>>8)&0xF], (int)(adr+(((s32)((signed char)(i&0xFF)))<<1)+4));
+     sprintf(txt, "B%s #%X", Condition[(i>>8)&0xF], (int)(adr+(((s32)((signed char)(i&0xFF)))<<1)+4));
      return txt;
 }
 
@@ -3743,7 +3743,7 @@ static char * OP_SWI_THUMB(u32 adr, u32 i, char * txt)
 
 static char * OP_B_UNCOND(u32 adr, u32 i, char * txt)
 {
-     sprintf(txt, "B #%08X", (int)(adr+(SIGNEEXT_IMM11(i)<<1)+4));
+     sprintf(txt, "B #%X", (int)(adr+(SIGNEEXT_IMM11(i)<<1)+4));
      return txt;
 }
 
@@ -3751,7 +3751,7 @@ u32 part = 0;
 
 static char * OP_BLX(u32 adr, u32 i, char * txt)
 {
-     sprintf(txt, "BLX #%08X", (int)(part + ((i&0x7FF)<<1))&0xFFFFFFFC);
+     sprintf(txt, "BLX #%X", (int)(part + ((i&0x7FF)<<1))&0xFFFFFFFC);
      return txt;
 }
 
@@ -3765,7 +3765,7 @@ static char * OP_BL_10(u32 adr, u32 i, char * txt)
 
 static char * OP_BL_11(u32 adr, u32 i, char * txt)
 {
-     sprintf(txt, "BL #%08X", (int)(part + ((i&0x7FF)<<1))&0xFFFFFFFC);
+     sprintf(txt, "BL #%X", (int)(part + ((i&0x7FF)<<1))&0xFFFFFFFC);
      return txt;
 } 
 

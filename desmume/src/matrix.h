@@ -33,22 +33,6 @@
 #include <emmintrin.h>
 #endif
 
-#ifdef HAVE_NEON
-extern "C" {
-#include "android/math-neon/math_neon.h"
-}
-#endif
-
-#ifdef GFX3D_USE_FLOAT
-struct MatrixStack
-{
-	MatrixStack(int size, int type);
-	float	*matrix;
-	s32		position;
-	s32		size;
-	u8		type;
-};
-#else
 struct MatrixStack
 {
 	MatrixStack(int size, int type);
@@ -57,7 +41,6 @@ struct MatrixStack
 	s32		size;
 	u8		type;
 };
-#endif
 
 void	MatrixInit				(float *matrix);
 void	MatrixInit				(s32 *matrix);
@@ -68,32 +51,18 @@ void	MatrixInit				(s32 *matrix);
 
 float	MatrixGetMultipliedIndex	(int index, float *matrix, float *rightMatrix);
 s32	MatrixGetMultipliedIndex	(int index, s32 *matrix, s32 *rightMatrix);
-void	MatrixSet				(float *matrix, int x, int y, float value);
 void	MatrixSet				(s32 *matrix, int x, int y, s32 value);
-void	MatrixCopy				(float * matrixDST, const float * matrixSRC);
 void	MatrixCopy				(s32 * matrixDST, const s32 * matrixSRC);
-int		MatrixCompare				(const float * matrixDST, const float * matrixSRC);
-int		MatrixCompare				(const s32 * matrixDST, const s32 * matrixSRC);
-void	MatrixIdentity			(float *matrix);
+int		MatrixCompare				(const s32 * matrixDST, const float * matrixSRC);
 void	MatrixIdentity			(s32 *matrix);
-void	MatrixTranspose				(float *matrix);
-void	MatrixTranspose				(s32 *matrix);
 
 void	MatrixStackInit				(MatrixStack *stack);
 void	MatrixStackSetMaxSize		(MatrixStack *stack, int size);
-#ifdef GFX3D_USE_FLOAT
-void	MatrixStackPushMatrix		(MatrixStack *stack, const float *ptr);
-void	MatrixStackPopMatrix		(float *mtxCurr, MatrixStack *stack, int size);
-float*	MatrixStackGetPos			(MatrixStack *stack, int pos);
-float*	MatrixStackGet				(MatrixStack *stack);
-void	MatrixStackLoadMatrix		(MatrixStack *stack, int pos, const float *ptr);
-#else
 void	MatrixStackPushMatrix		(MatrixStack *stack, const s32 *ptr);
 void	MatrixStackPopMatrix		(s32 *mtxCurr, MatrixStack *stack, int size);
 s32*	MatrixStackGetPos			(MatrixStack *stack, int pos);
 s32*	MatrixStackGet				(MatrixStack *stack);
 void	MatrixStackLoadMatrix		(MatrixStack *stack, int pos, const s32 *ptr);
-#endif
 
 void Vector2Copy(float *dst, const float *src);
 void Vector2Add(float *dst, const float *src);
@@ -324,43 +293,6 @@ static FORCEINLINE void memset_u8(void* _dst, u8 val)
 	//u32 u32val = (val<<24)|(val<<16)|(val<<8)|val;
 	//const __m128i temp = _mm_set_epi32(u32val,u32val,u32val,u32val);
 	//MACRODO_N(NUM/16,_mm_store_si128((__m128i*)(dst+(X)*16), temp));
-}
-
-#elif defined(HAVE_NEON)
-
-FORCEINLINE void MatrixMultVec4x4(float *matrix, float *vecPtr)
-{
-	matvec4_neon(matrix, vecPtr, vecPtr);
-}
-
-FORCEINLINE void MatrixMultVec4x4_M2(float *matrix, float *vecPtr)
-{
-	matvec4_neon(matrix+16, vecPtr, vecPtr);
-	matvec4_neon(matrix, vecPtr, vecPtr);
-}
-
-FORCEINLINE void MatrixMultiply(float * matrix, float * rightMatrix)
-{
-	float ret[16];
-	matmul4_neon(matrix, rightMatrix, ret);
-	memcpy(matrix, ret, sizeof(float)*16);
-}
-
-//TODO: NEON implementations
-void MatrixMultVec3x3(const float * matrix, float * vecPtr);
-void MatrixTranslate(float *matrix, const float *ptr);
-void MatrixScale(float * matrix, const float * ptr);
-template<int NUM_ROWS>
-FORCEINLINE void vector_fix2float(float* matrix, const float divisor)
-{
-	for(int i=0;i<NUM_ROWS*4;i++)
-		matrix[i] /= divisor;
-}
-
-template<int NUM>
-static FORCEINLINE void memset_u8(void* dst, u8 val)
-{
-	memset(dst,val,NUM);
 }
 
 #else //no sse

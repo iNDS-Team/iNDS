@@ -1,7 +1,7 @@
 /*
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2006-2007 shash
-	Copyright (C) 2008-2013 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,12 +26,14 @@
 //     of current ones)
 
 //#define UNTESTEDOPCODEDEBUG
+#include "instructions.h"
 #include "cp15.h"
 #include "debug.h"
 #include "MMU.h"
 #include "armcpu.h"
 #include "NDSSystem.h"
 #include "MMU_timing.h"
+#include "bios.h"
 
 #define cpu (&ARMPROC)
 #define TEMPLATE template<int PROCNUM> 
@@ -6191,10 +6193,11 @@ TEMPLATE static u32 FASTCALL  OP_SWI(const u32 i)
 		(cpu->intVector == 0x00000000 && PROCNUM==0)
 		|| (cpu->intVector == 0xFFFF0000 && PROCNUM==1);
 
+	//printf("ARM%c SWI %02X\t; %s\n", PROCNUM?'7':'9', (swinum & 0x1F), ARM_swi_names[PROCNUM][(swinum & 0x1F)]);
+
 	if(cpu->swi_tab && !bypassBuiltinSWI)
 	{
 		swinum &= 0x1F;
-		//printf("%d ARM SWI %d \n",PROCNUM,swinum);
 		return cpu->swi_tab[swinum]() + 3;
 	} 
 	else 

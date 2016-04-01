@@ -1,7 +1,7 @@
 /*
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2006-2007 shash
-	Copyright (C) 2008-2009 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
 #ifndef _TEXCACHE_H_
 #define _TEXCACHE_H_
 
-#include "common.h"
 #include <map>
+
+#include "types.h"
 
 enum TexCache_TexFormat
 {
@@ -41,6 +42,7 @@ public:
 		: decode_len(0)
 		, decoded(NULL)
 		, suspectedInvalid(false)
+		, assumedInvalid(false)
 		, deleteCallback(NULL)
 		, cacheFormat(TexFormat_None)
 	{}
@@ -52,7 +54,10 @@ public:
 	u32 mode;
 	u8* decoded; //decoded texture data
 	bool suspectedInvalid;
+	bool assumedInvalid;
 	TTexCacheItemMultimap::iterator iterator;
+
+	int getTextureMode() const { return (int)((texformat>>26)&0x07); }
 
 	u32 texformat, texpal;
 	u32 sizeX, sizeY;

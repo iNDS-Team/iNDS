@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (C) 2009-2010 DeSmuME team
+Copyright (C) 2009-2015 DeSmuME team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ size_t EMUFILE_MEMORY::_fread(const void *ptr, size_t bytes){
 void EMUFILE_FILE::truncate(s32 length)
 {
 	::fflush(fp);
-	#ifdef _MSC_VER
+	#ifdef HOST_WINDOWS 
 		_chsize(_fileno(fp),length);
 	#else
 		ftruncate(fileno(fp),length);
@@ -72,6 +72,84 @@ void EMUFILE_FILE::truncate(s32 length)
 	fclose(fp);
 	fp = NULL;
 	open(fname.c_str(),mode);
+}
+
+int EMUFILE_FILE::fseek(int offset, int origin)
+{
+	//if the position cache is enabled, and the seek offset matches the known current position, then early exit.
+	if(mPositionCacheEnabled)
+	{
+		if(origin == SEEK_SET)
+		{
+			if(mFilePosition == offset)
+			{
+				return 0;
+			}
+		}
+	}
+
+	mCondition = eCondition_Clean;
+
+	int ret = ::fseek(fp, offset, origin);
+ 
+	if(mPositionCacheEnabled)
+		mFilePosition = ::ftell(fp);
+ 
+	return ret;
+}
+
+
+int EMUFILE_FILE::ftell()
+{
+	if(mPositionCacheEnabled)
+		return (int)mFilePosition;
+	return (u32)::ftell(fp);
+}
+
+void EMUFILE_FILE::DemandCondition(eCondition cond)
+{
+	//allows switching between reading and writing; an fseek is required, under the circumstances
+
+	if(mCondition == eCondition_Clean)
+		goto CONCLUDE;
+	if(mCondition == eCondition_Unknown)
+		goto RESET;
+	if(mCondition != cond)
+		goto RESET;
+
+	return;
+
+RESET:
+	::fseek(fp,::ftell(fp),SEEK_SET);
+CONCLUDE:
+	mCondition = cond;
+}
+
+size_t EMUFILE_FILE::_fread(const void *ptr, size_t bytes)
+{
+	DemandCondition(eCondition_Read);
+	size_t ret = ::fread((void*)ptr, 1, bytes, fp);
+	mFilePosition += ret;
+	if(ret < bytes)
+		failbit = true;
+	return ret;
+}
+
+void EMUFILE_FILE::EnablePositionCache()
+{
+	mPositionCacheEnabled = true; 
+	mFilePosition = ::ftell(fp);
+}
+
+size_t EMUFILE_FILE::fwrite(const void *ptr, size_t bytes)
+{
+	DemandCondition(eCondition_Write);
+	size_t ret = ::fwrite((void*)ptr, 1, bytes, fp);
+	mFilePosition += ret;
+	if(ret < bytes)
+		failbit = true;
+	
+	return ret;
 }
 
 
@@ -95,20 +173,8 @@ void EMUFILE::write64le(u64* val)
 
 void EMUFILE::write64le(u64 val)
 {
-#ifdef LOCAL_BE
-	u8 s[8];
-	s[0]=(u8)val;
-	s[1]=(u8)(val>>8);
-	s[2]=(u8)(val>>16);
-	s[3]=(u8)(val>>24);
-	s[4]=(u8)(val>>32);
-	s[5]=(u8)(val>>40);
-	s[6]=(u8)(val>>48);
-	s[7]=(u8)(val>>56);
-	fwrite((char*)&s,8);
-#else
+	val = LOCAL_TO_LE_64(val);
 	fwrite(&val,8);
-#endif
 }
 
 
@@ -117,11 +183,9 @@ size_t EMUFILE::read64le(u64 *Bufo)
 	u64 buf;
 	if(fread((char*)&buf,8) != 8)
 		return 0;
-#ifndef LOCAL_BE
-	*Bufo=buf;
-#else
+	
 	*Bufo = LE_TO_LOCAL_64(buf);
-#endif
+	
 	return 1;
 }
 
@@ -139,16 +203,8 @@ void EMUFILE::write32le(u32* val)
 
 void EMUFILE::write32le(u32 val)
 {
-#ifdef LOCAL_BE
-	u8 s[4];
-	s[0]=(u8)val;
-	s[1]=(u8)(val>>8);
-	s[2]=(u8)(val>>16);
-	s[3]=(u8)(val>>24);
-	fwrite(s,4);
-#else
+	val = LOCAL_TO_LE_32(val);
 	fwrite(&val,4);
-#endif
 }
 
 size_t EMUFILE::read32le(s32* Bufo) { return read32le((u32*)Bufo); }
@@ -158,11 +214,9 @@ size_t EMUFILE::read32le(u32* Bufo)
 	u32 buf;
 	if(fread(&buf,4)<4)
 		return 0;
-#ifndef LOCAL_BE
-	*(u32*)Bufo=buf;
-#else
-	*(u32*)Bufo=((buf&0xFF)<<24)|((buf&0xFF00)<<8)|((buf&0xFF0000)>>8)|((buf&0xFF000000)>>24);
-#endif
+	
+	*Bufo = LE_TO_LOCAL_32(buf);
+	
 	return 1;
 }
 
@@ -180,14 +234,8 @@ void EMUFILE::write16le(u16* val)
 
 void EMUFILE::write16le(u16 val)
 {
-#ifdef LOCAL_BE
-	u8 s[2];
-	s[0]=(u8)val;
-	s[1]=(u8)(val>>8);
-	fwrite(s,2);
-#else
+	val = LOCAL_TO_LE_16(val);
 	fwrite(&val,2);
-#endif
 }
 
 size_t EMUFILE::read16le(s16* Bufo) { return read16le((u16*)Bufo); }
@@ -197,11 +245,9 @@ size_t EMUFILE::read16le(u16* Bufo)
 	u32 buf;
 	if(fread(&buf,2)<2)
 		return 0;
-#ifndef LOCAL_BE
-	*(u16*)Bufo=buf;
-#else
+	
 	*Bufo = LE_TO_LOCAL_16(buf);
-#endif
+	
 	return 1;
 }
 
@@ -257,4 +303,26 @@ size_t EMUFILE::readdouble(double* val)
 	size_t ret = read64le(&temp);
 	*val = u64_to_double(temp);
 	return ret;
+}
+
+void EMUFILE::writeMemoryStream(EMUFILE_MEMORY* ms)
+{
+	s32 size = (s32)ms->size();
+	write32le(size);
+	if(size>0)
+	{
+		std::vector<u8>* vec = ms->get_vec();
+		fwrite(&vec->at(0),size);
+	}
+}
+
+void EMUFILE::readMemoryStream(EMUFILE_MEMORY* ms)
+{
+	s32 size = read32le();
+	if(size != 0)
+	{
+		std::vector<u8> temp(size);
+		fread(&temp[0],size);
+		ms->fwrite(&temp[0],size);
+	}
 }

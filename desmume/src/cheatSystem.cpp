@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2012 DeSmuME team
+	Copyright (C) 2009-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,15 +15,17 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
 #include "cheatSystem.h"
+#include "bits.h"
+
 #include "NDSSystem.h"
+#include "common.h"
 #include "mem.h"
 #include "MMU.h"
 #include "debug.h"
 #include "utils/xstring.h"
 
-#ifndef _MSC_VER
+#ifndef _MSC_VER 
 #include <stdint.h>
 #endif
 
@@ -40,7 +42,7 @@ void CHEATS::init(char *path)
 {
 	clear();
 	strcpy((char *)filename, path);
-    printf("Loading cheatfile at path: %s\n", path);
+
 	load();
 }
 
@@ -98,6 +100,7 @@ void CHEATS::ARparser(CHEATS_LIST& list)
 
 		if (if_flag > 0) 
 		{
+			if ((type == 0x0E)) i += ((lo + 7) / 8);
 			if ( (type == 0x0D) && (subtype == 0)) if_flag--;	// ENDIF
 			if ( (type == 0x0D) && (subtype == 2))				// NEXT & Flush
 			{
@@ -388,7 +391,7 @@ void CHEATS::ARparser(CHEATS_LIST& list)
 					}
 				}
 				
-				i += (lo / 8);
+				i += ((lo + 7) / 8);
 			}
 			break;
 
@@ -412,7 +415,7 @@ BOOL CHEATS::add_AR_Direct(CHEATS_LIST cheat)
 	return TRUE;
 }
 
-BOOL CHEATS::add_AR(const char *code, const char *description, BOOL enabled)
+BOOL CHEATS::add_AR(char *code, char *description, BOOL enabled)
 {
 	//if (num == MAX_CHEAT_LIST) return FALSE;
 	size_t num = list.size();
@@ -429,7 +432,7 @@ BOOL CHEATS::add_AR(const char *code, const char *description, BOOL enabled)
 	return TRUE;
 }
 
-BOOL CHEATS::update_AR(const char *code, const char *description, BOOL enabled, u32 pos)
+BOOL CHEATS::update_AR(char *code, char *description, BOOL enabled, u32 pos)
 {
 	if (pos >= list.size()) return FALSE;
 
@@ -444,7 +447,7 @@ BOOL CHEATS::update_AR(const char *code, const char *description, BOOL enabled, 
 	return TRUE;
 }
 
-BOOL CHEATS::add_CB(const char *code, const char *description, BOOL enabled)
+BOOL CHEATS::add_CB(char *code, char *description, BOOL enabled)
 {
 	//if (num == MAX_CHEAT_LIST) return FALSE;
 	size_t num = list.size();
@@ -458,7 +461,7 @@ BOOL CHEATS::add_CB(const char *code, const char *description, BOOL enabled)
 	return TRUE;
 }
 
-BOOL CHEATS::update_CB(const char *code, const char *description, BOOL enabled, u32 pos)
+BOOL CHEATS::update_CB(char *code, char *description, BOOL enabled, u32 pos)
 {
 	if (pos >= list.size()) return FALSE;
 
@@ -534,6 +537,22 @@ CHEATS_LIST* CHEATS::getItemByIndex(const u32 pos)
 u32	CHEATS::getSize()
 {
 	return list.size();
+}
+
+size_t CHEATS::getActiveCount()
+{
+	size_t activeCheatCount = 0;
+	const size_t cheatListCount = this->getSize();
+	
+	for (size_t i = 0; i < cheatListCount; i++)
+	{
+		if (list[i].enabled)
+		{
+			activeCheatCount++;
+		}
+	}
+	
+	return activeCheatCount;
 }
 
 void CHEATS::setDescription(const char *description, u32 pos)
@@ -653,7 +672,7 @@ BOOL CHEATS::load()
 			continue;
 		}
 		trim(buf);
-		if ((strlen(buf) == 0) || (buf[0] == ';')) continue;
+		if ((buf[0] == 0) || (buf[0] == ';')) continue;
 		if(!strncasecmp(buf,"name=",5)) continue;
 		if(!strncasecmp(buf,"serial=",7)) continue;
 
@@ -733,7 +752,7 @@ void CHEATS::process()
 	if (CommonSettings.cheatsDisable) return;
 	if (list.size() == 0) return;
 	size_t num = list.size();
-	for (size_t i = 0; i < num; i++) //Loop throught cheats
+	for (size_t i = 0; i < num; i++)
 	{
 		if (!list[i].enabled) continue;
 
@@ -768,10 +787,9 @@ void CHEATS::process()
 			} //end case 0 internal cheat system
 
 			case 1:		// Action Replay
-                //printf("AR Code %s\n", list[i].description);
 				ARparser(list[i]);
 				break;
-			case 2:		// Codebreaker - looks like this doesn't work
+			case 2:		// Codebreaker
 				break;
 			default: continue;
 		}

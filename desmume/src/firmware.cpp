@@ -1,5 +1,5 @@
 /*	
-	Copyright (C) 2009-2011 DeSmuME Team
+	Copyright (C) 2009-2015 DeSmuME Team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,103 +16,24 @@
 */
 
 #include "firmware.h"
+
 #include "NDSSystem.h"
+#include "MMU.h"
 #include "path.h"
+#include "encrypt.h"
+#include "wifi.h"
 
-#define DWNUM(i) ((i) >> 2)
+#define DFC_ID_CODE	"DeSmuME Firmware User Settings"
+#define DFC_ID_SIZE	sizeof(DFC_ID_CODE)
+#define USER_SETTINGS_SIZE 0x100
+#define WIFI_SETTINGS_SIZE 0x1D5
+#define WIFI_AP_SETTINGS_SIZE 0x300
+#define SETTINGS_SIZE (USER_SETTINGS_SIZE + WIFI_SETTINGS_SIZE + WIFI_AP_SETTINGS_SIZE)
+#define DFC_FILE_SIZE (SETTINGS_SIZE + DFC_ID_SIZE)
+#define WIFI_SETTINGS_OFF 0x0000002A
+#define WIFI_AP_SETTINGS_OFF 0x0003FA00
 
-bool CFIRMWARE::getKeyBuf()
-{
-	FILE *file = fopen(CommonSettings.ARM7BIOS, "rb");
-	if (!file) return false;
-
-	fseek(file, 0x30, SEEK_SET);
-	size_t res = fread(keyBuf, 4, 0x412, file);
-	fclose(file);
-	return (res == 0x412);
-}
-
-void CFIRMWARE::crypt64BitUp(u32 *ptr)
-{
-	u32 Y = ptr[0];
-	u32 X = ptr[1];
-
-	for(u32 i = 0x00; i <= 0x0F; i++)
-	{
-		u32 Z = (keyBuf[i] ^ X);
-		X = keyBuf[DWNUM(0x048 + (((Z >> 24) & 0xFF) << 2))];
-		X = (keyBuf[DWNUM(0x448 + (((Z >> 16) & 0xFF) << 2))] + X);
-		X = (keyBuf[DWNUM(0x848 + (((Z >> 8) & 0xFF) << 2))] ^ X);
-		X = (keyBuf[DWNUM(0xC48 + ((Z & 0xFF) << 2))] + X);
-		X = (Y ^ X);
-		Y = Z;
-	}
-
-	ptr[0] = (X ^ keyBuf[DWNUM(0x40)]);
-	ptr[1] = (Y ^ keyBuf[DWNUM(0x44)]);
-}
-
-void CFIRMWARE::crypt64BitDown(u32 *ptr)
-{
-	u32 Y = ptr[0];
-	u32 X = ptr[1];
-
-	for(u32 i = 0x11; i >= 0x02; i--)
-	{
-		u32 Z = (keyBuf[i] ^ X);
-		X = keyBuf[DWNUM(0x048 + (((Z >> 24) & 0xFF) << 2))];
-		X = (keyBuf[DWNUM(0x448 + (((Z >> 16) & 0xFF) << 2))] + X);
-		X = (keyBuf[DWNUM(0x848 + (((Z >> 8)  & 0xFF) << 2))] ^ X);
-		X = (keyBuf[DWNUM(0xC48 + ((Z & 0xFF) << 2))] + X);
-		X = (Y ^ X);
-		Y = Z;
-	}
-
-	ptr[0] = (X ^ keyBuf[DWNUM(0x04)]);
-	ptr[1] = (Y ^ keyBuf[DWNUM(0x00)]);
-}
-
-#define bswap32(val) (((val & 0x000000FF) << 24) | ((val & 0x0000FF00) << 8) | ((val & 0x00FF0000) >> 8) | ((val & 0xFF000000) >> 24))
-void CFIRMWARE::applyKeycode(u32 modulo)
-{
-	crypt64BitUp(&keyCode[1]);
-	crypt64BitUp(&keyCode[0]);
-
-	u32 scratch[2] = {0x00000000, 0x00000000};
-
-	for(u32 i = 0; i <= 0x44; i += 4)
-	{
-		keyBuf[DWNUM(i)] = (keyBuf[DWNUM(i)] ^ bswap32(keyCode[DWNUM(i % modulo)]));
-	}
-
-	for(u32 i = 0; i <= 0x1040; i += 8)
-	{
-		crypt64BitUp(scratch);
-		keyBuf[DWNUM(i)] = scratch[1];
-		keyBuf[DWNUM(i+4)] = scratch[0];
-	}
-}
-#undef bswap32
-
-bool CFIRMWARE::initKeycode(u32 idCode, int level, u32 modulo)
-{
-	if(getKeyBuf() == FALSE)
-		return FALSE;
-
-	keyCode[0] = idCode;
-	keyCode[1] = (idCode >> 1);
-	keyCode[2] = (idCode << 1);
-
-	if(level >= 1) applyKeycode(modulo);
-	if(level >= 2) applyKeycode(modulo);
-
-	keyCode[1] <<= 1;
-	keyCode[2] >>= 1;
-
-	if(level >= 3) applyKeycode(modulo);
-
-	return TRUE;
-}
+static _KEY1	enc(&MMU.ARM7_BIOS[0x0030]);
 
 u16 CFIRMWARE::getBootCodeCRC16()
 {
@@ -164,7 +85,7 @@ u32 CFIRMWARE::decrypt(const u8 *in, u8* &out)
 	u16 data = 0;
 
 	memcpy(curBlock, in, 8);
-	crypt64BitDown(curBlock);
+	enc.decrypt(curBlock);
 	blockSize = (curBlock[0] >> 8);
 
 	if (blockSize == 0) return (0);
@@ -181,7 +102,7 @@ u32 CFIRMWARE::decrypt(const u8 *in, u8* &out)
 		if((xIn % 8) == 0)
 		{
 			memcpy(curBlock, in + xIn, 8);
-			crypt64BitDown(curBlock);
+			enc.decrypt(curBlock);
 		}
 
 		for(i = 0; i < 8; i++)
@@ -193,14 +114,14 @@ u32 CFIRMWARE::decrypt(const u8 *in, u8* &out)
 				if((xIn % 8) == 0)
 				{
 					memcpy(curBlock, in + xIn, 8);
-					crypt64BitDown(curBlock);
+					enc.decrypt(curBlock);
 				}
 				data |= T1ReadByte((u8*)curBlock, (xIn % 8));
 				xIn++;
 				if((xIn % 8) == 0)
 				{
 					memcpy(curBlock, in + xIn, 8);
-					crypt64BitDown(curBlock);
+					enc.decrypt(curBlock);
 				}
 
 				len = (data >> 12) + 3;
@@ -225,7 +146,7 @@ u32 CFIRMWARE::decrypt(const u8 *in, u8* &out)
 				if((xIn % 8) == 0)
 				{
 					memcpy(curBlock, in + xIn, 8);
-					crypt64BitDown(curBlock);
+					enc.decrypt(curBlock);
 				}
 
 				xLen--;
@@ -328,11 +249,6 @@ bool CFIRMWARE::load()
 {
 	u32 size = 0;
 	u8	*data = NULL;
-	u16 shift1 = 0, shift2 = 0, shift3 = 0, shift4 = 0;
-	u32 part1addr = 0, part2addr = 0, part3addr = 0, part4addr = 0, part5addr = 0;
-	u32 part1ram = 0, part2ram = 0;
-	
-	u32	src = 0;
 	
 	if (CommonSettings.UseExtFirmware == false)
 		return false;
@@ -345,20 +261,11 @@ bool CFIRMWARE::load()
 	fseek(fp, 0, SEEK_END);
 	size = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
-	if( (size != 256*1024) && (size != 512*1024) )
+	if( (size != NDS_FW_SIZE_V1) && (size != NDS_FW_SIZE_V2) )
 	{
 		fclose(fp);
 		return false;
 	}
-
-#if 1
-	if (size == 512*1024)
-	{
-		INFO("ERROR: 32Mbit (512Kb) firmware not supported\n");
-		fclose(fp);
-		return false;
-	}
-#endif
 
 	data = new u8 [size];
 	if (!data)
@@ -370,6 +277,7 @@ bool CFIRMWARE::load()
 	if (fread(data, 1, size, fp) != size)
 	{
 		delete [] data;
+		data = NULL;
 		fclose(fp);
 		return false; 
 	}
@@ -382,6 +290,54 @@ bool CFIRMWARE::load()
 		fclose(fp);
 		return false;
 	}
+	fclose(fp);
+
+	if (MMU.fw.size != size)	// reallocate
+		mc_alloc(&MMU.fw, size);
+
+	userDataAddr = T1ReadWord(data, 0x20) * 8;
+
+	// fix bad dump of firmware? (wrong DS type)
+	// fix mario kart touch screen calibration
+	if ((T1ReadWord(data, 0x1E) != 0xFFFF) && data[0x1D] == 0x63)
+	{
+		data[0x1D] = NDS_CONSOLE_TYPE_FAT;
+		data[0x1E] = 0xFF;
+		data[0x1F] = 0xFF;
+	}
+
+	memcpy(MMU.fw.data, data, size);
+
+	delete [] data;
+	data = NULL;
+
+	// Generate the path for the external firmware config file.
+	std::string extFilePath = CFIRMWARE::GetExternalFilePath();
+	strncpy(MMU.fw.userfile, extFilePath.c_str(), MAX_PATH);
+
+	successLoad = true;
+	return true;
+}
+
+bool CFIRMWARE::unpack()
+{
+	u32	src = 0;
+	u16 shift1 = 0, shift2 = 0, shift3 = 0, shift4 = 0;
+	u32 part1addr = 0, part2addr = 0, part3addr = 0, part4addr = 0, part5addr = 0;
+	u32 part1ram = 0, part2ram = 0;
+	u32 size = MMU.fw.size;
+
+	if (size == 512*1024)
+	{
+		INFO("ERROR: 32Mbit (512Kb) firmware not supported\n");
+		return false;
+	}
+
+	u8	*data = new u8 [size];
+	if (!data)
+		return false;
+
+	memcpy(data, MMU.fw.data, size);
 
 	shift1 = ((header.shift_amounts >> 0) & 0x07);
 	shift2 = ((header.shift_amounts >> 3) & 0x07);
@@ -400,15 +356,10 @@ bool CFIRMWARE::load()
 	ARM9bootAddr = part1ram;
 	ARM7bootAddr = part2ram;
 
-	if(initKeycode(header.fw_identifier, 1, 0xC) == FALSE)
-	{
-		delete [] data;
-		fclose(fp);
-		return false;
-	}
+	enc.init(header.fw_identifier, 1, 0xC);
 
 #if 0
-	crypt64BitDown((u32*)&data[0x18]);
+	enc.applyKeycode((u32*)&data[0x18]);
 #else
 	// fix touch coords
 	data[0x18] = 0x00;
@@ -422,18 +373,12 @@ bool CFIRMWARE::load()
 	data[0x1F] = 0x00;
 #endif
 
-	if(initKeycode(header.fw_identifier, 2, 0xC) == FALSE)
-	{
-		delete [] data;
-		fclose(fp);
-		return false;
-	}
+	enc.init(header.fw_identifier, 2, 0xC);
 
 	size9 = decrypt(data + part1addr, tmp_data9);
 	if (!tmp_data9)
 	{
-		delete [] data;
-		fclose(fp);
+		delete [] data; data = NULL;
 		return false;
 	}
 
@@ -441,8 +386,7 @@ bool CFIRMWARE::load()
 	if (!tmp_data7)
 	{
 		delete [] tmp_data9;
-		delete [] data;
-		fclose(fp);
+		delete [] data; data = NULL;
 		return false;
 	}
 
@@ -453,8 +397,7 @@ bool CFIRMWARE::load()
 		INFO("Firmware: ERROR: the boot code CRC16 (0x%04X) doesn't match the value in the firmware header (0x%04X)", crc16_mine, header.part12_boot_crc16);
 		delete [] tmp_data9;
 		delete [] tmp_data7;
-		delete [] data;
-		fclose(fp); 
+		delete [] data; data = NULL;
 		return false;
 	}
 
@@ -523,7 +466,6 @@ bool CFIRMWARE::load()
 		if (!tmp_data9) 
 		{
 			delete [] data;
-			fclose(fp);
 			return false;
 		}
 
@@ -532,7 +474,6 @@ bool CFIRMWARE::load()
 		{
 			delete [] tmp_data9;
 			delete [] data;
-			fclose(fp);
 			return false;
 		};
 		// Copy firmware boot codes to their respective locations
@@ -563,52 +504,98 @@ bool CFIRMWARE::load()
 		INFO("   * ARM7 unpacked size:         0x%08X (%i) bytes\n", size7, size7);
 	}
 
-	// Generate the path for the external firmware config file.
-	std::string extFilePath = CFIRMWARE::GetExternalFilePath();
-	strncpy(MMU.fw.userfile, extFilePath.c_str(), MAX_PATH);
-
-	fclose(fp);
-	fp = fopen(MMU.fw.userfile, "rb");
-	if (fp)
-	{
-		fseek(fp, 0, SEEK_END);
-		if (ftell(fp) == (0x100 + 0x1D6 + 0x300))
-		{
-			fseek(fp, 0, SEEK_SET);
-			char buf[0x301];
-			memset(buf, 0, sizeof(buf));
-			if (fread(buf, 1, 0x100, fp) == 0x100)
-			{
-				printf("- loaded firmware config from %s:\n", MMU.fw.userfile);
-				memcpy(&data[0x3FE00], &buf[0], 0x100);
-				memcpy(&data[0x3FF00], &buf[0], 0x100);
-				printf("   * User settings\n");
-				memset(buf, 0, sizeof(buf));
-				if (fread(buf, 1, 0x1D6, fp) == 0x1D6)
-				{
-					memcpy(&data[0x002A], &buf[0], 0x1D6);
-					printf("   * WiFi settings\n");
-
-					memset(buf, 0, sizeof(buf));
-					if (fread(buf, 1, 0x300, fp) == 0x300)
-					{
-						memcpy(&data[0x3FA00], &buf[0], 0x300);
-						printf("   * WiFi AP settings\n");
-					}
-				}
-			}
-		}
-		else
-			printf("- failed loading firmware config from %s (wrong file size)\n", MMU.fw.userfile);
-		fclose(fp);
-	}
-	printf("\n");
-
-	// TODO: add 512Kb support
-	memcpy(MMU.fw.data, data, 256*1024);
+	memcpy(MMU.fw.data, data, size);
 	MMU.fw.fp = NULL;
 
 	delete [] data; data = NULL;
+	return true;
+}
+
+bool CFIRMWARE::loadSettings()
+{
+	if (!CommonSettings.UseExtFirmware) return false;
+	if (!CommonSettings.UseExtFirmwareSettings) return false;
+
+	FILE *fp = fopen(MMU.fw.userfile, "rb");
+	if (fp)
+	{
+		fseek(fp, 0, SEEK_END);
+		if (ftell(fp) == DFC_FILE_SIZE)
+		{
+			fseek(fp, 0, SEEK_SET);
+			u8 *usr = new u8[SETTINGS_SIZE];
+			if (usr)
+			{
+				if (fread(usr, 1, DFC_ID_SIZE, fp) == DFC_ID_SIZE)
+				{
+					if (memcmp(usr, DFC_ID_CODE, DFC_ID_SIZE) == 0)
+					{
+						if (fread(usr, 1, SETTINGS_SIZE, fp) == SETTINGS_SIZE)
+						{
+							memcpy(&MMU.fw.data[userDataAddr], usr, USER_SETTINGS_SIZE);
+							memcpy(&MMU.fw.data[userDataAddr + 0x100], usr, USER_SETTINGS_SIZE);
+							memcpy(&MMU.fw.data[WIFI_SETTINGS_OFF], usr + USER_SETTINGS_SIZE, WIFI_SETTINGS_SIZE);
+							memcpy(&MMU.fw.data[WIFI_AP_SETTINGS_OFF], usr + USER_SETTINGS_SIZE + WIFI_SETTINGS_SIZE, WIFI_AP_SETTINGS_SIZE);
+							printf("Loaded user settings from %s\n", MMU.fw.userfile);
+						}
+					}
+				}
+				delete [] usr;
+				usr = NULL;
+			}
+		}
+		else
+			printf("Failed loading firmware config from %s (wrong file size)\n", MMU.fw.userfile);
+
+		fclose(fp);
+	}
+
+	return false;
+}
+
+bool CFIRMWARE::saveSettings()
+{
+	if (!CommonSettings.UseExtFirmware) return false;
+	if (!CommonSettings.UseExtFirmwareSettings) return false;
+
+	u8 *data = &MMU.fw.data[userDataAddr];
+	u8 counter0 = data[0x070];
+	u8 counter1 = data[0x170];
+
+	if (counter1 == ((counter0 + 1) & 0x7F))
+	{
+		// copy User Settings 1 to User Settings 0 area
+		memcpy(data, data + 0x100, 0x100);
+	}
+	else
+	{
+		// copy User Settings 0 to User Settings 1 area
+		memcpy(data + 0x100, data, 0x100);
+	}
+	
+	printf("Firmware: saving config");
+	FILE *fp = fopen(MMU.fw.userfile, "wb");
+	if (fp)
+	{
+		u8 *usr = new u8[DFC_FILE_SIZE];
+		if (usr)
+		{
+			memcpy(usr, DFC_ID_CODE, DFC_ID_SIZE);
+			memcpy(usr + DFC_ID_SIZE, data, USER_SETTINGS_SIZE);
+			memcpy(usr + DFC_ID_SIZE + USER_SETTINGS_SIZE, &MMU.fw.data[WIFI_SETTINGS_OFF], WIFI_SETTINGS_SIZE);
+			memcpy(usr + DFC_ID_SIZE + USER_SETTINGS_SIZE + WIFI_SETTINGS_SIZE, &MMU.fw.data[WIFI_AP_SETTINGS_OFF], WIFI_AP_SETTINGS_SIZE);
+			if (fwrite(usr, 1, DFC_FILE_SIZE, fp) == DFC_FILE_SIZE)
+				printf(" - done\n");
+			else
+				printf(" - failed\n");
+
+			delete [] usr;
+		}
+		fclose(fp);
+	}
+	else
+		printf(" - failed\n");
+
 	return true;
 }
 
@@ -616,10 +603,48 @@ std::string CFIRMWARE::GetExternalFilePath()
 {
 	std::string fwPath = CommonSettings.Firmware;
 	std::string fwFileName = Path::GetFileNameFromPathWithoutExt(fwPath);
-	std::string configPath = path.pathToBattery;
-	std::string finalPath = configPath + DIRECTORY_DELIMITER_CHAR + fwFileName + FILE_EXT_DELIMITER_CHAR + FW_CONFIG_FILE_EXT;
+	char configPath[MAX_PATH] = {0};
+	path.getpath(path.BATTERY, configPath);
+	if (configPath[strlen(configPath)-1] == DIRECTORY_DELIMITER_CHAR)
+			configPath[strlen(configPath)-1] = 0;
+	std::string finalPath = std::string(configPath) + DIRECTORY_DELIMITER_CHAR + fwFileName + FILE_EXT_DELIMITER_CHAR + FW_CONFIG_FILE_EXT;
 
 	return finalPath;
+}
+
+void *CFIRMWARE::getTouchCalibrate()
+{
+	static TSCalInfo cal = {0};
+
+	if (!successLoad || !CommonSettings.UseExtFirmware || !successLoad)
+	{
+		cal.adc.x1 = _MMU_read16<ARMCPU_ARM7>(0x027FFC80 + 0x58) & 0x1FFF;
+		cal.adc.y1 = _MMU_read16<ARMCPU_ARM7>(0x027FFC80 + 0x5A) & 0x1FFF;
+		cal.scr.x1 = _MMU_read08<ARMCPU_ARM7>(0x027FFC80 + 0x5C);
+		cal.scr.y1 = _MMU_read08<ARMCPU_ARM7>(0x027FFC80 + 0x5D);
+		cal.adc.x2 = _MMU_read16<ARMCPU_ARM7>(0x027FFC80 + 0x5E) & 0x1FFF;
+		cal.adc.y2 = _MMU_read16<ARMCPU_ARM7>(0x027FFC80 + 0x60) & 0x1FFF;
+		cal.scr.x2 = _MMU_read08<ARMCPU_ARM7>(0x027FFC80 + 0x62);
+		cal.scr.y2 = _MMU_read08<ARMCPU_ARM7>(0x027FFC80 + 0x63);
+	}
+	else
+	{
+		cal.adc.x1 = T1ReadWord(MMU.fw.data, userDataAddr + 0x58) & 0x1FFF;
+		cal.adc.y1 = T1ReadWord(MMU.fw.data, userDataAddr + 0x5A) & 0x1FFF;
+		cal.scr.x1 = T1ReadByte(MMU.fw.data, userDataAddr + 0x5C);
+		cal.scr.y1 = T1ReadByte(MMU.fw.data, userDataAddr + 0x5D);
+		cal.adc.x2 = T1ReadWord(MMU.fw.data, userDataAddr + 0x5E) & 0x1FFF;
+		cal.adc.y2 = T1ReadWord(MMU.fw.data, userDataAddr + 0x60) & 0x1FFF;
+		cal.scr.x2 = T1ReadByte(MMU.fw.data, userDataAddr + 0x62);
+		cal.scr.y2 = T1ReadByte(MMU.fw.data, userDataAddr + 0x63);
+	}
+
+	cal.adc.width	= (cal.adc.x2 - cal.adc.x1);
+	cal.adc.height	= (cal.adc.y2 - cal.adc.y1);
+	cal.scr.width	= (cal.scr.x2 - cal.scr.x1);
+	cal.scr.height	= (cal.scr.y2 - cal.scr.y1);
+
+	return (void*)&cal;
 }
 
 //=====================================================================================================
@@ -788,7 +813,7 @@ static void fill_user_data_area( struct NDS_fw_config_data *user_settings,u8 *da
 }
 
 // creates an firmware flash image, which contains all needed info to initiate a wifi connection
-int NDS_CreateDummyFirmware( struct NDS_fw_config_data *user_settings)
+int NDS_CreateDummyFirmware(NDS_fw_config_data *user_settings)
 {
 	//Create the firmware header
 
@@ -801,10 +826,10 @@ int NDS_CreateDummyFirmware( struct NDS_fw_config_data *user_settings)
 	MMU.fw.data[0x8 + 3] = 'P';
 
 	// DS type
-	if ( user_settings->ds_type == NDS_CONSOLE_TYPE_LITE)
-		MMU.fw.data[0x1d] = 0x20;
+	if ( user_settings->ds_type == NDS_CONSOLE_TYPE_DSI)
+		MMU.fw.data[0x1d] = 0xFF;
 	else
-		MMU.fw.data[0x1d] = 0xff;
+		MMU.fw.data[0x1d] = user_settings->ds_type;
 
 	//User Settings offset 0x3fe00 / 8
 	MMU.fw.data[0x20] = 0xc0;
@@ -872,18 +897,18 @@ int NDS_CreateDummyFirmware( struct NDS_fw_config_data *user_settings)
 	(*(u16*)(MMU.fw.data + 0x2A)) = calc_CRC16(0, (MMU.fw.data + 0x2C), 0x138);
 
 	if (&CommonSettings.fw_config != user_settings)
-		memcpy(&CommonSettings.fw_config, user_settings, sizeof(struct NDS_fw_config_data));
+		memcpy(&CommonSettings.fw_config, user_settings, sizeof(NDS_fw_config_data));
 
 	return TRUE ;
 }
 
-void NDS_FillDefaultFirmwareConfigData( struct NDS_fw_config_data *fw_config) {
+void NDS_FillDefaultFirmwareConfigData(NDS_fw_config_data *fw_config) {
 	const char *default_nickname = "DeSmuME";
 	const char *default_message = "DeSmuME makes you happy!";
 	int i;
 	int str_length;
 
-	memset( fw_config, 0, sizeof( struct NDS_fw_config_data));
+	memset( fw_config, 0, sizeof(NDS_fw_config_data));
 	fw_config->ds_type = NDS_CONSOLE_TYPE_FAT;
 
 	fw_config->fav_colour = 7;
@@ -935,4 +960,191 @@ void NDS_PatchFirmwareMAC()
 {
 	memcpy((MMU.fw.data + 0x36), FW_Mac, sizeof(FW_Mac));
 	(*(u16*)(MMU.fw.data + 0x2A)) = calc_CRC16(0, (MMU.fw.data + 0x2C), 0x138);
+}
+
+//=========================
+//- firmware SPI chip interface -
+//the original intention was for this code to have similarity to the AUXSPI backup memory devices.
+//however, that got overgrown, and this stuff stayed pretty simple.
+//perhaps it can be re-defined in terms of a simpler AUXSPI device after the AUXSPI devices are re-designed.
+
+#define FW_CMD_READ             0x03
+#define FW_CMD_WRITEDISABLE     0x04
+#define FW_CMD_READSTATUS       0x05
+#define FW_CMD_WRITEENABLE      0x06
+#define FW_CMD_PAGEWRITE        0x0A
+#define FW_CMD_READ_ID			0x9F
+
+void fw_reset_com(fw_memory_chip *mc)
+{
+	if(mc->com == FW_CMD_PAGEWRITE)
+	{
+		if (mc->fp)
+		{
+			fseek(mc->fp, 0, SEEK_SET);
+			fwrite(mc->data, mc->size, 1, mc->fp);
+		}
+
+		if (mc->isFirmware && CommonSettings.UseExtFirmware && CommonSettings.UseExtFirmwareSettings && firmware)
+		{
+			firmware->saveSettings();
+		}
+		mc->write_enable = FALSE;
+	}
+
+	mc->com = 0;
+}
+
+u8 fw_transfer(fw_memory_chip *mc, u8 data)
+{
+	if(mc->com == FW_CMD_READ || mc->com == FW_CMD_PAGEWRITE) /* check if we are in a command that needs 3 bytes address */
+	{
+		if(mc->addr_shift > 0)   /* if we got a complete address */
+		{
+			mc->addr_shift--;
+			mc->addr |= data << (mc->addr_shift * 8); /* argument is a byte of address */
+		}
+		else    /* if we have received 3 bytes of address, proceed command */
+		{
+			switch(mc->com)
+			{
+				case FW_CMD_READ:
+					if(mc->addr < mc->size)  /* check if we can read */
+					{
+						data = mc->data[mc->addr];       /* return byte */
+						mc->addr++;      /* then increment address */
+					}
+					break;
+					
+				case FW_CMD_PAGEWRITE:
+					if(mc->addr < mc->size)
+					{
+						mc->data[mc->addr] = data;       /* write byte */
+						mc->addr++;
+					}
+					break;
+			}
+			
+		}
+	}
+	else if(mc->com == FW_CMD_READ_ID)
+	{
+		switch(mc->addr)
+		{
+		//here is an ID string measured from an old ds fat: 62 16 00 (0x62=sanyo)
+		//but we chose to use an ST from martin's ds fat string so programs might have a clue as to the firmware size:
+		//20 40 12
+		case 0: 
+			data = 0x20;
+			mc->addr=1; 
+			break;
+		case 1: 
+			data = 0x40; //according to gbatek this is the device ID for the flash on someone's ds fat
+			mc->addr=2; 
+			break;
+		case 2: 
+			data = 0x12;
+			mc->addr = 0; 
+			break;
+		}
+	}
+	else if(mc->com == FW_CMD_READSTATUS)
+	{
+		return (mc->write_enable ? 0x02 : 0x00);
+	}
+	else	//finally, check if it's a new command
+	{
+		switch(data)
+		{
+			case 0: break;	//nothing
+
+			case FW_CMD_READ_ID:
+				mc->addr = 0;
+				mc->com = FW_CMD_READ_ID;
+				break;
+			
+			case FW_CMD_READ:    //read command
+				mc->addr = 0;
+				mc->addr_shift = 3;
+				mc->com = FW_CMD_READ;
+				break;
+				
+			case FW_CMD_WRITEENABLE:     //enable writing
+				if(mc->writeable_buffer) { mc->write_enable = TRUE; }
+				break;
+				
+			case FW_CMD_WRITEDISABLE:    //disable writing
+				mc->write_enable = FALSE;
+				break;
+				
+			case FW_CMD_PAGEWRITE:       //write command
+				if(mc->write_enable)
+				{
+					mc->addr = 0;
+					mc->addr_shift = 3;
+					mc->com = FW_CMD_PAGEWRITE;
+				}
+				else { data = 0; }
+				break;
+			
+			case FW_CMD_READSTATUS:  //status register command
+				mc->com = FW_CMD_READSTATUS;
+				break;
+				
+			default:
+				printf("Unhandled FW command: %02X\n", data);
+				break;
+		}
+	}
+	
+	return data;
+}	
+
+
+void mc_init(fw_memory_chip *mc, int type)
+{
+	mc->com = 0;
+	mc->addr = 0;
+	mc->addr_shift = 0;
+	mc->data = NULL;
+	mc->size = 0;
+	mc->write_enable = FALSE;
+	mc->writeable_buffer = FALSE;
+	mc->type = type;
+
+	switch(mc->type)
+	{
+	case MC_TYPE_EEPROM1:
+		mc->addr_size = 1;
+		break;
+	case MC_TYPE_EEPROM2:
+	case MC_TYPE_FRAM:
+		mc->addr_size = 2;
+		break;
+	case MC_TYPE_FLASH:
+		mc->addr_size = 3;
+		break;
+	default: break;
+	}
+}
+
+u8 *mc_alloc(fw_memory_chip *mc, u32 size)
+{
+	u8 *buffer = NULL;
+	buffer = new u8[size];
+	if(!buffer) { return NULL; }
+	memset(buffer,0,size);
+
+	if (mc->data) delete [] mc->data;
+	mc->data = buffer;
+	mc->size = size;
+	mc->writeable_buffer = TRUE;
+
+	return buffer;
+}
+
+void mc_free(fw_memory_chip *mc)
+{
+    if(mc->data) delete[] mc->data;
+    mc_init(mc, 0);
 }

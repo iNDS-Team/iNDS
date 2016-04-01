@@ -1,6 +1,6 @@
- /*	Copyright (C) 2006 yopyop
+/*	Copyright (C) 2006 yopyop
 	Copyright (C) 2011 Loren Merritt
-	Copyright (C) 2012 DeSmuME team
+	Copyright (C) 2012-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 */
 
 #include "types.h"
+
 #ifdef HAVE_JIT
-#if !defined(__x86_64__) && !defined(__LP64) && !defined(__IA64__) && !defined(_M_X64) && !defined(_WIN64) && !defined(_M_IX86) && !defined(__INTEL__) && !defined(__i386__)
+#if !defined(HOST_32) && !defined(HOST_64)
 #error "ERROR: JIT compiler - unsupported target platform"
 #endif
-#ifdef _WINDOWS
+
+#ifdef HOST_WINDOWS
 // **** Windows port
 #else
 #include <sys/mman.h>
@@ -30,6 +32,8 @@
 #include <stddef.h>
 #define HAVE_STATIC_CODE_BUFFER
 #endif
+
+#include "armcpu.h"
 #include "instructions.h"
 #include "instruction_attributes.h"
 #include "Disassembler.h"
@@ -60,12 +64,12 @@ using namespace AsmJit;
 	c.lea(txt, dword_ptr_abs(&buf)); \
 	c.mov(data, *(GpVar*)&val); \
 	X86CompilerFuncCall* prn = c.call((uintptr_t)fprintf); \
-	prn->setPrototype(ASMJIT_CALL_CONV, FuncBuilder3<void, void*, void*, u32>()); \
+	prn->setPrototype(kX86FuncConvDefault, FuncBuilder3<void, void*, void*, u32>()); \
 	prn->setArgument(0, io); \
 	prn->setArgument(1, txt); \
 	prn->setArgument(2, data); \
 	X86CompilerFuncCall* prn_flush = c.call((uintptr_t)fflush); \
-	prn_flush->setPrototype(ASMJIT_CALL_CONV, FuncBuilder1<void, void*>()); \
+	prn_flush->setPrototype(kX86FuncConvDefault, FuncBuilder1<void, void*>()); \
 	prn_flush->setArgument(0, io); \
 }
 #else
@@ -74,7 +78,119 @@ using namespace AsmJit;
 #define printJIT(buf, val)
 #endif
 
-typedef u32 (FASTCALL* ArmOpCompiled)();
+u32 saveBlockSizeJIT = 0;
+
+#ifdef MAPPED_JIT_FUNCS
+CACHE_ALIGN JIT_struct JIT;
+
+uintptr_t *JIT_struct::JIT_MEM[2][0x4000] = {{0}};
+
+static uintptr_t *JIT_MEM[2][32] = {
+	//arm9
+	{
+		/* 0X*/	DUP2(JIT.ARM9_ITCM),
+		/* 1X*/	DUP2(JIT.ARM9_ITCM), // mirror
+		/* 2X*/	DUP2(JIT.MAIN_MEM),
+		/* 3X*/	DUP2(JIT.SWIRAM),
+		/* 4X*/	DUP2(NULL),
+		/* 5X*/	DUP2(NULL),
+		/* 6X*/		 NULL, 
+					 JIT.ARM9_LCDC,	// Plain ARM9-CPU Access (LCDC mode) (max 656KB)
+		/* 7X*/	DUP2(NULL),
+		/* 8X*/	DUP2(NULL),
+		/* 9X*/	DUP2(NULL),
+		/* AX*/	DUP2(NULL),
+		/* BX*/	DUP2(NULL),
+		/* CX*/	DUP2(NULL),
+		/* DX*/	DUP2(NULL),
+		/* EX*/	DUP2(NULL),
+		/* FX*/	DUP2(JIT.ARM9_BIOS)
+	},
+	//arm7
+	{
+		/* 0X*/	DUP2(JIT.ARM7_BIOS),
+		/* 1X*/	DUP2(NULL),
+		/* 2X*/	DUP2(JIT.MAIN_MEM),
+		/* 3X*/	     JIT.SWIRAM,
+		             JIT.ARM7_ERAM,
+		/* 4X*/	     NULL,
+		             JIT.ARM7_WIRAM,
+		/* 5X*/	DUP2(NULL),
+		/* 6X*/		 JIT.ARM7_WRAM,		// VRAM allocated as Work RAM to ARM7 (max. 256K)
+					 NULL,
+		/* 7X*/	DUP2(NULL),
+		/* 8X*/	DUP2(NULL),
+		/* 9X*/	DUP2(NULL),
+		/* AX*/	DUP2(NULL),
+		/* BX*/	DUP2(NULL),
+		/* CX*/	DUP2(NULL),
+		/* DX*/	DUP2(NULL),
+		/* EX*/	DUP2(NULL),
+		/* FX*/	DUP2(NULL)
+		}
+};
+
+static u32 JIT_MASK[2][32] = {
+	//arm9
+	{
+		/* 0X*/	DUP2(0x00007FFF),
+		/* 1X*/	DUP2(0x00007FFF),
+		/* 2X*/	DUP2(0x003FFFFF), // FIXME _MMU_MAIN_MEM_MASK
+		/* 3X*/	DUP2(0x00007FFF),
+		/* 4X*/	DUP2(0x00000000),
+		/* 5X*/	DUP2(0x00000000),
+		/* 6X*/		 0x00000000,
+					 0x000FFFFF,
+		/* 7X*/	DUP2(0x00000000),
+		/* 8X*/	DUP2(0x00000000),
+		/* 9X*/	DUP2(0x00000000),
+		/* AX*/	DUP2(0x00000000),
+		/* BX*/	DUP2(0x00000000),
+		/* CX*/	DUP2(0x00000000),
+		/* DX*/	DUP2(0x00000000),
+		/* EX*/	DUP2(0x00000000),
+		/* FX*/	DUP2(0x00007FFF)
+	},
+	//arm7
+	{
+		/* 0X*/	DUP2(0x00003FFF),
+		/* 1X*/	DUP2(0x00000000),
+		/* 2X*/	DUP2(0x003FFFFF),
+		/* 3X*/	     0x00007FFF,
+		             0x0000FFFF,
+		/* 4X*/	     0x00000000,
+		             0x0000FFFF,
+		/* 5X*/	DUP2(0x00000000),
+		/* 6X*/		 0x0003FFFF,
+					 0x00000000,
+		/* 7X*/	DUP2(0x00000000),
+		/* 8X*/	DUP2(0x00000000),
+		/* 9X*/	DUP2(0x00000000),
+		/* AX*/	DUP2(0x00000000),
+		/* BX*/	DUP2(0x00000000),
+		/* CX*/	DUP2(0x00000000),
+		/* DX*/	DUP2(0x00000000),
+		/* EX*/	DUP2(0x00000000),
+		/* FX*/	DUP2(0x00000000)
+		}
+};
+
+static void init_jit_mem()
+{
+	static bool inited = false;
+	if(inited)
+		return;
+	inited = true;
+	for(int proc=0; proc<2; proc++)
+		for(int i=0; i<0x4000; i++)
+			JIT.JIT_MEM[proc][i] = JIT_MEM[proc][i>>9] + (((i<<14) & JIT_MASK[proc][i>>9]) >> 1);
+}
+
+#else
+DS_ALIGN(4096) uintptr_t compiled_funcs[1<<26] = {0};
+#endif
+
+static u8 recompile_counts[(1<<26)/16];
 
 #ifdef HAVE_STATIC_CODE_BUFFER
 // On x86_64, allocate jitted code from a static buffer to ensure that it's within 2GB of .text
@@ -84,8 +200,6 @@ typedef u32 (FASTCALL* ArmOpCompiled)();
 
 DS_ALIGN(4096) static u8 scratchpad[1<<25];
 static u8 *scratchptr;
-
-void arm_jit_reset();
 
 struct ASMJIT_API StaticCodeGenerator : public Context
 {
@@ -112,7 +226,7 @@ struct ASMJIT_API StaticCodeGenerator : public Context
 		if(size > (uintptr_t)(scratchpad+sizeof(scratchpad)-scratchptr))
 		{
 			fprintf(stderr, "Out of memory for asmjit. Clearing code cache.\n");
-			arm_jit_reset();
+			arm_jit_reset(1);
 			// If arm_jit_reset didn't involve recompiling op_cmp, we could keep the current function.
 			*dest = NULL;
 			return kErrorOk;
@@ -161,6 +275,7 @@ static u32 bb_constant_cycles;
 #define reg_pos_thumb(x)	dword_ptr(bb_cpu, offsetof(armcpu_t, R) + 4*((i>>(x))&0x7))
 #define reg_pos_thumbB(x)	byte_ptr(bb_cpu, offsetof(armcpu_t, R) + 4*((i>>(x))&0x7))
 #define cp15_ptr(x)			dword_ptr(bb_cp15, offsetof(armcp15_t, x))
+#define cp15_ptr_off(x, y)	dword_ptr(bb_cp15, offsetof(armcp15_t, x) + y)
 #define mmu_ptr(x)			dword_ptr(bb_mmu, offsetof(MMU_struct, x))
 #define mmu_ptr_byte(x)		byte_ptr(bb_mmu, offsetof(MMU_struct, x))
 #define _REG_NUM(i, n)		((i>>(n))&0x7)
@@ -184,7 +299,7 @@ struct PROFILER_COUNTER_INFO
 
 struct JIT_PROFILER
 {
-	JIT_PROFILER::JIT_PROFILER()
+	JIT_PROFILER()
 	{
 		memset(&arm_count[0], 0, sizeof(arm_count));
 		memset(&thumb_count[0], 0, sizeof(thumb_count));
@@ -196,8 +311,8 @@ struct JIT_PROFILER
 
 static GpVar bb_profiler;
 
-#define profiler_counter_arm(opcode)   qword_ptr(bb_profiler, offsetof(JIT_PROFILER, arm_count[INSTRUCTION_INDEX(opcode)]))
-#define profiler_counter_thumb(opcode) qword_ptr(bb_profiler, offsetof(JIT_PROFILER, thumb_count[opcode>>6]))
+#define profiler_counter_arm(opcode)   qword_ptr(bb_profiler, offsetof(JIT_PROFILER, arm_count) + (INSTRUCTION_INDEX(opcode)*sizeof(u64)))
+#define profiler_counter_thumb(opcode) qword_ptr(bb_profiler, offsetof(JIT_PROFILER, thumb_count) + ((opcode>>6)*sizeof(u64)))
 
 #if (PROFILER_JIT_LEVEL > 1)
 struct PROFILER_ENTRY
@@ -279,6 +394,32 @@ static GpVar bb_profiler_entry;
 	JIT_COMMENT("end SET_NZ"); \
 }
 
+#define SET_N { \
+	JIT_COMMENT("SET_N"); \
+	GpVar x = c.newGpVar(kX86VarTypeGpz); \
+	GpVar y = c.newGpVar(kX86VarTypeGpz); \
+	c.sets(x.r8Lo()); \
+	c.movzx(y, flags_ptr); \
+	c.and_(y, 0x7F); \
+	c.shl(x, 7); \
+	c.or_(x, y); \
+	c.mov(flags_ptr, x.r8Lo()); \
+	JIT_COMMENT("end SET_N"); \
+}
+
+#define SET_Z { \
+	JIT_COMMENT("SET_Z"); \
+	GpVar x = c.newGpVar(kX86VarTypeGpz); \
+	GpVar y = c.newGpVar(kX86VarTypeGpz); \
+	c.setz(x.r8Lo()); \
+	c.movzx(y, flags_ptr); \
+	c.and_(y, 0xBF); \
+	c.shl(x, 6); \
+	c.or_(x, y); \
+	c.mov(flags_ptr, x.r8Lo()); \
+	JIT_COMMENT("end SET_Z"); \
+}
+
 #define SET_Q { \
 	JIT_COMMENT("SET_Q"); \
 	GpVar x = c.newGpVar(kX86VarTypeGpz); \
@@ -296,7 +437,7 @@ static GpVar bb_profiler_entry;
 	c.mov(tmp, SPSR); \
 	c.and_(tmp, 0x1F); \
 	X86CompilerFuncCall* ctx = c.call((void*)armcpu_switchMode); \
-	ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<void, void*, u8>()); \
+	ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<Void, void*, u8>()); \
 	ctx->setArgument(0, bb_cpu); \
 	ctx->setArgument(1, tmp); \
 	c.mov(cpu_ptr(CPSR.val), SPSR); \
@@ -647,7 +788,6 @@ static void emit_MMU_aluMemCycles(int alu_cycles, GpVar mem_cycles, int populati
 	{ \
 		if(REG_POS(i,12)==15) \
 		{ \
-			GpVar tmp = c.newGpVar(kX86VarTypeGpd); \
 			c.mov(cpu_ptr(next_instruction), lhs); \
 			c.add(bb_total_cycles, 2); \
 		} \
@@ -1097,7 +1237,8 @@ static void MUL_Mxx_END(GpVar x, bool sign, int cycles)
 			c.adc(hi, reg_pos_ptr(16)); \
 			c.mov(reg_pos_ptr(12), lhs); \
 			c.mov(reg_pos_ptr(16), hi); \
-			c.or_(hi, lhs); SET_NZ(0); \
+			c.or_(lhs, hi); SET_Z; \
+			c.and_(hi, (1 << 31)); SET_N; \
 		} \
 		else \
 		{ \
@@ -1764,7 +1905,7 @@ static int OP_STRB_M_ROR_IMM_OFF_POSTIND(const u32 i) { OP_STR_(STRB, ROR_IMM, s
 //-----------------------------------------------------------------------------
 //   LDRD / STRD
 //-----------------------------------------------------------------------------
-typedef u32 (FASTCALL *LDRD_STRD_REG)(u32);
+typedef u32 FASTCALL (*LDRD_STRD_REG)(u32);
 template<int PROCNUM, u8 Rnum>
 static u32 FASTCALL OP_LDRD_REG(u32 adr)
 {
@@ -1897,7 +2038,7 @@ static u32 FASTCALL op_swpb(u32 adr, u32 *Rd, u32 Rs)
 	return (MMU_memAccessCycles<PROCNUM,8,MMU_AD_READ>(adr) + MMU_memAccessCycles<PROCNUM,8,MMU_AD_WRITE>(adr));
 }
 
-typedef u32 (FASTCALL *OP_SWP_SWPB)(u32, u32*, u32);
+typedef u32 FASTCALL (*OP_SWP_SWPB)(u32, u32*, u32);
 static const OP_SWP_SWPB op_swp_tab[2][2] = {{ op_swp<0>, op_swp<1> }, { op_swpb<0>, op_swpb<1> }};
 
 static int op_swp_(const u32 i, int b)
@@ -1927,7 +2068,7 @@ static int OP_SWPB(const u32 i) { return op_swp_(i, 1); }
 //-----------------------------------------------------------------------------
 //   LDMIA / LDMIB / LDMDA / LDMDB / STMIA / STMIB / STMDA / STMDB
 //-----------------------------------------------------------------------------
-static u32 popcount(u32 x)
+static u32 popregcount(u32 x)
 {
 	uint32_t pop = 0;
 	for(; x; x>>=1)
@@ -1956,7 +2097,7 @@ static u64 get_reg_list(u32 reg_mask, int dir)
 #endif
 
 template <int PROCNUM, bool store, int dir>
-static LDM_INLINE u32 FASTCALL OP_LDM_STM_generic(u32 adr, u64 regs, int n)
+static LDM_INLINE FASTCALL u32 OP_LDM_STM_generic(u32 adr, u64 regs, int n)
 {
 	u32 cycles = 0;
 	adr &= ~3;
@@ -1977,7 +2118,7 @@ static LDM_INLINE u32 FASTCALL OP_LDM_STM_generic(u32 adr, u64 regs, int n)
 #endif
 
 template <int PROCNUM, bool store, int dir>
-static LDM_INLINE u32 FASTCALL OP_LDM_STM_other(u32 adr, u64 regs, int n)
+static LDM_INLINE FASTCALL u32 OP_LDM_STM_other(u32 adr, u64 regs, int n)
 {
 	u32 cycles = 0;
 	adr &= ~3;
@@ -1999,12 +2140,12 @@ static LDM_INLINE u32 FASTCALL OP_LDM_STM_other(u32 adr, u64 regs, int n)
 }
 
 template <int PROCNUM, bool store, int dir, bool null_compiled>
-static FORCEINLINE u32 FASTCALL OP_LDM_STM_main(u32 adr, u64 regs, int n, u8 *ptr, u32 cycles)
+static FORCEINLINE FASTCALL u32 OP_LDM_STM_main(u32 adr, u64 regs, int n, u8 *ptr, u32 cycles)
 {
 #ifdef ENABLE_ADVANCED_TIMING
 	cycles = 0;
 #endif
-	uintptr_t *func = (uintptr_t *)&JITLUT_HANDLE(adr, PROCNUM);
+	uintptr_t *func = (uintptr_t *)&JIT_COMPILED_FUNC(adr, PROCNUM);
 
 #define OP(j) { \
 	/* no need to zero functions in DTCM, since we can't execute from it */ \
@@ -2038,7 +2179,7 @@ static FORCEINLINE u32 FASTCALL OP_LDM_STM_main(u32 adr, u64 regs, int n, u8 *pt
 }
 
 template <int PROCNUM, bool store, int dir>
-static u32 OP_LDM_STM(u32 adr, u64 regs, int n)
+static u32 FASTCALL OP_LDM_STM(u32 adr, u64 regs, int n)
 {
 	// TODO use classify_adr?
 	u32 cycles;
@@ -2079,7 +2220,7 @@ static u32 OP_LDM_STM(u32 adr, u64 regs, int n)
 	return OP_LDM_STM_main<PROCNUM, store, dir, store>(adr, regs, n, ptr, cycles);
 }
 
-typedef u32 (*LDMOpFunc)(u32,u64,int);
+typedef u32 FASTCALL (*LDMOpFunc)(u32,u64,int);
 static const LDMOpFunc op_ldm_stm_tab[2][2][2] = {{
 	{ OP_LDM_STM<0,0,-1>, OP_LDM_STM<0,0,+1> },
 	{ OP_LDM_STM<0,1,-1>, OP_LDM_STM<0,1,+1> },
@@ -2093,12 +2234,12 @@ static void call_ldm_stm(GpVar adr, u32 bitmask, bool store, int dir)
 	if(bitmask)
 	{
 		GpVar n = c.newGpVar(kX86VarTypeGpd);
-		c.mov(n, popcount(bitmask));
+		c.mov(n, popregcount(bitmask));
 #ifdef ASMJIT_X64
 		GpVar regs = c.newGpVar(kX86VarTypeGpz);
 		c.mov(regs, get_reg_list(bitmask, dir));
 		X86CompilerFuncCall *ctx = c.call((void*)op_ldm_stm_tab[PROCNUM][store][dir>0]);
-		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder3<u32, u32, uint64_t, int>());
+		ctx->setPrototype(ASMJIT_CALL_CONV, FuncBuilder3<u32, u32, uint64_t, int>());
 		ctx->setArgument(0, adr);
 		ctx->setArgument(1, regs);
 		ctx->setArgument(2, n);
@@ -2109,7 +2250,7 @@ static void call_ldm_stm(GpVar adr, u32 bitmask, bool store, int dir)
 		c.mov(regs_lo, (u32)get_reg_list(bitmask, dir));
 		c.mov(regs_hi, get_reg_list(bitmask, dir) >> 32);
 		X86CompilerFuncCall *ctx = c.call((void*)op_ldm_stm_tab[PROCNUM][store][dir>0]);
-		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder4<u32, u32, u32, u32, int>());
+		ctx->setPrototype(ASMJIT_CALL_CONV, FuncBuilder4<u32, u32, u32, u32, int>());
 		ctx->setArgument(0, adr);
 		ctx->setArgument(1, regs_lo);
 		ctx->setArgument(2, regs_hi);
@@ -2127,7 +2268,7 @@ static int op_bx_thumb(Mem srcreg, bool blx, bool test_thumb);
 static int op_ldm_stm(u32 i, bool store, int dir, bool before, bool writeback)
 {
 	u32 bitmask = i & 0xFFFF;
-	u32 pop = popcount(bitmask);
+	u32 pop = popregcount(bitmask);
 
 	GpVar adr = c.newGpVar(kX86VarTypeGpd);
 	c.mov(adr, reg_pos_ptr(16));
@@ -2186,7 +2327,7 @@ static int OP_STMDB_W(const u32 i) { return op_ldm_stm(i, 1, -1, 1, 1); }
 static int op_ldm_stm2(u32 i, bool store, int dir, bool before, bool writeback)
 {
 	u32 bitmask = i & 0xFFFF;
-	u32 pop = popcount(bitmask);
+	u32 pop = popregcount(bitmask);
 	bool bit15 = BIT15(i);
 
 	//printf("ARM%c: %s R%d:%08X, bitmask %02X\n", PROCNUM?'7':'9', (store?"STM":"LDM"), REG_POS(i, 16), cpu->R[REG_POS(i, 16)], bitmask);
@@ -2205,7 +2346,7 @@ static int op_ldm_stm2(u32 i, bool store, int dir, bool before, bool writeback)
 		//oldmode = armcpu_switchMode(cpu, SYS);
 		c.mov(oldmode, SYS);
 		X86CompilerFuncCall *ctx = c.call((void*)armcpu_switchMode);
-		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<u32, void*, u8>());
+		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<u32, u8*, u8>());
 		ctx->setArgument(0, bb_cpu);
 		ctx->setArgument(1, oldmode);
 		ctx->setReturn(oldmode);
@@ -2217,7 +2358,7 @@ static int op_ldm_stm2(u32 i, bool store, int dir, bool before, bool writeback)
 	{
 		//armcpu_switchMode(cpu, oldmode);
 		X86CompilerFuncCall *ctx = c.call((void*)armcpu_switchMode);
-		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<void, void*, u8>());
+		ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<Void, u8*, u8>());
 		ctx->setArgument(0, bb_cpu);
 		ctx->setArgument(1, oldmode);
 	}
@@ -2315,7 +2456,6 @@ static int op_bx(Mem srcreg, bool blx, bool test_thumb)
 	return 1;
 }
 
-//TODO: exeption when Rm=PC
 static int OP_BX(const u32 i) { return op_bx(reg_pos_ptr(0), 0, 1); }
 static int OP_BLX_REG(const u32 i) { return op_bx(reg_pos_ptr(0), 1, 1); }
 
@@ -2336,11 +2476,58 @@ static int OP_CLZ(const u32 i)
 //-----------------------------------------------------------------------------
 //   MCR / MRC
 //-----------------------------------------------------------------------------
-#define MASKPRECALC \
-{ \
-	X86CompilerFuncCall* ctxM = c.call((void*)maskPrecalc); \
-	ctxM->setPrototype(kX86FuncConvDefault, FuncBuilder0<Void>()); \
+
+// precalculate region masks/sets from cp15 register ----- JIT
+// TODO: rewrite to asm
+static void maskPrecalc(u32 _num)
+{
+#define precalc(num) {  \
+	u32 mask = 0, set = 0xFFFFFFFF ; /* (x & 0) == 0xFF..FF is allways false (disabled) */  \
+	if (BIT_N(cp15.protectBaseSize[num],0)) /* if region is enabled */ \
+	{    /* reason for this define: naming includes var */  \
+		mask = CP15_MASKFROMREG(cp15.protectBaseSize[num]) ;   \
+		set = CP15_SETFROMREG(cp15.protectBaseSize[num]) ; \
+		if (CP15_SIZEIDENTIFIER(cp15.protectBaseSize[num])==0x1F)  \
+		{   /* for the 4GB region, u32 suffers wraparound */   \
+			mask = 0 ; set = 0 ;   /* (x & 0) == 0  is allways true (enabled) */  \
+		} \
+	}  \
+	cp15.setSingleRegionAccess(num, mask, set) ;  \
 }
+	switch(_num)
+	{
+		case 0: precalc(0); break;
+		case 1: precalc(1); break;
+		case 2: precalc(2); break;
+		case 3: precalc(3); break;
+		case 4: precalc(4); break;
+		case 5: precalc(5); break;
+		case 6: precalc(6); break;
+		case 7: precalc(7); break;
+
+		case 0xFF:
+			precalc(0);
+			precalc(1);
+			precalc(2);
+			precalc(3);
+			precalc(4);
+			precalc(5);
+			precalc(6);
+			precalc(7);
+		break;
+	}
+#undef precalc
+}
+
+#define _maskPrecalc(num) \
+{ \
+	GpVar _num = c.newGpVar(kX86VarTypeGpd); \
+	X86CompilerFuncCall* ctxM = c.call((uintptr_t)maskPrecalc); \
+	c.mov(_num, num); \
+	ctxM->setPrototype(kX86FuncConvDefault, FuncBuilder1<Void, u32>()); \
+	ctxM->setArgument(0, _num); \
+}
+
 static int OP_MCR(const u32 i)
 {
 	if (PROCNUM == ARMCPU_ARM7) return 0;
@@ -2440,12 +2627,12 @@ static int OP_MCR(const u32 i)
 					case 2:
 						//DaccessPerm = val;
 						c.mov(cp15_ptr(DaccessPerm), data);
-						MASKPRECALC;
+						_maskPrecalc(0xFF);
 						break;
 					case 3:
 						//IaccessPerm = val;
 						c.mov(cp15_ptr(IaccessPerm), data);
-						MASKPRECALC;
+						_maskPrecalc(0xFF);
 						break;
 					default:
 						bUnknown = true;
@@ -2457,51 +2644,12 @@ static int OP_MCR(const u32 i)
 		case 6:
 			if((opcode1==0) && (opcode2==0))
 			{
-				switch(CRm)
+				if (CRm < 8)
 				{
-					case 0:
-						//protectBaseSize0 = val;
-						c.mov(cp15_ptr(protectBaseSize0), data);
-						MASKPRECALC;
-						break;
-					case 1:
-						//protectBaseSize1 = val;
-						c.mov(cp15_ptr(protectBaseSize1), data);
-						MASKPRECALC;
-						break;
-					case 2:
-						//protectBaseSize2 = val;
-						c.mov(cp15_ptr(protectBaseSize2), data);
-						MASKPRECALC;
-						break;
-					case 3:
-						//protectBaseSize3 = val;
-						c.mov(cp15_ptr(protectBaseSize3), data);
-						MASKPRECALC;
-						break;
-					case 4:
-						//protectBaseSize4 = val;
-						c.mov(cp15_ptr(protectBaseSize4), data);
-						MASKPRECALC;
-						break;
-					case 5:
-						//protectBaseSize5 = val;
-						c.mov(cp15_ptr(protectBaseSize5), data);
-						MASKPRECALC;
-						break;
-					case 6:
-						//protectBaseSize6 = val;
-						c.mov(cp15_ptr(protectBaseSize6), data);
-						MASKPRECALC;
-						break;
-					case 7:
-						//protectBaseSize7 = val;
-						c.mov(cp15_ptr(protectBaseSize7), data);
-						MASKPRECALC;
-						break;
-					default:
-						bUnknown = true;
-						break;
+					//protectBaseSize[CRm] = val;
+					c.mov(cp15_ptr_off(protectBaseSize, (CRm * sizeof(u32))), data);
+					_maskPrecalc(CRm);
+					break;
 				}
 			}
 			bUnknown = true;
@@ -2702,45 +2850,12 @@ static int OP_MRC(const u32 i)
 		case 6:
 			if((opcode1==0) && (opcode2==0))
 			{
-				switch(CRm)
+				if (CRm < 8)
 				{
-					case 0:
-						// *R = protectBaseSize0;
-						c.mov(data, cp15_ptr(protectBaseSize0));
-						break;
-					case 1:
-						// *R = protectBaseSize1;
-						c.mov(data, cp15_ptr(protectBaseSize1));
-						break;
-					case 2:
-						// *R = protectBaseSize2;
-						c.mov(data, cp15_ptr(protectBaseSize2));
-						break;
-					case 3:
-						// *R = protectBaseSize3;
-						c.mov(data, cp15_ptr(protectBaseSize3));
-						break;
-					case 4:
-						// *R = protectBaseSize4;
-						c.mov(data, cp15_ptr(protectBaseSize4));
-						break;
-					case 5:
-						// *R = protectBaseSize5;
-						c.mov(data, cp15_ptr(protectBaseSize5));
-						break;
-					case 6:
-						// *R = protectBaseSize6;
-						c.mov(data, cp15_ptr(protectBaseSize6));
-						break;
-					case 7:
-						// *R = protectBaseSize7;
-						c.mov(data, cp15_ptr(protectBaseSize7));
-						break;
-					default:
-						bUnknown = true;
-						break;
+					// *R = protectBaseSize[CRm];
+					c.mov(data, cp15_ptr_off(protectBaseSize, (CRm * sizeof(u32))));
+					break;
 				}
-				break;
 			}
 			bUnknown = true;
 			break;
@@ -2851,7 +2966,7 @@ u32 op_swi(u8 swinum)
 	JIT_COMMENT("enter SVC mode");
 	c.mov(mode, imm(SVC));
 	X86CompilerFuncCall* ctx = c.call((void*)armcpu_switchMode);
-	ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<void, void*, u8>());
+	ctx->setPrototype(kX86FuncConvDefault, FuncBuilder2<Void, void*, u8>());
 	ctx->setArgument(0, bb_cpu);
 	ctx->setArgument(1, mode);
 	c.unuse(mode);
@@ -3501,7 +3616,7 @@ static int OP_LDR_PCREL(const u32 i)
 static int op_ldm_stm_thumb(u32 i, bool store)
 {
 	u32 bitmask = i & 0xFF;
-	u32 pop = popcount(bitmask);
+	u32 pop = popregcount(bitmask);
 
 	//if (BIT_N(i, _REG_NUM(i, 8)))
 	//	printf("WARNING - %sIA with Rb in Rlist (THUMB)\n", store?"STM":"LDM");
@@ -3542,7 +3657,7 @@ static int op_push_pop(u32 i, bool store, bool pc_lr)
 {
 	u32 bitmask = (i & 0xFF);
 	bitmask |= pc_lr << (store ? 14 : 15);
-	u32 pop = popcount(bitmask);
+	u32 pop = popregcount(bitmask);
 	int dir = store ? -1 : 1;
 
 	GpVar adr = c.newGpVar(kX86VarTypeGpd);
@@ -3650,7 +3765,17 @@ static int op_bx_thumb(Mem srcreg, bool blx, bool test_thumb)
 	return 1;
 }
 
-static int OP_BX_THUMB(const u32 i) { if (REG_POS(i, 3) == 15) c.mov(reg_ptr(15), bb_r15); return op_bx_thumb(reg_pos_ptr(3), 0, 0); }
+static int op_bx_thumbR15()
+{
+	const u32 r15 = (bb_r15 & 0xFFFFFFFC);
+	c.mov(cpu_ptr(instruct_adr), Imm(r15));
+	c.mov(reg_ptr(15), Imm(r15));
+	c.and_(cpu_ptr(CPSR), (u32)~(1<< 5));
+	
+	return 1;
+}
+
+static int OP_BX_THUMB(const u32 i) { if (REG_POS(i, 3) == 15) return op_bx_thumbR15(); return op_bx_thumb(reg_pos_ptr(3), 0, 0); }
 static int OP_BLX_THUMB(const u32 i) { return op_bx_thumb(reg_pos_ptr(3), 1, 1); }
 
 static int OP_SWI_THUMB(const u32 i) { return op_swi(i & 0x1F); }
@@ -3745,11 +3870,16 @@ static u32 instr_attributes(u32 opcode)
 static bool instr_is_branch(u32 opcode)
 {
 	u32 x = instr_attributes(opcode);
+	
 	if(bb_thumb)
+	{
+		// merge OP_BL_10+OP_BL_11
+		if (x & MERGE_NEXT) return false;
 		return (x & BRANCH_ALWAYS)
 		    || ((x & BRANCH_POS0) && ((opcode&7) | ((opcode>>4)&8)) == 15)
 			|| (x & BRANCH_SWI)
 		    || (x & JIT_BYPASS);
+	}
 	else
 		return (x & BRANCH_ALWAYS)
 		    || ((x & BRANCH_POS12) && REG_POS(opcode,12) == 15)
@@ -3828,9 +3958,9 @@ static void sync_r15(u32 opcode, bool is_last, bool force)
 {
 	if(instr_does_prefetch(opcode))
 	{
-		assert(!instr_uses_r15(opcode));
 		if(force)
 		{
+			//assert(!instr_uses_r15(opcode));
 			JIT_COMMENT("sync_r15: force instruct_adr %08Xh (PREFETCH)", bb_adr);
 			c.mov(cpu_ptr(instruct_adr), bb_next_instruction);
 		}
@@ -3938,7 +4068,7 @@ static u32 compile_basicblock()
 	bb_thumb = cpu->CPSR.bits.T;
 	bb_opcodesize = bb_thumb ? 2 : 4;
 
-	if (!JITLUT_MAPPED(start_adr & 0x0FFFFFFF, PROCNUM))
+	if (!JIT_MAPPED(start_adr & 0x0FFFFFFF, PROCNUM))
 	{
 		printf("JIT: use unmapped memory address %08X\n", start_adr);
 		execute = false;
@@ -3988,7 +4118,7 @@ static u32 compile_basicblock()
 
 		u32 cycles = instr_cycles(opcode);
 
-		bEndBlock = (i >= (CommonSettings.jit_max_block_size - 1)) || instr_is_branch(opcode);
+		bEndBlock = instr_is_branch(opcode) || (i >= (CommonSettings.jit_max_block_size - 1));
 		
 #if LOG_JIT
 		if (instr_is_conditional(opcode) && (cycles > 1) || (cycles == 0))
@@ -4087,7 +4217,7 @@ static u32 compile_basicblock()
 	fflush(stderr);
 #endif
 	
-	JITLUT_HANDLE(start_adr, PROCNUM) = (uintptr_t)f;
+	JIT_COMPILED_FUNC(start_adr, PROCNUM) = (uintptr_t)f;
 	return interpreted_cycles;
 }
 
@@ -4097,15 +4227,15 @@ template<int PROCNUM> u32 arm_jit_compile()
 
 	// prevent endless recompilation of self-modifying code, which would be a memleak since we only free code all at once.
 	// also allows us to clear compiled_funcs[] while leaving it sparsely allocated, if the OS does memory overcommit.
-	//u32 adr = cpu->instruct_adr;
-	//if (!JitBlockModify(adr))
-	//{
-	//	//printf("hot modify %x %d !!!.\n", adr, PROCNUM);
-
-	//	ArmOpCompiled f = op_decode[PROCNUM][cpu->CPSR.bits.T];
-	//	JITLUT_HANDLE(adr, PROCNUM) = (uintptr_t)f;
-	//	return f();
-	//}
+	u32 adr = cpu->instruct_adr;
+	u32 mask_adr = (adr & 0x07FFFFFE) >> 4;
+	if(((recompile_counts[mask_adr >> 1] >> 4*(mask_adr & 1)) & 0xF) > 8)
+	{
+		ArmOpCompiled f = op_decode[PROCNUM][cpu->CPSR.bits.T];
+		JIT_COMPILED_FUNC(adr, PROCNUM) = (uintptr_t)f;
+		return f();
+	}
+	recompile_counts[mask_adr >> 1] += 1 << 4*(mask_adr & 1);
 
 	return compile_basicblock<PROCNUM>();
 }
@@ -4113,20 +4243,49 @@ template<int PROCNUM> u32 arm_jit_compile()
 template u32 arm_jit_compile<0>();
 template u32 arm_jit_compile<1>();
 
-void arm_jit_reset()
+void arm_jit_reset(bool enable, bool suppress_msg)
 {
 #if LOG_JIT
 	c.setLogger(&logger);
-#ifdef _WINDOWS
-	freopen("\\desmume_jit.log", "w", stderr);
-#endif
+	freopen("desmume_jit.log", "w", stderr);
 #endif
 #ifdef HAVE_STATIC_CODE_BUFFER
 	scratchptr = scratchpad;
 #endif
+	if (!suppress_msg)
+		printf("CPU mode: %s\n", enable?"JIT":"Interpreter");
+	saveBlockSizeJIT = CommonSettings.jit_max_block_size;
 
-	JitLutReset();
-	printf("JIT: max block size %d instruction(s)\n", CommonSettings.jit_max_block_size);
+	if (enable)
+	{
+		printf("JIT: max block size %d instruction(s)\n", CommonSettings.jit_max_block_size);
+
+#ifdef MAPPED_JIT_FUNCS
+
+		//these pointers are allocated by asmjit and need freeing
+		#define JITFREE(x)  for(int iii=0;iii<ARRAY_SIZE(x);iii++) if(x[iii]) AsmJit::MemoryManager::getGlobal()->free((void*)x[iii]);  memset(x,0,sizeof(x));
+			JITFREE(JIT.MAIN_MEM);
+			JITFREE(JIT.SWIRAM);
+			JITFREE(JIT.ARM9_ITCM);
+			JITFREE(JIT.ARM9_LCDC);
+			JITFREE(JIT.ARM9_BIOS);
+			JITFREE(JIT.ARM7_BIOS);
+			JITFREE(JIT.ARM7_ERAM);
+			JITFREE(JIT.ARM7_WIRAM);
+			JITFREE(JIT.ARM7_WRAM);
+		#undef JITFREE
+
+		memset(recompile_counts, 0, sizeof(recompile_counts));
+		init_jit_mem();
+#else
+		for(int i=0; i<sizeof(recompile_counts)/8; i++)
+			if(((u64*)recompile_counts)[i])
+			{
+				((u64*)recompile_counts)[i] = 0;
+				memset(compiled_funcs+128*i, 0, 128*sizeof(*compiled_funcs));
+			}
+#endif
+	}
 
 	c.clear();
 
@@ -4222,11 +4381,11 @@ void arm_jit_close()
 		std::qsort(thumb_info, last[1], sizeof(PROFILER_COUNTER_INFO), (int (*)(const void *, const void *))pcmp);
 
 		char buf[MAX_PATH] = {0};
-		sprintf(buf, "\\desmume_jit%c_counter.profiler", proc==0?'9':'7');
+		sprintf(buf, "desmume_jit%c_counter.profiler", proc==0?'9':'7');
 		FILE *fp = fopen(buf, "w");
 		if (fp)
 		{
-			if (!gameInfo.isHomebrew)
+			if (!gameInfo.isHomebrew())
 			{
 				fprintf(fp, "Name:   %s\n", gameInfo.ROMname);
 				fprintf(fp, "Serial: %s\n", gameInfo.ROMserial);
@@ -4258,7 +4417,7 @@ void arm_jit_close()
 		delete [] thumb_info; thumb_info = NULL;
 
 #if (PROFILER_JIT_LEVEL > 1)
-		sprintf(buf, "\\desmume_jit%c_entry.profiler", proc==0?'9':'7');
+		sprintf(buf, "desmume_jit%c_entry.profiler", proc==0?'9':'7');
 		fp = fopen(buf, "w");
 		if (fp)
 		{
@@ -4274,7 +4433,7 @@ void arm_jit_close()
 				memcpy(&tmp[count++], &profiler_entry[proc][i], sizeof(PROFILER_ENTRY));
 			}
 			std::qsort(tmp, count, sizeof(PROFILER_ENTRY), (int (*)(const void *, const void *))pcmp_entry);
-			if (!gameInfo.isHomebrew)
+			if (!gameInfo.isHomebrew())
 			{
 				fprintf(fp, "Name:   %s\n", gameInfo.ROMname);
 				fprintf(fp, "Serial: %s\n", gameInfo.ROMserial);
@@ -4295,86 +4454,4 @@ void arm_jit_close()
 	printf(" done.\n");
 #endif
 }
-
-////////////////////////////////////////////////////////////////////
-static void cpuReserve()
-{
-}
-
-static void cpuShutdown()
-{
-	arm_jit_close();
-}
-
-static void cpuReset()
-{
-	arm_jit_reset();
-}
-
-static void cpuSync()
-{
-	armcpu_sync();
-}
-
-template<int PROCNUM>
-static void cpuClear(u32 Addr, u32 Size)
-{
-	if (Addr == 0 && Size == CPUBASE_FLUSHALL)
-	{
-		JitLutReset();
-	}
-	else
-	{
-		Size /= 2;
-		for (u32 i = 0; i < Size; i++)
-		{
-			const u32 adr = Addr + i*2;
-
-			if (JITLUT_MAPPED(adr, PROCNUM))
-				JITLUT_HANDLE(adr, PROCNUM) = (uintptr_t)NULL;
-		}
-	}
-}
-
-template<int PROCNUM>
-static u32 cpuExecute()
-{
-	ArmOpCompiled f = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
-	return f ? f() : arm_jit_compile<PROCNUM>();
-}
-
-static u32 cpuGetCacheReserve()
-{
-	return (u32)-1;
-}
-
-static void cpuSetCacheReserve(u32 reserveInMegs)
-{
-}
-
-static const char* cpuDescription()
-{
-	return "Arm Old Jit";
-}
-
-CpuBase arm_oldjit = 
-{
-	cpuReserve,
-
-	cpuShutdown,
-
-	cpuReset,
-
-	cpuSync,
-
-	cpuClear<0>, cpuClear<1>,
-
-	cpuExecute<0>, cpuExecute<1>,
-
-	cpuGetCacheReserve,
-	cpuSetCacheReserve,
-
-	cpuDescription
-};
-
 #endif // HAVE_JIT

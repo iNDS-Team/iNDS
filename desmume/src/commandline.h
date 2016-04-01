@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2011 DeSmuME team
+	Copyright (C) 2009-2013 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ public:
 	std::string slot1;
 	std::string console_type;
 	std::string slot1_fat_dir;
-#ifndef _MSC_VER
+	bool _slot1_fat_dir_type;
+#ifndef HOST_WINDOWS 
 	int disable_sound;
 	int disable_limiter;
 #endif
@@ -78,6 +79,8 @@ public:
 	GError *error;
 	GOptionContext *ctx;
 
+	int _spu_sync_mode;
+	int _spu_sync_method;
 private:
 	char* _play_movie_file;
 	char* _record_movie_file;
@@ -85,16 +88,20 @@ private:
 	char* _cflash_path;
 	char* _gbaslot_rom;
 	char* _bios_arm9, *_bios_arm7;
+	int _load_to_memory;
 	int _bios_swi;
 	int _spu_advanced;
 	int _num_cores;
 	int _rigorous_timing;
 	int _advanced_timing;
+#ifdef HAVE_JIT
 	int _cpu_mode;
 	int _jit_size;
+#endif
 	char* _slot1;
 	char *_slot1_fat_dir;
 	char* _console_type;
+	char* _advanscene_import;
 };
 
 #endif
