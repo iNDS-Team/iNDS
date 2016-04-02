@@ -1,7 +1,7 @@
 /*
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2006-2007 shash
-	Copyright (C) 2008-2013 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 
 #ifndef OGLRENDER_3_2_H
 
-#if defined(_WIN32) && !defined(WXPORT)
+#if defined(_WIN32)
 	#define WIN32_LEAN_AND_MEAN
 	#include <windows.h>
 	#include <GL/gl.h>
@@ -310,16 +310,15 @@ struct OGLRenderRef
 	// FBO
 	GLuint texClearImageColorID;
 	GLuint texClearImageDepthStencilID;
+	
+	GLuint rboFragColorID;
+	GLuint rboFragDepthStencilID;
+	GLuint rboMSFragColorID;
+	GLuint rboMSFragDepthStencilID;
+	
 	GLuint fboClearImageID;
-	
-	GLuint rboFinalOutputColorID;
-	GLuint rboFinalOutputDepthStencilID;
-	GLuint fboFinalOutputID;
-	
-	// Multisampled FBO
-	GLuint rboMultisampleColorID;
-	GLuint rboMultisampleDepthStencilID;
-	GLuint fboMultisampleRenderID;
+	GLuint fboMSIntermediateRenderID;
+	GLuint fboRenderID;
 	GLuint selectedRenderingFBO;
 	
 	// Shader states
@@ -327,15 +326,18 @@ struct OGLRenderRef
 	GLuint fragmentShaderID;
 	GLuint shaderProgram;
 	
-	GLint uniformPolyID;
-	GLint uniformPolyAlpha;
 	GLint uniformTexScale;
-	GLint uniformHasTexture;
-	GLint uniformPolygonMode;
-	GLint uniformToonShadingMode;
-	GLint uniformWBuffer;
-	GLint uniformEnableAlphaTest;
-	GLint uniformAlphaTestRef;
+	
+	GLint uniformStateToonShadingMode;
+	GLint uniformStateEnableAlphaTest;
+	GLint uniformStateUseWDepth;
+	GLint uniformStateAlphaTestRef;
+	
+	GLint uniformPolyMode;
+	GLint uniformPolyAlpha;
+	GLint uniformPolyID;
+	
+	GLint uniformPolyEnableTexture;
 	
 	GLuint texToonTableID;
 	
@@ -347,7 +349,7 @@ struct OGLRenderRef
 	
 	// Client-side Buffers
 	GLfloat *color4fBuffer;
-	DS_ALIGN(16) GLushort vertIndexBuffer[OGLRENDER_VERT_INDEX_BUFFER_COUNT];
+	CACHE_ALIGN GLushort vertIndexBuffer[OGLRENDER_VERT_INDEX_BUFFER_COUNT];
 };
 
 struct GFX3D_State;
@@ -383,11 +385,6 @@ extern void (*oglrender_endOpenGL)();
 extern void (*OGLLoadEntryPoints_3_2_Func)();
 extern void (*OGLCreateRenderer_3_2_Func)(OpenGLRenderer **rendererPtr);
 
-// Lookup Tables
-extern CACHE_ALIGN GLfloat material_8bit_to_float[256];
-extern CACHE_ALIGN GLuint dsDepthToD24S8_LUT[32768];
-extern const GLfloat divide5bitBy31_LUT[32];
-
 FORCEINLINE u32 BGRA8888_32_To_RGBA6665_32(const u32 srcPix);
 FORCEINLINE u32 BGRA8888_32Rev_To_RGBA6665_32Rev(const u32 srcPix);
 bool IsVersionSupported(unsigned int checkVersionMajor, unsigned int checkVersionMinor, unsigned int checkVersionRevision);
@@ -415,12 +412,9 @@ protected:
 	// Textures
 	TexCacheItem *currTexture;
 	
-	u16 currentToonTable16[32];
-	bool toonTableNeedsUpdate;
-	
-	DS_ALIGN(16) u32 GPU_screen3D[2][256 * 192 * sizeof(u32)];
+	CACHE_ALIGN u32 GPU_screen3D[2][GFX3D_FRAMEBUFFER_WIDTH * GFX3D_FRAMEBUFFER_HEIGHT * sizeof(u32)];
 	bool gpuScreen3DHasNewData[2];
-	unsigned int doubleBufferIndex;
+	size_t doubleBufferIndex;
 	u8 clearImageStencilValue;
 	
 	// OpenGL-specific methods
@@ -444,15 +438,13 @@ protected:
 	virtual Render3DError SetupShaderIO() = 0;
 	virtual Render3DError CreateToonTable() = 0;
 	virtual Render3DError DestroyToonTable() = 0;
-	virtual Render3DError UploadToonTable(const GLushort *toonTableBuffer) = 0;
-	virtual Render3DError CreateClearImage() = 0;
-	virtual Render3DError DestroyClearImage() = 0;
-	virtual Render3DError UploadClearImage(const GLushort *clearImageColorBuffer, const GLint *clearImageDepthBuffer) = 0;
+	virtual Render3DError UploadToonTable(const u16 *toonTableBuffer) = 0;
+	virtual Render3DError UploadClearImage(const u16 *clearImageColor16Buffer, const u32 *clearImageDepthStencilBuffer) = 0;
 	
 	virtual void GetExtensionSet(std::set<std::string> *oglExtensionSet) = 0;
 	virtual Render3DError ExpandFreeTextures() = 0;
-	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, unsigned int *outIndexCount) = 0;
-	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const unsigned int vertIndexCount) = 0;
+	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, size_t *outIndexCount) = 0;
+	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const size_t vertIndexCount) = 0;
 	virtual Render3DError DisableVertexAttributes() = 0;
 	virtual Render3DError SelectRenderingFramebuffer() = 0;
 	virtual Render3DError DownsampleFBO() = 0;
@@ -465,7 +457,7 @@ protected:
 	virtual Render3DError PostRender() = 0;
 	virtual Render3DError EndRender(const u64 frameCount) = 0;
 	
-	virtual Render3DError UpdateClearImage(const u16 *__restrict colorBuffer, const u16 *__restrict depthBuffer, const u8 clearStencil, const u8 xScroll, const u8 yScroll) = 0;
+	virtual Render3DError UpdateClearImage(const u16 *__restrict colorBuffer, const u32 *__restrict depthStencilBuffer) = 0;
 	virtual Render3DError UpdateToonTable(const u16 *toonTableBuffer) = 0;
 	
 	virtual Render3DError ClearUsingImage() const = 0;
@@ -473,7 +465,7 @@ protected:
 	
 	virtual Render3DError SetupPolygon(const POLY *thePoly) = 0;
 	virtual Render3DError SetupTexture(const POLY *thePoly, bool enableTexturing) = 0;
-	virtual Render3DError SetupViewport(const POLY *thePoly) = 0;
+	virtual Render3DError SetupViewport(const u32 viewportValue) = 0;
 	
 public:
 	OpenGLRenderer();
@@ -517,15 +509,13 @@ protected:
 	virtual Render3DError SetupShaderIO();
 	virtual Render3DError CreateToonTable();
 	virtual Render3DError DestroyToonTable();
-	virtual Render3DError UploadToonTable(const GLushort *toonTableBuffer);
-	virtual Render3DError CreateClearImage();
-	virtual Render3DError DestroyClearImage();
-	virtual Render3DError UploadClearImage(const GLushort *clearImageColorBuffer, const GLint *clearImageDepthBuffer);
+	virtual Render3DError UploadToonTable(const u16 *toonTableBuffer);
+	virtual Render3DError UploadClearImage(const u16 *clearImageColor16Buffer, const u32 *clearImageDepthStencilBuffer);
 	
 	virtual void GetExtensionSet(std::set<std::string> *oglExtensionSet);
 	virtual Render3DError ExpandFreeTextures();
-	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, unsigned int *outIndexCount);
-	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const unsigned int vertIndexCount);
+	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, size_t *outIndexCount);
+	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const size_t vertIndexCount);
 	virtual Render3DError DisableVertexAttributes();
 	virtual Render3DError SelectRenderingFramebuffer();
 	virtual Render3DError DownsampleFBO();
@@ -538,7 +528,7 @@ protected:
 	virtual Render3DError PostRender();
 	virtual Render3DError EndRender(const u64 frameCount);
 	
-	virtual Render3DError UpdateClearImage(const u16 *__restrict colorBuffer, const u16 *__restrict depthBuffer, const u8 clearStencil, const u8 xScroll, const u8 yScroll);
+	virtual Render3DError UpdateClearImage(const u16 *__restrict colorBuffer, const u32 *__restrict depthStencilBuffer);
 	virtual Render3DError UpdateToonTable(const u16 *toonTableBuffer);
 	
 	virtual Render3DError ClearUsingImage() const;
@@ -546,7 +536,7 @@ protected:
 	
 	virtual Render3DError SetupPolygon(const POLY *thePoly);
 	virtual Render3DError SetupTexture(const POLY *thePoly, bool enableTexturing);
-	virtual Render3DError SetupViewport(const POLY *thePoly);
+	virtual Render3DError SetupViewport(const u32 viewportValue);
 	
 public:
 	OpenGLRenderer_1_2();
@@ -562,12 +552,8 @@ public:
 class OpenGLRenderer_1_3 : public OpenGLRenderer_1_2
 {
 protected:
-	virtual Render3DError CreateToonTable();
-	virtual Render3DError DestroyToonTable();
-	virtual Render3DError UploadToonTable(const GLushort *toonTableBuffer);
-	virtual Render3DError CreateClearImage();
-	virtual Render3DError DestroyClearImage();
-	virtual Render3DError UploadClearImage(const GLushort *clearImageColorBuffer, const GLint *clearImageDepthBuffer);
+	virtual Render3DError UploadToonTable(const u16 *toonTableBuffer);
+	virtual Render3DError UploadClearImage(const u16 *clearImageColor16Buffer, const u32 *clearImageDepthStencilBuffer);
 };
 
 class OpenGLRenderer_1_4 : public OpenGLRenderer_1_3
@@ -585,7 +571,7 @@ protected:
 	virtual void DestroyPBOs();
 	virtual Render3DError CreateVAOs();
 	
-	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const unsigned int vertIndexCount);
+	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const size_t vertIndexCount);
 	virtual Render3DError DisableVertexAttributes();
 	virtual Render3DError ReadBackPixels();
 		
@@ -601,8 +587,8 @@ protected:
 	virtual Render3DError InitExtensions();
 	virtual Render3DError InitFinalRenderStates(const std::set<std::string> *oglExtensionSet);
 	
-	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, unsigned int *outIndexCount);
-	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const unsigned int vertIndexCount);
+	virtual Render3DError SetupVertices(const VERTLIST *vertList, const POLYLIST *polyList, const INDEXLIST *indexList, GLushort *outIndexBuffer, size_t *outIndexCount);
+	virtual Render3DError EnableVertexAttributes(const VERTLIST *vertList, const GLushort *indexBuffer, const size_t vertIndexCount);
 	virtual Render3DError DisableVertexAttributes();
 	
 	virtual Render3DError BeginRender(const GFX3D_State *renderState);

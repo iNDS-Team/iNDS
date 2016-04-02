@@ -1,6 +1,6 @@
 /* mic.cpp - this file is part of DeSmuME
  *
- * Copyright (C) 2009-2011 DeSmuME Team
+ * Copyright (C) 2009-2015 DeSmuME Team
  *
  * This file is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef WIN32
+#if !defined(WIN32) || defined(DESMUME_QT)
 
 #include <stdlib.h>
 #include "mic.h"
 #include "NDSSystem.h"
 #include "readwrite.h"
+#include "emufile.h"
 
 #define MIC_NULL_SAMPLE_VALUE 0
 #define MIC_MAX_BUFFER_SAMPLES 320

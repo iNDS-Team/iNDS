@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2008-2013 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,30 +20,13 @@
 #define NDSSYSTEM_H
 
 #include <string.h>
-#include "armcpu.h"
-#include "MMU.h"
-#include "driver.h"
-#include "GPU.h"
-#include "SPU.h"
-#include "mem.h"
-#include "wifi.h"
-#include "emufile.h"
-#include "firmware.h"
-#include "types.h"
-#include "sequencer.h"
-
 #include <string>
 
-#if defined(_WINDOWS) && !defined(WXPORT)
-#include "pathsettings.h"
-#endif
+#include "types.h"
 
-#ifndef _WINDOWS
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
+class BaseDriver;
+class CFIRMWARE;
+class EMUFILE;
 
 template<typename Type>
 struct buttonstruct {
@@ -73,9 +56,6 @@ struct buttonstruct {
 extern buttonstruct<bool> Turbo;
 extern buttonstruct<int> TurboTime;
 extern buttonstruct<bool> AutoHold;
-
-int NDS_WritePNG(const char *fname);
-
 extern volatile bool execute;
 extern BOOL click;
 
@@ -91,66 +71,82 @@ extern BOOL click;
 #define NDS_FW_LANG_CHI 6
 #define NDS_FW_LANG_RES 7
 
+extern BaseDriver *driver;
+extern CFIRMWARE *firmware;
+
+#define DSGBA_LOADER_SIZE 512
+enum
+{
+	ROM_NDS = 0,
+	ROM_DSGBA
+};
 
 //#define LOG_ARM9
 //#define LOG_ARM7
 
+#include "PACKED.h"
 struct NDS_header
 {
-       char     gameTile[12];
-       char     gameCode[4];
-       u16      makerCode;
-       u8       unitCode;
-       u8       deviceCode;
-       u8       cardSize;
-       u8       cardInfo[8];
-       u8       flags;
-	   u8		romversion;
-       
-       u32      ARM9src;
-       u32      ARM9exe;
-       u32      ARM9cpy;
-       u32      ARM9binSize;
-       
-       u32      ARM7src;
-       u32      ARM7exe;
-       u32      ARM7cpy;
-       u32      ARM7binSize;
-       
-       u32      FNameTblOff;
-       u32      FNameTblSize;
-       
-       u32      FATOff;
-       u32      FATSize;
-       
-       u32     ARM9OverlayOff;
-       u32     ARM9OverlaySize;
-       u32     ARM7OverlayOff;
-       u32     ARM7OverlaySize;
-       
-       u32     unknown2a;
-       u32     unknown2b;
-       
-       u32     IconOff;
-       u16     CRC16;
-       u16     ROMtimeout;
-       u32     ARM9unk;
-       u32     ARM7unk;
-       
-       u8      unknown3c[8];
-       u32     ROMSize;
-       u32     HeaderSize;
-       u8      unknown5[56];
-       u8      logo[156];
-       u16     logoCRC16;
-       u16     headerCRC16;
-       u8      reserved[160];
+	char	gameTile[12];		// 000 - Game Title (uppercase ASCII, padded with 00h)
+	char	gameCode[4];		// 00C - Gamecode (uppercase ASCII, NTR-<code>, 0=homebrew)
+	u16		makerCode;			// 010 - Makercode (uppercase ASCII, 0=homebrew)
+	u8		unitCode;			// 012 - Unitcode (00h=Nintendo DS)
+	u8		deviceCode;			// 013 - Encryption Seed Select (00..07h, usually 00h)
+	u8		cardSize;			// 014 - Devicecapacity (Chipsize = 128KB SHL nn) (eg. 7 = 16MB)
+	u8		reserved1[8];		// 015 - Must be set to 0x00
+	u8		region;				// 01D - Specific region: 0x80 - China, 0x40 - Korea, 0x00 - Other
+	u8		romversion;			// 01E - ROM Version (usually 00h)
+	u8		autostart;			// 01F - Autostart (Bit2: Skip "Press Button" after Health and Safety)
+								//	 (Also skips bootmenu, even in Manual mode & even Start pressed)
+	u32		ARM9src;			// 020 - ARM9 rom_offset    (4000h and up, align 1000h)
+	u32		ARM9exe;			// 024 - ARM9 entry_address (2000000h..23BFE00h)
+	u32		ARM9cpy;			// 028 - ARM9 ram_address   (2000000h..23BFE00h)
+	u32		ARM9binSize;		// 02C - ARM9 size          (max 3BFE00h) (3839.5KB)
+
+	u32		ARM7src;			// 030 - ARM7 rom_offset    (8000h and up)
+	u32		ARM7exe;			// 034 - ARM7 entry_address (2000000h..23BFE00h, or 37F8000h..3807E00h)
+	u32		ARM7cpy;			// 038 - ARM7 ram_address   (2000000h..23BFE00h, or 37F8000h..3807E00h)
+	u32		ARM7binSize;		// 03C - ARM7 size          (max 3BFE00h, or FE00h) (3839.5KB, 63.5KB)
+
+	u32		FNameTblOff;		// 040 - File Name Table (FNT) offset
+	u32		FNameTblSize;		// 044 - File Name Table (FNT) size
+
+	u32		FATOff;				// 048 - File Allocation Table (FAT) offset
+	u32		FATSize;			// 04C - File Allocation Table (FAT) size
+
+	u32		ARM9OverlayOff;		// 050 - File ARM9 overlay_offset
+	u32		ARM9OverlaySize;	// 054 - File ARM9 overlay_size
+	u32		ARM7OverlayOff;		// 058 - File ARM7 overlay_offset
+	u32		ARM7OverlaySize;	// 05C - File ARM7 overlay_size
+
+	u32		normalCmd;			// 060 - Port 40001A4h setting for normal commands (usually 00586000h)
+	u32		Key1Cmd;			// 064 - Port 40001A4h setting for KEY1 commands   (usually 001808F8h)
+
+	u32		IconOff;			// 068 - Icon_title_offset (0=None) (8000h and up)
+	u16		CRC16;				// 06C - Secure Area Checksum, CRC-16 of [ [20h]..7FFFh] - Calculations with this algorithm use 0xffff as the initial value
+	u16		ROMtimeout;			// 06E - Secure Area Loading Timeout (usually 051Eh)
+	u32		ARM9autoload;		// 070 - ARM9 Auto Load List RAM Address
+	u32		ARM7autoload;		// 074 - ARM7 Auto Load List RAM Address
+
+	u8		infoResevedRegion[8];	// 078 - ROM Information Reserved Region (must be set to 0x00)
+	u32		endROMoffset;		// 080 - Total Used ROM size (remaining/unused bytes usually FFh-padded)
+	u32		HeaderSize;			// 084 - ROM Header Size (4000h)
+	u32		ARM9module;			// 088 - ARM9 Module Parameter Address (auto-load parameters)
+	u32		ARM7module;			// 08C - ARM7 Module Parameter Address (auto-load parameters)
+	u8		reserved2[48];		// 090 - Must be set to 0x00 - "PASS" is contained within here?
+	u8		logo[156];			// 0C0 - Nintendo Logo (compressed bitmap, same as in GBA Headers)
+	u16		logoCRC16;			// 15C - Nintendo Logo Checksum, CRC-16 of [0C0h-15Bh], fixed CF56h
+	u16		headerCRC16;		// 15E - Header Checksum, CRC-16 of [000h-15Dh]
+	u8		reserved[160];		// Must be set to 0x00
 };
+#include "PACKED_END.h"
 
 extern void debug();
 void emu_halt();
 
 extern u64 nds_timer;
+void NDS_Reschedule();
+void NDS_RescheduleGXFIFO(u32 cost);
 void NDS_RescheduleDMA();
 void NDS_RescheduleTimers();
 
@@ -165,10 +161,11 @@ enum ENSATA_HANDSHAKE
 
 enum NDS_CONSOLE_TYPE
 {
-	NDS_CONSOLE_TYPE_FAT,
-	NDS_CONSOLE_TYPE_LITE,
-	NDS_CONSOLE_TYPE_IQUE,
-	NDS_CONSOLE_TYPE_DSI
+	NDS_CONSOLE_TYPE_FAT = 0xFF,
+	NDS_CONSOLE_TYPE_LITE = 0x20,
+	NDS_CONSOLE_TYPE_IQUE = 0x43,
+	NDS_CONSOLE_TYPE_IQUE_LIE = 0x63,
+	NDS_CONSOLE_TYPE_DSI = 0xFE
 };
 
 struct NDSSystem
@@ -189,6 +186,9 @@ struct NDSSystem
 	u16 scr_touchX;
 	u16 scr_touchY;
 
+	//whether the console is using our faked-bootup process
+	BOOL isFakeBooted;
+	
 	BOOL isTouch;
 	u16 pad;
 	
@@ -276,14 +276,7 @@ struct NDS_fw_config_data
 
 extern NDSSystem nds;
 
-#ifdef GDB_STUB
-int NDS_Init( struct armcpu_memory_iface *arm9_mem_if,
-              struct armcpu_ctrl_iface **arm9_ctrl_iface,
-              struct armcpu_memory_iface *arm7_mem_if,
-              struct armcpu_ctrl_iface **arm7_ctrl_iface);
-#else
-int NDS_Init ( void);
-#endif
+int NDS_Init();
 
 void Desmume_InitOnce();
 
@@ -294,7 +287,7 @@ NDS_header * NDS_getROMHeader(void);
 
 struct RomBanner
 {
-	RomBanner(bool defaultInit);
+	RomBanner(bool defaultInit = true);
 	u16 version; //Version  (0001h)
 	u16 crc16; //CRC16 across entries 020h..83Fh
 	u8 reserved[0x1C]; //Reserved (zero-filled)
@@ -317,88 +310,54 @@ struct RomBanner
   //840h  -    End of Icon/Title structure (next 1C0h bytes usually FFh-filled)
 };
 
-extern bool useMmapForRomLoading;
-
-class GameInfo
+struct GameInfo
 {
-public:
-	GameInfo()
-		: romdata(NULL), openRomFd(-1)
-	{}
-	
-	~GameInfo()
-	{
-		closeMmap();
-	}
-	
-	int openRomFd;
-	
-	void closeMmap()
-	{
-		if(useMmapForRomLoading)
-		{
-			if(openRomFd != -1)
-				close(openRomFd);
-			openRomFd = -1;
-			if(romdata != NULL)
-				munmap(romdata, romsize);
-			romdata = NULL;
-		}
-	}
-	
-	void cleanup()
-	{
-		if(useMmapForRomLoading)
-			closeMmap();
-		else if(romdata != NULL) delete[] romdata;
-	}
-
-	void loadData(char* buf, int size)
-	{
-		resize(size);
-		memcpy(romdata,buf,size);
-		romsize = (u32)size;
-		fillGap();
-	}
-
-	void fillGap()
-	{
-		if(!useMmapForRomLoading)
-			memset(romdata+romsize,0xFF,allocatedSize-romsize);
-	}
-
-	void resize(int size) {
-		cleanup();
-
-		//calculate the necessary mask for the requested size
-		mask = size-1; 
-		mask |= (mask >>1);
-		mask |= (mask >>2);
-		mask |= (mask >>4);
-		mask |= (mask >>8);
-		mask |= (mask >>16);
-
-		//now, we actually need to over-allocate, because bytes from anywhere protected by that mask
-		//could be read from the rom
-		allocatedSize = mask+4;
-
-		if(!useMmapForRomLoading)
-			romdata = new char[allocatedSize];
-		romsize = size;
-	}
+	FILE *fROM;
+	u8	*romdata;
+	u32 romsize;
+	u32 cardSize;
+	u32 mask;
 	u32 crc;
-	NDS_header header;
+	u32 chipID;
+	u32 lastReadPos;
+	u32	romType;
+	u32 headerOffset;
 	char ROMserial[20];
 	char ROMname[20];
-	//char ROMfullName[7][0x100];
-	void populate();
-	char* romdata;
-	u32 romsize;
-	u32 allocatedSize;
-	u32 mask;
+	bool _isDSiEnhanced;
+	NDS_header header;
+	//a copy of the pristine secure area from the rom
+	u8	secureArea[0x4000];
+	RomBanner	banner;
 	const RomBanner& getRomBanner();
+
+	GameInfo() :	fROM(NULL),
+					romdata(NULL),
+					crc(0),
+					chipID(0x00000FC2),
+					romsize(0),
+					cardSize(0),
+					mask(0),
+					lastReadPos(0xFFFFFFFF),
+					romType(ROM_NDS),
+					headerOffset(0),
+					_isDSiEnhanced(false)
+	{
+		memset(&header, 0, sizeof(header));
+		memset(&ROMserial[0], 0, sizeof(ROMserial));
+		memset(&ROMname[0], 0, sizeof(ROMname));
+	}
+
+	~GameInfo() { closeROM(); }
+
+	bool loadROM(std::string fname, u32 type = ROM_NDS);
+	void closeROM();
+	u32 readROM(u32 pos);
+	void populate();
+	bool isDSiEnhanced();
+	bool isHomebrew();
 	bool hasRomBanner();
-	bool isHomebrew;
+	
 };
 
 typedef struct TSCalInfo
@@ -481,17 +440,15 @@ void NDS_suspendProcessingInput(bool suspend);
 
 
 
-int NDS_LoadROM(const char *filename, const char* logicalFilename=0);
+int NDS_LoadROM(const char *filename, const char* physicalFilename=0, const char* logicalFilename=0);
 void NDS_FreeROM(void);
 void NDS_Reset();
-int NDS_ImportSave(const char *filename, u32 force_size = 0);
-u32 NDS_ImportSaveSize(const char *filename);
-bool NDS_ExportSave(const char *filename);
+
+bool NDS_LegitBoot();
+bool NDS_FakeBoot();
 
 void nds_savestate(EMUFILE* os);
 bool nds_loadstate(EMUFILE* is, int size);
-
-int NDS_WriteBMP(const char *filename);
 
 void NDS_Sleep();
 void NDS_TriggerCardEjectIRQ();
@@ -504,20 +461,14 @@ void NDS_debug_break();
 void NDS_debug_continue();
 void NDS_debug_step();
 
-void execHardware_doAllDma(EDMAMode modeNum);
+int NDS_GetCPUCoreCount();
+void NDS_SetupDefaultFirmware();
+
+//void execHardware_doAllDma(EDMAMode modeNum);
 
 template<bool FORCE> void NDS_exec(s32 nb = 560190<<1);
 
 extern int lagframecounter;
-
-static INLINE void NDS_swapScreen(void)
-{
-   u16 tmp = MainScreen.offset;
-   MainScreen.offset = SubScreen.offset;
-   SubScreen.offset = tmp;
-}
-
-int NDS_WriteBMP_32bppBuffer(int width, int height, const void* buf, const char *filename);
 
 extern struct TCommonSettings {
 	TCommonSettings() 
@@ -528,20 +479,22 @@ extern struct TCommonSettings {
 		, GFX3D_LineHack(true)
 		, GFX3D_Zelda_Shadow_Depth_Hack(0)
 		, GFX3D_Renderer_Multisample(false)
-		, jit_max_block_size(10)
+		, GFX3D_TXTHack(false)
+		, jit_max_block_size(100)
+		, loadToMemory(false)
 		, UseExtBIOS(false)
 		, SWIFromBIOS(false)
 		, PatchSWI3(false)
 		, UseExtFirmware(false)
+		, UseExtFirmwareSettings(false)
 		, BootFromFirmware(false)
 		, DebugConsole(false)
 		, EnsataEmulation(false)
 		, cheatsDisable(false)
-		, num_cores(1)
 		, rigorous_timing(false)
 		, advanced_timing(true)
 		, micMode(InternalNoise)
-		, spuInterpolationMode(SPUInterpolation_Linear)
+		, spuInterpolationMode(1)
 		, manualBackupType(0)
 		, autodetectBackupMethod(0)
 		, spu_captureMuted(false)
@@ -549,11 +502,13 @@ extern struct TCommonSettings {
 		, StylusPressure(50)
 		, ConsoleType(NDS_CONSOLE_TYPE_FAT)
 		, StylusJitter(false)
+		, backupSave(false)
+		, SPU_sync_mode(0)
+		, SPU_sync_method(0)
 	{
 		strcpy(ARM9BIOS, "biosnds9.bin");
 		strcpy(ARM7BIOS, "biosnds7.bin");
 		strcpy(Firmware, "firmware.bin");
-		NDS_FillDefaultFirmwareConfigData(&fw_config);
 
 		/* WIFI mode: adhoc = 0, infrastructure = 1 */
 		wifi.mode = 1;
@@ -565,10 +520,16 @@ extern struct TCommonSettings {
 		for(int g=0;g<2;g++)
 			for(int x=0;x<5;x++)
 				dispLayers[g][x]=true;
-
+#ifdef HAVE_JIT
 		//zero 06-sep-2012 - shouldnt be defaulting this to true for now, since the jit is buggy. 
 		//id rather have people discover a bonus speedhack than discover new bugs in a new version
-		CpuMode = 0;
+		use_jit = false;
+#else
+		use_jit = false;
+#endif
+
+		num_cores = NDS_GetCPUCoreCount();
+		NDS_SetupDefaultFirmware();
 	}
 	bool GFX3D_HighResolutionInterpolateColor;
 	bool GFX3D_EdgeMark;
@@ -577,6 +538,10 @@ extern struct TCommonSettings {
 	bool GFX3D_LineHack;
 	int  GFX3D_Zelda_Shadow_Depth_Hack;
 	bool GFX3D_Renderer_Multisample;
+	bool GFX3D_TXTHack;
+
+	bool loadToMemory;
+
 	bool UseExtBIOS;
 	char ARM9BIOS[256];
 	char ARM7BIOS[256];
@@ -584,6 +549,7 @@ extern struct TCommonSettings {
 	bool PatchSWI3;
 
 	bool UseExtFirmware;
+	bool UseExtFirmwareSettings;
 	char Firmware[256];
 	bool BootFromFirmware;
 	NDS_fw_config_data fw_config;
@@ -605,7 +571,7 @@ extern struct TCommonSettings {
 	
 	FAST_ALIGN bool advanced_timing;
 
-	int CpuMode;
+	bool use_jit;
 	u32	jit_max_block_size;
 	
 	struct _Wifi {
@@ -622,7 +588,7 @@ extern struct TCommonSettings {
 	} micMode;
 
 
-	SPUInterpolationMode spuInterpolationMode;
+	int spuInterpolationMode;
 
 	//this is a temporary hack until we straighten out the flushing logic and/or gxfifo
 	//int gfx3d_flushMode;
@@ -630,6 +596,10 @@ extern struct TCommonSettings {
 	int autodetectBackupMethod;
 	//this is the user's choice of manual backup type, for cases when the autodetection can't be trusted
 	int manualBackupType;
+	bool backupSave;
+
+	int SPU_sync_mode;
+	int SPU_sync_method;
 
 	bool spu_muteChannels[16];
 	bool spu_captureMuted;
@@ -656,8 +626,11 @@ extern struct TCommonSettings {
 		bool ShowInputDisplay, ShowGraphicalInputDisplay, FpsDisplay, FrameCounterDisplay, ShowLagFrameCounter, ShowMicrophone, ShowRTC;
 	} hud;
 
+	std::string run_advanscene_import;
+
 } CommonSettings;
 
+void NDS_RunAdvansceneAutoImport();
 
 extern std::string InputDisplayString;
 extern int LagFrameFlag;
@@ -669,10 +642,8 @@ void ClearAutoHold(void);
 
 bool ValidateSlot2Access(u32 procnum, u32 demandSRAMSpeed, u32 demand1stROMSpeed, u32 demand2ndROMSpeed, int clockbits);
 
-extern ADVANsCEne	advsc;
-
-extern u64 sequencerNext;
-#define SEQUENCER_NEXT(X) if(X <= sequencerNext) sequencerNext = X
+//MUSTANG
+//extern ADVANsCEne	advsc;
 
 #endif
 

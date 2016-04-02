@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2006-2009 DeSmuME team
+	Copyright (C) 2006-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 */
 
 #include "readwrite.h"
-#include "types.h"
+#include "emufile.h"
 
 //well. just for the sake of consistency
 int write8le(u8 b, EMUFILE*os)
@@ -76,14 +76,12 @@ int write64le(u64 b, EMUFILE* os)
 
 int read32le(u32 *Bufo, EMUFILE *fp)
 {
-	u32 buf;
+	u32 buf = 0;
 	if(fp->_fread(&buf,4)<4)
 		return 0;
-#ifdef LOCAL_LE
-	*(u32*)Bufo=buf;
-#else
-	*(u32*)Bufo=((buf&0xFF)<<24)|((buf&0xFF00)<<8)|((buf&0xFF0000)>>8)|((buf&0xFF000000)>>24);
-#endif
+	
+	*Bufo = LE_TO_LOCAL_32(buf);
+	
 	return 1;
 }
 
@@ -92,11 +90,9 @@ int read16le(u16 *Bufo, EMUFILE *is)
 	u16 buf;
 	if(is->_fread((char*)&buf,2) != 2)
 		return 0;
-#ifdef LOCAL_LE
-	*Bufo=buf;
-#else
+
 	*Bufo = LE_TO_LOCAL_16(buf);
-#endif
+	
 	return 1;
 }
 
@@ -105,11 +101,9 @@ int read64le(u64 *Bufo, EMUFILE *is)
 	u64 buf;
 	if(is->_fread((char*)&buf,8) != 8)
 		return 0;
-#ifdef LOCAL_LE
-	*Bufo=buf;
-#else
+
 	*Bufo = LE_TO_LOCAL_64(buf);
-#endif
+	
 	return 1;
 }
 
@@ -118,11 +112,9 @@ static int read32le(u32 *Bufo, std::istream *is)
 	u32 buf;
 	if(is->read((char*)&buf,4).gcount() != 4)
 		return 0;
-#ifdef LOCAL_LE
-	*(u32*)Bufo=buf;
-#else
-	*(u32*)Bufo=((buf&0xFF)<<24)|((buf&0xFF00)<<8)|((buf&0xFF0000)>>8)|((buf&0xFF000000)>>24);
-#endif
+
+	*Bufo = LE_TO_LOCAL_32(buf);
+	
 	return 1;
 }
 

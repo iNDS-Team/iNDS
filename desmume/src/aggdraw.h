@@ -411,13 +411,13 @@ public:
 			lineColor(255-lineColorOld.r,255-lineColorOld.g,255-lineColorOld.b);
 		else
 			lineColor(0,0,0);
-		/*renderText(dstX-1,dstY-1,str);
+		renderText(dstX-1,dstY-1,str);
 		renderText(dstX,dstY-1,str);
 		renderText(dstX+1,dstY-1,str);
 		renderText(dstX-1,dstY,str);
 		renderText(dstX+1,dstY,str);
 		renderText(dstX-1,dstY+1,str);
-		renderText(dstX,dstY+1,str);*/
+		renderText(dstX,dstY+1,str);
 		renderText(dstX+1,dstY+1,str);
 		lineColor(lineColorOld);
 		renderText(dstX,dstY,str);

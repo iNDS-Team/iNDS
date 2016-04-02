@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2008-2012 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,9 +22,14 @@
 #include <iosfwd>
 #include <ostream>
 #include <istream>
-#include "types.h"
-#include "emufile.h"
 
+#include "types.h"
+
+class EMUFILE;
+
+// Pixel dimensions of the NDS 3D framebuffer
+#define GFX3D_FRAMEBUFFER_WIDTH		256
+#define GFX3D_FRAMEBUFFER_HEIGHT	192
 
 //geometry engine command numbers
 #define GFX3D_NOP 0x00
@@ -66,13 +71,6 @@
 #define GFX3D_POS_TEST 0x71
 #define GFX3D_VEC_TEST 0x72
 #define GFX3D_NOP_NOARG_HACK 0xDD
-		
-//produce a 32bpp color from a DS RGB16
-#ifdef WORDS_BIGENDIAN
-	#define RGB16TO32(col,alpha) ( (alpha) | ((((col) & 0x7C00)>>7)<<8) | ((((col) & 0x03E0)>>2)<<16) | ((((col) & 0x001F)<<3)<<24) )
-#else
-	#define RGB16TO32(col,alpha) ( ((alpha)<<24) | ((((col) & 0x7C00)>>7)<<16) | ((((col) & 0x03E0)>>2)<<8) | (((col) & 0x001F)<<3) )
-#endif
 
 //produce a 32bpp color from a ds RGB15, using a table
 #define RGB15TO32_NOALPHA(col) ( color_15bit_to_24bit[col&0x7FFF] )
@@ -112,13 +110,6 @@ inline u32 RGB15TO6665(u16 col, u8 alpha5)
 
 //produce a 16bpp color from a ds RGB15, using a table
 #define RGB15TO16_REVERSE(col) ( color_15bit_to_16bit_reverse[(col)&0x7FFF] )
-
-//produce a 32bpp color from a ds RGB15 plus an 8bit alpha, not using a table (but using other tables)
-#ifdef WORDS_BIGENDIAN
-	#define RGB15TO32_DIRECT(col,alpha8) ( (alpha8) | (material_5bit_to_8bit[((col)>>10)&0x1F] << 8) | (material_5bit_to_8bit[((col)>>5)&0x1F]<<16) | (material_5bit_to_8bit[(col)&0x1F]<<24) )
-#else
-	#define RGB15TO32_DIRECT(col,alpha8) ( ((alpha8)<<24) | (material_5bit_to_8bit[((col)>>10)&0x1F]<<16) | (material_5bit_to_8bit[((col)>>5)&0x1F]<<8) | material_5bit_to_8bit[(col)&0x1F] )
-#endif
 
 //produce a 15bpp color from individual 5bit components
 #define R5G5B5TORGB15(r,g,b) ( (r) | ((g)<<5) | ((b)<<10) )
@@ -227,9 +218,6 @@ enum
 
 void gfx3d_init();
 void gfx3d_reset();
-
-#define OSWRITE(x) os->fwrite((char*)&(x),sizeof((x)));
-#define OSREAD(x) is->fread((char*)&(x),sizeof((x)));
 
 typedef struct
 {
@@ -492,26 +480,9 @@ struct POLY {
 		
 		return false;
 	}
-
-	void save(EMUFILE* os)
-	{
-		OSWRITE(type); 
-		OSWRITE(vertIndexes[0]); OSWRITE(vertIndexes[1]); OSWRITE(vertIndexes[2]); OSWRITE(vertIndexes[3]);
-		OSWRITE(polyAttr); OSWRITE(texParam); OSWRITE(texPalette);
-		OSWRITE(viewport);
-		OSWRITE(miny);
-		OSWRITE(maxy);
-	}
-
-	void load(EMUFILE* is)
-	{
-		OSREAD(type); 
-		OSREAD(vertIndexes[0]); OSREAD(vertIndexes[1]); OSREAD(vertIndexes[2]); OSREAD(vertIndexes[3]);
-		OSREAD(polyAttr); OSREAD(texParam); OSREAD(texPalette);
-		OSREAD(viewport);
-		OSREAD(miny);
-		OSREAD(maxy);
-	}
+	
+	void save(EMUFILE* os);
+	void load(EMUFILE* is);
 };
 
 #define POLYLIST_SIZE 100000
@@ -520,19 +491,43 @@ struct POLYLIST {
 	int count;
 };
 
-struct VERT {
+//just a vert with a 4 float position
+struct VERT_POS4f
+{
 	union {
 		float coord[4];
 		struct {
 			float x,y,z,w;
 		};
+		struct {
+			float x,y,z,w;
+		} position;
 	};
+	void set_coord(float x, float y, float z, float w)
+	{ 
+		this->x = x; 
+		this->y = y; 
+		this->z = z; 
+		this->w = w; 
+	}
+};
+
+//dont use SSE optimized matrix instructions in here, things might not be aligned
+//we havent padded this because the sheer bulk of data leaves things running faster without the extra bloat
+struct VERT {
+	// Align to 16 for SSE instructions to work
+	union {
+		float coord[4];
+		struct {
+			float x,y,z,w;
+		};
+	} CACHE_ALIGN;
 	union {
 		float texcoord[2];
 		struct {
 			float u,v;
 		};
-	};
+	} CACHE_ALIGN;
 	void set_coord(float x, float y, float z, float w) { 
 		this->x = x; 
 		this->y = y; 
@@ -545,27 +540,17 @@ struct VERT {
 		z = coords[2];
 		w = coords[3];
 	}
-	u8 color[3];
 	float fcolor[3];
+	u8 color[3];
+
+
 	void color_to_float() {
 		fcolor[0] = color[0];
 		fcolor[1] = color[1];
 		fcolor[2] = color[2];
 	}
-	void save(EMUFILE* os)
-	{
-		OSWRITE(x); OSWRITE(y); OSWRITE(z); OSWRITE(w);
-		OSWRITE(u); OSWRITE(v);
-		OSWRITE(color[0]); OSWRITE(color[1]); OSWRITE(color[2]);
-		OSWRITE(fcolor[0]); OSWRITE(fcolor[1]); OSWRITE(fcolor[2]);
-	}
-	void load(EMUFILE* is)
-	{
-		OSREAD(x); OSREAD(y); OSREAD(z); OSREAD(w);
-		OSREAD(u); OSREAD(v);
-		OSREAD(color[0]); OSREAD(color[1]); OSREAD(color[2]);
-		OSREAD(fcolor[0]); OSREAD(fcolor[1]); OSREAD(fcolor[2]);
-	}
+	void save(EMUFILE* os);
+	void load(EMUFILE* is);
 };
 
 #define VERTLIST_SIZE 400000
@@ -672,11 +657,7 @@ struct GFX3D_State
 
 	bool invalidateToon;
 	u16 u16ToonTable[32];
-#ifdef GFX3D_USE_FLOAT
-	float shininessTable[128];
-#else
 	u8 shininessTable[128];
-#endif
 };
 
 struct Viewer3d_State
@@ -732,8 +713,8 @@ extern CACHE_ALIGN const u8 material_3bit_to_8bit[8];
 
 //these contain the 3d framebuffer converted into the most useful format
 //they are stored here instead of in the renderers in order to consolidate the buffers
-extern CACHE_ALIGN u8 gfx3d_convertedScreen[256*192*4];
-extern CACHE_ALIGN u8 gfx3d_convertedAlpha[256*192*2]; //see cpp for explanation of illogical *2
+extern CACHE_ALIGN u8 gfx3d_convertedScreen[GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT*4];
+extern CACHE_ALIGN u8 gfx3d_convertedAlpha[GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT*2]; //see cpp for explanation of illogical *2
 
 extern BOOL isSwapBuffers;
 

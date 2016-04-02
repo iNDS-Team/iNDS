@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2010 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -20,34 +20,15 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#include <string>
 #include <stdio.h>
 #include <string.h>
+#include <string>
 #include "types.h"
 
-
 #if defined(WIN32)
-
-	#include <winsock2.h>
-	#include <windows.h>
-
 	#define CLASSNAME "DeSmuME"
-
-	extern HINSTANCE hAppInst;
-
-	extern bool romloaded;
-
-	extern char IniName[MAX_PATH];
-	extern void GetINIPath();
-	extern void WritePrivateProfileInt(char* appname, char* keyname, int val, char* file);
-
-	bool GetPrivateProfileBool(const char* appname, const char* keyname, bool defval, const char* filename);
-	void WritePrivateProfileBool(char* appname, char* keyname, bool val, char* file);
-
 #else		// non Windows
-
-#define sscanf_s sscanf
-
+	#define sscanf_s sscanf
 #endif
 
 template<typename T>
@@ -104,5 +85,10 @@ struct MAKER
 };
 
 std::string getDeveloperNameByID(u16 id);
+
+
+extern int NDS_WritePNG(const char *fname, u8 *data);
+extern int NDS_WriteBMP(const char *filename, u8 *data);
+extern int NDS_WriteBMP_32bppBuffer(int width, int height, const void* buf, const char *filename);
 
 #endif

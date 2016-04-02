@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2008-2012 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 	
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,14 +16,31 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//this file contains HLE for the arm9 and arm7 bios SWI routines.
+//it renders the use of bios files generally unnecessary.
+//it turns out that they're not too complex, although of course the timings will be all wrong here.
+
+#include "armcpu.h"
 #include "cp15.h"
 #include <math.h>
 #include "MMU.h"
 #include "debug.h"
+#include "registers.h"
 #include "NDSSystem.h"
 
 #define cpu (&ARMPROC)
-#define TEMPLATE template<int PROCNUM> 
+#define TEMPLATE template<int PROCNUM>
+
+struct CompressionHeader
+{
+public:
+	CompressionHeader(u32 _value) : value(_value) {}
+	u32 DataSize() const { return value&15; } 
+	u32 Type() const { return (value>>4)&15; }
+	u32 DecompressedSize() const { return value>>8; }
+private:
+	u32 value;
+};
 
 static const u16 getsinetbl[] = {
 0x0000, 0x0324, 0x0648, 0x096A, 0x0C8C, 0x0FAB, 0x12C8, 0x15E2, 
@@ -279,7 +296,16 @@ TEMPLATE static u32 waitVBlankARM()
 
 TEMPLATE static u32 sleep()
 {
-	_MMU_write08<PROCNUM>(0x04000301, 0xC0);
+	//just set REG_HALTCNT to the fixed Sleep value
+	_MMU_write08<PROCNUM>(REG_HALTCNT, 0xC0);
+	return 1;
+}
+
+//ARM7 only
+TEMPLATE static u32 CustomHalt()
+{
+	//just set REG_HALTCNT to the provided value
+	_MMU_write08<PROCNUM>(REG_HALTCNT, cpu->R[2]);
 	return 1;
 }
 
@@ -628,6 +654,10 @@ TEMPLATE static u32 RLUnCompVram()
 
 TEMPLATE static u32 RLUnCompWram()
 {
+	//this routine is used by yoshi touch&go from the very beginning
+
+	//printf("RLUnCompWram\n");
+
   int i;
   int len;
   u32 source = cpu->R[0];
@@ -671,6 +701,8 @@ TEMPLATE static u32 RLUnCompWram()
 
 TEMPLATE static u32 UnCompHuffman()
 {
+	//this routine is used by the nintendo logo in the firmware boot screen
+
   u32 source, dest, writeValue, header, treeStart, mask;
   u32 data;
   u8 treeSize, currentNode, rootNode;
@@ -680,7 +712,7 @@ TEMPLATE static u32 UnCompHuffman()
   source = cpu->R[0];
   dest = cpu->R[1];
 
-  header = _MMU_read08<PROCNUM>(source);
+  header = _MMU_read32<PROCNUM>(source);
   source += 4;
 
   //INFO("swi uncomphuffman\n");
@@ -698,7 +730,7 @@ TEMPLATE static u32 UnCompHuffman()
   len = header >> 8;
 
   mask = 0x80000000;
-  data = _MMU_read08<PROCNUM>(source);
+  data = _MMU_read32<PROCNUM>(source);
   source += 4;
 
   pos = 0;
@@ -741,7 +773,7 @@ TEMPLATE static u32 UnCompHuffman()
         if(byteCount == 4) {
           byteCount = 0;
           byteShift = 0;
-          _MMU_write08<PROCNUM>(dest, writeValue);
+          _MMU_write32<PROCNUM>(dest, writeValue);
           writeValue = 0;
           dest += 4;
           len -= 4;
@@ -750,7 +782,7 @@ TEMPLATE static u32 UnCompHuffman()
       mask >>= 1;
       if(mask == 0) {
         mask = 0x80000000;
-        data = _MMU_read08<PROCNUM>(source);
+        data = _MMU_read32<PROCNUM>(source);
         source += 4;
       }
     }
@@ -794,7 +826,7 @@ TEMPLATE static u32 UnCompHuffman()
           if(byteCount == 4) {
             byteCount = 0;
             byteShift = 0;
-            _MMU_write08<PROCNUM>(dest, writeValue);
+            _MMU_write32<PROCNUM>(dest, writeValue);
             dest += 4;
             writeValue = 0;
             len -= 4;
@@ -807,157 +839,151 @@ TEMPLATE static u32 UnCompHuffman()
       mask >>= 1;
       if(mask == 0) {
         mask = 0x80000000;
-        data = _MMU_read08<PROCNUM>(source);
+        data = _MMU_read32<PROCNUM>(source);
         source += 4;
       }
     }    
   }
   return 1;
 }
-
 TEMPLATE static u32 BitUnPack()
 {
-  u32 source,dest,header,base,d,temp;
-  int len,bits,revbits,dataSize,data,bitwritecount,mask,bitcount,addBase;
-  u8 b;
+	u32 source,dest,header,base,temp;
+	int len,bits,revbits,dataSize,data,bitwritecount,mask,bitcount,addBase;
+	u8 b;
 
-  source = cpu->R[0];
-  dest = cpu->R[1];
-  header = cpu->R[2];
+	source = cpu->R[0];
+	dest = cpu->R[1];
+	header = cpu->R[2];
 
-  len = _MMU_read16<PROCNUM>(header);
-  bits = _MMU_read08<PROCNUM>(header+2);
-  switch (bits)
-  {
+	len = _MMU_read16<PROCNUM>(header);
+	bits = _MMU_read08<PROCNUM>(header+2);
+	switch (bits)
+	{
 	case 1:
 	case 2:
 	case 4:
 	case 8:
-	  break;
-	default: return (0);	// error
-  }
-  dataSize = _MMU_read08<PROCNUM>(header+3);
-  switch (dataSize)
-  {
+		break;
+	default: 
+		return (0);	// error
+	}
+	dataSize = _MMU_read08<PROCNUM>(header+3);
+	switch (dataSize)
+	{
 	case 1:
 	case 2:
 	case 4:
 	case 8:
 	case 16:
 	case 32:
-	  break;
-	default: return (0);	// error
-  }
+		break;
+	default: 
+		return (0);	// error
+	}
 
-  revbits = 8 - bits; 
-  // u32 value = 0;
-  base = _MMU_read08<PROCNUM>(header+4);
-  addBase = (base & 0x80000000) ? 1 : 0;
-  base &= 0x7fffffff;
-  
-  //INFO("SWI10: bitunpack src 0x%08X dst 0x%08X hdr 0x%08X (src len %05i src bits %02i dst bits %02i)\n\n", source, dest, header, len, bits, dataSize);
+	revbits = 8 - bits; 
+	base = _MMU_read32<PROCNUM>(header+4);
+	addBase = (base & 0x80000000) ? 1 : 0;
+	base &= 0x7fffffff;
 
-  data = 0; 
-  bitwritecount = 0; 
-  while(1) {
-    len -= 1;
-    if(len < 0)
-      break;
-    mask = 0xff >> revbits; 
-    b = _MMU_read08<PROCNUM>(source); 
-    source++;
-    bitcount = 0;
-    while(1) {
-      if(bitcount >= 8)
-        break;
-      d = b & mask;
-      temp = d >> bitcount;
-      if(!temp && addBase) {
-        temp += base;
-      }
-      data |= temp << bitwritecount;
-      bitwritecount += dataSize;
-      if(bitwritecount >= 32) {
-        _MMU_write08<PROCNUM>(dest, data);
-        dest += 4;
-        data = 0;
-        bitwritecount = 0;
-      }
-      mask <<= bits;
-      bitcount += bits;
-    }
-  }
-  return 1;
+	//INFO("SWI10: bitunpack src 0x%08X dst 0x%08X hdr 0x%08X (src len %05i src bits %02i dst bits %02i)\n\n", source, dest, header, len, bits, dataSize);
+
+	data = 0; 
+	bitwritecount = 0; 
+	while(1) {
+		len -= 1;
+		if(len < 0)
+			break;
+		mask = 0xff >> revbits; 
+		b = _MMU_read08<PROCNUM>(source); 
+		source++;
+		bitcount = 0;
+		while(1) {
+			if(bitcount >= 8)
+				break;
+			temp = b & mask;
+			if(temp)
+				temp += base;
+			else if(addBase)
+				temp += base;
+
+			//you might think you should do this. but you would be wrong!
+			//this is meant for palette adjusting things, i.e. 16col data to 256col data in colors 240..255. In that case theres no modulo normally.
+			//Users expecting modulo have done something wrong anyway.
+			//temp &= (1<<bits)-1;
+
+			data |= temp << bitwritecount;
+			bitwritecount += dataSize;
+			if(bitwritecount >= 32) {
+				_MMU_write32<PROCNUM>(dest, data);
+				dest += 4;
+				data = 0;
+				bitwritecount = 0;
+			}
+			bitcount += bits;
+			b >>= bits;
+		}
+	}
+	return 1;
 }
 
-TEMPLATE static u32 Diff8bitUnFilterWram()
+TEMPLATE static u32 Diff8bitUnFilterWram() //this one might be different on arm7 and needs checking
 {
-  u32 source,dest,header;
-  u8 data,diff;
-  int len;
+	//INFO("swi Diff8bitUnFilterWram\n");
 
-  source = cpu->R[0];
-  dest = cpu->R[1];
+	u32 source = cpu->R[0];
+	u32 dest = cpu->R[1];
 
-  header = _MMU_read08<PROCNUM>(source);
-  source += 4;
+	CompressionHeader header(_MMU_read32<PROCNUM>(source));
+	source += 4;
 
-  //INFO("swi diff8bitunfilterwram\n");
+	if(header.DataSize() != 1) printf("WARNING: incorrect header passed to Diff8bitUnFilterWram\n");
+	if(header.Type() != 8) printf("WARNING: incorrect header passed to Diff8bitUnFilterWram\n");
+	u32 len = header.DecompressedSize();
 
-  if(((source & 0xe000000) == 0) ||
-     (( (source + ((header >> 8) & 0x1fffff)) & 0xe000000) == 0))
-    return 0;  
+	u8 data = _MMU_read08<PROCNUM>(source++);
+	_MMU_write08<PROCNUM>(dest++, data);
+	len--;
 
-  len = header >> 8;
-
-  data = _MMU_read08<PROCNUM>(source++);
-  _MMU_write08<PROCNUM>(dest++, data);
-  len--;
-  
-  while(len > 0) {
-    diff = _MMU_read08<PROCNUM>(source++);
-    data += diff;
-    _MMU_write08<PROCNUM>(dest++, data);
-    len--;
-  }
-  return 1;
+	while(len > 0) {
+		u8 diff = _MMU_read08<PROCNUM>(source++);
+		data += diff;
+		_MMU_write08<PROCNUM>(dest++, data);
+		len--;
+	}
+	return 1;
 }
 
 TEMPLATE static u32 Diff16bitUnFilter()
 {
-  u32 source,dest,header;
-  u16 data;
-  int len;
+	//INFO("swi Diff16bitUnFilter\n");
 
-  source = cpu->R[0];
-  dest = cpu->R[1];
+	u32 source = cpu->R[0];
+	u32 dest = cpu->R[1];
 
-  //INFO("swi diff16bitunfilter\n");
+	CompressionHeader header(_MMU_read32<PROCNUM>(source));
+	source += 4;
 
-  header = _MMU_read08<PROCNUM>(source);
-  source += 4;
+	if(header.DataSize() != 2) printf("WARNING: incorrect header passed to Diff16bitUnFilter\n");
+	if(header.Type() != 8) printf("WARNING: incorrect header passed to Diff16bitUnFilter\n");
+	u32 len = header.DecompressedSize();
 
-  if(((source & 0xe000000) == 0) ||
-     ((source + ((header >> 8) & 0x1fffff)) & 0xe000000) == 0)
-    return 0;  
-  
-  len = header >> 8;
+	u16 data = _MMU_read16<PROCNUM>(source);
+	source += 2;
+	_MMU_write16<PROCNUM>(dest, data);
+	dest += 2;
+	len -= 2;
 
-  data = _MMU_read16<PROCNUM>(source);
-  source += 2;
-  _MMU_write16<PROCNUM>(dest, data);
-  dest += 2;
-  len -= 2;
-  
-  while(len >= 2) {
-    u16 diff = _MMU_read16<PROCNUM>(source);
-    source += 2;
-    data += diff;
-    _MMU_write16<PROCNUM>(dest, data);
-    dest += 2;
-    len -= 2;
-  }
-  return 1;
+	while(len >= 2) {
+		u16 diff = _MMU_read16<PROCNUM>(source);
+		source += 2;
+		data += diff;
+		_MMU_write16<PROCNUM>(dest, data);
+		dest += 2;
+		len -= 2;
+	}
+	return 1;
 }
 
 TEMPLATE static u32 bios_sqrt()
@@ -966,12 +992,15 @@ TEMPLATE static u32 bios_sqrt()
      return 1;
 }
 
-TEMPLATE static u32 setHaltCR()
+//ARM9 only
+TEMPLATE static u32 CustomPost()
 { 
-     _MMU_write08<PROCNUM>(0x4000300+cpu->proc_ID, cpu->R[0]);
-     return 1;
+	//just write provided value to REG_POSTFLG
+	_MMU_write08<PROCNUM>(REG_POSTFLG, cpu->R[0]);
+	return 1;
 }
 
+//ARM7 only
 TEMPLATE static u32 getSineTab()
 {
 	//ds returns garbage according to gbatek, but we must protect ourselves
@@ -986,6 +1015,7 @@ TEMPLATE static u32 getSineTab()
 	return 1;
 }
 
+//ARM7 only
 TEMPLATE static u32 getPitchTab()
 { 
 	//ds returns garbage according to gbatek, but we must protect ourselves
@@ -999,6 +1029,7 @@ TEMPLATE static u32 getPitchTab()
 	return 1;
 }
 
+//ARM7 only
 TEMPLATE static u32 getVolumeTab()
 { 
 	//ds returns garbage according to gbatek, but we must protect ourselves
@@ -1007,47 +1038,46 @@ TEMPLATE static u32 getVolumeTab()
 		printf("Invalid SWI getVolumeTab: %08X\n",cpu->R[0]);
 		return 1;
 	}
-
-
-    cpu->R[0] = getvoltbl[cpu->R[0]];
-    return 1;
+	cpu->R[0] = getvoltbl[cpu->R[0]];
+	return 1;
 }
 
 
-//TEMPLATE static u32 getCRC16_old(u32 crc, u32 datap, u32 size)
-//{
-//  unsigned int i,j;
-//   
-//  const u16 val[] = { 0xC0C1,0xC181,0xC301,0xC601,0xCC01,0xD801,0xF001,0xA001 };
-//  for(i = 0; i < size; i++)
-//  {
-//    crc = crc ^ _MMU_read08<PROCNUM>(datap + i);
-//
-//    for(j = 0; j < 8; j++) {
-//      int do_bit = 0;
-//
-//      if ( crc & 0x1)
-//        do_bit = 1;
-//
-//      crc = crc >> 1;
-//
-//      if ( do_bit) {
-//        crc = crc ^ (val[j] << (7-j));
-//      }
-//    }
-//  }
-//  return crc;
-//}
+TEMPLATE static u32 getCRC16_old_and_broken(u32 crc, u32 datap, u32 size)
+{
+  unsigned int i,j;
+   
+  const u16 val[] = { 0xC0C1,0xC181,0xC301,0xC601,0xCC01,0xD801,0xF001,0xA001 };
+  for(i = 0; i < size; i++)
+  {
+    crc = crc ^ _MMU_read08<PROCNUM>(datap + i);
+
+    for(j = 0; j < 8; j++) {
+      int do_bit = 0;
+
+      if ( crc & 0x1)
+        do_bit = 1;
+
+      crc = crc >> 1;
+
+      if ( do_bit) {
+        crc = crc ^ (val[j] << (7-j));
+      }
+    }
+  }
+  return crc;
+}
 
 TEMPLATE static u32 getCRC16()
 {
-	//gbatek is wrong.
-
 	//dawn of sorrow uses this to checksum its save data;
 	//if this implementation is wrong, then it won't match what the real bios returns, 
-	//and savefiles created with a bios will be invalid when loaded with non-bios (and vice-versa)
-
-	//u32 old = getCRC16_old<PROCNUM>(cpu->R[0],cpu->R[1],cpu->R[2]);
+	//and savefiles created with a bios will be invalid when loaded with non-bios (and vice-versa).
+	//Once upon a time, desmume was doing this wrongly; this was due to its mis-use of high bits of the input CRC.
+	//Additionally, that implementation was not handling odd sizes and addresses correctly (but this was discovered independently)
+	//We have confirmed that the crc16 works the same on the arm9 and arm7.
+	//The following call is left here so we can A/B test with the old version. Glad I left it, because we keep coming back to this code.
+	//u32 old = getCRC16_old_and_broken<PROCNUM>(cpu->R[0],cpu->R[1],cpu->R[2]);
 
 	u16 crc = (u16)cpu->R[0];
 	u32 datap = cpu->R[1];
@@ -1073,8 +1103,11 @@ TEMPLATE static u32 getCRC16()
 	}
 
 	cpu->R[0] = crc;
-	// R3 contains the last processed halfword 
+
+	//R3 contains the last processed halfword 
+	//this is significant -- why? Can we get a test case? Supposedly there is one..
 	cpu->R[3] = currVal;
+
 	return 1;
 }
 
@@ -1088,16 +1121,18 @@ TEMPLATE static u32 isDebugger()
 	return 1;
 }
 
+//ARM7 only
 TEMPLATE static u32 SoundBias()
 {
-     u32 curBias = _MMU_read32<ARMCPU_ARM7>(0x04000504);
-	 u32 newBias = (curBias == 0) ? 0x000:0x200;
-	 u32 delay = (newBias > curBias) ? (newBias-curBias) : (curBias-newBias);
+	u32 curBias = _MMU_read32<ARMCPU_ARM7>(0x04000504);
+	u32 newBias = (curBias == 0) ? 0x000:0x200;
+	u32 delay = (newBias > curBias) ? (newBias-curBias) : (curBias-newBias);
 
-	 _MMU_write32<ARMCPU_ARM7>(0x04000504, newBias);
-     return cpu->R[1] * delay;
+	_MMU_write32<ARMCPU_ARM7>(0x04000504, newBias);
+	return cpu->R[1] * delay;
 }
 
+//ARM7 only
 TEMPLATE static u32 getBootProcs()
 {
 	cpu->R[0] = 0x00000A2E;
@@ -1106,73 +1141,153 @@ TEMPLATE static u32 getBootProcs()
 	return 1;
 }
 
+TEMPLATE static u32 SoftReset()
+{
+	//not emulated yet
+	return 1;
+}
+
+
 u32 (* ARM_swi_tab[2][32])()={
 	{
-         bios_nop<ARMCPU_ARM9>,             // 0x00
-         bios_nop<ARMCPU_ARM9>,             // 0x01
-         bios_nop<ARMCPU_ARM9>,             // 0x02
-         WaitByLoop<ARMCPU_ARM9>,           // 0x03
-         intrWaitARM<ARMCPU_ARM9>,          // 0x04
-         waitVBlankARM<ARMCPU_ARM9>,        // 0x05
-         wait4IRQ<ARMCPU_ARM9>,             // 0x06
-         bios_nop<ARMCPU_ARM9>,             // 0x07
-         bios_nop<ARMCPU_ARM9>,             // 0x08
-         divide<ARMCPU_ARM9>,               // 0x09
-         bios_nop<ARMCPU_ARM9>,             // 0x0A
-         copy<ARMCPU_ARM9>,                 // 0x0B
-         fastCopy<ARMCPU_ARM9>,             // 0x0C
-         bios_sqrt<ARMCPU_ARM9>,            // 0x0D
-         getCRC16<ARMCPU_ARM9>,             // 0x0E
-         isDebugger<ARMCPU_ARM9>,           // 0x0F
-         BitUnPack<ARMCPU_ARM9>,            // 0x10
-         LZ77UnCompWram<ARMCPU_ARM9>,       // 0x11
-         LZ77UnCompVram<ARMCPU_ARM9>,       // 0x12
-         UnCompHuffman<ARMCPU_ARM9>,        // 0x13
-         RLUnCompWram<ARMCPU_ARM9>,         // 0x14
-         RLUnCompVram<ARMCPU_ARM9>,         // 0x15
-         Diff8bitUnFilterWram<ARMCPU_ARM9>, // 0x16
-         bios_nop<ARMCPU_ARM9>,             // 0x17
-         Diff16bitUnFilter<ARMCPU_ARM9>,    // 0x18
-         bios_nop<ARMCPU_ARM9>,             // 0x19
-         bios_nop<ARMCPU_ARM9>,             // 0x1A
-         bios_nop<ARMCPU_ARM9>,             // 0x1B
-         bios_nop<ARMCPU_ARM9>,             // 0x1C
-         bios_nop<ARMCPU_ARM9>,             // 0x1D
-         bios_nop<ARMCPU_ARM9>,             // 0x1E
-         setHaltCR<ARMCPU_ARM9>,            // 0x1F
+		SoftReset<ARMCPU_ARM9>,            // 0x00
+		bios_nop<ARMCPU_ARM9>,             // 0x01
+		bios_nop<ARMCPU_ARM9>,             // 0x02
+		WaitByLoop<ARMCPU_ARM9>,           // 0x03
+		intrWaitARM<ARMCPU_ARM9>,          // 0x04
+		waitVBlankARM<ARMCPU_ARM9>,        // 0x05
+		wait4IRQ<ARMCPU_ARM9>,             // 0x06
+		bios_nop<ARMCPU_ARM9>,             // 0x07
+		bios_nop<ARMCPU_ARM9>,             // 0x08
+		divide<ARMCPU_ARM9>,               // 0x09
+		bios_nop<ARMCPU_ARM9>,             // 0x0A
+		copy<ARMCPU_ARM9>,                 // 0x0B
+		fastCopy<ARMCPU_ARM9>,             // 0x0C
+		bios_sqrt<ARMCPU_ARM9>,            // 0x0D
+		getCRC16<ARMCPU_ARM9>,             // 0x0E
+		isDebugger<ARMCPU_ARM9>,           // 0x0F
+		BitUnPack<ARMCPU_ARM9>,            // 0x10
+		LZ77UnCompWram<ARMCPU_ARM9>,       // 0x11
+		LZ77UnCompVram<ARMCPU_ARM9>,       // 0x12
+		UnCompHuffman<ARMCPU_ARM9>,        // 0x13
+		RLUnCompWram<ARMCPU_ARM9>,         // 0x14
+		RLUnCompVram<ARMCPU_ARM9>,         // 0x15
+		Diff8bitUnFilterWram<ARMCPU_ARM9>, // 0x16
+		bios_nop<ARMCPU_ARM9>,             // 0x17
+		Diff16bitUnFilter<ARMCPU_ARM9>,    // 0x18
+		bios_nop<ARMCPU_ARM9>,             // 0x19
+		bios_nop<ARMCPU_ARM9>,             // 0x1A
+		bios_nop<ARMCPU_ARM9>,             // 0x1B
+		bios_nop<ARMCPU_ARM9>,             // 0x1C
+		bios_nop<ARMCPU_ARM9>,             // 0x1D
+		bios_nop<ARMCPU_ARM9>,             // 0x1E
+		CustomPost<ARMCPU_ARM9>,            // 0x1F
 	},
 	{
-         bios_nop<ARMCPU_ARM7>,             // 0x00
-         bios_nop<ARMCPU_ARM7>,             // 0x01
-         bios_nop<ARMCPU_ARM7>,             // 0x02
-         WaitByLoop<ARMCPU_ARM7>,           // 0x03
-         intrWaitARM<ARMCPU_ARM7>,          // 0x04
-         waitVBlankARM<ARMCPU_ARM7>,        // 0x05
-         wait4IRQ<ARMCPU_ARM7>,             // 0x06
-         sleep<ARMCPU_ARM7>,                // 0x07
-         SoundBias<ARMCPU_ARM7>,            // 0x08
-         divide<ARMCPU_ARM7>,               // 0x09
-         bios_nop<ARMCPU_ARM7>,             // 0x0A
-         copy<ARMCPU_ARM7>,                 // 0x0B
-         fastCopy<ARMCPU_ARM7>,             // 0x0C
-         bios_sqrt<ARMCPU_ARM7>,            // 0x0D
-         getCRC16<ARMCPU_ARM7>,             // 0x0E
-		 isDebugger<ARMCPU_ARM7>,           // 0x0F
-         BitUnPack<ARMCPU_ARM7>,            // 0x10
-         LZ77UnCompWram<ARMCPU_ARM7>,       // 0x11
-         LZ77UnCompVram<ARMCPU_ARM7>,       // 0x12
-         UnCompHuffman<ARMCPU_ARM7>,        // 0x13
-         RLUnCompWram<ARMCPU_ARM7>,         // 0x14
-         RLUnCompVram<ARMCPU_ARM7>,         // 0x15
-         Diff8bitUnFilterWram<ARMCPU_ARM7>, // 0x16
-         bios_nop<ARMCPU_ARM7>,             // 0x17
-         bios_nop<ARMCPU_ARM7>,             // 0x18
-         bios_nop<ARMCPU_ARM7>,             // 0x19
-         getSineTab<ARMCPU_ARM7>,           // 0x1A
-         getPitchTab<ARMCPU_ARM7>,          // 0x1B
-         getVolumeTab<ARMCPU_ARM7>,         // 0x1C
-         getBootProcs<ARMCPU_ARM7>,         // 0x1D
-         bios_nop<ARMCPU_ARM7>,             // 0x1E
-         setHaltCR<ARMCPU_ARM7>,            // 0x1F
+		SoftReset<ARMCPU_ARM7>,            // 0x00
+		bios_nop<ARMCPU_ARM7>,             // 0x01
+		bios_nop<ARMCPU_ARM7>,             // 0x02
+		WaitByLoop<ARMCPU_ARM7>,           // 0x03
+		intrWaitARM<ARMCPU_ARM7>,          // 0x04
+		waitVBlankARM<ARMCPU_ARM7>,        // 0x05
+		wait4IRQ<ARMCPU_ARM7>,             // 0x06
+		sleep<ARMCPU_ARM7>,                // 0x07
+		SoundBias<ARMCPU_ARM7>,            // 0x08
+		divide<ARMCPU_ARM7>,               // 0x09
+		bios_nop<ARMCPU_ARM7>,             // 0x0A
+		copy<ARMCPU_ARM7>,                 // 0x0B
+		fastCopy<ARMCPU_ARM7>,             // 0x0C
+		bios_sqrt<ARMCPU_ARM7>,            // 0x0D
+		getCRC16<ARMCPU_ARM7>,             // 0x0E
+		isDebugger<ARMCPU_ARM7>,           // 0x0F
+		BitUnPack<ARMCPU_ARM7>,            // 0x10
+		LZ77UnCompWram<ARMCPU_ARM7>,       // 0x11
+		LZ77UnCompVram<ARMCPU_ARM7>,       // 0x12
+		UnCompHuffman<ARMCPU_ARM7>,        // 0x13
+		RLUnCompWram<ARMCPU_ARM7>,         // 0x14
+		RLUnCompVram<ARMCPU_ARM7>,         // 0x15
+		bios_nop<ARMCPU_ARM7>,             // 0x16
+		bios_nop<ARMCPU_ARM7>,             // 0x17
+		bios_nop<ARMCPU_ARM7>,             // 0x18
+		bios_nop<ARMCPU_ARM7>,             // 0x19
+		getSineTab<ARMCPU_ARM7>,           // 0x1A
+		getPitchTab<ARMCPU_ARM7>,          // 0x1B
+		getVolumeTab<ARMCPU_ARM7>,         // 0x1C
+		getBootProcs<ARMCPU_ARM7>,         // 0x1D
+		bios_nop<ARMCPU_ARM7>,             // 0x1E
+		CustomHalt<ARMCPU_ARM7>,           // 0x1F
 	}
 };
+
+#define BIOS_NOP "bios_nop"
+const char* ARM_swi_names[2][32] = {
+	{
+		"SoftReset",			// 0x00
+		BIOS_NOP,				// 0x01
+		BIOS_NOP,				// 0x02
+		"WaitByLoop",			// 0x03
+		"IntrWait",				// 0x04
+		"VBlankIntrWait",		// 0x05
+		"Halt",					// 0x06
+		BIOS_NOP,				// 0x07
+		BIOS_NOP,				// 0x08
+		"Div",					// 0x09
+		BIOS_NOP,				// 0x0A
+		"CpuSet",				// 0x0B
+		"CpuFastSet",			// 0x0C
+		"Sqrt",					// 0x0D
+		"GetCRC16",				// 0x0E
+		"IsDebugger",			// 0x0F
+		"BitUnPack",			// 0x10
+		"LZ77UnCompWram",		// 0x11
+		"LZ77UnCompVram",		// 0x12
+		"HuffUnComp",			// 0x13
+		"RLUnCompWram",			// 0x14
+		"RLUnCompVram",			// 0x15
+		"Diff8bitUnFilterWram",	// 0x16
+		BIOS_NOP,				// 0x17
+		"Diff16bitUnFilter",	// 0x18
+		BIOS_NOP,				// 0x19
+		BIOS_NOP,				// 0x1A
+		BIOS_NOP,				// 0x1B
+		BIOS_NOP,				// 0x1C
+		BIOS_NOP,				// 0x1D
+		BIOS_NOP,				// 0x1E
+		"CustomPost",			// 0x1F
+	},
+	{
+		"SoftReset",			// 0x00
+		BIOS_NOP,				// 0x01
+		BIOS_NOP,				// 0x02
+		"WaitByLoop",			// 0x03
+		"IntrWait",				// 0x04
+		"VBlankIntrWait",		// 0x05
+		"Halt",					// 0x06
+		"Sleep",				// 0x07
+		"SoundBias",			// 0x08
+		"Div",					// 0x09
+		BIOS_NOP,				// 0x0A
+		"CpuSet",				// 0x0B
+		"CpuFastSet",			// 0x0C
+		"Sqrt",					// 0x0D
+		"GetCRC16",				// 0x0E
+		"IsDebugger",			// 0x0F
+		"BitUnPack",			// 0x10
+		"LZ77UnCompWram",		// 0x11
+		"LZ77UnCompVram",		// 0x12
+		"HuffUnComp",			// 0x13
+		"RLUnCompWram",			// 0x14
+		"RLUnCompVram",			// 0x15
+		BIOS_NOP,				// 0x16
+		BIOS_NOP,				// 0x17
+		BIOS_NOP,				// 0x18
+		BIOS_NOP,				// 0x19
+		"GetSineTable",			// 0x1A
+		"GetPitchTable",		// 0x1B
+		"GetVolumeTable",		// 0x1C
+		"GetBootProcs",			// 0x1D
+		BIOS_NOP,				// 0x1E
+		"CustomHalt",			// 0x1F
+	}
+};
+#undef BIOS_NOP

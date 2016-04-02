@@ -1,7 +1,7 @@
 /*
 	Copyright 2006 yopyop
 	Copyright 2007 shash
-	Copyright 2007-2012 DeSmuME team
+	Copyright 2007-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,11 +18,14 @@
 */
 
 #include "FIFO.h"
+
 #include <string.h>
+
 #include "armcpu.h"
 #include "debug.h"
 #include "mem.h"
 #include "MMU.h"
+#include "registers.h"
 #include "NDSSystem.h"
 #include "gfx3d.h"
 
@@ -185,7 +188,7 @@ static void GXF_FIFO_handleEvents()
 	bool low = gxFIFO.size <= 127;
 	bool lowchange = MMU_new.gxstat.fifo_low ^ low;
 	MMU_new.gxstat.fifo_low = low;
-	if(low) triggerDma<EDMAMode_GXFifo>();
+	if(low) triggerDma(EDMAMode_GXFifo);
 
 	bool empty = gxFIFO.size == 0;
 	bool emptychange = MMU_new.gxstat.fifo_empty ^ empty;
@@ -197,7 +200,7 @@ static void GXF_FIFO_handleEvents()
 	if(emptychange||lowchange) NDS_Reschedule();
 }
 
-static FORCEINLINE bool IsMatrixStackCommand(u8 cmd)
+static bool IsMatrixStackCommand(u8 cmd)
 {
 	return cmd == 0x11 || cmd == 0x12;
 }
@@ -234,9 +237,9 @@ void GFX_FIFOsend(u8 cmd, u32 param)
 	if(IsMatrixStackCommand(cmd))
 		gxFIFO.matrix_stack_op_size++;
 
-	/*if(gxFIFO.size>=HACK_GXIFO_SIZE) {
+	if(gxFIFO.size>=HACK_GXIFO_SIZE) {
 		printf("--FIFO FULL-- : %d\n",gxFIFO.size);
-	}*/
+	}
 	
 	//gxstat |= 0x08000000;		// set busy flag
 
@@ -263,8 +266,8 @@ BOOL GFX_PIPErecv(u8 *cmd, u32 *param)
 	if(IsMatrixStackCommand(*cmd))
 	{
 		gxFIFO.matrix_stack_op_size--;
-		/*if(gxFIFO.matrix_stack_op_size>0x10000000)
-			printf("bad news disaster in matrix_stack_op_size\n");*/
+		if(gxFIFO.matrix_stack_op_size>0x10000000)
+			printf("bad news disaster in matrix_stack_op_size\n");
 	}
 
 	gxFIFO.head++;

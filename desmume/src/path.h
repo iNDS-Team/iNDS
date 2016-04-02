@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2011 DeSmuME team
+	Copyright (C) 2009-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,38 +16,36 @@
 */
 
 #include <string>
+#include "types.h"
 
-#ifdef _MSC_VER
-#define mkdir _mkdir
-#endif
+#if defined(HOST_WINDOWS)
+	#define WIN32_LEAN_AND_MEAN
+	#include <windows.h>
+	#include <direct.h>
+	#define mkdir _mkdir
 
-#if defined(_WINDOWS)
-#include <winsock2.h>
-#include <windows.h>
-#include <direct.h>
-#include "winutil.h"
-#include "common.h"
-#if !defined(WXPORT)
-#include "resource.h"
-#else
-#include <glib.h>
-#endif /* !WXPORT */
-#elif !defined(DESMUME_COCOA) && !defined(ANDROID)
-#include <glib.h>
-#endif /* _WINDOWS */
+	#ifndef DESMUME_QT
+		#include "windows/winutil.h"
+		#include "windows/resource.h"
+	#endif
+#elif !defined(DESMUME_COCOA)
+	#include <glib.h>
+#endif /* HOST_WINDOWS */
 
 #include "time.h"
 #include "utils/xstring.h"
 
-#ifdef _WINDOWS
-#define FILE_EXT_DELIMITER_CHAR		'.'
-#define DIRECTORY_DELIMITER_CHAR	'\\'
+#ifdef HOST_WINDOWS
+	#define FILE_EXT_DELIMITER_CHAR		'.'
+	#define DIRECTORY_DELIMITER_CHAR	'\\'
+	#define ALL_DIRECTORY_DELIMITER_STRING "/\\"
 #else
-#define FILE_EXT_DELIMITER_CHAR		'.'
-#define DIRECTORY_DELIMITER_CHAR	'/'
+	#define FILE_EXT_DELIMITER_CHAR		'.'
+	#define DIRECTORY_DELIMITER_CHAR	'/'
+	#define ALL_DIRECTORY_DELIMITER_STRING "/"
 #endif
 
-#ifdef _WINDOWS
+#ifdef HOST_WINDOWS
 void FCEUD_MakePathDirs(const char *fname);
 #endif
 
@@ -57,6 +55,7 @@ public:
 	static bool IsPathRooted (const std::string &path);
 	static std::string GetFileDirectoryPath(std::string filePath);
 	static std::string GetFileNameFromPath(std::string filePath);
+	static std::string ScrubInvalid(std::string str);
 	static std::string GetFileNameWithoutExt(std::string fileName);
 	static std::string GetFileNameFromPathWithoutExt(std::string filePath);
 	static std::string GetFileExt(std::string fileName);
@@ -78,7 +77,7 @@ public:
 	#define STATEKEY		"States"
 	#define SCREENSHOTKEY	"Screenshots"
 	#define AVIKEY			"AviFiles"
-	#define CHEATKEY		"Battery" //Moved cheats to battery - Will
+	#define CHEATKEY		"Cheats"
 	#define R4FORMATKEY		"R4format"
 	#define SOUNDKEY		"SoundSamples"
 	#define FIRMWAREKEY		"Firmware"
@@ -87,6 +86,7 @@ public:
 	#define NEEDSSAVINGKEY	"needsSaving"
 	#define LASTVISITKEY	"lastVisit"
 	#define LUAKEY			"Lua"
+	#define SLOT1DKEY		"Slot1D"
 	char screenshotFormat[MAX_FORMAT];
 	bool savelastromvisit;
 
@@ -102,6 +102,7 @@ public:
 		SOUNDS,
 		FIRMWARE,
 		MODULE,
+		SLOT1D,
 		MAXKNOWNPATH = MODULE
 	};
 
@@ -113,11 +114,12 @@ public:
 	char pathToCheats[MAX_PATH];
 	char pathToSounds[MAX_PATH];
 	char pathToFirmware[MAX_PATH];
-	static char pathToModule[MAX_PATH];
+	char pathToModule[MAX_PATH];
 	char pathToLua[MAX_PATH];
+	char pathToSlot1D[MAX_PATH];
 
-	void init(const char *filename) {
-
+	void init(const char *filename) 
+	{
 		path = std::string(filename);
 
 		//extract the internal part of the logical rom name
@@ -132,9 +134,7 @@ public:
 
 	void LoadModulePath()
 	{
-#ifdef ANDROID
-		return; //set from java
-#elif defined(_WINDOWS)
+#if defined(HOST_WINDOWS)
 
 		char *p;
 		ZeroMemory(pathToModule, sizeof(pathToModule));
@@ -143,6 +143,14 @@ public:
 		p = pathToModule + lstrlen(pathToModule);
 		while (p >= pathToModule && *p != DIRECTORY_DELIMITER_CHAR) p--;
 		if (++p >= pathToModule) *p = 0;
+
+#ifndef DESMUME_QT
+		extern char* _hack_alternateModulePath;
+		if(_hack_alternateModulePath)
+		{
+			strcpy(pathToModule,_hack_alternateModulePath);
+		}
+#endif
 #elif defined(DESMUME_COCOA)
 		std::string pathStr = Path::GetFileDirectoryPath(path);
 
@@ -163,11 +171,9 @@ public:
 
 	void GetDefaultPath(char *pathToDefault, const char *key, int maxCount)
 	{
-#ifdef _WINDOWS
+#ifdef HOST_WINDOWS
 		std::string temp = (std::string)"." + DIRECTORY_DELIMITER_CHAR + pathToDefault;
 		strncpy(pathToDefault, temp.c_str(), maxCount);
-#elif ANDROID
-		snprintf(pathToDefault, maxCount, "%s/%s", pathToModule, key); 
 #else
 		strncpy(pathToDefault, pathToModule, maxCount);
 #endif
@@ -175,7 +181,7 @@ public:
 
 	void ReadKey(char *pathToRead, const char *key)
 	{
-#ifdef _WINDOWS
+#ifdef HOST_WINDOWS
 		GetPrivateProfileString(SECTION, key, key, pathToRead, MAX_PATH, IniName);
 		if(strcmp(pathToRead, key) == 0) {
 			//since the variables are all intialized in this file they all use MAX_PATH
@@ -201,11 +207,17 @@ public:
 		ReadKey(pathToSounds, SOUNDKEY);
 		ReadKey(pathToFirmware, FIRMWAREKEY);
 		ReadKey(pathToLua, LUAKEY);
-#ifdef _WINDOWS
+		ReadKey(pathToSlot1D, SLOT1DKEY);
+#ifdef HOST_WINDOWS
 		GetPrivateProfileString(SECTION, FORMATKEY, "%f_%s_%r", screenshotFormat, MAX_FORMAT, IniName);
 		savelastromvisit	= GetPrivateProfileBool(SECTION, LASTVISITKEY, true, IniName);
 		currentimageformat	= (ImageFormat)GetPrivateProfileInt(SECTION, DEFAULTFORMATKEY, PNG, IniName);
 		r4Format = (R4Format)GetPrivateProfileInt(SECTION, R4FORMATKEY, R4_CHEAT_DAT, IniName);
+		if ((r4Format != R4_CHEAT_DAT) && (r4Format != R4_USRCHEAT_DAT))
+		{
+			r4Format = R4_USRCHEAT_DAT;
+			WritePrivateProfileInt(SECTION, R4FORMATKEY, r4Format, IniName);
+		}
 #endif
 	/*
 		needsSaving		= GetPrivateProfileInt(SECTION, NEEDSSAVINGKEY, TRUE, IniName);
@@ -248,6 +260,9 @@ public:
 		case MODULE:
 			pathToCopy = pathToModule;
 			break;
+		case SLOT1D:
+			pathToCopy = pathToSlot1D;
+			break;
 		}
 
 		if(action == GET)
@@ -269,7 +284,7 @@ public:
 			}
 
 			strncpy(buffer, thePath.c_str(), MAX_PATH);
-			#ifdef _WINDOWS
+			#ifdef HOST_WINDOWS
 			FCEUD_MakePathDirs(buffer);
 			#endif
 		}
@@ -325,84 +340,74 @@ public:
 
 	void formatname(char *output)
 	{
+		// Except 't' for tick and 'r' for random.
+		const char* strftimeArgs = "AbBcCdDeFgGhHIjmMnpRStTuUVwWxXyYzZ%";
+
 		std::string file;
 		time_t now = time(NULL);
 		tm *time_struct = localtime(&now);
-		srand((unsigned int)now);
 
-		for(int i = 0; i < MAX_FORMAT;i++) 
-		{		
-			char *c = &screenshotFormat[i];
-			char tmp[MAX_PATH] = {0};
+		srand((unsigned)now);
 
-			if(*c == '%')
+		for (char*  p = screenshotFormat,
+			 *end = p + sizeof(screenshotFormat); p < end; p++)
 			{
-				c = &screenshotFormat[++i];
-				switch(*c)
+			if (*p != '%')
 				{
-				case 'f':
-					
-					strcat(tmp, GetRomNameWithoutExtension().c_str());
-					break;
-				case 'D':
-					strftime(tmp, MAX_PATH, "%d", time_struct);
-					break;
-				case 'M':
-					strftime(tmp, MAX_PATH, "%m", time_struct);
-					break;
-				case 'Y':
-					strftime(tmp, MAX_PATH, "%Y", time_struct);
-					break;
-				case 'h':
-					strftime(tmp, MAX_PATH, "%H", time_struct);
-					break;
-				case 'm':
-					strftime(tmp, MAX_PATH, "%M", time_struct);
-					break;
-				case 's':
-					strftime(tmp, MAX_PATH, "%S", time_struct);
-					break;
-				case 'r':
-					sprintf(tmp, "%d", rand() % RAND_MAX);
-					break;
-				}
+				file.append(1, *p);
 			}
 			else
 			{
-				int j;
-				for(j=i;j<MAX_FORMAT-i;j++)
-					if(screenshotFormat[j] != '%')
-						tmp[j-i]=screenshotFormat[j];
-					else
-						break;
-				tmp[j-i]='\0';
+				p++;
+
+				if (*p == 'f')
+				{
+					file.append(GetRomNameWithoutExtension());
+				}
+				else if (*p == 'r')
+				{
+					file.append(stditoa(rand()));
 			}
-			file += tmp;
+				else if (*p == 't')
+			{
+					file.append(stditoa(clock() >> 5));
+			}
+				else if (strchr(strftimeArgs, *p))
+				{
+					char tmp[MAX_PATH];
+					char format[] = { '%', *p, NULL };
+					strftime(tmp, MAX_PATH, format, time_struct);
+					file.append(tmp);
 		}
+			}
+		}
+
+#ifdef WIN32
+		// Replace invalid file name character.
+		{
+			const char* invalids = "\\/:*?\"<>|";
+			size_t pos = 0;
+			while ((pos = file.find_first_of(invalids, pos)) != std::string::npos)
+			{
+				file[pos] = '-';
+			}
+		}
+#endif
+
 		strncpy(output, file.c_str(), MAX_PATH);
 	}
 
 	enum R4Format
 	{
-#if defined(_WINDOWS) && !defined(WXPORT)
-		R4_CHEAT_DAT = IDC_R4TYPE1,
-		R4_USRCHEAT_DAT = IDC_R4TYPE2
-#else
-		R4_CHEAT_DAT,
-		R4_USRCHEAT_DAT
-#endif
+		R4_CHEAT_DAT = 0,
+		R4_USRCHEAT_DAT = 1
 	};
 	R4Format r4Format;
 
 	enum ImageFormat
 	{
-#if defined(_WINDOWS) && !defined(WXPORT)
-		PNG = IDC_PNG,
-		BMP = IDC_BMP
-#else
-		PNG,
-		BMP
-#endif
+		PNG = 0,
+		BMP = 1
 	};
 
 	ImageFormat currentimageformat;
@@ -416,6 +421,7 @@ public:
 		std::string romPath = filename;
 
 		RomName = Path::GetFileNameFromPath(romPath);
+		RomName = Path::ScrubInvalid(RomName);
 		RomDirectory = Path::GetFileDirectoryPath(romPath);
 	}
 
@@ -426,6 +432,8 @@ public:
 
 	std::string GetRomNameWithoutExtension()
 	{
+		if (RomName.c_str() == NULL)
+			return "";
 		return Path::GetFileNameWithoutExt(RomName);
 	}
 

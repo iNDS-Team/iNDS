@@ -2,7 +2,7 @@
 	Copyright (C) 2006 yopyop
 	Copyright (C) 2006-2007 Theo Berkau
 	Copyright (C) 2007 shash
-	Copyright (C) 2008-2012 DeSmuME team
+	Copyright (C) 2008-2015 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,21 +18,26 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include <algorithm>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <iostream>
-#include "MMU.h"
 #include "GPU.h"
+
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <iostream>
+
+#include "MMU.h"
+#include "FIFO.h"
 #include "debug.h"
 #include "render3D.h"
+#include "registers.h"
 #include "gfx3d.h"
 #include "debug.h"
 #include "GPU_osd.h"
 #include "NDSSystem.h"
 #include "readwrite.h"
+#include "matrix.h"
+#include "emufile.h"
 
 #ifdef FASTBUILD
 	#undef FORCEINLINE
@@ -90,14 +95,6 @@ const short sizeTab[8][4][2] =
 	{{128,128}, {256,256}, {512,512}, {1024,1024}}, //affine ext 256x16
 	{{128,128}, {256,256}, {512,256}, {512,512}}, //affine ext 256x1
 	{{128,128}, {256,256}, {512,256}, {512,512}}, //affine ext direct
-};
-
-static GraphicsInterface_struct *GFXCore=NULL;
-
-// This should eventually be moved to the port specific code
-GraphicsInterface_struct *GFXCoreList[] = {
-&GFXDummy,
-NULL
 };
 
 static const CACHE_ALIGN u8 win_empty[256] = {
@@ -219,14 +216,14 @@ void GPU_Reset(GPU *g, u8 l)
 
 	if(g->core == GPU_SUB)
 	{
-		g->oam = (OAM *)(MMU.ARM9_OAM + ADDRESS_STEP_1KB);
+		g->oam = (MMU.ARM9_OAM + ADDRESS_STEP_1KB);
 		g->sprMem = MMU_BOBJ;
 		// GPU core B
 		g->dispx_st = (REG_DISPx*)(&MMU.ARM9_REG[REG_DISPB]);
 	}
 	else
 	{
-		g->oam = (OAM *)(MMU.ARM9_OAM);
+		g->oam = (MMU.ARM9_OAM);
 		g->sprMem = MMU_AOBJ;
 		// GPU core A
 		g->dispx_st = (REG_DISPx*)(&MMU.ARM9_REG[0]);
@@ -318,9 +315,9 @@ FORCEINLINE u16 GPU::blend(u16 colA, u16 colB)
 
 void GPU_setMasterBrightness (GPU *gpu, u16 val)
 {
-	/*if(!nds.isInVblank()) {
+	if(!nds.isInVblank()) {
 		PROGINFO("Changing master brightness outside of vblank\n");
-	}*/
+	}
  	gpu->MasterBrightFactor = (val & 0x1F);
 	gpu->MasterBrightMode	= (val>>14);
 	//printf("MASTER BRIGHTNESS %d to %d at %d\n",gpu->core,gpu->MasterBrightFactor,nds.VCount);
@@ -498,7 +495,7 @@ void GPU_addBack(GPU * gpu, u8 num)
 template<int WIN_NUM>
 FORCEINLINE u8 GPU::withinRect(u16 x) const
 {
-	//assert(x<256); //only way to be >256 is in debug views, and mosaic shouldnt be enabled for those
+	assert(x<256); //only way to be >256 is in debug views, and mosaic shouldnt be enabled for those
 	return curr_win[WIN_NUM][x];
 }
 
@@ -615,7 +612,7 @@ FORCEINLINE FASTCALL void GPU::_master_setFinal3dColor(int dstX, int srcX)
 			switch(FUNC) {
 				case Increase: final = currentFadeInColors[final&0x7FFF]; break;
 				case Decrease: final = currentFadeOutColors[final&0x7FFF]; break;
-				case None: 
+				case NoBlend: 
 				case Blend:
 					break;
 			}
@@ -630,7 +627,7 @@ template<bool BACKDROP, BlendFunc FUNC, bool WINDOW>
 FORCEINLINE FASTCALL bool GPU::_master_setFinalBGColor(u16 &color, const u32 x)
 {
 	//no further analysis for no special effects. on backdrops. just draw it.
-	if(FUNC==None && BACKDROP) return true;
+	if(FUNC==NoBlend && BACKDROP) return true;
 
 	//blend backdrop with what?? this doesn't make sense
 	if(FUNC==Blend && BACKDROP) return true;
@@ -660,7 +657,7 @@ FORCEINLINE FASTCALL bool GPU::_master_setFinalBGColor(u16 &color, const u32 x)
 		case Blend: if(blend2[bg_under]) color = blend(color,HostReadWord(currDst, x<<1)); break;
 		case Increase: color = currentFadeInColors[color]; break;
 		case Decrease: color = currentFadeOutColors[color]; break;
-		case None: break;
+		case NoBlend: break;
 	}
 	return true;
 }
@@ -668,47 +665,65 @@ FORCEINLINE FASTCALL bool GPU::_master_setFinalBGColor(u16 &color, const u32 x)
 template<BlendFunc FUNC, bool WINDOW>
 static FORCEINLINE void _master_setFinalOBJColor(GPU *gpu, u8 *dst, u16 color, u8 alpha, u8 type, u16 x)
 {
-	bool windowDraw = true, windowEffect = true;
+	const bool isObjTranslucentType = type == GPU_OBJ_MODE_Transparent || type == GPU_OBJ_MODE_Bitmap;
+	
+	bool windowDraw = true;
+	bool windowEffectSatisfied = true;
 
 	if(WINDOW)
 	{
-		gpu->renderline_checkWindows(x, windowDraw, windowEffect);
+		gpu->renderline_checkWindows(x, windowDraw, windowEffectSatisfied);
 		if(!windowDraw)
 			return;
 	}
 
-	const bool sourceEffectSelected = gpu->blend1;
+	//if the window effect is satisfied, then we can do color effects to modify the color
+	if(windowEffectSatisfied)
+	{
+		const bool firstTargetSatisfied = gpu->blend1;
+		const int bg_under = gpu->bgPixels[x];
+		const bool secondTargetSatisfied = (bg_under != 4) && gpu->blend2[bg_under];
+		BlendFunc selectedFunc = NoBlend;
 
-	//note that the fadein and fadeout is done here before blending, 
-	//so that a fade and blending can be applied at the same time (actually, I don't think that is legal..)
-	bool forceBlendingForNormal = false;
-	if(windowEffect && sourceEffectSelected)
-		switch(FUNC) 
+		int eva = gpu->BLDALPHA_EVA, evb = gpu->BLDALPHA_EVB;
+
+		//if normal BLDCNT layer target conditions are met, then we can use the BLDCNT-specified color effect
+		if(FUNC == Blend)
 		{
-			//zero 13-jun-2010 : if(allowBlend) was removed from these;
-			//it should be possible to increase/decrease and also blend
-			//(the effect would be increase, but the obj properties permit blending and the target layers are configured correctly)
-		case Increase: color = gpu->currentFadeInColors[color&0x7FFF]; break;
-		case Decrease: color = gpu->currentFadeOutColors[color&0x7FFF]; break;
-
-		//only when blend color effect is selected, ordinarily opaque sprites are blended with the color effect params
-		case Blend: forceBlendingForNormal = true; break;
-		case None: break;
+			//blending requires first and second target screens to be satisfied
+			if(firstTargetSatisfied && secondTargetSatisfied) selectedFunc = FUNC;
+		}
+		else 
+		{
+			//brightness up and down requires only the first target screen to be satisfied
+			if(firstTargetSatisfied) selectedFunc = FUNC;
 		}
 
-	//this inspects the layer beneath the sprite to see if the current blend flags make it a candidate for blending
-	const int bg_under = gpu->bgPixels[x];
-	const bool allowBlend = (bg_under != 4) && gpu->blend2[bg_under];
+		//translucent-capable OBJ are forcing the function to blend when the second target is satisfied
+		if(isObjTranslucentType && secondTargetSatisfied)
+		{
+			selectedFunc = Blend;
+		
+			//obj without fine-grained alpha are using EVA/EVB for blending. this is signified by receiving 255 in the alpha
+			//it's tested by the spriteblend demo and the glory of heracles title screen
+			if(alpha != 255)
+			{
+				eva = alpha;
+				evb = 16 - alpha;
+			}
+		}
 
-	if(allowBlend)
-	{
-		u16 backColor = HostReadWord(dst,x<<1);
-		//this hasn't been tested: this blending occurs without regard to the color effect,
-		//but rather purely from the sprite's alpha
-		if(type == GPU_OBJ_MODE_Bitmap)
-			color = _blend(color,backColor,&gpuBlendTable555[alpha+1][15-alpha]);
-		else if(type == GPU_OBJ_MODE_Transparent || forceBlendingForNormal)
-			color = gpu->blend(color,backColor);
+	
+		switch(selectedFunc) 
+		{
+		case NoBlend: break;
+		case Increase: color = gpu->currentFadeInColors[color&0x7FFF]; break;
+		case Decrease: color = gpu->currentFadeOutColors[color&0x7FFF]; break;
+		case Blend: 
+			u16 backColor = HostReadWord(dst,x<<1);
+			color = _blend(color,backColor,&gpuBlendTable555[eva][evb]); 
+			break;
+		}
 	}
 
 	HostWriteWord(dst, x<<1, (color | 0x8000));
@@ -730,11 +745,11 @@ FORCEINLINE void GPU::setFinalColorBG(u16 color, const u32 x)
 	const int test = BACKDROP?FUNCNUM:setFinalColorBck_funcNum;
 	switch(test)
 	{
-		case 0: draw = _master_setFinalBGColor<BACKDROP,None,false>(color,x); break;
+		case 0: draw = _master_setFinalBGColor<BACKDROP,NoBlend,false>(color,x); break;
 		case 1: draw = _master_setFinalBGColor<BACKDROP,Blend,false>(color,x); break;
 		case 2: draw = _master_setFinalBGColor<BACKDROP,Increase,false>(color,x); break;
 		case 3: draw = _master_setFinalBGColor<BACKDROP,Decrease,false>(color,x); break;
-		case 4: draw = _master_setFinalBGColor<BACKDROP,None,true>(color,x); break;
+		case 4: draw = _master_setFinalBGColor<BACKDROP,NoBlend,true>(color,x); break;
 		case 5: draw = _master_setFinalBGColor<BACKDROP,Blend,true>(color,x); break;
 		case 6: draw = _master_setFinalBGColor<BACKDROP,Increase,true>(color,x); break;
 		case 7: draw = _master_setFinalBGColor<BACKDROP,Decrease,true>(color,x); break;
@@ -753,11 +768,11 @@ FORCEINLINE void GPU::setFinalColor3d(int dstX, int srcX)
 {
 	switch(setFinalColor3d_funcNum)
 	{
-	case 0x0: _master_setFinal3dColor<None,false>(dstX,srcX); break;
+	case 0x0: _master_setFinal3dColor<NoBlend,false>(dstX,srcX); break;
 	case 0x1: _master_setFinal3dColor<Blend,false>(dstX,srcX); break;
 	case 0x2: _master_setFinal3dColor<Increase,false>(dstX,srcX); break;
 	case 0x3: _master_setFinal3dColor<Decrease,false>(dstX,srcX); break;
-	case 0x4: _master_setFinal3dColor<None,true>(dstX,srcX); break;
+	case 0x4: _master_setFinal3dColor<NoBlend,true>(dstX,srcX); break;
 	case 0x5: _master_setFinal3dColor<Blend,true>(dstX,srcX); break;
 	case 0x6: _master_setFinal3dColor<Increase,true>(dstX,srcX); break;
 	case 0x7: _master_setFinal3dColor<Decrease,true>(dstX,srcX); break;
@@ -768,11 +783,11 @@ FORCEINLINE void setFinalColorSpr(GPU* gpu, u8 *dst, u16 color, u8 alpha, u8 typ
 {
 	switch(gpu->setFinalColorSpr_funcNum)
 	{
-	case 0x0: _master_setFinalOBJColor<None,false>(gpu, dst, color, alpha, type, x); break;
+	case 0x0: _master_setFinalOBJColor<NoBlend,false>(gpu, dst, color, alpha, type, x); break;
 	case 0x1: _master_setFinalOBJColor<Blend,false>(gpu, dst, color, alpha, type, x); break;
 	case 0x2: _master_setFinalOBJColor<Increase,false>(gpu, dst, color, alpha, type, x); break;
 	case 0x3: _master_setFinalOBJColor<Decrease,false>(gpu, dst, color, alpha, type, x); break;
-	case 0x4: _master_setFinalOBJColor<None,true>(gpu, dst, color, alpha, type, x); break;
+	case 0x4: _master_setFinalOBJColor<NoBlend,true>(gpu, dst, color, alpha, type, x); break;
 	case 0x5: _master_setFinalOBJColor<Blend,true>(gpu, dst, color, alpha, type, x); break;
 	case 0x6: _master_setFinalOBJColor<Increase,true>(gpu, dst, color, alpha, type, x); break;
 	case 0x7: _master_setFinalOBJColor<Decrease,true>(gpu, dst, color, alpha, type, x); break;
@@ -793,7 +808,7 @@ FORCEINLINE void GPU::___setFinalColorBck(u16 color, const u32 x, const int opaq
 	//under ordinary circumstances, nobody should pass in something >=256
 	//but in fact, someone is going to try. specifically, that is the map viewer debug tools
 	//which try to render the enter BG. in cases where that is large, it could be up to 1024 wide.
-	//assert(debug || x<256);
+	assert(debug || x<256);
 
 	int x_int;
 
@@ -822,6 +837,45 @@ finish:
 	}
 }
 
+//unpacks an _OAM_ structure from the provided oam buffer (should point at OAM 0) and provided OAM index.
+//is endian-safe
+void SlurpOAM(_OAM_* oam_output, void* oam_buffer, int oam_index)
+{
+	u16* u16_oam_buffer = (u16*)oam_buffer;
+	int u16_offset = oam_index<<2;
+	u16 attr[4];
+	for(int i=0;i<4;i++)
+		attr[i] = LE_TO_LOCAL_16(u16_oam_buffer[u16_offset + i]);
+	
+	oam_output->Y = (attr[0]>>0) & 0xFF;
+	oam_output->RotScale = (attr[0]>>8)&3;
+	oam_output->Mode = (attr[0]>>10)&3;
+	oam_output->Mosaic = (attr[0]>>12)&1;
+	oam_output->Depth = (attr[0]>>13)&1;
+	oam_output->Shape = (attr[0]>>14)&3;
+	
+	oam_output->X = (((s32)((attr[1]>>0)&0x1FF))<<23)>>23;
+	oam_output->RotScalIndex = (attr[1]>>9)&7;
+	oam_output->HFlip = (attr[1]>>12)&1;
+	oam_output->VFlip = (attr[1]>>13)&1;
+	oam_output->Size = (attr[1]>>14)&3;
+
+	oam_output->TileIndex = (attr[2]>>0)&0x3FF;
+	oam_output->Priority = (attr[2]>>10)&3;
+	oam_output->PaletteIndex = (attr[2]>>12)&0xF;
+
+	oam_output->attr3 = attr[3];
+}
+
+//gets the affine parameter associated with the specified oam index.
+u16 SlurpOAMAffineParam(void* oam_buffer, int oam_index)
+{
+	u16* u16_oam_buffer = (u16*)oam_buffer;
+	int u16_offset = oam_index<<2;
+	return LE_TO_LOCAL_16(u16_oam_buffer[u16_offset + 3]);
+}
+
+
 //this is fantastically inaccurate.
 //we do the early return even though it reduces the resulting accuracy
 //because we need the speed, and because it is inaccurate anyway
@@ -830,8 +884,9 @@ static void mosaicSpriteLinePixel(GPU * gpu, int x, u16 l, u8 * dst, u8 * dst_al
 	int x_int;
 	int y = l;
 
-	_OAM_ * spriteInfo = (_OAM_ *)(gpu->oam + gpu->sprNum[x]);
-	bool enabled = spriteInfo->Mosaic;
+	_OAM_ spriteInfo;
+	SlurpOAM(&spriteInfo,gpu->oam,gpu->sprNum[x]);
+	bool enabled = spriteInfo.Mosaic!=0;
 	if(!enabled)
 		return;
 
@@ -1041,8 +1096,8 @@ template<bool MOSAIC> INLINE void renderline_textBG(GPU * gpu, u16 XBG, u16 YBG,
 /*****************************************************************************/
 //			BACKGROUND RENDERING -ROTOSCALE-
 /*****************************************************************************/
-template<bool MOSAIC> FORCEINLINE void rot_tiled_8bit_entry(GPU * gpu, const s32 auxX, const s32 auxY, const int lg, const u32 map, const u32 tile, u8 * pal, const int i) {
 
+template<bool MOSAIC> FORCEINLINE void rot_tiled_8bit_entry(GPU * gpu, s32 auxX, s32 auxY, int lg, u32 map, u32 tile, u8 * pal, int i) {
 	u8 palette_entry;
 	u16 tileindex, x, y, color;
 
@@ -1056,7 +1111,7 @@ template<bool MOSAIC> FORCEINLINE void rot_tiled_8bit_entry(GPU * gpu, const s32
 	gpu->__setFinalColorBck<MOSAIC,false>(color,i,palette_entry);
 }
 
-template<bool MOSAIC, bool extPal> FORCEINLINE void rot_tiled_16bit_entry(GPU * gpu, const s32 auxX, const s32 auxY, const int lg, const u32 map, const u32 tile, u8 * pal, int i) {
+template<bool MOSAIC, bool extPal> FORCEINLINE void rot_tiled_16bit_entry(GPU * gpu, s32 auxX, s32 auxY, int lg, u32 map, u32 tile, u8 * pal, int i) {
 	void* const map_addr = MMU_gpu_map(map + (((auxX>>3) + (auxY>>3) * (lg>>3))<<1));
 	
 	TILEENTRY tileentry;
@@ -1070,7 +1125,7 @@ template<bool MOSAIC, bool extPal> FORCEINLINE void rot_tiled_16bit_entry(GPU * 
 	gpu->__setFinalColorBck<MOSAIC,false>(color, i, palette_entry);
 }
 
-template<bool MOSAIC> FORCEINLINE void rot_256_map(GPU * gpu, const s32 auxX, const s32 auxY, const int lg, const u32 map, const u32 tile, u8 * pal, const int i) {
+template<bool MOSAIC> FORCEINLINE void rot_256_map(GPU * gpu, s32 auxX, s32 auxY, int lg, u32 map, u32 tile, u8 * pal, int i) {
 	u8 palette_entry;
 	u16 color;
 
@@ -1081,17 +1136,17 @@ template<bool MOSAIC> FORCEINLINE void rot_256_map(GPU * gpu, const s32 auxX, co
 	gpu->__setFinalColorBck<MOSAIC,false>(color, i, palette_entry);
 }
 
-template<bool MOSAIC> FORCEINLINE void rot_BMP_map(GPU * gpu, const s32 auxX, const s32 auxY, const int lg, const u32 map, const u32 tile, u8 * pal, const int i) {
+template<bool MOSAIC> FORCEINLINE void rot_BMP_map(GPU * gpu, s32 auxX, s32 auxY, int lg, u32 map, u32 tile, u8 * pal, int i) {
 	u16 color;
 	void* adr = MMU_gpu_map((map) + ((auxX + auxY * lg) << 1));
 	color = T1ReadWord(adr, 0);
 	gpu->__setFinalColorBck<MOSAIC,false>(color, i, color&0x8000);
 }
 
-typedef void (*rot_fun)(GPU * gpu, const s32 auxX, const s32 auxY, const int lg, const u32 map, const u32 tile, u8 * pal, const int i);
+typedef void (*rot_fun)(GPU * gpu, s32 auxX, s32 auxY, int lg, u32 map, u32 tile, u8 * pal, int i);
 
 template<rot_fun fun, bool WRAP>
-FORCEINLINE void rot_scale_op(GPU * gpu, const s32 X, const s32 Y, const s16 PA, const s16 PB, const s16 PC, const s16 PD, const u16 LG, const s32 wh, const s32 ht, const u32 map, const u32 tile, u8 * pal)
+FORCEINLINE void rot_scale_op(GPU * gpu, s32 X, s32 Y, s16 PA, s16 PB, s16 PC, s16 PD, u16 LG, s32 wh, s32 ht, u32 map, u32 tile, u8 * pal)
 {
 	ROTOCOORD x, y;
 	x.val = X;
@@ -1214,14 +1269,12 @@ static void lineNull(GPU * gpu)
 
 template<bool MOSAIC> void lineText(GPU * gpu)
 {
-#if 0
 	if(gpu->debug)
 	{
 		const s32 wh = gpu->BGSize[gpu->currBgNum][0];
 		renderline_textBG<MOSAIC>(gpu, 0, gpu->currLine, wh);
 	}
 	else
-#endif
 	{
 		const u16 vofs = gpu->getVOFS(gpu->currBgNum);
 		const u16 hofs = gpu->getHOFS(gpu->currBgNum);
@@ -1238,14 +1291,12 @@ template<bool MOSAIC> void lineRot(GPU * gpu)
 		parms = &(gpu->dispx_st)->dispx_BG3PARMS;		
 	}
 
-#if 0
 	if(gpu->debug)
 	{
 		s32 wh = gpu->BGSize[gpu->currBgNum][0];
 		rotBG2<MOSAIC>(gpu, 0, (s16)gpu->currLine*256, 256,0, 0,-77, wh);
 	}
 	else
-#endif
 	{
 		 rotBG2<MOSAIC>(gpu, 
 				  parms->BGxX,
@@ -1269,14 +1320,12 @@ template<bool MOSAIC> void lineExtRot(GPU * gpu)
 		parms = &(gpu->dispx_st)->dispx_BG3PARMS;		
 	}
 
-#if 0
 	if(gpu->debug)
 	{
 		s32 wh = gpu->BGSize[gpu->currBgNum][0];
 		extRotBG2<MOSAIC>(gpu, 0, (s16)gpu->currLine*256, 256,0, 0,-77, wh);
 	}
 	else
-#endif
 	{
 		extRotBG2<MOSAIC>(gpu,
               parms->BGxX,
@@ -1295,8 +1344,6 @@ template<bool MOSAIC> void lineExtRot(GPU * gpu)
 //			SPRITE RENDERING -HELPER FUNCTIONS-
 /*****************************************************************************/
 
-#define nbShow 128
-
 /* if i understand it correct, and it fixes some sprite problems in chameleon shot */
 /* we have a 15 bit color, and should use the pal entry bits as alpha ?*/
 /* http://nocash.emubase.de/gbatek.htm#dsvideoobjs */
@@ -1308,11 +1355,11 @@ INLINE void render_sprite_BMP (GPU * gpu, u8 spriteNum, u16 l, u8 * dst, u32 src
 		u16* src = (u16*)MMU_gpu_map(srcadr+(x<<1));
 		color = LE_TO_LOCAL_16(*src);
 
-		// alpha bit = invisible
+		//a cleared alpha bit suppresses the pixel from processing entirely; it doesnt exist
 		if ((color&0x8000)&&(prio<prioTab[sprX]))
 		{
 			HostWriteWord(dst, (sprX<<1), color);
-			dst_alpha[sprX] = alpha;
+			dst_alpha[sprX] = alpha+1;
 			typeTab[sprX] = 3;
 			prioTab[sprX] = prio;
 			gpu->sprNum[sprX] = spriteNum;
@@ -1331,13 +1378,13 @@ INLINE void render_sprite_256(GPU * gpu, u8 spriteNum, u16 l, u8 * dst, u32 srca
 		u32 adr = srcadr + (x&0x7) + ((x&0xFFF8)<<3);
 		u8* src = (u8 *)MMU_gpu_map(adr);
 		palette_entry = *src;
-		color = LE_TO_LOCAL_16(pal[palette_entry]);
 
-		// palette entry = 0 means backdrop
+		//a zero value suppresses the pixel from processing entirely; it doesnt exist
 		if ((palette_entry>0)&&(prio<prioTab[sprX]))
 		{
+			color = LE_TO_LOCAL_16(pal[palette_entry]);
 			HostWriteWord(dst, (sprX<<1), color);
-			dst_alpha[sprX] = 16;
+			dst_alpha[sprX] = -1;
 			typeTab[sprX] = (alpha ? 1 : 0);
 			prioTab[sprX] = prio;
 			gpu->sprNum[sprX] = spriteNum;
@@ -1361,13 +1408,13 @@ INLINE void render_sprite_16 (	GPU * gpu, u16 l, u8 * dst, u32 srcadr, u16 * pal
 
 		if (x & 1) palette_entry = palette >> 4;
 		else       palette_entry = palette & 0xF;
-		color = LE_TO_LOCAL_16(pal[palette_entry]);
 
-		// palette entry = 0 means backdrop
+		//a zero value suppresses the pixel from processing entirely; it doesnt exist
 		if ((palette_entry>0)&&(prio<prioTab[sprX]))
 		{
+			color = LE_TO_LOCAL_16(pal[palette_entry]);
 			HostWriteWord(dst, (sprX<<1), color);
-			dst_alpha[sprX] = 16;
+			dst_alpha[sprX] = -1;
 			typeTab[sprX] = (alpha ? 1 : 0);
 			prioTab[sprX] = prio;
 		}
@@ -1487,28 +1534,14 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 	int cost = 0;
 
 	struct _DISPCNT * dispCnt = &(gpu->dispx_st)->dispx_DISPCNT.bits;
-	_OAM_ * spriteInfo = (_OAM_ *)(gpu->oam);
 	u8 block = gpu->sprBoundary;
-	u8 i;
 
-	//what the hell? why is all this here? the #ifdefs in the bitfields definition should take care of this.
-	//this needs to be fixed anyway since i changed the sprite render order
-	//better yet, just dont do it this way at all. _OAM_ is so small, why not just copy it and then twiddle it?
-
-//#ifdef WORDS_BIGENDIAN
-//	*(((u16*)spriteInfo)+1) = (*(((u16*)spriteInfo)+1) >> 1) | *(((u16*)spriteInfo)+1) << 15;
-//	*(((u16*)spriteInfo)+2) = (*(((u16*)spriteInfo)+2) >> 2) | *(((u16*)spriteInfo)+2) << 14;
-//#endif
-
-	for(i = 0; i<nbShow; ++i, ++spriteInfo
-//#ifdef WORDS_BIGENDIAN    
-//	,*(((u16*)(spriteInfo+1))+1) = (*(((u16*)(spriteInfo+1))+1) << 1) | *(((u16*)(spriteInfo+1))+1) >> 15
-//	,*(((u16*)(spriteInfo+1))+2) = (*(((u16*)(spriteInfo+1))+2) << 2) | *(((u16*)(spriteInfo+1))+2) >> 14
-//	,*(((u16*)spriteInfo)+1) = (*(((u16*)spriteInfo)+1) >> 1) | *(((u16*)spriteInfo)+1) << 15
-//	,*(((u16*)spriteInfo)+2) = (*(((u16*)spriteInfo)+2) >> 2) | *(((u16*)spriteInfo)+2) << 14
-//#endif
-	)     
+	for(int i = 0; i<128; i++)     
 	{
+		_OAM_ oam;
+		_OAM_* spriteInfo = &oam;
+		SlurpOAM(spriteInfo, gpu->oam, i);
+
 		//for each sprite:
 		if(cost>=2130)
 		{
@@ -1579,17 +1612,11 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 			blockparameter = (spriteInfo->RotScalIndex + (spriteInfo->HFlip<< 3) + (spriteInfo->VFlip << 4))*4;
 
 			// Get rotation/scale parameters
-#ifdef WORDS_BIGENDIAN
-			dx  = ((s16)(gpu->oam + blockparameter+0)->attr31 << 8) | ((s16)(gpu->oam + blockparameter+0)->attr30);
-			dmx = ((s16)(gpu->oam + blockparameter+1)->attr31 << 8) | ((s16)(gpu->oam + blockparameter+1)->attr30);
-			dy  = ((s16)(gpu->oam + blockparameter+2)->attr31 << 8) | ((s16)(gpu->oam + blockparameter+2)->attr30);
-			dmy = ((s16)(gpu->oam + blockparameter+3)->attr31 << 8) | ((s16)(gpu->oam + blockparameter+3)->attr30);
-#else
-			dx  = (s16)(gpu->oam + blockparameter+0)->attr3;
-			dmx = (s16)(gpu->oam + blockparameter+1)->attr3;
-			dy  = (s16)(gpu->oam + blockparameter+2)->attr3;
-			dmy = (s16)(gpu->oam + blockparameter+3)->attr3;
-#endif
+			dx = SlurpOAMAffineParam(gpu->oam,blockparameter+0);
+			dmx = SlurpOAMAffineParam(gpu->oam,blockparameter+1);
+			dy = SlurpOAMAffineParam(gpu->oam,blockparameter+2);
+			dmy = SlurpOAMAffineParam(gpu->oam,blockparameter+3);
+
 
 			// Calculate fixed poitn 8.8 start offsets
 			realX = ((sprSize.x) << 7) - (fieldX >> 1)*dx - (fieldY>>1)*dmx + y * dmx;
@@ -1642,7 +1669,7 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 						if (colour && (prio<prioTab[sprX]))
 						{ 
 							HostWriteWord(dst, (sprX<<1), HostReadWord(pal, (colour<<1)));
-							dst_alpha[sprX] = 16;
+							dst_alpha[sprX] = -1;
 							typeTab[sprX] = spriteInfo->Mode;
 							prioTab[sprX] = prio;
 						}
@@ -1745,7 +1772,7 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 							else
 							{
 								HostWriteWord(dst, (sprX<<1), LE_TO_LOCAL_16(HostReadWord(pal, colour << 1)));
-								dst_alpha[sprX] = 16;
+								dst_alpha[sprX] = -1;
 								typeTab[sprX] = spriteInfo->Mode;
 								prioTab[sprX] = prio;
 							}
@@ -1838,11 +1865,6 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 		}
 	}
 
-//#ifdef WORDS_BIGENDIAN
-//	*(((u16*)spriteInfo)+1) = (*(((u16*)spriteInfo)+1) << 1) | *(((u16*)spriteInfo)+1) >> 15;
-//	*(((u16*)spriteInfo)+2) = (*(((u16*)spriteInfo)+2) << 2) | *(((u16*)spriteInfo)+2) >> 14;
-//#endif
-
 }
 
 
@@ -1850,7 +1872,7 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 //			SCREEN FUNCTIONS
 /*****************************************************************************/
 
-int Screen_Init(int coreid)
+int Screen_Init()
 {
 	MainScreen.gpu = GPU_Init(0);
 	SubScreen.gpu = GPU_Init(1);
@@ -1863,13 +1885,15 @@ int Screen_Init(int coreid)
 	if (osd)  {delete osd; osd =NULL; }
 	osd  = new OSDCLASS(-1);
 
-	return GPU_ChangeGraphicsCore(coreid);
+	return 0;
 }
 
 void Screen_Reset(void)
 {
 	GPU_Reset(MainScreen.gpu, 0);
 	GPU_Reset(SubScreen.gpu, 1);
+	MainScreen.offset = 0;
+	SubScreen.offset = 192;
 
 	memset(GPU_screen, 0, sizeof(GPU_screen));
 	for(int i = 0; i < (256*192*2); i++)
@@ -1884,87 +1908,7 @@ void Screen_DeInit(void)
 	GPU_DeInit(MainScreen.gpu);
 	GPU_DeInit(SubScreen.gpu);
 
-	if (GFXCore)
-		GFXCore->DeInit();
-
 	if (osd)  {delete osd; osd =NULL; }
-}
-
-/*****************************************************************************/
-//			GRAPHICS CORE
-/*****************************************************************************/
-
-// This is for future graphics core switching. This is by no means set in stone
-
-int GPU_ChangeGraphicsCore(int coreid)
-{
-   int i;
-
-   // Make sure the old core is freed
-   if (GFXCore)
-      GFXCore->DeInit();
-
-   // So which core do we want?
-   if (coreid == GFXCORE_DEFAULT)
-      coreid = 0; // Assume we want the first one
-
-   // Go through core list and find the id
-   for (i = 0; GFXCoreList[i] != NULL; i++)
-   {
-      if (GFXCoreList[i]->id == coreid)
-      {
-         // Set to current core
-         GFXCore = GFXCoreList[i];
-         break;
-      }
-   }
-
-   if (GFXCore == NULL)
-   {
-      GFXCore = &GFXDummy;
-      return -1;
-   }
-
-   if (GFXCore->Init() == -1)
-   {
-      // Since it failed, instead of it being fatal, we'll just use the dummy
-      // core instead
-      GFXCore = &GFXDummy;
-   }
-
-   return 0;
-}
-
-int GFXDummyInit();
-void GFXDummyDeInit();
-void GFXDummyResize(int width, int height, BOOL fullscreen);
-void GFXDummyOnScreenText(char *string, ...);
-
-GraphicsInterface_struct GFXDummy = {
-GFXCORE_DUMMY,
-"Dummy Graphics Interface",
-0,
-GFXDummyInit,
-GFXDummyDeInit,
-GFXDummyResize,
-GFXDummyOnScreenText
-};
-
-int GFXDummyInit()
-{
-   return 0;
-}
-
-void GFXDummyDeInit()
-{
-}
-
-void GFXDummyResize(int width, int height, BOOL fullscreen)
-{
-}
-
-void GFXDummyOnScreenText(char *string, ...)
-{
 }
 
 
@@ -2044,8 +1988,9 @@ static void GPU_RenderLine_layer(NDS_Screen * screen, u16 l)
 	switch(gpu->setFinalColorBck_funcNum)
 	{
 		//for backdrops, blend isnt applied (it's illogical, isnt it?)
-		case 0: 
-		case 1: 
+		case 0:
+		case 1:
+PLAIN_CLEAR:
 			memset_u16_le<256>(gpu->currDst,backdrop_color); 
 			break;
 
@@ -2053,10 +1998,12 @@ static void GPU_RenderLine_layer(NDS_Screen * screen, u16 l)
 		case 2:
 			if(gpu->BLDCNT & 0x20) //backdrop is selected for color effect
 				memset_u16_le<256>(gpu->currDst,gpu->currentFadeInColors[backdrop_color]);
+			else goto PLAIN_CLEAR;
 			break;
 		case 3:
 			if(gpu->BLDCNT & 0x20) //backdrop is selected for color effect
 				memset_u16_le<256>(gpu->currDst,gpu->currentFadeOutColors[backdrop_color]);
+			else goto PLAIN_CLEAR;
 			break;
 
 		//windowed cases apparently need special treatment? why? can we not render the backdrop? how would that even work?
@@ -2075,7 +2022,7 @@ static void GPU_RenderLine_layer(NDS_Screen * screen, u16 l)
 	memset(sprWin, 0, 256);
 	
 	// init pixels priorities
-	//assert(NB_PRIORITIES==4);
+	assert(NB_PRIORITIES==4);
 	gpu->itemsForPriority[0].nbPixelsX = 0;
 	gpu->itemsForPriority[1].nbPixelsX = 0;
 	gpu->itemsForPriority[2].nbPixelsX = 0;
@@ -2258,10 +2205,20 @@ template<bool SKIP> static void GPU_RenderLine_DispCapture(u16 l)
 							case 0:			// Capture screen (BG + OBJ + 3D)
 								{
 									//INFO("Capture screen (BG + OBJ + 3D)\n");
-
-									u8 *src;
-									src = (u8*)(gpu->tempScanline);
+									u8 *src = (u8*)(gpu->tempScanline);
+#ifdef LOCAL_BE
+									static u16 swapSrc[256];
+									const size_t swapSrcSize = (gpu->dispCapCnt.capx == DISPCAPCNT::_128) ? 128 : 256;
+									
+									for(size_t i = 0; i < swapSrcSize; i++)
+									{
+										swapSrc[i] = LE_TO_LOCAL_16(((u16 *)src)[i]);
+									}
+									
+									CAPCOPY((u8 *)swapSrc,cap_dst,true);
+#else
 									CAPCOPY(src,cap_dst,true);
+#endif
 								}
 							break;
 							case 1:			// Capture 3D
@@ -2629,7 +2586,14 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 			{
 				u8 * dst = GPU_screen + (screen->offset + l) * 512;
 				u8 * src = gpu->VRAMaddr + (l*512);
+#ifdef LOCAL_BE
+				for(size_t i = 0; i < 256; i++)
+				{
+					((u16 *)dst)[i] = LE_TO_LOCAL_16(((u16 *)src)[i]);
+				}
+#else
 				memcpy (dst, src, 512);
+#endif
 			}
 			break;
 		case 3: // Display memory FIFO
@@ -2778,6 +2742,16 @@ template<bool MOSAIC> void GPU::modeRender(int layer)
 		default:
 			break;
 	}
+}
+
+u32 GPU::getHOFS(int bg)
+{
+	return T1ReadWord(&dispx_st->dispx_BGxOFS[bg].BGxHOFS,0) & 0x1FF;
+}
+
+u32 GPU::getVOFS(int bg)
+{
+	return T1ReadWord(&dispx_st->dispx_BGxOFS[bg].BGxVOFS,0) & 0x1FF;
 }
 
 void gpu_SetRotateScreen(u16 angle)

@@ -41,7 +41,7 @@ static INLINE u8 T1ReadByte(u8* const mem, const u32 addr)
 
 static INLINE u16 T1ReadWord_guaranteedAligned(void* const mem, const u32 addr)
 {
-	//assert((addr&1)==0);
+	assert((addr&1)==0);
 #ifdef WORDS_BIGENDIAN
    return (((u8*)mem)[addr + 1] << 8) | ((u8*)mem)[addr];
 #else
@@ -60,7 +60,7 @@ static INLINE u16 T1ReadWord(void* const mem, const u32 addr)
 
 static INLINE u32 T1ReadLong_guaranteedAligned(u8* const  mem, const u32 addr)
 {
-	//assert((addr&3)==0);
+	assert((addr&3)==0);
 #ifdef WORDS_BIGENDIAN
    return (mem[addr + 3] << 24 | mem[addr + 2] << 16 |
            mem[addr + 1] << 8 | mem[addr]);
@@ -173,6 +173,12 @@ static INLINE u16 HostReadWord(u8* const mem, const u32 addr)
 static INLINE void HostWriteWord(u8* const mem, const u32 addr, const u16 val)
 {
    *((u16 *) (mem + addr)) = val;
+}
+
+
+static INLINE void HostWriteLong(u8* const mem, const u32 addr, const u32 val)
+{
+   *((u32 *) (mem + addr)) = val;
 }
 
 static INLINE void HostWriteTwoWords(u8* const mem, const u32 addr, const u32 val)
