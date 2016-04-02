@@ -19,6 +19,8 @@
 #import "MBProgressHUD.h"
 #import "SCLAlertView.h"
 
+#import "AFHTTPSessionManager.h"
+
 @interface iNDSBugReportTableViewController () <iNDSBugReportSelectionDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate> {
     iNDSGame    *selectedGame;
     NSString    *saveStatePath;
@@ -26,7 +28,7 @@
     //<=============== Image
     IBOutlet UILabel        *addImage;
     IBOutlet UIImageView    *bannerImage;
-    NSData                  *jsonData;
+    NSMutableDictionary     *parameters;
     BOOL bannerSet;
     BOOL submitSuccess;
 }
@@ -65,13 +67,14 @@
     }
     NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString *deviceName = [self rawDeviceName];
-    NSMutableDictionary *parameters = [@{@"description": description.text,
-                                         @"device": deviceName,
-                                         @"isSystem": @([AppDelegate.sharedInstance isSystemApplication]),
-                                         @"major": [infoDictionary objectForKey:@"CFBundleShortVersionString"],
-                                         @"minor": [infoDictionary objectForKey:@"CFBundleVersion"]
-                                        }
-                                       mutableCopy];
+    parameters = [NSMutableDictionary
+                  dictionaryWithDictionary: @{@"description": description.text,
+                                              @"device": deviceName,
+                                              @"isSystem": @([AppDelegate.sharedInstance isSystemApplication]),
+                                              @"major": [infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                                              @"minor": [infoDictionary objectForKey:@"CFBundleVersion"]
+                                              }];
+    
     if (selectedGame){
         parameters[@"game"] = selectedGame.title;
         parameters[@"gameCode"] = selectedGame.rawTitle;
@@ -84,53 +87,27 @@
         NSData *bannerData = UIImageJPEGRepresentation(bannerImage.image, 0.5);
         parameters[@"image"] = [bannerData base64EncodedStringWithOptions:0];
     }
-    NSError *error;
-    jsonData = [NSJSONSerialization dataWithJSONObject:parameters
-                                                       options:0
-                                                         error:&error];
+    __block MBProgressHUD *hud;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        hud.mode = MBProgressHUDModeIndeterminate;
+        hud.label.text = @"Submitting";
+    });
+    AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc]initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     
-    if (!jsonData) {
-        NSLog(@"json error: %@", error.localizedDescription);
-    } else {
-        NSLog(@"Staring Send");
-        __block MBProgressHUD *hud;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-            hud.mode = MBProgressHUDModeIndeterminate;
-            hud.label.text = @"Submitting";
-        });
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-            [request setURL:[NSURL URLWithString:@"http://www.williamlcobb.com/iNDS/bugreport"]];
-            //[request setURL:[NSURL URLWithString:@"http://10.20.36.13/iNDS/bugreport"]];
-            [request setHTTPMethod:@"POST"];
-            [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-            [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-            [request setHTTPBody:jsonData];
-            
-            NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-            if(connection) {
-                NSLog(@"Connection Successful");
-            } else {
-                NSLog(@"Connection could not be made");
-            }
-        });
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (!submitSuccess) {
-                [self sendError];
-            }
-        });
-    }
-}
-
-- (NSString *)appNameAndVersionNumberDisplayString {
-    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString *appDisplayName = [infoDictionary objectForKey:@"CFBundleDisplayName"];
-    NSString *majorVersion = [infoDictionary objectForKey:@"CFBundleShortVersionString"];
-    NSString *minorVersion = [infoDictionary objectForKey:@"CFBundleVersion"];
-    
-    return [NSString stringWithFormat:@"%@, Version %@ (%@)",
-            appDisplayName, majorVersion, minorVersion];
+    [manager POST:kBugUrl parameters:parameters progress:^(NSProgress * _Nonnull uploadProgress) {
+        hud.progress = uploadProgress.fractionCompleted;
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        [self sendSuccess];
+        NSLog(@"Submit Success");
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"error: %@", error);
+        [self sendError];
+    }];
+    submit.enabled = NO;
 }
 
 - (void)sendError
@@ -141,12 +118,12 @@
         alertView.shouldDismissOnTapOutside = YES;
         [alertView showError:self title:@"Error!" subTitle:@"Unable to send bug report! Have no fear, your bug report has been saved and will be sent again at a later time." closeButtonTitle:@"Okay" duration:0.0];
         NSString *savePath = [AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:@"bug.json"];
-        [jsonData writeToFile:savePath atomically:YES];
+        [parameters writeToFile:savePath atomically:YES];
         [alertView alertIsDismissed:^{
-            //[self dismissViewControllerAnimated:YES completion:nil];
+            [self dismissViewControllerAnimated:YES completion:nil];
         }];
-        
     });
+    submit.enabled = YES;
 }
 
 - (void)sendSuccess
@@ -166,22 +143,9 @@
         }];
         
     });
+    submit.enabled = YES;
 }
 
-- (void) connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    NSLog(@"Connection Error");
-    [self sendError];
-    
-}
-
-
-- (void) connectionDidFinishLoading:(NSURLConnection *)connection {
-    //NSFileManager *fm = [NSFileManager defaultManager];
-    NSLog(@"Finished!");
-    [self sendSuccess];
-    
-}
 
 - (void)setGame:(iNDSGame *)game
 {

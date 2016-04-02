@@ -22,6 +22,8 @@
 #import "iNDSInitialViewController.h"
 #import "SCLAlertView.h"
 
+#import "AFHTTPSessionManager.h"
+
 @interface AppDelegate () {
     BOOL    backgroundProcessesStarted;
 }
@@ -339,7 +341,24 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    
+    // Send saved bug reports
+    NSString *savePath = [AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:@"bug.json"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:savePath]) {
+        NSLog(@"Sending saved bug");
+        NSMutableDictionary * parameters = [NSMutableDictionary dictionaryWithContentsOfFile:savePath];
+        
+        AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc]initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
+        manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+        
+        [manager POST:kBugUrl parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            [[NSFileManager defaultManager] removeItemAtPath:savePath error:nil];
+            [ZAActivityBar showSuccessWithStatus:@"Sent a saved bug report" duration:5];
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            
+        }];
+    }
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

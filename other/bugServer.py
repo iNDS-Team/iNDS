@@ -8,12 +8,10 @@ import sqlite3 as sqlite
 file_path = os.path.dirname(os.path.realpath(__file__))
 
 # Create DB if it doesn't exist
-con = sqlite.connect('bugs.sqlite')
-if not os.path.exists(file_path + '/bugs.sqlite'):
-    print "Creating DB"
-    cursor = con.cursor()
-    cursor.execute("CREATE TABLE bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT)")
-
+con = sqlite.connect(file_path + '/ bugs.sqlite')
+cursor = con.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT)")
+con.commit()
 
 
 
@@ -39,11 +37,16 @@ class S(BaseHTTPRequestHandler):
         
         # Doesn't do anything with posted data
         self._set_headers()
-        self.wfile.write("success")
         content_len = int(self.headers.getheader('content-length', 0))
         print "Receiving post of length:", content_len / 1000000.0, "MB"
         post_body = self.rfile.read(content_len)
+        print post_body[:400]
+        print "---"
+        print post_body[-400:]
         jdata = json.loads(post_body)
+        if (not "game" in jdata):
+            jdata["game"] = ""
+            jdata["gameCode"] = ""
         if ("save" in jdata):
             save = jdata["save"]
             saveHash = hashlib.sha1(save).hexdigest()
@@ -51,6 +54,8 @@ class S(BaseHTTPRequestHandler):
             f.write(save.decode('base64'))
             f.close()
             jdata["save"] = saveHash
+        else:
+            jdata["save"] = ""
         if ("image" in jdata):
             image = jdata["image"]
             imageHash = hashlib.sha1(image).hexdigest()
@@ -58,16 +63,19 @@ class S(BaseHTTPRequestHandler):
             f.write(image.decode('base64'))
             f.close()
             jdata["image"] = imageHash
-
+        else:
+            jdata["image"] = ""
+        
         cur = con.cursor()
         cur.execute("""INSERT INTO bugs 
                        (device, major, minor, isSystem, description, game, gameCode, save, image)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                       jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],
-                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"])
+                       (jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],
+                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"]))
         
 
         print "Post Success"
+        self.wfile.write('{"result": "success"}')
         con.commit()
 
 def run(server_class=HTTPServer, handler_class=S, port=6768):
