@@ -2,7 +2,7 @@
 	Copyright (C) 2006 Normmatt
 	Copyright (C) 2006 Theo Berkau
 	Copyright (C) 2007 Pascal Giard
-	Copyright (C) 2008-2015 DeSmuME team
+	Copyright (C) 2008-2012 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//MUST SAVE ADDONS! OMG HOW DID WE FORGET THAT
+
 #ifdef HAVE_LIBZ
 #include <zlib.h>
 #endif
@@ -28,18 +30,11 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <fstream>
-
-#include "common.h"
-#include "armcpu.h"
-#include "registers.h"
-#include "FIFO.h"
-#include "driver.h"
 #include "saves.h"
 #include "MMU.h"
 #include "NDSSystem.h"
 #include "render3D.h"
 #include "cp15.h"
-#include "GPU.h"
 #include "GPU_osd.h"
 #include "version.h"
 
@@ -48,15 +43,13 @@
 #include "movie.h"
 #include "mic.h"
 #include "MMU_timing.h"
-#include "slot1.h"
-#include "slot2.h"
-#include "SPU.h"
-#include "wifi.h"
 
 #include "path.h"
 
-#ifdef HOST_WINDOWS
+#ifdef _WINDOWS
 #include "windows/main.h"
+#elif defined(ANDROID)
+#include "android/main.h"
 #endif
 
 int lastSaveState = 0;		//Keeps track of last savestate used for quick save/load functions
@@ -64,12 +57,6 @@ int lastSaveState = 0;		//Keeps track of last savestate used for quick save/load
 //void*v is actually a void** which will be indirected before reading
 //since this isnt supported right now, it is declared in here to make things compile
 #define SS_INDIRECT            0x80000000
-
-u32 _DESMUME_version = EMU_DESMUME_VERSION_NUMERIC();
-u32 svn_rev = EMU_DESMUME_SUBVERSION_NUMERIC();
-s64 save_time = 0;
-NDS_SLOT1_TYPE slot1Type = NDS_SLOT1_RETAIL_AUTO;
-NDS_SLOT2_TYPE slot2Type = NDS_SLOT2_AUTO;
 
 savestates_t savestates[NB_STATES];
 
@@ -79,14 +66,9 @@ static const char* magic = "DeSmuME SState\0";
 //a savestate chunk loader can set this if it wants to permit a silent failure (for compatibility)
 static bool SAV_silent_fail_flag;
 
-SFORMAT SF_NDS_INFO[]={
+SFORMAT SF_NDS_HEADER[]={
 	{ "GINF", 1, sizeof(gameInfo.header), &gameInfo.header},
 	{ "GRSZ", 1, 4, &gameInfo.romsize},
-	{ "DVMJ", 1, 1, (void*)&DESMUME_VERSION_MAJOR},
-	{ "DVMI", 1, 1, (void*)&DESMUME_VERSION_MINOR},
-	{ "DSBD", 1, 1, (void*)&DESMUME_VERSION_BUILD},
-	{ "GREV", 1, 4, &svn_rev},
-	{ "GTIM", 1, 8, &save_time},
 	{ 0 }
 };
 
@@ -196,7 +178,6 @@ SFORMAT SF_NDS[]={
 	{ "_STX", 2, 1, &nds.scr_touchX},
 	{ "_STY", 2, 1, &nds.scr_touchY},
 	{ "_TPB", 4, 1, &nds.isTouch},
-	{ "_IFB", 4, 1, &nds.isFakeBooted},
 	{ "_DBG", 4, 1, &nds._DebugConsole},
 	{ "_ENS", 4, 1, &nds.ensataEmulation},
 	{ "_TYP", 4, 1, &nds.ConsoleType},
@@ -241,7 +222,7 @@ SFORMAT SF_MMU[]={
 	{ "M_SX", 1, 2,       &MMU.SPI_CNT},
 	{ "M_SC", 1, 2,       &MMU.SPI_CMD},
 	{ "MASX", 1, 2,       &MMU.AUX_SPI_CNT},
-	//{ "MASC", 1, 2,       &MMU.AUX_SPI_CMD}, //zero 20-aug-2013 - this seems pointless
+	{ "MASC", 1, 2,       &MMU.AUX_SPI_CMD},
 
 	{ "MWRA", 1, 2,       &MMU.WRAMCNT},
 
@@ -263,11 +244,10 @@ SFORMAT SF_MMU[]={
 	{ "BUWR", 4, 1,       &MMU.fw.writeable_buffer},
 	//end memory chips
 
-	//TODO:slot-1 plugins
-	{ "GC0T", 4, 1,       &MMU.dscard[0].transfer_count},
-	{ "GC0M", 4, 1,       &MMU.dscard[0].mode},
-	{ "GC1T", 4, 1,       &MMU.dscard[1].transfer_count},
-	{ "GC1M", 4, 1,       &MMU.dscard[1].mode},
+	{ "MC0A", 4, 1,       &MMU.dscard[0].address},
+	{ "MC0T", 4, 1,       &MMU.dscard[0].transfer_count},
+	{ "MC1A", 4, 1,       &MMU.dscard[1].address},
+	{ "MC1T", 4, 1,       &MMU.dscard[1].transfer_count},
 	//{ "MCHT", 4, 1,       &MMU.CheckTimers},
 	//{ "MCHD", 4, 1,       &MMU.CheckDMAs},
 
@@ -385,78 +365,6 @@ SFORMAT reserveChunks[] = {
 	{ 0 }
 };
 
-static bool s_slot1_loadstate(EMUFILE* is, int size)
-{
-	u32 version = is->read32le();
-
-	//version 0:
-	if(version >= 0)
-	{
-		u8 slotID = is->read32le();
-		slot1Type = NDS_SLOT1_RETAIL_AUTO;
-		if (version >= 1)
-			slot1_getTypeByID(slotID, slot1Type);
-
-		slot1_Change(slot1Type);
-
-		EMUFILE_MEMORY temp;
-		is->readMemoryStream(&temp);
-		temp.fseek(0,SEEK_SET);
-		slot1_Loadstate(&temp);
-	}
-
-	return true;
-}
-
-static void s_slot1_savestate(EMUFILE* os)
-{
-	u32 version = 1;
-	os->write32le(version);
-
-	u8 slotID = (u8)slot1_List[slot1_GetSelectedType()]->info()->id();
-	os->write32le(slotID);
-
-	EMUFILE_MEMORY temp;
-	slot1_Savestate(&temp);
-	os->writeMemoryStream(&temp);
-}
-
-static bool s_slot2_loadstate(EMUFILE* is, int size)
-{
-	u32 version = is->read32le();
-
-	//version 0:
-	if(version >= 0)
-	{
-		slot2Type = NDS_SLOT2_AUTO;
-		u8 slotID = is->read32le();
-		if (version == 0)
-			slot2_getTypeByID(slotID, slot2Type);
-		slot2_Change(slot2Type);
-
-		EMUFILE_MEMORY temp;
-		is->readMemoryStream(&temp);
-		temp.fseek(0,SEEK_SET);
-		slot2_Loadstate(&temp);
-	}
-
-	return true;
-}
-
-static void s_slot2_savestate(EMUFILE* os)
-{
-	u32 version = 0;
-	os->write32le(version);
-
-	//version 0:
-	u8 slotID = (u8)slot2_List[slot2_GetSelectedType()]->info()->id();
-	os->write32le(slotID);
-
-	EMUFILE_MEMORY temp;
-	slot2_Savestate(&temp);
-	os->writeMemoryStream(&temp);
-}
-
 static void mmu_savestate(EMUFILE* os)
 {
 	u32 version = 8;
@@ -510,7 +418,7 @@ static bool mmu_loadstate(EMUFILE* is, int size)
 			//if(bupmem_size != MMU.bupmem.size) return false; //mismatch between current initialized and saved size
 			addr_size = BackupDevice::addr_size_for_old_save_size(bupmem_size);
 		}
-		else if(version == 1)
+		else //if(version == 1)
 		{
 			//version 1 reinitializes the save system with the type that was saved
 			u32 bupmem_type;
@@ -678,12 +586,18 @@ void savestate_slot(int num)
    if (savestate_save(filename))
    {
 	   osd->setLineColor(255, 255, 255);
-	   osd->addLine("Saved to %i slot", num);
+	   if(num == 10) //autosave
+			osd->addLine("Saved autosave");
+	   else
+			osd->addLine("Saved to %i slot", num);
    }
    else
    {
 	   osd->setLineColor(255, 0, 0);
-	   osd->addLine("Error saving %i slot", num);
+	   if(num == 10) //autosave
+			osd->addLine("Error saving autosave");
+	   else	
+			osd->addLine("Error saving %i slot", num);
 	   return;
    }
 
@@ -711,12 +625,18 @@ void loadstate_slot(int num)
    if (savestate_load(filename))
    {
 	   osd->setLineColor(255, 255, 255);
-	   osd->addLine("Loaded from %i slot", num);
+	   if(num == 10) //autosave
+			osd->addLine("Loaded autosave");
+	   else
+			osd->addLine("Loaded from %i slot", num);
    }
    else
    {
 	   osd->setLineColor(255, 0, 0);
-	   osd->addLine("Error loading %i slot", num);
+	   if(num == 10) //autosave
+			osd->addLine("Error loading autosave");
+	   else
+			osd->addLine("Error loading %i slot", num);
    }
 }
 
@@ -946,7 +866,8 @@ static void writechunks(EMUFILE* os);
 bool savestate_save(EMUFILE* outstream, int compressionLevel)
 {
 #ifdef HAVE_JIT 
-	arm_jit_sync();
+	if (arm_cpubase)
+		arm_cpubase->Sync();
 #endif
 	#ifndef HAVE_LIBZ
 	compressionLevel = Z_NO_COMPRESSION;
@@ -1027,12 +948,6 @@ bool savestate_save (const char *file_name)
 }
 
 static void writechunks(EMUFILE* os) {
-
-	DateTime tm = DateTime::get_Now();
-	svn_rev = EMU_DESMUME_SUBVERSION_NUMERIC();
-
-	save_time = tm.get_Ticks();
-
 	savestate_WriteChunk(os,1,SF_ARM9);
 	savestate_WriteChunk(os,2,SF_ARM7);
 	savestate_WriteChunk(os,3,cp15_savestate);
@@ -1050,10 +965,10 @@ static void writechunks(EMUFILE* os) {
 	savestate_WriteChunk(os,101,mov_savestate);
 	savestate_WriteChunk(os,110,SF_WIFI);
 	savestate_WriteChunk(os,120,SF_RTC);
-	savestate_WriteChunk(os,130,SF_NDS_INFO);
-	savestate_WriteChunk(os,140,s_slot1_savestate);
-	savestate_WriteChunk(os,150,s_slot2_savestate);
+	savestate_WriteChunk(os,130,SF_NDS_HEADER);
 	// reserved for future versions
+	savestate_WriteChunk(os,140,reserveChunks);
+	savestate_WriteChunk(os,150,reserveChunks);
 	savestate_WriteChunk(os,160,reserveChunks);
 	savestate_WriteChunk(os,170,reserveChunks);
 	savestate_WriteChunk(os,180,reserveChunks);
@@ -1066,21 +981,11 @@ static bool ReadStateChunks(EMUFILE* is, s32 totalsize)
 	bool ret = true;
 	bool haveInfo = false;
 	
-	s64 save_time = 0;
 	u32 romsize = 0;
-	u8 version_major = 0;
-	u8 version_minor = 0;
-	u8 version_build = 0;
-	
 	NDS_header header;
-	SFORMAT SF_INFO[]={
+	SFORMAT SF_HEADER[]={
 		{ "GINF", 1, sizeof(header), &header},
 		{ "GRSZ", 1, 4, &romsize},
-		{ "DVMJ", 1, 1, &version_major},
-		{ "DVMI", 1, 1, &version_minor},
-		{ "DSBD", 1, 1, &version_build},
-		{ "GREV", 1, 4, &svn_rev},
-		{ "GTIM", 1, 8, &save_time},
 		{ 0 }
 	};
 	memset(&header, 0, sizeof(header));
@@ -1111,10 +1016,10 @@ static bool ReadStateChunks(EMUFILE* is, s32 totalsize)
 			case 101: if(!mov_loadstate(is, size)) ret=false; break;
 			case 110: if(!ReadStateChunk(is,SF_WIFI,size)) ret=false; break;
 			case 120: if(!ReadStateChunk(is,SF_RTC,size)) ret=false; break;
-			case 130: if(!ReadStateChunk(is,SF_INFO,size)) ret=false; else haveInfo=true; break;
-			case 140: if(!s_slot1_loadstate(is, size)) ret=false; break;
-			case 150: if(!s_slot2_loadstate(is, size)) ret=false; break;
+			case 130: if(!ReadStateChunk(is,SF_HEADER,size)) ret=false; else haveInfo=true; break;
 			// reserved for future versions
+			case 140:
+			case 150:
 			case 160:
 			case 170:
 			case 180:
@@ -1135,28 +1040,12 @@ static bool ReadStateChunks(EMUFILE* is, s32 totalsize)
 		memset(&buf[0], 0, sizeof(buf));
 		memcpy(buf, header.gameTile, sizeof(header.gameTile));
 		printf("Savestate info:\n");
-		if (version_major | version_minor | version_build)
-		{
-			char buf[32] = {0};
-			if (svn_rev != 0xFFFFFFFF)
-				sprintf(buf, " svn %u", svn_rev);
-			printf("\tDeSmuME version: %u.%u.%u%s\n", version_major, version_minor, version_build, buf);
-		}
-
-		if (save_time)
-		{
-			static const char *wday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-			DateTime tm = save_time;
-			printf("\tSave created: %04d-%03s-%02d %s %02d:%02d:%02d\n", tm.get_Year(), DateTime::GetNameOfMonth(tm.get_Month()), tm.get_Day(), wday[tm.get_DayOfWeek()%7], tm.get_Hour(), tm.get_Minute(), tm.get_Second());
-		}
 		printf("\tGame title: %s\n", buf);
-		printf("\tGame code: %c%c%c%c\n", header.gameCode[0], header.gameCode[1], header.gameCode[2], header.gameCode[3]);
+		printf("\tGame code: %c%c%c%c\n", header.gameCode[3], header.gameCode[2], header.gameCode[1], header.gameCode[0]);
 		printf("\tMaker code: %c%c (0x%04X) - %s\n", header.makerCode & 0xFF, header.makerCode >> 8, header.makerCode, getDeveloperNameByID(header.makerCode).c_str());
 		printf("\tDevice capacity: %dMb (real size %dMb)\n", ((128 * 1024) << header.cardSize) / (1024 * 1024), romsize / (1024 * 1024));
 		printf("\tCRC16: %04Xh\n", header.CRC16);
 		printf("\tHeader CRC16: %04Xh\n", header.headerCRC16);
-		printf("\tSlot1: %s\n", slot1_List[slot1Type]->info()->name());
-		printf("\tSlot2: %s\n", slot2_List[slot2Type]->info()->name());
 
 		if (gameInfo.romsize != romsize || memcmp(&gameInfo.header, &header, sizeof(header)) != 0)
 			msgbox->warn("The savestate you are loading does not match the ROM you are running.\nYou should find the correct ROM");
@@ -1203,9 +1092,9 @@ bool savestate_load(EMUFILE* is)
 	if(is->fail() || memcmp(header,magic,16))
 		return false;
 
-	u32 ssversion,len,comprlen;
+	u32 ssversion,dversion,len,comprlen;
 	if(!read32le(&ssversion,is)) return false;
-	if(!read32le(&_DESMUME_version,is)) return false;
+	if(!read32le(&dversion,is)) return false;
 	if(!read32le(&len,is)) return false;
 	if(!read32le(&comprlen,is)) return false;
 

@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2015 DeSmuME team
+	Copyright (C) 2009-2012 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,44 +15,31 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "types.h"
 #include "lua-engine.h"
-
-#if defined(WIN32)
-	#include <windows.h>
-	#include <direct.h>
-
-	typedef HMENU PlatformMenu;    // hMenu
-	#define MAX_MENU_COUNT (IDC_LUAMENU_RESERVE_END - IDC_LUAMENU_RESERVE_START + 1)
-
-	#include "windows/main.h"
-	#include "windows/video.h"
-	#include "windows/resource.h"
-#else
-	// TODO: define appropriate types for menu
-	typedef void* PlatformMenu;
-	#define MAX_MENU_COUNT 0
-
-	#include <unistd.h>
-#endif
-
+#include "movie.h"
 #include <assert.h>
 #include <vector>
 #include <map>
 #include <string>
 #include <algorithm>
-
-#include "armcpu.h"
-#include "movie.h"
 #include "zlib.h"
-#include "driver.h"
 #include "NDSSystem.h"
 #include "movie.h"
-#include "MMU.h"
-#include "GPU.h"
 #include "GPU_osd.h"
-#include "SPU.h"
 #include "saves.h"
 #include "emufile.h"
+#if defined(WIN32) && !defined(WXPORT)
+#include <windows.h>
+#include "main.h"
+#include "video.h"
+#include "resource.h"
+#endif
+#ifdef WIN32
+#include <direct.h>
+#else
+#include <unistd.h>
+#endif
 
 using namespace std;
 
@@ -495,7 +482,7 @@ static int doPopup(lua_State* L, const char* deftype, const char* deficon)
 
 	static const char * const titles [] = {"Notice", "Question", "Warning", "Error"};
 	const char* answer = "ok";
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WXPORT)
 	static const int etypes [] = {MB_OK, MB_YESNO, MB_YESNOCANCEL, MB_OKCANCEL, MB_ABORTRETRYIGNORE};
 	static const int eicons [] = {MB_ICONINFORMATION, MB_ICONQUESTION, MB_ICONWARNING, MB_ICONERROR};
 //	DialogsOpen++;
@@ -1358,7 +1345,7 @@ bool luabitop_validate(lua_State *L) // originally named as luaopen_bit
   if (b != (UBits)1437217655L || BAD_SAR) {  /* Perform a simple self-test. */
     const char *msg = "compiled with incompatible luaconf.h";
 #ifdef LUA_NUMBER_DOUBLE
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WXPORT)
     if (b == (UBits)1610612736L)
       msg = "use D3DCREATE_FPU_PRESERVE with DirectX";
 #endif
@@ -1430,7 +1417,7 @@ void indicateBusy(lua_State* L, bool busy)
 		lua_pop(L, 1);
 	}
 */
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WXPORT)
 	int uid = luaStateToUIDMap[L->l_G->mainthread];
 	HWND hDlg = (HWND)uid;
 	char str [1024];
@@ -1484,7 +1471,7 @@ void LuaRescueHook(lua_State* L, lua_Debug *dbg)
 		if(!info.panic)
 		{
 			SPU_ClearOutputBuffer();
-#if defined(ASK_USER_ON_FREEZE) && defined(_WIN32)
+#if defined(ASK_USER_ON_FREEZE) && defined(_WIN32) && !defined(WXPORT)
 			DialogsOpen++;
 			int answer = MessageBox(HWnd, "A Lua script has been running for quite a while. Maybe it is in an infinite loop.\n\nWould you like to stop the script?\n\n(Yes to stop it now,\n No to keep running and not ask again,\n Cancel to keep running but ask again later)", "Lua Alert", MB_YESNOCANCEL | MB_DEFBUTTON3 | MB_ICONASTERISK);
 			DialogsOpen--;
@@ -2210,7 +2197,7 @@ public:
 
 	std::vector<std::string> differences;
 
-	virtual size_t fwrite(const void *ptr, size_t bytes)
+	virtual void fwrite(const void *ptr, size_t bytes)
 	{
 		if(!failbit)
 		{
@@ -2243,8 +2230,6 @@ public:
 		}
 
 		pos += bytes;
-		
-		return bytes;
 	}
 };
 
@@ -2609,7 +2594,7 @@ static void prepare_reading()
 	}
 	else
 	{
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 		extern VideoInfo video;
 		curGuiData.data = video.buffer;
 		curGuiData.stridePix = 256;
@@ -3457,7 +3442,7 @@ static void GetCurrentScriptDir(char* buffer, int bufLen)
 
 DEFINE_LUA_FUNCTION(emu_openscript, "filename")
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	char curScriptDir[1024]; GetCurrentScriptDir(curScriptDir, 1024); // make sure we can always find scripts that are in the same directory as the current script
 	const char* filename = lua_isstring(L,1) ? lua_tostring(L,1) : NULL;
 	extern const char* OpenLuaScript(const char* filename, const char* extraDirToCheck, bool makeSubservient);
@@ -3479,7 +3464,7 @@ DEFINE_LUA_FUNCTION(emu_reset, "")
 
 static bool IsLuaMenuItem(PlatformMenuItem menuItem)
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	return (menuItem >= IDC_LUAMENU_RESERVE_START && menuItem <= IDC_LUAMENU_RESERVE_END);
 #else
 	return false;
@@ -3488,7 +3473,7 @@ static bool IsLuaMenuItem(PlatformMenuItem menuItem)
 
 static bool SearchFreeMenuItem(PlatformMenu menu, PlatformMenuItem& menuItem)
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	for (UINT menuItemId = IDC_LUAMENU_RESERVE_START; menuItemId <= IDC_LUAMENU_RESERVE_END; menuItemId++)
 	{
 		MENUITEMINFO mii;
@@ -3510,7 +3495,7 @@ static bool SearchFreeMenuItem(PlatformMenu menu, PlatformMenuItem& menuItem)
 
 static PlatformMenu AddSubMenu(PlatformMenu topMenu, PlatformMenu menu, const char* menuName)
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	LuaContextInfo& info = GetCurrentInfo();
 	MENUITEMINFO mii;
 
@@ -3538,7 +3523,7 @@ static PlatformMenu AddSubMenu(PlatformMenu topMenu, PlatformMenu menu, const ch
 	}
 
 	// add new submenu
-	PlatformMenuItem subMenuId;
+	UINT subMenuId;
 	if (!SearchFreeMenuItem(topMenu, subMenuId))
 	{
 		return NULL;
@@ -3568,7 +3553,7 @@ static PlatformMenu AddSubMenu(PlatformMenu topMenu, PlatformMenu menu, const ch
 
 bool AddMenuEntries(PlatformMenu topMenu, PlatformMenu menu)
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	LuaContextInfo& info = GetCurrentInfo();
 	lua_State* L = info.L;
 	luaL_checktype(L, -1, LUA_TTABLE);
@@ -3582,7 +3567,7 @@ bool AddMenuEntries(PlatformMenu topMenu, PlatformMenu menu)
 		lua_rawgeti(L, -1, index);
 		if (lua_isnil(L, -1))
 		{
-			PlatformMenuItem menuItem;
+			UINT menuItem;
 			if (!SearchFreeMenuItem(topMenu, menuItem))
 			{
 				luaL_error(L, "too many menu items");
@@ -3612,7 +3597,7 @@ bool AddMenuEntries(PlatformMenu topMenu, PlatformMenu menu)
 			lua_rawgeti(L, -1, 2);
 			if (lua_isfunction(L, -1))
 			{
-				PlatformMenuItem menuItem;
+				UINT menuItem;
 				if (!SearchFreeMenuItem(topMenu, menuItem))
 				{
 					luaL_error(L, "too many menu items");
@@ -3672,7 +3657,7 @@ bool AddMenuEntries(PlatformMenu topMenu, PlatformMenu menu)
 
 DEFINE_LUA_FUNCTION(emu_addmenu, "menuName, menuEntries")
 {
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	int nargs = lua_gettop(L);
 	if (nargs > 1 && !lua_isnil(L, 1))
 	{
@@ -3708,7 +3693,7 @@ DEFINE_LUA_FUNCTION(emu_setmenuiteminfo, "menuItem, infoTable")
 {
 	luaL_checktype(L, 1, LUA_TFUNCTION);
 	luaL_checktype(L, 2, LUA_TTABLE);
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 	LuaContextInfo& info = GetCurrentInfo();
 	map<PlatformMenuItem, PlatformMenu>::iterator it = info.menuData.menuItemMap.begin();
 	while(it != info.menuData.menuItemMap.end())
@@ -3963,7 +3948,7 @@ DEFINE_LUA_FUNCTION(sound_clear, "")
 	return 0;
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WXPORT)
 const char* s_keyToName[256] =
 {
 	NULL,
@@ -4077,7 +4062,7 @@ DEFINE_LUA_FUNCTION(input_getcurrentinputstatus, "")
 {
 	lua_newtable(L);
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WXPORT)
 	// keyboard and mouse button status
 	{
 		extern bool allowBackgroundInput;
@@ -5353,7 +5338,7 @@ void StopLuaScript(int uid)
 			for(int i = 0; i < LUAMEMHOOK_COUNT; i++)
 				CalculateMemHookRegions((LuaMemHookType)i);
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(WXPORT)
 			// remove items
 			map<PlatformMenuItem, PlatformMenu>::iterator it = info.menuData.menuItemMap.begin();
 			while(it != info.menuData.menuItemMap.end())

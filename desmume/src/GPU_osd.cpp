@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2006-2015 DeSmuME team
+	Copyright (C) 2006-2011 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 */
 
 #include "GPU_osd.h"
-#include "driver.h"
 #include "GPU.h"
 #include "mem.h"
 #include <string.h> //mem funcs
@@ -25,7 +24,11 @@
 #include <sstream>
 #include <stdio.h>
 #include <time.h>
+#ifndef ANDROID
 #include <glib.h>
+#else
+#include <sys/time.h>
+#endif
 #include "debug.h"
 
 #include "aggdraw.h"
@@ -511,8 +514,13 @@ static void DrawEditableElementIndicators()
 
 void DrawHUD()
 {
+#ifdef ANDROID
+	struct timeval time;
+	gettimeofday(&time, NULL);
+#else
 	GTimeVal time;
 	g_get_current_time(&time);
+#endif
 	hudTimer = ((s64)time.tv_sec * 1000) + ((s64)time.tv_usec/1000);
 
 	if (HudEditorMode)
@@ -553,7 +561,7 @@ void DrawHUD()
 		drawPad(Hud.GraphicalInputDisplay.x, Hud.GraphicalInputDisplay.y, 2.5);
 	}
 
-	#if defined(WIN32) && !defined(DESMUME_QT)
+	#if defined(WIN32) && !defined(WXPORT)
 	if (CommonSettings.hud.ShowMicrophone) 
 	{
 		osd->addFixed(Hud.Microphone.x, Hud.Microphone.y, "%03d [%07d]",MicDisplay, Hud.cpuloopIterationCount);

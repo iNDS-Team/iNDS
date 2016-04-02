@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2005 Guillaume Duhamel
-	Copyright (C) 2008-2015 DeSmuME team
+	Copyright (C) 2008-2012 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -21,22 +21,9 @@
 
 //analyze microsoft compilers
 #ifdef _MSC_VER
-	#define HOST_WINDOWS
-	
-	//todo - everyone will want to support this eventually, i suppose
-	#ifndef DESMUME_QT
-		#include "config.h"
-	#endif
-
-#endif //_MSC_VER
-
-// Determine CPU architecture for platforms that don't use the autoconf script
-#if defined(HOST_WINDOWS) || defined(DESMUME_COCOA)
-	#if defined(__x86_64__) || defined(__LP64) || defined(__IA64__) || defined(_M_X64) || defined(_WIN64)
-		#define HOST_64
-	#else
-		#define HOST_32
-	#endif
+#define _WINDOWS
+//todo - everyone will want to support this eventually, i suppose
+#include "config.h"
 #endif
 
 //enforce a constraint: gdb stub requires developer
@@ -50,7 +37,8 @@
 #define IF_DEVELOPER(X)
 #endif
 
-#ifdef HOST_WINDOWS
+#ifdef _WINDOWS
+	//#define HAVE_WX //not useful yet....
 	#define HAVE_LIBAGG
 	#define ENABLE_SSE
 	#define ENABLE_SSE2
@@ -85,24 +73,25 @@
 #define WINAPI
 #endif
 
-#if !defined(MAX_PATH)
-	#if defined(HOST_WINDOWS)
-		#define MAX_PATH 260
-	#elif defined(__GNUC__)
-		#include <limits.h>
-		#if !defined(PATH_MAX)
-			#define MAX_PATH 1024
-		#else
-			#define MAX_PATH PATH_MAX
-		#endif
-	#else
-		#define MAX_PATH 1024
-	#endif
+#ifdef __GNUC__
+#include <limits.h>
+#ifndef PATH_MAX
+#define MAX_PATH 1024
+#else
+#define MAX_PATH PATH_MAX
+#endif
 #endif
 
-//------------alignment macros-------------
-//dont apply these to types without further testing. it only works portably here on declarations of variables
-//cant we find a pattern other people use more successfully?
+#if defined(WIN32) || defined(_WIN32)
+#define _alloca16(x)	((void *)((((int)_alloca( (x)+15 )) + 15) & ~15))
+#define _alloca32(x)	((void *)((((int)_alloca( (x)+31 )) + 31) & ~31))
+#else
+#include <alloca.h>
+#define _alloca			alloca
+#define _alloca16(x)	((void *)((((uintptr_t)alloca( (x)+15 )) + 15) & ~15))
+#define _alloca32(x)	((void *)((((uintptr_t)_alloca( (x)+31 )) + 31) & ~31))
+#endif
+
 #if defined(_MSC_VER) || defined(__INTEL_COMPILER)
 #define DS_ALIGN(X) __declspec(align(X))
 #elif defined(__GNUC__)
@@ -110,23 +99,32 @@
 #else
 #define DS_ALIGN(X)
 #endif
+
+#ifdef __arm__
+#define CACHE_ALIGN DS_ALIGN(64)
+#else
 #define CACHE_ALIGN DS_ALIGN(32)
+#endif
+
 //use this for example when you want a byte value to be better-aligned
 #define FAST_ALIGN DS_ALIGN(4)
-//---------------------------------------------
 
-#ifdef __MINGW32__
+#ifdef __MINGW32__ 
 #define FASTCALL __attribute__((fastcall))
 #define ASMJIT_CALL_CONV kX86FuncConvGccFastCall
+#define HAVE_FASTCALL
 #elif defined (__i386__) && !defined(__clang__)
 #define FASTCALL __attribute__((regparm(3)))
 #define ASMJIT_CALL_CONV kX86FuncConvGccRegParm3
+#define HAVE_FASTCALL
 #elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
-#define FASTCALL
-#define ASMJIT_CALL_CONV kX86FuncConvDefault
+#define FASTCALL __fastcall
+#define ASMJIT_CALL_CONV kX86FuncConvMsFastCall
+#define HAVE_FASTCALL
 #else
 #define FASTCALL
 #define ASMJIT_CALL_CONV kX86FuncConvDefault
+//#define HAVE_FASTCALL
 #endif
 
 #ifdef _MSC_VER
@@ -157,7 +155,7 @@
 #ifdef __GNUC__
 #define NOINLINE __attribute__((noinline))
 #else
-#define NOINLINE
+#define NOINLINE __declspec(noinline)
 #endif
 #endif
 
@@ -263,10 +261,10 @@ typedef int desmume_BOOL;
 #ifdef LOCAL_BE	/* local arch is big endian */
 # define LE_TO_LOCAL_16(x) ((((x)&0xff)<<8)|(((x)>>8)&0xff))
 # define LE_TO_LOCAL_32(x) ((((x)&0xff)<<24)|(((x)&0xff00)<<8)|(((x)>>8)&0xff00)|(((x)>>24)&0xff))
-# define LE_TO_LOCAL_64(x) ((((x)&0xff)<<56)|(((x)&0xff00)<<40)|(((x)&0xff0000)<<24)|(((x)&0xff000000)<<8)|(((x)>>8)&0xff000000)|(((x)>>24)&0xff0000)|(((x)>>40)&0xff00)|(((x)>>56)&0xff))
+# define LE_TO_LOCAL_64(x) ((((x)&0xff)<<56)|(((x)&0xff00)<<40)|(((x)&0xff0000)<<24)|(((x)&0xff000000)<<8)|(((x)>>8)&0xff000000)|(((x)>>24)&0xff00)|(((x)>>40)&0xff00)|(((x)>>56)&0xff))
 # define LOCAL_TO_LE_16(x) ((((x)&0xff)<<8)|(((x)>>8)&0xff))
 # define LOCAL_TO_LE_32(x) ((((x)&0xff)<<24)|(((x)&0xff00)<<8)|(((x)>>8)&0xff00)|(((x)>>24)&0xff))
-# define LOCAL_TO_LE_64(x) ((((x)&0xff)<<56)|(((x)&0xff00)<<40)|(((x)&0xff0000)<<24)|(((x)&0xff000000)<<8)|(((x)>>8)&0xff000000)|(((x)>>24)&0xff0000)|(((x)>>40)&0xff00)|(((x)>>56)&0xff))
+# define LOCAL_TO_LE_64(x) ((((x)&0xff)<<56)|(((x)&0xff00)<<40)|(((x)&0xff0000)<<24)|(((x)&0xff000000)<<8)|(((x)>>8)&0xff000000)|(((x)>>24)&0xff00)|(((x)>>40)&0xff00)|(((x)>>56)&0xff))
 #else		/* local arch is little endian */
 # define LE_TO_LOCAL_16(x) (x)
 # define LE_TO_LOCAL_32(x) (x)

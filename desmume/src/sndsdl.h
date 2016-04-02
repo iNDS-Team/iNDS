@@ -1,5 +1,4 @@
 /*
-	Copyright (C) 2005-2015 DeSmuME Team
 	Copyright 2005-2006 Theo Berkau
 
 	This file is free software: you can redistribute it and/or modify
@@ -19,7 +18,6 @@
 #ifndef SNDSDL_H
 #define SNDSDL_H
 
-#include "SPU.h"
 #define SNDCORE_SDL 2
 
 extern SoundInterface_struct SNDSDL;

@@ -1,7 +1,7 @@
 /*
 The MIT License
 
-Copyright (C) 2009-2015 DeSmuME team
+Copyright (C) 2009-2012 DeSmuME team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,13 +37,11 @@ THE SOFTWARE.
 
 #include "emufile_types.h"
 
-#ifdef HOST_WINDOWS 
+#ifdef _MSC_VER
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
-
-class EMUFILE_MEMORY;
 
 class EMUFILE {
 protected:
@@ -84,7 +82,11 @@ public:
 	virtual int fputc(int c) = 0;
 
 	virtual size_t _fread(const void *ptr, size_t bytes) = 0;
-	virtual size_t fwrite(const void *ptr, size_t bytes) = 0;
+
+	//removing these return values for now so we can find any code that might be using them and make sure
+	//they handle the return values correctly
+
+	virtual void fwrite(const void *ptr, size_t bytes) = 0;
 
 	void write64le(u64* val);
 	void write64le(u64 val);
@@ -118,10 +120,6 @@ public:
 	virtual void fflush() = 0;
 
 	virtual void truncate(s32 length) = 0;
-
-	void writeMemoryStream(EMUFILE_MEMORY* ms);
-	void readMemoryStream(EMUFILE_MEMORY* ms);
-
 };
 
 //todo - handle read-only specially?
@@ -168,7 +166,7 @@ public:
 		return &(*vec)[0];
 	}
 
-	std::vector<u8>* get_vec() const { return vec; };
+	std::vector<u8>* get_vec() { return vec; };
 
 	virtual FILE *get_fp() { return NULL; }
 
@@ -184,10 +182,10 @@ public:
 		va_start(argptr, format);
 		vsprintf(tempbuf,format,argptr);
 		
-		fwrite(tempbuf,amt);
+        fwrite(tempbuf,amt);
 		delete[] tempbuf;
-
-		va_end(argptr);
+		
+        va_end(argptr);
 		return amt;
 	};
 
@@ -217,13 +215,15 @@ public:
 	}
 
 	virtual size_t _fread(const void *ptr, size_t bytes);
-	virtual size_t fwrite(const void *ptr, size_t bytes){
+
+	//removing these return values for now so we can find any code that might be using them and make sure
+	//they handle the return values correctly
+
+	virtual void fwrite(const void *ptr, size_t bytes){
 		reserve(pos+(s32)bytes);
 		memcpy(buf()+pos,ptr,bytes);
 		pos += (s32)bytes;
 		len = std::max(pos,len);
-		
-		return bytes;
 	}
 
 	virtual int fseek(int offset, int origin){ 
@@ -264,22 +264,10 @@ protected:
 	FILE* fp;
 	std::string fname;
 	char mode[16];
-	long mFilePosition;
-	bool mPositionCacheEnabled;
-	
-	enum eCondition
-	{
-		eCondition_Clean,
-		eCondition_Unknown,
-		eCondition_Read,
-		eCondition_Write
-	} mCondition;
 
 private:
 	void open(const char* fname, const char* mode)
 	{
-		mPositionCacheEnabled = false;
-		mCondition = eCondition_Clean;
 		fp = fopen(fname,mode);
 		if(!fp)
 			failbit = true;
@@ -291,8 +279,6 @@ public:
 
 	EMUFILE_FILE(const std::string& fname, const char* mode) { open(fname.c_str(),mode); }
 	EMUFILE_FILE(const char* fname, const char* mode) { open(fname,mode); }
-
-	void EnablePositionCache();
 
 	virtual ~EMUFILE_FILE() {
 		if(NULL != fp)
@@ -306,8 +292,6 @@ public:
 	virtual EMUFILE* memwrap();
 
 	bool is_open() { return fp != NULL; }
-
-	void DemandCondition(eCondition cond);
 
 	virtual void truncate(s32 length);
 
@@ -326,12 +310,29 @@ public:
 		return ::fputc(c, fp);
 	}
 
-	virtual size_t _fread(const void *ptr, size_t bytes);
-	virtual size_t fwrite(const void *ptr, size_t bytes);
+	virtual size_t _fread(const void *ptr, size_t bytes){
+		size_t ret = ::fread((void*)ptr, 1, bytes, fp);
+		if(ret < bytes)
+			failbit = true;
+		return ret;
+	}
 
-	virtual int fseek(int offset, int origin);
+	//removing these return values for now so we can find any code that might be using them and make sure
+	//they handle the return values correctly
 
-	virtual int ftell();
+	virtual void fwrite(const void *ptr, size_t bytes){
+		size_t ret = ::fwrite((void*)ptr, 1, bytes, fp);
+		if(ret < bytes)
+			failbit = true;
+	}
+
+	virtual int fseek(int offset, int origin) { 
+		return ::fseek(fp, offset, origin);
+	}
+
+	virtual int ftell() {
+		return (u32)::ftell(fp);
+	}
 
 	virtual int size() { 
 		int oldpos = ftell();

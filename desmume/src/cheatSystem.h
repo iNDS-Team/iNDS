@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2015 DeSmuME team
+	Copyright (C) 2009-2012 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,12 +15,10 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string>
+#include "common.h"
 #include <vector>
-#include "types.h"
 
 #define CHEAT_VERSION_MAJOR			2
 #define CHEAT_VERSION_MINOR			0
@@ -54,7 +52,7 @@ class CHEATS
 {
 private:
 	std::vector<CHEATS_LIST> list;
-	u8					filename[MAX_PATH];
+	//u8					filename[MAX_PATH];
 	u32					currentGet;
 
 	void	clear();
@@ -68,15 +66,15 @@ public:
 		memset(filename, 0, sizeof(filename));
 	}
 	~CHEATS() {}
-
+    u8					filename[MAX_PATH]; //Will
 	void	init(char *path);
 	BOOL	add(u8 size, u32 address, u32 val, char *description, BOOL enabled);
 	BOOL	update(u8 size, u32 address, u32 val, char *description, BOOL enabled, u32 pos);
-	BOOL	add_AR(char *code, char *description, BOOL enabled);
-	BOOL	update_AR(char *code, char *description, BOOL enabled, u32 pos);
+	BOOL	add_AR(const char *code, const char *description, BOOL enabled);
+	BOOL	update_AR(const char *code, const char *description, BOOL enabled, u32 pos);
 	BOOL	add_AR_Direct(CHEATS_LIST cheat);
-	BOOL	add_CB(char *code, char *description, BOOL enabled);
-	BOOL	update_CB(char *code, char *description, BOOL enabled, u32 pos);
+	BOOL	add_CB(const char *code, const char *description, BOOL enabled);
+	BOOL	update_CB(const char *code, const char *description, BOOL enabled, u32 pos);
 	BOOL	remove(u32 pos);
 	void	getListReset();
 	BOOL	getList(CHEATS_LIST *cheat);
@@ -84,7 +82,6 @@ public:
 	BOOL	get(CHEATS_LIST *cheat, u32 pos);
 	CHEATS_LIST*	getItemByIndex(const u32 pos);
 	u32		getSize();
-	size_t	getActiveCount();
 	void	setDescription(const char *description, u32 pos);
 	BOOL	save();
 	BOOL	load();

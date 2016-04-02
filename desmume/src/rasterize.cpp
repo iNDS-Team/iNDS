@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2009-2015 DeSmuME team
+	Copyright (C) 2009-2013 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -33,15 +33,7 @@
 #include <math.h>
 #include <string.h>
 
-#if defined(_MSC_VER) && _MSC_VER == 1600
-#define SLEEP_HACK_2011
-#endif
-
-#ifdef SLEEP_HACK_2011
-#include <Windows.h>
-#endif
-
-#ifndef _MSC_VER 
+#ifndef _MSC_VER
 #include <stdint.h>
 #endif
 
@@ -51,9 +43,11 @@
 #include "render3D.h"
 #include "gfx3d.h"
 #include "texcache.h"
-#include "MMU.h"
 #include "NDSSystem.h"
 #include "utils/task.h"
+
+#ifdef ANDROID
+#endif
 
 //#undef FORCEINLINE
 //#define FORCEINLINE
@@ -71,10 +65,10 @@ template<typename T> T _max(T a, T b, T c, T d) { return max(_max(a,b,d),c); }
 
 static const int kUnsetTranslucentPolyID = 255;
 
-static u8 modulate_table[64][64];
-static u8 decal_table[32][64][64];
-static u8 index_lookup_table[65];
-static u8 index_start_table[8];
+static CACHE_ALIGN u8 modulate_table[64][64];
+static CACHE_ALIGN u8 decal_table[32][64][64];
+static CACHE_ALIGN u8 index_lookup_table[65];
+static CACHE_ALIGN u8 index_start_table[8];
 
 static bool softRastHasNewData = false;
 
@@ -124,8 +118,8 @@ static FORCEINLINE int fastFloor(float f)
 //	verts[vert_index] = &rawvert;
 //}
 
-static Fragment _screen[GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT];
-static FragmentColor _screenColor[GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT];
+static Fragment _screen[256*192];
+static FragmentColor _screenColor[256*192];
 
 static FORCEINLINE int iround(float f) {
 	return (int)f; //lol
@@ -416,7 +410,7 @@ public:
 
 		bool enabled;
 		int width, height;
-		s32 wmask, hmask;
+		int wmask, hmask;
 		int wrap;
 		int wshift;
 		int texFormat;
@@ -432,27 +426,42 @@ public:
 			enabled = gfx3d.renderState.enableTexturing && (texFormat!=0);
 		}
 
-		FORCEINLINE void clamp(s32 &val, const int size, const s32 sizemask){
+		/*FORCEINLINE void clamp(int &val, const int size, const int sizemask){
 			if(val<0) val = 0;
 			if(val>sizemask) val = sizemask;
-		}
-		FORCEINLINE void hclamp(s32 &val) { clamp(val,width,wmask); }
-		FORCEINLINE void vclamp(s32 &val) { clamp(val,height,hmask); }
+		}*/
 
-		FORCEINLINE void repeat(s32 &val, const int size, const s32 sizemask) {
+		//jeffq: branchless clamp
+		#define clamp(val, unused, sizemax) \
+			((val = val + ( -val & ( val >> 31 ) )), (val = sizemax + ( ( val - sizemax ) & ( (val - sizemax) >> 31))))
+
+
+		/*FORCEINLINE void hclamp(int &val) { clamp(val,width,wmask); }
+		FORCEINLINE void vclamp(int &val) { clamp(val,height,hmask); }*/
+
+		#define hclamp(val) clamp(val,width,wmask)
+		#define vclamp(val) clamp(val,height,hmask)
+
+		/*FORCEINLINE void repeat(int &val, const int size, const int sizemask) {
 			val &= sizemask;
-		}
-		FORCEINLINE void hrepeat(s32 &val) { repeat(val,width,wmask); }
-		FORCEINLINE void vrepeat(s32 &val) { repeat(val,height,hmask); }
+		}*/
 
-		FORCEINLINE void flip(s32 &val, const int size, const s32 sizemask) {
+		#define repeat(val, unused, sizemask) val &= sizemask
+
+		/*FORCEINLINE void hrepeat(int &val) { repeat(val,width,wmask); }
+		FORCEINLINE void vrepeat(int &val) { repeat(val,height,hmask); }*/
+
+		#define hrepeat(val) repeat(val,width,wmask)
+		#define vrepeat(val) repeat(val,height,hmask)
+
+		FORCEINLINE void flip(int &val, const int size, const int sizemask) {
 			val &= ((size<<1)-1);
 			if(val>=size) val = (size<<1)-val-1;
 		}
-		FORCEINLINE void hflip(s32 &val) { flip(val,width,wmask); }
-		FORCEINLINE void vflip(s32 &val) { flip(val,height,hmask); }
+		FORCEINLINE void hflip(int &val) { flip(val,width,wmask); }
+		FORCEINLINE void vflip(int &val) { flip(val,height,hmask); }
 
-		FORCEINLINE void dowrap(s32 &iu, s32 &iv)
+		FORCEINLINE void dowrap(int& iu, int& iv)
 		{
 			switch(wrap) {
 				//flip none
@@ -486,33 +495,13 @@ public:
 
 		//finally, we can use floor here. but, it is slower than we want.
 		//the best solution is probably to wait until the pipeline is full of fixed point
-		s32 iu = 0;
-		s32 iv = 0;
-		
-		if (!CommonSettings.GFX3D_TXTHack)
-		{
-			iu = s32floor(u);
-			iv = s32floor(v);
-		}
-		else
-		{
-			iu = round_s(u);
-			iv = round_s(v);
-		}
-		
-		sampler.dowrap(iu, iv);
+		s32 iu = s32floor(u);
+		s32 iv = s32floor(v);
+		sampler.dowrap(iu,iv);
+
 		FragmentColor color;
 		color.color = ((u32*)lastTexKey->decoded)[(iv<<sampler.wshift)+iu];
 		return color;
-	}
-
-	//round function - tkd3
-	float round_s(double val){
-		if (val > 0.0 ){
-			return floorf(val*256.0f+0.5f)/256.0f; //this value(256.0) is good result.(I think)
-		} else {
-			return -1.0*floorf(fabs(val)*256.0f+0.5f)/256.0f;
-		}
 	}
 
 	struct Shader
@@ -607,22 +596,13 @@ public:
 		Fragment &destFragment = engine->screen[adr];
 		FragmentColor &destFragmentColor = engine->screenColor[adr];
 
-		u32 depth;
-		if(gfx3d.renderState.wbuffer)
-		{
-			//not sure about this
-			//this value was chosen to make the skybox, castle window decals, and water level render correctly in SM64
-			depth = u32floor(4096*w);
-		}
-		else
-		{
-			depth = u32floor(z*0x7FFF);
-			depth <<= 9;
-		}
+		//not sure about this
+		//this value was chosen to make the skybox, castle window decals, and water level render correctly in SM64
+		const u32 depth = gfx3d.renderState.wbuffer ? w*4096 : ((u32)(z*0x7FFF))<<9;
 
 		if(polyAttr.decalMode)
 		{
-			if ( CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack > 0)
+			/*if ( CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack > 0)
 			{
 				if(depth<destFragment.depth - CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack
 					|| depth>destFragment.depth + CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack) 
@@ -631,7 +611,7 @@ public:
 				}
 
 			}
-			else
+			else*/
 			{
 				if(depth != destFragment.depth)
 				{
@@ -796,10 +776,10 @@ public:
 
 		//CONSIDER: in case some other math is wrong (shouldve been clipped OK), we might go out of bounds here.
 		//better check the Y value.
-		if(RENDERER && (pLeft->Y<0 || pLeft->Y>191)) {
+		/*if(RENDERER && (pLeft->Y<0 || pLeft->Y>191)) {
 			printf("rasterizer rendering at y=%d! oops!\n",pLeft->Y);
 			return;
-		}
+		}*/
 		if(!RENDERER && (pLeft->Y<0 || pLeft->Y>=engine->height)) {
 			printf("rasterizer rendering at y=%d! oops!\n",pLeft->Y);
 			return;
@@ -825,14 +805,14 @@ public:
 			width -= -x;
 			x = 0;
 		}
-		if(x+width > (RENDERER?GFX3D_FRAMEBUFFER_WIDTH:engine->width))
+		if(x+width > (RENDERER?256:engine->width))
 		{
 			if(RENDERER && !lineHack)
 			{
-				printf("rasterizer rendering at x=%d! oops!\n",x+width-1);
+				printf("rasterizer rendering at x=%d! RENDERER: %d oops!\n",x+width-1, RENDERER);
 				return;
 			}
-			width = (RENDERER?GFX3D_FRAMEBUFFER_WIDTH:engine->width)-x;
+			width = (RENDERER?256:engine->width)-x;
 		}
 
 		while(width-- > 0)
@@ -862,7 +842,7 @@ public:
 		bool first=true;
 
 		//HACK: special handling for horizontal line poly
-		if (lineHack && left->Height == 0 && right->Height == 0 && left->Y<GFX3D_FRAMEBUFFER_HEIGHT && left->Y>=0)
+		if (lineHack && left->Height == 0 && right->Height == 0 && left->Y<192 && left->Y>=0)
 		{
 			bool draw = (!SLI || (left->Y & SLI_MASK) == SLI_VALUE);
 			if(draw) drawscanline(left,right,lineHack);
@@ -969,7 +949,7 @@ public:
 			// hack for VC++ 2010 (bug in compiler optimization?)
 			// freeze on 3D
 			// TODO: study it
-			#ifdef SLEEP_HACK_2011
+			#if defined(_MSC_VER) && _MSC_VER == 1600
 				Sleep(0); // nop
 			#endif
 		}
@@ -1128,11 +1108,9 @@ static char SoftRastInit(void)
 		_HACK_viewer_rasterizerUnit.SLI_VALUE = 0;
 
 		rasterizerCores = CommonSettings.num_cores;
-
 		if (rasterizerCores > _MAX_CORES) 
 			rasterizerCores = _MAX_CORES;
-
-		if(CommonSettings.num_cores == 1)
+		if(CommonSettings.num_cores <= 1)
 		{
 			rasterizerCores = 1;
 			rasterizerUnit[0].SLI_MASK = 0;
@@ -1183,7 +1161,7 @@ static char SoftRastInit(void)
 	TexCache_Reset();
 
 	printf("SoftRast Initialized with cores=%d\n",rasterizerCores);
-	return result;
+	return 1;
 }
 
 static void SoftRastReset()
@@ -1225,7 +1203,7 @@ static void SoftRastVramReconfigureSignal()
 
 static void SoftRastConvertFramebuffer()
 {
-	memcpy(gfx3d_convertedScreen, _screenColor, GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT*4);
+	memcpy(gfx3d_convertedScreen,_screenColor,256*192*4);
 }
 
 void SoftRasterizerEngine::initFramebuffer(const int width, const int height, const bool clearImage)
@@ -1249,12 +1227,12 @@ void SoftRasterizerEngine::initFramebuffer(const int width, const int height, co
 	clearFragment.isTranslucentPoly = 0;
 	clearFragment.fogged = BIT15(gfx3d.renderState.clearColor);
 	for(int i=0;i<todo;i++)
-		screen[i] = clearFragment;
+		memcpy(&screen[i], &clearFragment, sizeof(Fragment));
 
 	if(clearImage)
 	{
 		//need to handle this somehow..
-		assert(width==GFX3D_FRAMEBUFFER_WIDTH && height==GFX3D_FRAMEBUFFER_HEIGHT);
+		assert(width==256 && height==192);
 
 		u16* clearImage = (u16*)MMU.texInfo.textureSlotAddr[2];
 		u16* clearDepth = (u16*)MMU.texInfo.textureSlotAddr[3];
@@ -1268,9 +1246,9 @@ void SoftRasterizerEngine::initFramebuffer(const int width, const int height, co
 		FragmentColor *dstColor = screenColor;
 		Fragment *dst = screen;
 
-		for(int iy=0; iy<GFX3D_FRAMEBUFFER_HEIGHT; iy++) {
+		for(int iy=0;iy<192;iy++) {
 			int y = ((iy + yscroll)&255)<<8;
-			for(int ix=0; ix<GFX3D_FRAMEBUFFER_WIDTH; ix++) {
+			for(int ix=0;ix<256;ix++) {
 				int x = (ix + xscroll)&255;
 				int adr = y + x;
 				
@@ -1293,7 +1271,7 @@ void SoftRasterizerEngine::initFramebuffer(const int width, const int height, co
 	}
 	else 
 		for(int i=0;i<todo;i++)
-			screenColor[i] = clearFragmentColor;
+			memcpy(&screenColor[i], &clearFragmentColor, sizeof(FragmentColor));
 }
 
 void SoftRasterizerEngine::updateToonTable()
@@ -1301,7 +1279,7 @@ void SoftRasterizerEngine::updateToonTable()
 	//convert the toon colors
 	for(int i=0;i<32;i++) {
 		#ifdef WORDS_BIGENDIAN
-			u32 u32temp = RGB15TO32_NOALPHA(gfx3d.renderState.u16ToonTable[i]);
+			const u32 u32temp = RGB15TO32_NOALPHA(gfx3d.renderState.u16ToonTable[i]);
 			toonTable[i].r = (u32temp >> 2) & 0x3F;
 			toonTable[i].g = (u32temp >> 10) & 0x3F;
 			toonTable[i].b = (u32temp >> 18) & 0x3F;
@@ -1399,15 +1377,13 @@ void SoftRasterizerEngine::framebufferProcess()
 			edgeMarkColors[i].g = GFX3D_5TO6(edgeMarkColors[i].g);
 			edgeMarkColors[i].b = GFX3D_5TO6(edgeMarkColors[i].b);
 
-			//zero 20-jun-2013 - this doesnt make any sense. at least, it should be related to the 0x8000 bit. if this is undocumented behaviour, lets write about which scenario proves it here, or which scenario is requiring this code.
-			//// this seems to be the only thing that selectively disables edge marking
-			//edgeMarkDisabled[i] = (col == 0x7FFF);
-			edgeMarkDisabled[i] = 0;
+			// this seems to be the only thing that selectively disables edge marking
+			edgeMarkDisabled[i] = (col == 0x7FFF);
 		}
 
-		for(int i=0,y=0; y<GFX3D_FRAMEBUFFER_HEIGHT; y++)
+		for(int i=0,y=0;y<192;y++)
 		{
-			for(int x=0; x<GFX3D_FRAMEBUFFER_WIDTH; x++,i++)
+			for(int x=0;x<256;x++,i++)
 			{
 				Fragment destFragment = screen[i];
 				u8 self = destFragment.polyid.opaque;
@@ -1421,8 +1397,8 @@ void SoftRasterizerEngine::framebufferProcess()
 
 				FragmentColor edgeColor = edgeMarkColors[self>>3];
 
-#define PIXOFFSET(dx,dy) ((dx)+(GFX3D_FRAMEBUFFER_WIDTH*(dy)))
-#define ISEDGE(dx,dy) ((x+(dx)!=GFX3D_FRAMEBUFFER_WIDTH) && (x+(dx)!=-1) && (y+(dy)!=GFX3D_FRAMEBUFFER_HEIGHT) && (y+(dy)!=-1) && self > screen[i+PIXOFFSET(dx,dy)].polyid.opaque)
+#define PIXOFFSET(dx,dy) ((dx)+(256*(dy)))
+#define ISEDGE(dx,dy) ((x+(dx)!=256) && (x+(dx)!=-1) && (y+(dy)!=192) && (y+(dy)!=-1) && self > screen[i+PIXOFFSET(dx,dy)].polyid.opaque)
 #define DRAWEDGE(dx,dy) alphaBlend(screenColor[i+PIXOFFSET(dx,dy)], edgeColor)
 
 				bool upleft    = ISEDGE(-1,-1);
@@ -1465,7 +1441,7 @@ void SoftRasterizerEngine::framebufferProcess()
 		u32 g = GFX3D_5TO6((gfx3d.renderState.fogColor>>5)&0x1F);
 		u32 b = GFX3D_5TO6((gfx3d.renderState.fogColor>>10)&0x1F);
 		u32 a = (gfx3d.renderState.fogColor>>16)&0x1F;
-		for(int i=0; i<GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT; i++)
+		for(int i=0;i<256*192;i++)
 		{
 			Fragment &destFragment = screen[i];
 			if(!destFragment.fogged) continue;
@@ -1485,7 +1461,7 @@ void SoftRasterizerEngine::framebufferProcess()
 	}
 
 	////debug alpha channel framebuffer contents
-	//for(int i=0;i<GFX3D_FRAMEBUFFER_WIDTH*GFX3D_FRAMEBUFFER_HEIGHT;i++)
+	//for(int i=0;i<256*192;i++)
 	//{
 	//	FragmentColor &destFragmentColor = screenColor[i];
 	//	destFragmentColor.r = destFragmentColor.a;
@@ -1520,10 +1496,10 @@ void SoftRasterizerEngine::performClipping(bool hirez)
 
 template<bool CUSTOM> void SoftRasterizerEngine::performViewportTransforms(int width, int height)
 {
-	const float xfactor = (float)width/GFX3D_FRAMEBUFFER_WIDTH;
-	const float yfactor = (float)height/GFX3D_FRAMEBUFFER_HEIGHT;
-	const float xmax = GFX3D_FRAMEBUFFER_WIDTH*xfactor-(CUSTOM?0.001f:0); //fudge factor to keep from overrunning render buffers
-	const float ymax = GFX3D_FRAMEBUFFER_HEIGHT*yfactor-(CUSTOM?0.001f:0);
+	const float xfactor = width/256.0f;
+	const float yfactor = height/192.0f;
+	const float xmax = 256.0f*xfactor-(CUSTOM?0.001f:0); //fudge factor to keep from overrunning render buffers
+	const float ymax = 192.0f*yfactor-(CUSTOM?0.001f:0);
 
 
 	//viewport transforms
@@ -1676,18 +1652,18 @@ static void SoftRastRender()
 	mainSoftRasterizer.indexlist = &gfx3d.indexlist;
 	mainSoftRasterizer.screen = _screen;
 	mainSoftRasterizer.screenColor = _screenColor;
-	mainSoftRasterizer.width = GFX3D_FRAMEBUFFER_WIDTH;
-	mainSoftRasterizer.height = GFX3D_FRAMEBUFFER_HEIGHT;
+	mainSoftRasterizer.width = 256;
+	mainSoftRasterizer.height = 192;
 
 	//setup fog variables (but only if fog is enabled)
 	if(gfx3d.renderState.enableFog)
 		mainSoftRasterizer.updateFogTable();
 	
-	mainSoftRasterizer.initFramebuffer(GFX3D_FRAMEBUFFER_WIDTH, GFX3D_FRAMEBUFFER_HEIGHT, gfx3d.renderState.enableClearImage?true:false);
+	mainSoftRasterizer.initFramebuffer(256, 192, gfx3d.renderState.enableClearImage?true:false);
 	mainSoftRasterizer.updateToonTable();
 	mainSoftRasterizer.updateFloatColors();
 	mainSoftRasterizer.performClipping(CommonSettings.GFX3D_HighResolutionInterpolateColor);
-	mainSoftRasterizer.performViewportTransforms<false>(GFX3D_FRAMEBUFFER_WIDTH, GFX3D_FRAMEBUFFER_HEIGHT);
+	mainSoftRasterizer.performViewportTransforms<false>(256, 192);
 	mainSoftRasterizer.performBackfaceTests();
 	mainSoftRasterizer.performCoordAdjustment(true);
 	mainSoftRasterizer.setupTextures(true);

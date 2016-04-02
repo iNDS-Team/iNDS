@@ -1,6 +1,6 @@
 /*
 	Copyright (C) 2006 yopyop
-	Copyright (C) 2006-2015 DeSmuME team
+	Copyright (C) 2006-2010 DeSmuME team
 
 	This file is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -19,10 +19,8 @@
 #ifndef __CP15_H__
 #define __CP15_H__
 
-#include <string.h>
-#include "types.h"
-
-class EMUFILE;
+#include "armcpu.h"
+#include "emufile.h"
 
 #define CP15_ACCESS_WRITE         0
 #define CP15_ACCESS_READ          2
@@ -33,11 +31,6 @@ class EMUFILE;
 #define CP15_ACCESS_READSYS       3
 #define CP15_ACCESS_EXECUSR       CP15_ACCESS_EXECUTE
 #define CP15_ACCESS_EXECSYS       5
-
-#define CP15_SIZEBINARY(val)     (1 << (CP15_SIZEIDENTIFIER(val)+1))
-#define CP15_SIZEIDENTIFIER(val) ((((val) >> 1) & 0x1F))
-#define CP15_MASKFROMREG(val)    (~((CP15_SIZEBINARY(val)-1) | 0x3F))
-#define CP15_SETFROMREG(val)     ((val) & CP15_MASKFROMREG(val))
 
 struct armcp15_t
 {
@@ -52,7 +45,14 @@ public:
         u32 und;
         u32 DaccessPerm;
         u32 IaccessPerm;
-        u32 protectBaseSize[8];
+        u32 protectBaseSize0;
+        u32 protectBaseSize1;
+        u32 protectBaseSize2;
+        u32 protectBaseSize3;
+        u32 protectBaseSize4;
+        u32 protectBaseSize5;
+        u32 protectBaseSize6;
+        u32 protectBaseSize7;
         u32 cacheOp;
         u32 DcacheLock;
         u32 IcacheLock;
@@ -77,32 +77,41 @@ public:
         u32 regionExecuteSet_USR[8] ;
         u32 regionExecuteSet_SYS[8] ;
 
-		void setSingleRegionAccess(u8 num, u32 mask, u32 set);
+		armcpu_t *cpu;
+
+		void setSingleRegionAccess(u32 dAccess,u32 iAccess,unsigned char num, u32 mask,u32 set);
 		void maskPrecalc();
 
 public:
-		armcp15_t() :	IDCode(0x41059461),
-						cacheType(0x0F0D2112),
-						TCMSize(0x00140180),
-						ctrl(0x00012078),
+		armcp15_t() :	IDCode(0),
+						cacheType(0),
+						TCMSize(0),
+						ctrl(0),
 						DCConfig(0),
 						ICConfig(0),
 						writeBuffCtrl(0),
 						und(0),
-						DaccessPerm(0x22222222),
-						IaccessPerm(0x22222222),
+						DaccessPerm(0),
+						IaccessPerm(0),
+						protectBaseSize0(0),
+						protectBaseSize1(0),
+						protectBaseSize2(0),
+						protectBaseSize3(0),
+						protectBaseSize4(0),
+						protectBaseSize5(0),
+						protectBaseSize6(0),
+						protectBaseSize7(0),
 						cacheOp(0),
 						DcacheLock(0),
 						IcacheLock(0),
-						ITCMRegion(0x0C),
-						DTCMRegion(0x0080000A),
+						ITCMRegion(0),
+						DTCMRegion(0),
 						processID(0),
 						RAM_TAG(0),
 						testState(0),
-						cacheDbg(0)
+						cacheDbg(0),
+						cpu(NULL)
 		{
-			//printf("CP15 Reset\n");
-			memset(&protectBaseSize[0], 0, sizeof(protectBaseSize));
 			memset(&regionWriteMask_USR[0], 0, sizeof(regionWriteMask_USR));
 			memset(&regionWriteMask_SYS[0], 0, sizeof(regionWriteMask_SYS));
 			memset(&regionReadMask_USR[0], 0, sizeof(regionReadMask_USR));
@@ -116,6 +125,7 @@ public:
 			memset(&regionExecuteSet_USR[0], 0, sizeof(regionExecuteSet_USR));
 			memset(&regionExecuteSet_SYS[0], 0, sizeof(regionExecuteSet_SYS));
 		}
+		bool reset(armcpu_t * c);
 		BOOL dataProcess(u8 CRd, u8 CRn, u8 CRm, u8 opcode1, u8 opcode2);
 		BOOL load(u8 CRd, u8 adr);
 		BOOL store(u8 CRd, u8 adr);
@@ -128,4 +138,9 @@ public:
 };
 
 extern armcp15_t cp15;
+
+void maskPrecalc();
+BOOL armcp15_moveARM2CP(u32 val, u8 CRn, u8 CRm, u8 opcode1, u8 opcode2);
+BOOL armcp15_moveCP2ARM(u32 * R, u8 CRn, u8 CRm, u8 opcode1, u8 opcode2);
+
 #endif /* __CP15_H__*/
