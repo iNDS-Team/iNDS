@@ -3,8 +3,19 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 import json
 import os
+import sqlite3 as sqlite
 
 file_path = os.path.dirname(os.path.realpath(__file__))
+
+# Create DB if it doesn't exist
+con = sqlite.connect('bugs.sqlite')
+if not os.path.exists(file_path + '/bugs.sqlite'):
+    print "Creating DB"
+    cursor = con.cursor()
+    cursor.execute("CREATE TABLE bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT)")
+
+
+
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -20,21 +31,11 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
     
     def do_POST(self):
-        # Read Bug number
-        bugNumber = 0
-        bugNumPath = file_path + '/bugNum.dat'
-        if not (os.path.exists(bugNumPath)):
-            f = open(bugNumPath, 'w')
-            f.write('0')
-            f.close()
-        else:
-            f = open(bugNumPath, 'r+')
-            bugNumber = int(f.read())
-            f.write(str(bugNumber + 1))
-            f.close()
-        
-        
-        
+        # Create folders and DB
+        if not os.path.exists(file_path + '/images'):
+            os.makedirs(file_path + '/images')
+        if not os.path.exists(file_path + '/saves'):
+            os.makedirs(file_path + '/saves')
         
         # Doesn't do anything with posted data
         self._set_headers()
@@ -43,20 +44,12 @@ class S(BaseHTTPRequestHandler):
         print "Receiving post of length:", content_len / 1000000.0, "MB"
         post_body = self.rfile.read(content_len)
         jdata = json.loads(post_body)
-        fileData = "Version: " + jdata["version"]
-        fileData = "\nDevice: " + jdata["device"]
-        fileData += "\nIs System Application: " + str(jdata["isSystem"])
-        fileData += "\nDescription: " + jdata["description"]
-        if ("game" in jdata):
-            fileData += "\nGame Name: " + jdata["game"]
-            fileData += "\nGame Code: " + jdata["gameCode"]
         if ("save" in jdata):
             save = jdata["save"]
             saveHash = hashlib.sha1(save).hexdigest()
             f = open(file_path + '/saves/' + saveHash + '.dsv', 'w')
             f.write(save.decode('base64'))
             f.close()
-            fileData += "\nSave: " + saveHash  + ".dsv"
             jdata["save"] = saveHash
         if ("image" in jdata):
             image = jdata["image"]
@@ -64,14 +57,18 @@ class S(BaseHTTPRequestHandler):
             f = open(file_path + '/images/' + imageHash + '.jpg', 'w')
             f.write(image.decode('base64'))
             f.close()
-            fileData += "\nImage: " + imageHash + ".jpg"
             jdata["image"] = imageHash
-        fileData += "\n\nJSON Dump: " + json.dumps(jdata)
-        print fileData
-        f = open(file_path + '/bugs/bug_'+str(bugNumber)+'.txt', 'w')
-        f.write(fileData)
-        f.close()
+
+        cur = con.cursor()
+        cur.execute("""INSERT INTO bugs 
+                       (device, major, minor, isSystem, description, game, gameCode, save, image)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],
+                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"])
+        
+
         print "Post Success"
+        con.commit()
 
 def run(server_class=HTTPServer, handler_class=S, port=6768):
     server_address = ('', port)

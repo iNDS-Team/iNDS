@@ -63,11 +63,13 @@
         [AppDelegate.sharedInstance showError:@"Please enter a description"];
         return;
     }
+    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
     NSString *deviceName = [self rawDeviceName];
     NSMutableDictionary *parameters = [@{@"description": description.text,
                                          @"device": deviceName,
                                          @"isSystem": @([AppDelegate.sharedInstance isSystemApplication]),
-                                         @"version": [self appNameAndVersionNumberDisplayString]
+                                         @"major": [infoDictionary objectForKey:@"CFBundleShortVersionString"],
+                                         @"minor": [infoDictionary objectForKey:@"CFBundleVersion"]
                                         }
                                        mutableCopy];
     if (selectedGame){
