@@ -512,7 +512,6 @@ const float textureVert[] =
 - (void)suspendEmulation
 {
     NSLog(@"Suspending");
-    [self saveStateWithName:@"Pause"];
     [self pauseEmulation];
     // Shutting down while editing a layout causes a ton of problems.
     // So We'll just not shutdown while editing... :/
@@ -524,11 +523,15 @@ const float textureVert[] =
 
 - (void)pauseEmulation
 {
-    NSLog(@"Pausing");
-    if (!execute) return;
-    EMU_pause(true);
-    [emuLoopLock lock]; // make sure emulator loop has ended
-    [emuLoopLock unlock];
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSLog(@"Pausing");
+        if (!execute) return;
+        [self saveStateWithName:@"Pause"];
+        EMU_pause(true);
+        [emuLoopLock lock]; // make sure emulator loop has ended
+        [emuLoopLock unlock];
+    //});
+    
     
 }
 
@@ -577,7 +580,7 @@ const float textureVert[] =
                     lastAutosave = CACurrentMediaTime();
                 }
             } else {
-                //iNDS_throttle();
+                iNDS_throttle();
             }
             
         }
@@ -639,9 +642,9 @@ const float textureVert[] =
         EMU_setSynchMode([[NSUserDefaults standardUserDefaults] boolForKey:@"synchSound"]);
     }
     if (speed <= 1.0) {
-        EMU_setFrameSkip(userFrameSkip);
+        //EMU_setFrameSkip(userFrameSkip);
     } else {
-        EMU_setFrameSkip(MAX((int)speed, userFrameSkip));
+        //EMU_setFrameSkip(MAX((int)speed, userFrameSkip));
     }
     _speed = speed;
 }

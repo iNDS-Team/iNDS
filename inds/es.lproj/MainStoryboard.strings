@@ -1,0 +1,252 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Enabling Dropbox will add an \"iNDS\" folder to your Dropbox account. Your game saves will be synced back to that folder so it will carry across devices (iPhone, iPad, iPod touch, Android, PC, etc)."; ObjectID = "0Py-uK-oNg"; */
+"0Py-uK-oNg.footerTitle" = "Enabling Dropbox will add an \"iNDS\" folder to your Dropbox account. Your game saves will be synced back to that folder so it will carry across devices (iPhone, iPad, iPod touch, Android, PC, etc).";
+
+/* Class = "UITableViewSection"; headerTitle = "Dropbox"; ObjectID = "0Py-uK-oNg"; */
+"0Py-uK-oNg.headerTitle" = "Dropbox";
+
+/* Class = "UILabel"; text = "Perfil de diseño"; ObjectID = "2US-OK-06r"; */
+"2US-OK-06r.text" = "Perfil de diseño";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[0] = "0"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[0]" = "0";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[1] = "1"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[1]" = "1";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[2] = "2"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[2]" = "2";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[3] = "3"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[3]" = "3";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[4] = "4"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[4]" = "4";
+
+/* Class = "UISegmentedControl"; 2i9-9X-BIw.segmentTitles[5] = "Auto"; ObjectID = "2i9-9X-BIw"; */
+"2i9-9X-BIw.segmentTitles[5]" = "Auto";
+
+/* Class = "UITableViewSection"; footerTitle = "Game ID: ABCD"; ObjectID = "42X-Aw-BBz"; */
+"42X-Aw-BBz.footerTitle" = "Game ID: ABCD";
+
+/* Class = "UITableViewSection"; headerTitle = "Nombre del Truco "; ObjectID = "42X-Aw-BBz"; */
+"42X-Aw-BBz.headerTitle" = "Nombre del Truco ";
+
+/* Class = "UIButton"; normalTitle = "<"; ObjectID = "4aI-FU-eO8"; */
+"4aI-FU-eO8.normalTitle" = "<";
+
+/* Class = "UILabel"; text = "Esitlos de Controles"; ObjectID = "628-xJ-TE3"; */
+"628-xJ-TE3.text" = "Esitlos de Controles";
+
+/* Class = "UILabel"; text = "rom actual"; ObjectID = "7Nm-3Y-HQy"; */
+"7Nm-3Y-HQy.text" = "rom actual";
+
+/* Class = "UILabel"; text = "DeSmuME"; ObjectID = "7hH-Y3-i5I"; */
+"7hH-Y3-i5I.text" = "DeSmuME";
+
+/* Class = "UILabel"; text = "guardar el estado"; ObjectID = "9Y1-Oj-gA3"; */
+"9Y1-Oj-gA3.text" = "guardar el estado";
+
+/* Class = "UILabel"; text = "@iNDSapp"; ObjectID = "9aT-vh-0tO"; */
+"9aT-vh-0tO.text" = "@iNDSapp";
+
+/* Class = "UISegmentedControl"; Aa4-Hv-ujp.segmentTitles[0] = "D-Pad"; ObjectID = "Aa4-Hv-ujp"; */
+"Aa4-Hv-ujp.segmentTitles[0]" = "D-Pad";
+
+/* Class = "UISegmentedControl"; Aa4-Hv-ujp.segmentTitles[1] = "Joystick"; ObjectID = "Aa4-Hv-ujp"; */
+"Aa4-Hv-ujp.segmentTitles[1]" = "Joystick";
+
+/* Class = "UILabel"; text = "Duplicar diseño"; ObjectID = "CRW-Js-4qm"; */
+"CRW-Js-4qm.text" = "Duplicar diseño";
+
+/* Class = "UIBarButtonItem"; title = "Guardar"; ObjectID = "FkX-0g-MMi"; */
+"FkX-0g-MMi.title" = "Guardar";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "Fpc-cd-CwK"; */
+"Fpc-cd-CwK.title" = "Item";
+
+/* Class = "UITableViewSection"; footerTitle = "GNU Lighting JIT makes games run faster. You must be jailbroken or iNDS will crash."; ObjectID = "HQs-Z9-d7P"; */
+"HQs-Z9-d7P.footerTitle" = "GNU Lighting JIT makes games run faster. You must be jailbroken or iNDS will crash.";
+
+/* Class = "UITableViewSection"; headerTitle = "Experimental"; ObjectID = "HQs-Z9-d7P"; */
+"HQs-Z9-d7P.headerTitle" = "Experimental";
+
+/* Class = "UINavigationItem"; title = "Profiles"; ObjectID = "Hxy-GB-gYw"; */
+"Hxy-GB-gYw.title" = "Profiles";
+
+/* Class = "UILabel"; text = "Ajustes de emulación "; ObjectID = "IrQ-Ld-BIK"; */
+"IrQ-Ld-BIK.text" = "Ajustes de emulación ";
+
+/* Class = "UILabel"; text = "Opacidad de Controles (Vertical)"; ObjectID = "IzY-y9-rcs"; */
+"IzY-y9-rcs.text" = "Opacidad de Controles (Vertical)";
+
+/* Class = "UILabel"; text = "Volume Button Bumpers"; ObjectID = "Kub-Od-1N5"; */
+"Kub-Od-1N5.text" = "Volume Button Bumpers";
+
+/* Class = "UILabel"; text = "Enable Dropbox"; ObjectID = "M3y-fK-XWf"; */
+"M3y-fK-XWf.text" = "Enable Dropbox";
+
+/* Class = "UITextField"; placeholder = "Nombre del truco "; ObjectID = "MCG-cT-CwN"; */
+"MCG-cT-CwN.placeholder" = "Nombre del truco ";
+
+/* Class = "UILabel"; text = "Saltar Fotogramas"; ObjectID = "Mdm-Bf-hXu"; */
+"Mdm-Bf-hXu.text" = "Saltar Fotogramas";
+
+/* Class = "UINavigationItem"; title = "Layout Settings"; ObjectID = "NXh-pG-0Rw"; */
+"NXh-pG-0Rw.title" = "Layout Settings";
+
+/* Class = "UILabel"; text = "audio síncrono"; ObjectID = "O1f-2K-M0t"; */
+"O1f-2K-M0t.text" = "audio síncrono";
+
+/* Class = "UITableViewSection"; headerTitle = "Developer"; ObjectID = "O9Q-KX-eTM"; */
+"O9Q-KX-eTM.headerTitle" = "Developer";
+
+/* Class = "UILabel"; text = "Velocidad"; ObjectID = "OH5-aq-hT5"; */
+"OH5-aq-hT5.text" = "Velocidad";
+
+/* Class = "UILabel"; text = "Ajustes de diseño"; ObjectID = "P2c-hh-ouv"; */
+"P2c-hh-ouv.text" = "Ajustes de diseño";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "PbD-9E-hsE"; */
+"PbD-9E-hsE.text" = "Title";
+
+/* Class = "UILabel"; text = "Trucos"; ObjectID = "QLj-V6-c8i"; */
+"QLj-V6-c8i.text" = "Trucos";
+
+/* Class = "UILabel"; text = "Show FPS"; ObjectID = "RV9-0b-oWH"; */
+"RV9-0b-oWH.text" = "Show FPS";
+
+/* Class = "UILabel"; text = "Not Linked"; ObjectID = "STN-h0-VIH"; */
+"STN-h0-VIH.text" = "Not Linked";
+
+/* Class = "UILabel"; text = "Entrar en pantalla completa"; ObjectID = "SY3-FN-oou"; */
+"SY3-FN-oou.text" = "Entrar en pantalla completa";
+
+/* Class = "UILabel"; text = "Github"; ObjectID = "TBh-Rc-Ubf"; */
+"TBh-Rc-Ubf.text" = "Github";
+
+/* Class = "UILabel"; text = "NDS4iOS Team"; ObjectID = "Tds-MR-hME"; */
+"Tds-MR-hME.text" = "NDS4iOS Team";
+
+/* Class = "UILabel"; text = "Twitter"; ObjectID = "WMZ-cq-doC"; */
+"WMZ-cq-doC.text" = "Twitter";
+
+/* Class = "UILabel"; text = "Will Cobb"; ObjectID = "Y2T-PC-9Uh"; */
+"Y2T-PC-9Uh.text" = "Will Cobb";
+
+/* Class = "UITableViewSection"; headerTitle = "Controls"; ObjectID = "Y6o-vJ-AvE"; */
+"Y6o-vJ-AvE.headerTitle" = "Controls";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[0] = "0.5x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[0]" = "0.5x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[1] = "1x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[1]" = "1x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[2] = "2x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[2]" = "2x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[3] = "4x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[3]" = "4x";
+
+/* Class = "UILabel"; text = "Nuevo diseño"; ObjectID = "Z1L-fs-zh3"; */
+"Z1L-fs-zh3.text" = "Nuevo diseño";
+
+/* Class = "UITableViewSection"; headerTitle = "codificación "; ObjectID = "ZGH-jB-Jsf"; */
+"ZGH-jB-Jsf.headerTitle" = "codificación ";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "ZaP-XB-7Ha"; */
+"ZaP-XB-7Ha.text" = "Subtitle";
+
+/* Class = "UITableViewSection"; footerTitle = "automáticamente guardará automáticamente el estado del juego cada cuatos minutos en caso que usted se encuentra con un error."; ObjectID = "Zfz-To-hqF"; */
+"Zfz-To-hqF.footerTitle" = "automáticamente guardará automáticamente el estado del juego cada cuatos minutos en caso que usted se encuentra con un error.";
+
+/* Class = "UITableViewSection"; headerTitle = "Emulator"; ObjectID = "Zfz-To-hqF"; */
+"Zfz-To-hqF.headerTitle" = "Emulator";
+
+/* Class = "UINavigationItem"; title = "Settings"; ObjectID = "aA7-QL-3jR"; */
+"aA7-QL-3jR.title" = "Settings";
+
+/* Class = "UILabel"; text = "Ported DeSmuME to iOS"; ObjectID = "anh-aD-krd"; */
+"anh-aD-krd.text" = "Ported DeSmuME to iOS";
+
+/* Class = "UILabel"; text = "GNU Lightning JIT"; ObjectID = "bIB-FM-Hft"; */
+"bIB-FM-Hft.text" = "GNU Lightning JIT";
+
+/* Class = "UILabel"; text = "Vibracion"; ObjectID = "cNL-IT-Ar0"; */
+"cNL-IT-Ar0.text" = "Vibracion";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "cO1-PS-QPR"; */
+"cO1-PS-QPR.normalTitle" = ">";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "cXf-GX-t2i"; */
+"cXf-GX-t2i.title" = "Item";
+
+/* Class = "UILabel"; text = "Pokemon"; ObjectID = "d6Z-Sh-06Y"; */
+"d6Z-Sh-06Y.text" = "Pokemon";
+
+/* Class = "UITableViewSection"; footerTitle = "Version 1.1.6"; ObjectID = "f6X-Yw-0Td"; */
+"f6X-Yw-0Td.footerTitle" = "Version 1.1.6";
+
+/* Class = "UITableViewSection"; headerTitle = "Info"; ObjectID = "f6X-Yw-0Td"; */
+"f6X-Yw-0Td.headerTitle" = "Info";
+
+/* Class = "UILabel"; text = "desactivar el sonido"; ObjectID = "gJw-qx-K1N"; */
+"gJw-qx-K1N.text" = "desactivar el sonido";
+
+/* Class = "UILabel"; text = "guarda periódica"; ObjectID = "i1H-5W-GBv"; */
+"i1H-5W-GBv.text" = "guarda periódica";
+
+/* Class = "UILabel"; text = "Source"; ObjectID = "j7Z-7e-txx"; */
+"j7Z-7e-txx.text" = "Source";
+
+/* Class = "UILabel"; text = "Emulation Core"; ObjectID = "kGJ-Zf-nOZ"; */
+"kGJ-Zf-nOZ.text" = "Emulation Core";
+
+/* Class = "UILabel"; text = "Ajustes de MFI  (próximamente)"; ObjectID = "lt9-GU-1uI"; */
+"lt9-GU-1uI.text" = "Ajustes de MFI  (próximamente)";
+
+/* Class = "UILabel"; text = "60 FPS"; ObjectID = "mo4-qa-NUQ"; */
+"mo4-qa-NUQ.text" = "60 FPS";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "n2J-99-dwn"; */
+"n2J-99-dwn.text" = "Title";
+
+/* Class = "UILabel"; text = "interpolación bicúbica"; ObjectID = "p7C-Hn-wrd"; */
+"p7C-Hn-wrd.text" = "interpolación bicúbica";
+
+/* Class = "UINavigationItem"; title = "Nuevo truco"; ObjectID = "pBZ-dv-s3c"; */
+"pBZ-dv-s3c.title" = "Nuevo truco";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "qaf-Bt-HzZ"; */
+"qaf-Bt-HzZ.text" = "Subtitle";
+
+/* Class = "UINavigationItem"; title = "Ajustes de emulación"; ObjectID = "rWF-4U-yKM"; */
+"rWF-4U-yKM.title" = "Ajustes de emulación";
+
+/* Class = "UILabel"; text = "Wiki Creator"; ObjectID = "twp-tN-iPD"; */
+"twp-tN-iPD.text" = "Wiki Creator";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "uTC-VG-Bcz"; */
+"uTC-VG-Bcz.text" = "Subtitle";
+
+/* Class = "UILabel"; text = "Renombrar diseño"; ObjectID = "uco-au-tPw"; */
+"uco-au-tPw.text" = "Renombrar diseño";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "uui-Kk-GET"; */
+"uui-Kk-GET.text" = "Title";
+
+/* Class = "UILabel"; text = "Developer"; ObjectID = "vRu-OD-kxI"; */
+"vRu-OD-kxI.text" = "Developer";
+
+/* Class = "UILabel"; text = "Editar diseño"; ObjectID = "x2E-FO-x01"; */
+"x2E-FO-x01.text" = "Editar diseño";
+
+/* Class = "UILabel"; text = "Default"; ObjectID = "z6e-hj-9kP"; */
+"z6e-hj-9kP.text" = "Default";
+
+/* Class = "UILabel"; text = "Pmp174"; ObjectID = "zUt-7U-gQp"; */
+"zUt-7U-gQp.text" = "Pmp174";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "zdy-Vn-XW6"; */
+"zdy-Vn-XW6.title" = "Item";

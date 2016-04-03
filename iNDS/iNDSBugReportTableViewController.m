@@ -43,7 +43,8 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self.tableView reloadData];
+    [self.tableView beginUpdates];
+    [self.tableView endUpdates];
     UITableViewCell *selectImageCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]];
     selectImageCell.layoutMargins = UIEdgeInsetsZero;
     selectImageCell.preservesSuperviewLayoutMargins = NO;
