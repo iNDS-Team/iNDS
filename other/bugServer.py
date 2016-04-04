@@ -4,13 +4,14 @@ import SocketServer
 import json
 import os
 import sqlite3 as sqlite
+import time
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 
 # Create DB if it doesn't exist
-con = sqlite.connect(file_path + '/ bugs.sqlite')
+con = sqlite.connect(file_path + '/bugs.sqlite')
 cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT, date TEXT)")
 con.commit()
 
 
@@ -40,10 +41,8 @@ class S(BaseHTTPRequestHandler):
         content_len = int(self.headers.getheader('content-length', 0))
         print "Receiving post of length:", content_len / 1000000.0, "MB"
         post_body = self.rfile.read(content_len)
-        print post_body[:400]
-        print "---"
-        print post_body[-400:]
         jdata = json.loads(post_body)
+
         if (not "game" in jdata):
             jdata["game"] = ""
             jdata["gameCode"] = ""
@@ -68,10 +67,10 @@ class S(BaseHTTPRequestHandler):
         
         cur = con.cursor()
         cur.execute("""INSERT INTO bugs 
-                       (device, major, minor, isSystem, description, game, gameCode, save, image)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                       (device, major, minor, isSystem, description, game, gameCode, save, image, date)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                        (jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],
-                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"]))
+                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"], time.ctime()))
         
 
         print "Post Success"
@@ -81,7 +80,7 @@ class S(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=S, port=6768):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print 'Starting httpd...'
+    print 'Starting server on port:', port
     httpd.serve_forever()
 
 if __name__ == "__main__":
