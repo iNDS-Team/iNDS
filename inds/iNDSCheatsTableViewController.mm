@@ -11,11 +11,16 @@
 #import "AppDelegate.h"
 #import "iNDSEmulatorViewController.h"
 #import "SCLAlertView.h"
-#import <UnrarKit/UnrarKit.h>
 #include <CommonCrypto/CommonDigest.h>
 
 #include "emu.h"
 #include "cheatSystem.h"
+
+#ifdef UseRarKit
+    #import <UnrarKit/UnrarKit.h>
+#else
+    #import "LZMAExtractor.h"
+#endif
 
 @interface iNDSCheatsTableViewController () {
     NSString    *currentGameId;
@@ -67,18 +72,50 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:cheatSavePath]) {
         NSLog(@"Loading DB Cheats");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSLog(@"Hey");
+#ifdef UseRarKit
             NSError *error = nil;
             URKArchive *archive = [[URKArchive alloc] initWithPath:cheatsArchivePath error:&error];
             NSData *cheatData = [archive extractDataFromFile:@"usrcheat1.xml" progress:nil error:&error];
-            currentFolder = @"";
+#else
+            NSString *extractPath = [AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:@"cheats.xml"];
+            NSString *archivePath = [[NSBundle mainBundle] pathForResource:@"cheats" ofType:@"7z"];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:extractPath]) {
+//                if (![LZMAExtractor extractArchiveEntry:archivePath archiveEntry:@"usrcheat1.xml" outPath:@"cheats.xml"]) {
+//                    NSLog(@"Unable to extract 7z");
+//                }
+                NSLog(@"%@", archivePath);
+                if (![LZMAExtractor extract7zArchive:archivePath dirName:NSTemporaryDirectory() preserveDir:YES]) {
+                    NSLog(@"Unable to extract 7z");
+                }
+                NSError *error;
+                [[NSFileManager defaultManager] moveItemAtPath:[NSTemporaryDirectory() stringByAppendingString:@"cheats.xml"] toPath:extractPath error:&error];
+                 if (error) {
+                     NSLog(@"Error extracting: %@", error);
+                 }
+                NSLog(@"Done Extracting");
+            } else {
+                NSLog(@"Cheats file exists");
+            }
+            
+            NSData *cheatData = [NSData dataWithContentsOfFile:extractPath];
+#endif
+            NSLog(@"CHeat data: %@", cheatData);
             cheatParser = [[NSXMLParser alloc] initWithData:cheatData];
             cheatParser.delegate = self;
+            currentFolder = @"";
+            NSLog(@"Starting Parse %@", cheatData);
             [cheatParser parse];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
             
         });
     } else {
         [self indexCheats];
-        [self.tableView reloadData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
     }
 }
 
@@ -172,7 +209,9 @@
 - (void)parserDidEndDocument:(NSXMLParser *)parser {
     cheats->save();
     [self indexCheats];
-    [self.tableView reloadData];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 #pragma mark - Table view data source
@@ -239,8 +278,10 @@
     if (section == 0) return [noFolderCodes count]; //num user cheats
     if (section == 1) {
         if (cheatsLoaded) {
+            NSLog(@"CL");
             return cheatDict.allKeys.count; //num db cheats
         } else {
+            NSLog(@"CNL");
             return 1;
         }
     }

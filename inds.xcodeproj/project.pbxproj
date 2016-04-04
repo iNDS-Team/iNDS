@@ -172,8 +172,6 @@
 		CA42580E1CADA89F00BFD05E /* UIImage+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CA42580D1CADA89F00BFD05E /* UIImage+Utilities.m */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
-		CA4748E51C100178006F1438 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; };
-		CA4748E61C100178006F1438 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
 		CA6E60951CB056A0000B269D /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6E60891CB056A0000B269D /* AFHTTPSessionManager.m */; };
 		CA6E60961CB056A0000B269D /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6E608C1CB056A0000B269D /* AFNetworkReachabilityManager.m */; };
@@ -189,7 +187,6 @@
 		CA8EA1401C37C3FB0082A3F8 /* RBVolumeButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */; };
 		CA8EBCF31C39BCE50082A3F8 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */; };
-		CA8EBCF41C39C0D10082A3F8 /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CA8EA1431C3850D50082A3F8 /* cheats.rar */; };
 		CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */; };
 		CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF91C2356F700B2A864 /* SCLAlertView.m */; };
 		CA908C071C2356F700B2A864 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFB1C2356F700B2A864 /* SCLButton.m */; };
@@ -211,6 +208,8 @@
 		CAB2C40E1CB2033600ED22BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C40D1CB2033600ED22BB /* AppDelegate.m */; };
 		CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */; };
 		CAB2C42A1CB2041900ED22BB /* iNDS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */; };
+		CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42F1CB222AF00ED22BB /* cheats.rar */; };
+		CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42B1CB21C2000ED22BB /* cheats.7z */; };
 		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
 		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */; };
@@ -250,7 +249,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CA4748E61C100178006F1438 /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -570,7 +568,6 @@
 		CA0BA5401BF9712B00C93357 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
 		CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloadManager.h; sourceTree = "<group>"; };
 		CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
-		CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UnrarKit.framework; path = iNDS/frameworks/UnrarKit.framework; sourceTree = "<group>"; };
 		CA42580C1CADA89F00BFD05E /* UIImage+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Utilities.h"; sourceTree = "<group>"; };
 		CA42580D1CADA89F00BFD05E /* UIImage+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Utilities.m"; sourceTree = "<group>"; };
 		CA42580F1CADADF200BFD05E /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice-Hardware.h"; sourceTree = "<group>"; };
@@ -604,7 +601,6 @@
 		CA8EA13E1C37C3FB0082A3F8 /* RBVolumeButtons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RBVolumeButtons.h; sourceTree = "<group>"; };
 		CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBVolumeButtons.m; sourceTree = "<group>"; };
 		CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
-		CA8EA1431C3850D50082A3F8 /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
 		CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
 		CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
@@ -640,6 +636,9 @@
 		CAB2C40D1CB2033600ED22BB /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSEmulatorViewController.mm; sourceTree = "<group>"; };
 		CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iNDS-Info.plist"; sourceTree = "<group>"; };
+		CAB2C42B1CB21C2000ED22BB /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.7z; path = Resources/cheats/cheats.7z; sourceTree = "<group>"; };
+		CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnrarKit.framework; sourceTree = "<group>"; };
+		CAB2C42F1CB222AF00ED22BB /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
 		CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSSettingsTableViewController.h; sourceTree = "<group>"; };
 		CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSSettingsTableViewController.m; sourceTree = "<group>"; };
 		CABE38371C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfileTableViewController.h; sourceTree = "<group>"; };
@@ -718,7 +717,6 @@
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
-				CA4748E51C100178006F1438 /* UnrarKit.framework in Frameworks */,
 				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -821,7 +819,8 @@
 			isa = PBXGroup;
 			children = (
 				CABE38BF1C34B8B800BE8857 /* Icons */,
-				CA8EA1431C3850D50082A3F8 /* cheats.rar */,
+				CAB2C42F1CB222AF00ED22BB /* cheats.rar */,
+				CAB2C42B1CB21C2000ED22BB /* cheats.7z */,
 				CA908C1D1C23B2BE00B2A864 /* Twitter.png */,
 				CA7079CA1C08FB47005A1B19 /* AppIcon-Transparent.png */,
 				D325821017A1D69B0009C84B /* pixelgrid.png */,
@@ -942,12 +941,12 @@
 				4C3F2AEC178E017600AE10B8 /* Twitter.framework */,
 				BF9D514717865D5100B5864B /* AudioToolbox.framework */,
 				BFAE6F9A17674D93000911CF /* libz.dylib */,
+				CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */,
 				BFAE6F921767490A000911CF /* OpenGLES.framework */,
 				BFAE6F9017674902000911CF /* GLKit.framework */,
 				BFCFE0F21764FBD3000A70CF /* UIKit.framework */,
 				BFCFE0F41764FBD3000A70CF /* Foundation.framework */,
 				BFCFE0F61764FBD3000A70CF /* CoreGraphics.framework */,
-				CA1E52951C0FFF9B003B84A5 /* UnrarKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1552,7 +1551,7 @@
 					};
 				};
 			};
-			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "inds" */;
+			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1583,7 +1582,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA8EBCF41C39C0D10082A3F8 /* cheats.rar in Resources */,
+				CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */,
+				CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
 				28DA4A52178802FB002236A4 /* RTrigger.png in Resources */,
 				28DA4A491787FD7F002236A4 /* Select@2x.png in Resources */,
@@ -2080,7 +2080,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "inds" */ = {
+		BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BFCFE1131764FBD3000A70CF /* Debug */,

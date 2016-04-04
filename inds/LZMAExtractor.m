@@ -122,6 +122,7 @@ int do7z_extract_entry(char *archivePath, char *archiveCachePath, char *entryNam
       NSAssert(worked, @"could not remove existing file");
     }
   } else {
+      NSLog(@"mtp: %@", myTmpDir);
     worked = [[NSFileManager defaultManager] createDirectoryAtPath:myTmpDir withIntermediateDirectories:YES attributes:nil error:nil];    
     NSAssert(worked, @"could not create tmp dir");
   }

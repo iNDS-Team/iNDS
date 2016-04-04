@@ -14,7 +14,6 @@
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
-#import <UnrarKit/UnrarKit.h>
 
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
@@ -23,6 +22,12 @@
 #import "SCLAlertView.h"
 
 #import "AFHTTPSessionManager.h"
+
+
+
+#ifdef UseRarKit
+    #import <UnrarKit/UnrarKit.h>
+#endif
 
 @interface AppDelegate () {
     BOOL    backgroundProcessesStarted;
@@ -149,7 +154,8 @@
                     return NO;
                 }
             } else { //Rar
-                NSError *archiveError = nil;
+                
+#ifdef UseRarKit
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
                     NSLog(@"Unable to open rar: %@", archiveError);
@@ -164,7 +170,10 @@
                     [self showError:@"Unable to extract .rar file."];
                     [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                 }
-                
+#else
+                [self showError:@"iNDS does not currently support .rar files"];
+                return NO;
+#endif
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];
