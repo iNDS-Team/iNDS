@@ -62,9 +62,10 @@
 
 - (void)reloadGames:(id)sender
 {
+    NSLog(@"Reloading");
     if (sender == self) {
         // do it later, the file may not be written yet
-        [self performSelector:_cmd withObject:nil afterDelay:2.5];
+        [self performSelector:_cmd withObject:nil afterDelay:1.5];
     } else  {
         // reload all games
         games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
