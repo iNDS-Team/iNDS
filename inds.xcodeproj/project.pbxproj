@@ -143,7 +143,6 @@
 		BFCFE26B1766379F000A70CF /* addons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13017650FB0000A70CF /* addons.cpp */; };
 		C345B67218906BB40065A795 /* iNDSMFIControllerSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */; };
 		CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA031AAF1BE951B700EDE98D /* Images.xcassets */; };
-		CA031ADC1BEAB1B000EDE98D /* iNDSGameTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA031ADB1BEAB1B000EDE98D /* iNDSGameTableView.m */; };
 		CA031ADF1BEB103B00EDE98D /* iNDSRomDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = CA031ADE1BEB103B00EDE98D /* iNDSRomDownloader.m */; };
 		CA031CC81BEBDC4F00EDE98D /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031CBE1BEBDC4F00EDE98D /* ioapi.c */; };
 		CA031CC91BEBDC4F00EDE98D /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031CC01BEBDC4F00EDE98D /* mztools.c */; };
@@ -168,8 +167,6 @@
 		CA031D2E1BEBE1EB00EDE98D /* Ppmd8Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D1C1BEBE1EB00EDE98D /* Ppmd8Dec.c */; };
 		CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D301BEBE36200EDE98D /* 7zAlloc.c */; };
 		CA031D341BEBE36200EDE98D /* 7zMain.c in Sources */ = {isa = PBXBuildFile; fileRef = CA031D321BEBE36200EDE98D /* 7zMain.c */; };
-		CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */; };
-		CA42580E1CADA89F00BFD05E /* UIImage+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CA42580D1CADA89F00BFD05E /* UIImage+Utilities.m */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
@@ -203,13 +200,16 @@
 		CAA59B071CAC6C210084AB5D /* bug@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAA59B051CAC6C210084AB5D /* bug@2x.png */; };
 		CAA59B081CAC6C210084AB5D /* bug@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAA59B061CAC6C210084AB5D /* bug@3x.png */; };
 		CAA59B0C1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA59B0B1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.m */; };
-		CAA59B101CAC74940084AB5D /* iNDSBugReportRomTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA59B0F1CAC74940084AB5D /* iNDSBugReportRomTableViewController.m */; };
 		CAA59B131CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA59B121CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m */; };
 		CAB2C40E1CB2033600ED22BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C40D1CB2033600ED22BB /* AppDelegate.m */; };
 		CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */; };
 		CAB2C42A1CB2041900ED22BB /* iNDS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */; };
 		CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42F1CB222AF00ED22BB /* cheats.rar */; };
 		CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42B1CB21C2000ED22BB /* cheats.7z */; };
+		CAB2C4391CB2D86C00ED22BB /* iNDSGameTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4371CB2D86C00ED22BB /* iNDSGameTableView.m */; };
+		CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43B1CB2D88500ED22BB /* iNDSRomDownloadManager.m */; };
+		CAB2C43E1CB2D89700ED22BB /* UIImage+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43D1CB2D89700ED22BB /* UIImage+Utilities.m */; };
+		CAB2C4421CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4411CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m */; };
 		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
 		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */; };
@@ -515,8 +515,6 @@
 		C345B67018906BB40065A795 /* iNDSMFIControllerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSMFIControllerSupport.h; path = iNDS/controls/iNDSMFIControllerSupport.h; sourceTree = SOURCE_ROOT; };
 		C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iNDSMFIControllerSupport.mm; path = iNDS/controls/iNDSMFIControllerSupport.mm; sourceTree = SOURCE_ROOT; };
 		CA031AAF1BE951B700EDE98D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		CA031ADA1BEAB1B000EDE98D /* iNDSGameTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSGameTableView.h; sourceTree = "<group>"; };
-		CA031ADB1BEAB1B000EDE98D /* iNDSGameTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSGameTableView.m; sourceTree = "<group>"; };
 		CA031ADD1BEB103B00EDE98D /* iNDSRomDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloader.h; sourceTree = "<group>"; };
 		CA031ADE1BEB103B00EDE98D /* iNDSRomDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloader.m; sourceTree = "<group>"; };
 		CA031CBD1BEBDC4F00EDE98D /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
@@ -566,10 +564,7 @@
 		CA031D311BEBE36200EDE98D /* 7zAlloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 7zAlloc.h; sourceTree = "<group>"; };
 		CA031D321BEBE36200EDE98D /* 7zMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 7zMain.c; sourceTree = "<group>"; };
 		CA0BA5401BF9712B00C93357 /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
-		CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloadManager.h; sourceTree = "<group>"; };
-		CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
 		CA42580C1CADA89F00BFD05E /* UIImage+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Utilities.h"; sourceTree = "<group>"; };
-		CA42580D1CADA89F00BFD05E /* UIImage+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Utilities.m"; sourceTree = "<group>"; };
 		CA42580F1CADADF200BFD05E /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice-Hardware.h"; sourceTree = "<group>"; };
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		CA4258121CADBD4900BFD05E /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
@@ -629,7 +624,6 @@
 		CAA59B0A1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSBugReportTableViewController.h; path = inds/iNDSBugReportTableViewController.h; sourceTree = SOURCE_ROOT; };
 		CAA59B0B1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSBugReportTableViewController.m; path = inds/iNDSBugReportTableViewController.m; sourceTree = SOURCE_ROOT; };
 		CAA59B0E1CAC74940084AB5D /* iNDSBugReportRomTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSBugReportRomTableViewController.h; path = inds/iNDSBugReportRomTableViewController.h; sourceTree = SOURCE_ROOT; };
-		CAA59B0F1CAC74940084AB5D /* iNDSBugReportRomTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSBugReportRomTableViewController.m; path = inds/iNDSBugReportRomTableViewController.m; sourceTree = SOURCE_ROOT; };
 		CAA59B111CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSBugReportSaveStateTableViewController.h; path = inds/iNDSBugReportSaveStateTableViewController.h; sourceTree = SOURCE_ROOT; };
 		CAA59B121CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSBugReportSaveStateTableViewController.m; path = inds/iNDSBugReportSaveStateTableViewController.m; sourceTree = SOURCE_ROOT; };
 		CAB2C40C1CB2033600ED22BB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -639,6 +633,12 @@
 		CAB2C42B1CB21C2000ED22BB /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.7z; path = Resources/cheats/cheats.7z; sourceTree = "<group>"; };
 		CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnrarKit.framework; sourceTree = "<group>"; };
 		CAB2C42F1CB222AF00ED22BB /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
+		CAB2C4361CB2D86C00ED22BB /* iNDSGameTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSGameTableView.h; sourceTree = "<group>"; };
+		CAB2C4371CB2D86C00ED22BB /* iNDSGameTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSGameTableView.m; sourceTree = "<group>"; };
+		CAB2C43A1CB2D88500ED22BB /* iNDSRomDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSRomDownloadManager.h; sourceTree = "<group>"; };
+		CAB2C43B1CB2D88500ED22BB /* iNDSRomDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSRomDownloadManager.m; sourceTree = "<group>"; };
+		CAB2C43D1CB2D89700ED22BB /* UIImage+Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Utilities.m"; sourceTree = "<group>"; };
+		CAB2C4411CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSBugReportRomTableViewController.m; sourceTree = "<group>"; };
 		CABE38341C27E4C200BE8857 /* iNDSSettingsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSSettingsTableViewController.h; sourceTree = "<group>"; };
 		CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSSettingsTableViewController.m; sourceTree = "<group>"; };
 		CABE38371C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfileTableViewController.h; sourceTree = "<group>"; };
@@ -768,12 +768,12 @@
 				CAB2C40D1CB2033600ED22BB /* AppDelegate.m */,
 				8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */,
 				8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */,
-				CA031ADA1BEAB1B000EDE98D /* iNDSGameTableView.h */,
-				CA031ADB1BEAB1B000EDE98D /* iNDSGameTableView.m */,
+				CAB2C4361CB2D86C00ED22BB /* iNDSGameTableView.h */,
+				CAB2C4371CB2D86C00ED22BB /* iNDSGameTableView.m */,
 				CA031ADD1BEB103B00EDE98D /* iNDSRomDownloader.h */,
 				CA031ADE1BEB103B00EDE98D /* iNDSRomDownloader.m */,
-				CA0BA5411BFBBAA400C93357 /* iNDSRomDownloadManager.h */,
-				CA0BA5421BFBBAA400C93357 /* iNDSRomDownloadManager.m */,
+				CAB2C43A1CB2D88500ED22BB /* iNDSRomDownloadManager.h */,
+				CAB2C43B1CB2D88500ED22BB /* iNDSRomDownloadManager.m */,
 				CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */,
 				CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */,
 				CA7079CC1C095147005A1B19 /* toDo.txt */,
@@ -1392,13 +1392,13 @@
 				CA42580F1CADADF200BFD05E /* UIDevice-Hardware.h */,
 				CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */,
 				CA42580C1CADA89F00BFD05E /* UIImage+Utilities.h */,
-				CA42580D1CADA89F00BFD05E /* UIImage+Utilities.m */,
+				CAB2C43D1CB2D89700ED22BB /* UIImage+Utilities.m */,
 				CA4258121CADBD4900BFD05E /* MBProgressHUD.h */,
 				CA4258131CADBD4900BFD05E /* MBProgressHUD.m */,
 				CAA59B0A1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.h */,
 				CAA59B0B1CAC6CAB0084AB5D /* iNDSBugReportTableViewController.m */,
 				CAA59B0E1CAC74940084AB5D /* iNDSBugReportRomTableViewController.h */,
-				CAA59B0F1CAC74940084AB5D /* iNDSBugReportRomTableViewController.m */,
+				CAB2C4411CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m */,
 				CAA59B111CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.h */,
 				CAA59B121CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m */,
 			);
@@ -1663,6 +1663,7 @@
 				BFCFE18E17650FB0000A70CF /* FIFO.cpp in Sources */,
 				BFCFE18F17650FB0000A70CF /* firmware.cpp in Sources */,
 				BFCFE19017650FB0000A70CF /* fs-linux.cpp in Sources */,
+				CAB2C4421CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m in Sources */,
 				BFCFE19117650FB0000A70CF /* gfx3d.cpp in Sources */,
 				CA031CCC1BEBDC4F00EDE98D /* SSZipArchive.m in Sources */,
 				8BEA097A17872C4B0060B347 /* UIScreen+Widescreen.m in Sources */,
@@ -1711,6 +1712,7 @@
 				BFCFE1A617650FB0000A70CF /* wifi.cpp in Sources */,
 				CA6E60961CB056A0000B269D /* AFNetworkReachabilityManager.m in Sources */,
 				CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */,
+				CAB2C43E1CB2D89700ED22BB /* UIImage+Utilities.m in Sources */,
 				BFCFE1B417651005000A70CF /* 2xsai.cpp in Sources */,
 				CA031D291BEBE1EB00EDE98D /* LzmaDec.c in Sources */,
 				CAB2C40E1CB2033600ED22BB /* AppDelegate.m in Sources */,
@@ -1719,7 +1721,6 @@
 				BFCFE1B617651005000A70CF /* epx.cpp in Sources */,
 				BFCFE1B717651005000A70CF /* hq2x.cpp in Sources */,
 				BFCFE1B817651005000A70CF /* hq4x.cpp in Sources */,
-				CA42580E1CADA89F00BFD05E /* UIImage+Utilities.m in Sources */,
 				CA031D2A1BEBE1EB00EDE98D /* LZMAExtractor.m in Sources */,
 				BFCFE1B917651005000A70CF /* lq2x.cpp in Sources */,
 				CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */,
@@ -1731,7 +1732,6 @@
 				BFCFE1D517651076000A70CF /* ConvertUTF.c in Sources */,
 				BFCFE1D617651076000A70CF /* datetime.cpp in Sources */,
 				CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */,
-				CA031ADC1BEAB1B000EDE98D /* iNDSGameTableView.m in Sources */,
 				BFCFE1D717651076000A70CF /* dlditool.cpp in Sources */,
 				BFCFE1D817651076000A70CF /* emufat.cpp in Sources */,
 				BFCFE1D917651076000A70CF /* FileMap.cpp in Sources */,
@@ -1774,11 +1774,11 @@
 				CA031CCB1BEBDC4F00EDE98D /* zip.c in Sources */,
 				BFCFE23E176634EE000A70CF /* slot1_retail_nand.cpp in Sources */,
 				BFCFE23F176634EE000A70CF /* slot1_retail.cpp in Sources */,
+				CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */,
 				8BEA098D17872CF40060B347 /* throttle.cpp in Sources */,
 				BFCFE240176634EE000A70CF /* slot2_expMemory.cpp in Sources */,
 				BFCFE241176634EE000A70CF /* slot2_gbagame.cpp in Sources */,
 				CA031D211BEBE1EB00EDE98D /* 7zDec.c in Sources */,
-				CAA59B101CAC74940084AB5D /* iNDSBugReportRomTableViewController.m in Sources */,
 				8BEA098A17872CF40060B347 /* emu.cpp in Sources */,
 				BFCFE242176634EE000A70CF /* slot2_guitarGrip.cpp in Sources */,
 				BFCFE243176634EE000A70CF /* slot2_mpcf.cpp in Sources */,
@@ -1800,7 +1800,6 @@
 				CA031D221BEBE1EB00EDE98D /* 7zFile.c in Sources */,
 				CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */,
 				8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */,
-				CA0BA5431BFBBAA400C93357 /* iNDSRomDownloadManager.m in Sources */,
 				CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */,
 				8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */,
 				D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */,
@@ -1819,6 +1818,7 @@
 				2838715F17950B69009B8E84 /* math_mat4.c in Sources */,
 				2838716017950B69009B8E84 /* math_sqrtf.c in Sources */,
 				28387163179561F5009B8E84 /* iNDSGame.m in Sources */,
+				CAB2C4391CB2D86C00ED22BB /* iNDSGameTableView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

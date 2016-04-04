@@ -15,6 +15,7 @@
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
 
+
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
 
@@ -23,10 +24,8 @@
 
 #import "AFHTTPSessionManager.h"
 
-
-
 #ifdef UseRarKit
-    #import <UnrarKit/UnrarKit.h>
+#import <UnrarKit/UnrarKit.h>
 #endif
 
 @interface AppDelegate () {
@@ -154,8 +153,8 @@
                     return NO;
                 }
             } else { //Rar
-                
 #ifdef UseRarKit
+                NSError *archiveError = nil;
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
                     NSLog(@"Unable to open rar: %@", archiveError);
@@ -169,11 +168,14 @@
                     NSLog(@"Unable to extract rar: %@", archiveError);
                     [self showError:@"Unable to extract .rar file."];
                     [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+                    return NO;
                 }
 #else
-                [self showError:@"iNDS does not currently support .rar files"];
+                [self showError:@"Rar support has been disabled due to singing issues."];
+                [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                 return NO;
 #endif
+                
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];

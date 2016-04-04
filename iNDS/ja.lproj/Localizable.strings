@@ -1,0 +1,49 @@
+ROM_LIST = "ROMリスト";
+ABOUT_INDS = "iNDSについて";
+SETTINGS = "設定";
+DONATE = "寄付";
+
+SHARE = "シェア";
+
+EMULATOR_CORE_CODE = "エミュレータコアコード";
+
+EMULATOR = "エミュレータ";
+CONTROLS = "コントロール";
+DEVELOPER = "開発者";
+EXPERIMENTAL = "実験的";
+
+OVERLAY_PIXEL_GRID_DETAIL = "ピクセルグリッドはゲームブラーを低減します。その代わり、ピクセルグリッドは明るさを低減します。";
+ENABLE_DROPBOX_DETAIL = "Dropboxとの同期を有効にすると、あなたのDropboxアカウントに「iNDS」フォルダを作成され、セーブデータ（DSV）に保存されます。よって、セーブデータはすべてのデバイス（iPhone、iPad、iPod touch、Android、PCなど）で利用できるようになります。";
+ARMLJIT_DETAIL = "GNU Lightning JITはエミュレーションが速くなります。脱獄(Jailbreak)をしていなければiNDSがクラッシュします。";
+
+AUTO = "オート";
+DPAD = "Dパッド";
+JOYSTICK = "ジョイスティック";
+TOP = "上側";
+BOTTOM = "下側";
+
+FRAME_SKIP = "フレームスキップ";
+DISABLE_SOUND = "サウンドを無効にする";
+OVERLAY_PIXEL_GRID = "ピクセルグリッド";
+
+CONTROL_PAD_STYLE = "コントロールパッドスタイル";
+CONTROL_POSITION_PORTRAIT = "コントロールのポジション (縦向き時)";
+CONTROL_OPACITY_PORTRAIT = "コントロールの不透明 (縦向き時)";
+
+ENABLE_DROPBOX = "Dropbox同期を有効にする";
+NOT_LINKED = "接続されていません";
+LINKED = "接続されてしました";
+UNLINKED = "切断されました！";
+UNLINKED_DETAIL = "Dropboxから切断されました。セーブデータは同期されません。";
+SUCCESS = "成功！";
+SUCCESS_DETAIL = "Dropbox接続されてしました！今から、Dropbox上の「iNDS」フォルダにあなたのセーブデータ（DSV）を同期します。";
+DROPBOX_CFG_ERROR = "Dropbox接続エラー";
+
+SHOW_FPS = "FPSを表示";
+VIBRATION = "振動";
+
+LAUNCH_GAME = "ゲームをスタートする";
+LAUNCH_GAME_DETAIL = "ゲームを起動する";
+RESUME_AUTOSAVE = "オートセーブから再開";
+
+ARMLJIT = "GNU Lightning JIT";

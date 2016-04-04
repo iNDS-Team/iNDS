@@ -1,0 +1,49 @@
+ROM_LIST = "Lista de ROMs";
+ABOUT_INDS = "Acerca de iNDS";
+SETTINGS = "Ajustes";
+DONATE = "Donar";
+
+SHARE = "Compartir";
+
+EMULATOR_CORE_CODE = "Emulador de código de la base";
+
+EMULATOR = "Emulador";
+CONTROLS = "Controles";
+DEVELOPER = "Desarrollador";
+EXPERIMENTAL = "Experimental";
+
+OVERLAY_PIXEL_GRID_DETAIL = "La cuadrícula de píxeles hace que los juegos se vean menos borrosos, pero a la vez reduce el brillo.";
+ENABLE_DROPBOX_DETAIL = "Activar Dropbox creará una carpeta llamada \"iNDS\" en tu cuenta de Dropbox. Tus partidas se sincronizarán a esa carpeta para que puedas seguirla en todos tus dispositivos (iPhone, iPad, iPod touch, Android, PC, etc).";
+ARMLJIT_DETAIL = "GNU Lighting JIT hace que los juegos funcionen más rápido. Usted debe estar jailbroken o iNDS se estrellará.";
+
+AUTO = "Auto";
+DPAD = "D-Pad";
+JOYSTICK = "Joystick";
+TOP = "Arriba";
+BOTTOM = "Abajo";
+
+FRAME_SKIP = "Saltar Fotogramas";
+DISABLE_SOUND = "Desactivar Sonido";
+OVERLAY_PIXEL_GRID = "Mostrar Cuadrícula";
+
+CONTROL_PAD_STYLE = "Estilo de Controles";
+CONTROL_POSITION_PORTRAIT = "Posicion de Controles (Vertical)";
+CONTROL_OPACITY_PORTRAIT = "Opacidad de Controles (Vertical)";
+
+ENABLE_DROPBOX = "Sincronización";
+NOT_LINKED = "No Vinculado";
+LINKED = "vinculado";
+UNLINKED = "desvinculado!";
+UNLINKED_DETAIL = "Dropbox ha sido desvinculado. Sus archivos ya no se sincronizan.";
+SUCCESS = "éxito";
+SUCCESS_DETAIL = "Dropbox se vinculó con éxito! Inds ahora comenzará a sincronizar tus archivos en una carpeta de Dropbox llamada 'inds' ubicado en el directorio raíz de Dropbox.";
+DROPBOX_CFG_ERROR = "Error al configurar Dropbox";
+
+SHOW_FPS = "Mostrar FPS";
+VIBRATION = "Vibración";
+
+LAUNCH_GAME = "Iniciar Juego";
+LAUNCH_GAME_DETAIL = "Iniciando el juego normalmente";
+RESUME_AUTOSAVE = "Reanudar desde autoguardado";
+
+ARMLJIT = "GNU Lightning JIT";
