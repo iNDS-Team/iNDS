@@ -7,8 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import <Fabric/Fabric.h>
-#import <Crashlytics/Crashlytics.h>
 #import <DropboxSDK/DropboxSDK.h>
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
@@ -42,8 +40,6 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [Fabric with:@[[Crashlytics class]]];
-    [[Crashlytics sharedInstance] setObjectValue:@"Starting App" forKey:@"GameTitle"];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     

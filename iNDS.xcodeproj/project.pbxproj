@@ -193,8 +193,6 @@
 		CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C041C2356F700B2A864 /* SCLTextView.m */; };
 		CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */; };
 		CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0E1C235AA000B2A864 /* Accelerate.framework */; };
-		CA908C181C239D0000B2A864 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C161C239D0000B2A864 /* Fabric.framework */; };
-		CA908C191C239D0000B2A864 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C171C239D0000B2A864 /* Crashlytics.framework */; };
 		CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */; };
 		CA908C1E1C23B2BE00B2A864 /* Twitter.png in Resources */ = {isa = PBXBuildFile; fileRef = CA908C1D1C23B2BE00B2A864 /* Twitter.png */; };
 		CAA59B071CAC6C210084AB5D /* bug@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CAA59B051CAC6C210084AB5D /* bug@2x.png */; };
@@ -210,9 +208,6 @@
 		CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43B1CB2D88500ED22BB /* iNDSRomDownloadManager.m */; };
 		CAB2C43E1CB2D89700ED22BB /* UIImage+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43D1CB2D89700ED22BB /* UIImage+Utilities.m */; };
 		CAB2C4421CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4411CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m */; };
-		CAB2C4431CB2E02700ED22BB /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CAB2C4441CB2E07600ED22BB /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CAB2C4451CB2E07600ED22BB /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38351C27E4C200BE8857 /* iNDSSettingsTableViewController.m */; };
 		CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE38381C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m */; };
 		CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CABE383E1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m */; };
@@ -252,7 +247,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CAB2C4451CB2E07600ED22BB /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -618,8 +612,6 @@
 		CA908C041C2356F700B2A864 /* SCLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTextView.m; sourceTree = "<group>"; };
 		CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		CA908C0E1C235AA000B2A864 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		CA908C161C239D0000B2A864 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
-		CA908C171C239D0000B2A864 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
 		CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfile.m; sourceTree = "<group>"; };
 		CA908C1D1C23B2BE00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Twitter.png; path = Resources/Twitter.png; sourceTree = "<group>"; };
@@ -700,18 +692,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAB2C4431CB2E02700ED22BB /* UnrarKit.framework in Frameworks */,
 				CA6E609C1CB0574B000B269D /* MobileCoreServices.framework in Frameworks */,
 				CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */,
 				1A5BAE8117D184AD00BABC01 /* AudioToolbox.framework in Frameworks */,
 				CABE38981C30FA9800BE8857 /* libsqlite3.tbd in Frameworks */,
 				CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */,
-				CAB2C4441CB2E07600ED22BB /* UnrarKit.framework in Frameworks */,
 				CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */,
 				9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */,
-				CA908C181C239D0000B2A864 /* Fabric.framework in Frameworks */,
 				D32C39DB178E749C00E6809E /* libc++.dylib in Frameworks */,
-				CA908C191C239D0000B2A864 /* Crashlytics.framework in Frameworks */,
 				D32C39D9178E748000E6809E /* QuartzCore.framework in Frameworks */,
 				D32C39D7178E73C200E6809E /* SystemConfiguration.framework in Frameworks */,
 				D32C39D5178E73B500E6809E /* Security.framework in Frameworks */,
@@ -932,8 +920,6 @@
 				CA6E609B1CB0574B000B269D /* MobileCoreServices.framework */,
 				CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */,
 				CABE38971C30FA9800BE8857 /* libsqlite3.tbd */,
-				CA908C161C239D0000B2A864 /* Fabric.framework */,
-				CA908C171C239D0000B2A864 /* Crashlytics.framework */,
 				CA908C0E1C235AA000B2A864 /* Accelerate.framework */,
 				CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */,
 				CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */,
@@ -1642,7 +1628,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GIT=`which git`\nif [ \"$GIT\" -a -d .git ]; then\n  GIT_VERSION=`$GIT describe --tags --always`\nelse\n  GIT_VERSION=unknown\nfi\ndefaults write $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Info GitVersionString -string $GIT_VERSION\n./Fabric.framework/run bf9ae23f23417a44b021654804e24bf6823d3c49 e8bee6f3bc84e01e9c88cae0fcc260a6c4e44ab186748ea15ab6140db62afb6e\n";
+			shellScript = "GIT=`which git`\nif [ \"$GIT\" -a -d .git ]; then\n  GIT_VERSION=`$GIT describe --tags --always`\nelse\n  GIT_VERSION=unknown\nfi\ndefaults write $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Info GitVersionString -string $GIT_VERSION\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1988,7 +1974,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.4.1;
+				CURRENT_PROJECT_VERSION = 1.4.0.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2041,7 +2027,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.4.1;
+				CURRENT_PROJECT_VERSION = 1.4.0.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",

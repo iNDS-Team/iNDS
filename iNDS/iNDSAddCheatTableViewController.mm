@@ -71,6 +71,13 @@
 
 - (IBAction)saveCheat:(id)sender
 {
+    if (self.cheatName.text.length < 1) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showInfo:self title:@"Error!" subTitle:@"Please enter a name for the cheat." closeButtonTitle:@"Okay" duration:0.0];
+            return;
+        });
+    }
     NSString *code = [self.cheatCode.text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     NSString *description = [NSString stringWithFormat:@"||%@||", self.cheatName.text];
     cheats->add_AR([code UTF8String], [description UTF8String], NO);

@@ -14,7 +14,7 @@
 // Embedding UnrarKit causes signing issues for the build store.
 // To use it, you must uncomment this line and then link and
 // embed UnrarKit.framework
-#define UseRarKit
+//#define UseRarKit
 
 #define kBugUrl @"http://69.167.218.245:6768/iNDS/bugreport"
 //#define kBugUrl @"http://www.williamlcobb.com/iNDS/bugreport"
