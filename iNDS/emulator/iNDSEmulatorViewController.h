@@ -32,4 +32,5 @@
 - (void)loadProfile:(iNDSEmulationProfile *)profile;
 - (void)newSaveState;
 - (void)reloadEmulator;
+- (void)setLidClosed:(BOOL)closed;
 @end

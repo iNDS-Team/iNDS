@@ -163,7 +163,7 @@ BOOL Mic_Init()
 	SLDataSink audioSnk = {&loc_bq, &format_pcm};
 	
 	const SLInterfaceID id[1] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
-	const SLboolean req[1] = {SL_BOOLEAN_TRUE};
+	const SLboolean req[1] = {SL_BOOLEAN_TRUE}; 
 	
 	if(FAILED(result = (*engineEngine)->CreateAudioRecorder(engineEngine, &recorderObject, &audioSrc, &audioSnk, 1, id, req)))
 		return FALSE;

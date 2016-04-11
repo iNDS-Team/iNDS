@@ -37,7 +37,7 @@ Reporting Bugs
 To-do
 ------------------------
 ###### Planned improvments
-* Cheat Codes
+* Microphone
 * GNU Lightning JIT (JAILBROKEN DEVICES ONLY)
 * Sharing roms between devices
 * Sharable game hacks

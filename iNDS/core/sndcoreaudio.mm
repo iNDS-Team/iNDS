@@ -115,12 +115,10 @@ u32 SNDCoreAudioGetAudioSpace() {
 }
 
 void SNDCoreAudioMuteAudio() {
-    NSLog(@"Muted");
     AudioQueueStop(audioQueue, false);
 }
 
 void SNDCoreAudioUnMuteAudio() {
-    NSLog(@"Unmuted");
     AudioQueueStart(audioQueue, NULL);
 }
 

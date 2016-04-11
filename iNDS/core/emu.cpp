@@ -69,13 +69,6 @@ struct MainLoopData
 VideoInfo video;
 
 
-void Mic_DeInit(){}
-BOOL Mic_Init(){return true;}
-void Mic_Reset(){}
-u8 Mic_ReadSample(){return 0x99;}
-void mic_savestate(EMUFILE* os){}
-bool mic_loadstate(EMUFILE* is, int size){ return true;}
-
 bool useMmapForRomLoading = false;
 volatile bool execute = true;
 bool autoframeskipenab=1;
@@ -529,24 +522,24 @@ void EMU_closeRom()
 	NDS_Reset();
 }
 
-static BOOL _b[] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
-#define all_button _b[0], _b[1], _b[2], _b[3], _b[4], _b[5], _b[6], _b[7], _b[8], _b[9], _b[10], _b[11]
+static BOOL _b[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+#define all_button _b[0], _b[1], _b[2], _b[3], _b[4], _b[5], _b[6], _b[7], _b[8], _b[9], _b[10], _b[11], _b[12], _b[13]
 
 void EMU_setButtons(int l, int r, int up, int down, int left, int right, int a, int b, int x, int y, int start, int select)
 {
-	NDS_setPad(right, left, down, up, select, start, b, a, y, x, l, r, false, false);
+	NDS_setPad(right, left, down, up, select, start, b, a, y, x, l, r, _b[12], _b[13]);
 }
 
 void EMU_buttonDown(BUTTON_ID button)
 {
     _b[button] = true;
-    NDS_setPad(all_button, false, false);
+    NDS_setPad(all_button);
 }
 
 void EMU_buttonUp(BUTTON_ID button)
 {
     _b[button] = false;
-    NDS_setPad(all_button, false, false);
+    NDS_setPad(all_button);
 }
 
 void EMU_setDPad(bool up, bool down, bool left, bool right)
@@ -555,7 +548,7 @@ void EMU_setDPad(bool up, bool down, bool left, bool right)
     _b[BUTTON_DOWN] = !!down;
     _b[BUTTON_LEFT] = !!left;
     _b[BUTTON_RIGHT] = !!right;
-    NDS_setPad(all_button, false, false);
+    NDS_setPad(all_button);
 }
 
 void EMU_setABXY(bool a, bool b, bool x, bool y)
@@ -564,7 +557,7 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
     _b[BUTTON_B] = !!b;
     _b[BUTTON_X] = !!x;
     _b[BUTTON_Y] = !!y;
-    NDS_setPad(all_button, false, false);
+    NDS_setPad(all_button);
 }
 
 

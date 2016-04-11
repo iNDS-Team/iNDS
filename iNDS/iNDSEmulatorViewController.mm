@@ -30,6 +30,8 @@
 
 #import "iCadeReaderView.h"
 
+#import <AVFoundation/AVFoundation.h>
+
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
 #define SHADER_STRING(text) @ STRINGIZE2(text)
@@ -193,6 +195,8 @@ const float textureVert[] =
         });
     };
     
+    
+    
     [self defaultsChanged:nil];
     
     _speed = 1;
@@ -290,16 +294,24 @@ const float textureVert[] =
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (emuLoopLock) { //Only update these is the core has loaded
         EMU_setFrameSkip((int)[defaults integerForKey:@"frameSkip"]);
-        EMU_enableSound(![defaults boolForKey:@"disableSound"]);
+        EMU_enableSound(![defaults boolForKey:@"disableSound"] && ![[AVAudioSession sharedInstance] secondaryAudioShouldBeSilencedHint]);
         EMU_setSynchMode([defaults boolForKey:@"synchSound"]);
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
-    if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
-        [volumeStealer startStealingVolumeButtonEvents];
-    } else {
-        [volumeStealer stopStealingVolumeButtonEvents];
-    }
+    
+    // For some reason both of these disable the mic
+//    if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
+//        [volumeStealer startStealingVolumeButtonEvents];
+//    } else {
+//        [volumeStealer stopStealingVolumeButtonEvents];
+//    }
+    
+//    if ([defaults boolForKey:@"ignoreMute"]) {
+//        [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error:nil];
+//    } else {
+//        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
+//    }
     
     [self.view setNeedsLayout];
 }
@@ -523,16 +535,11 @@ const float textureVert[] =
 
 - (void)pauseEmulation
 {
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSLog(@"Pausing");
-        if (!execute) return;
-        [self saveStateWithName:@"Pause"];
-        EMU_pause(true);
-        [emuLoopLock lock]; // make sure emulator loop has ended
-        [emuLoopLock unlock];
-    //});
-    
-    
+    NSLog(@"Pausing");
+    if (!execute) return;
+    EMU_pause(true);
+    [emuLoopLock lock]; // make sure emulator loop has ended
+    [emuLoopLock unlock];
 }
 
 - (void)resumeEmulation
@@ -591,6 +598,7 @@ const float textureVert[] =
 
 - (void)saveStateWithName:(NSString*)saveStateName
 {
+    NSLog(@"Saving: %@", saveStateName);
     NSString *savePath = [self.game pathForSaveStateWithName:saveStateName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:savePath]) {
         [[NSFileManager defaultManager] removeItemAtPath:savePath error:nil];
@@ -647,6 +655,18 @@ const float textureVert[] =
         //EMU_setFrameSkip(MAX((int)speed, userFrameSkip));
     }
     _speed = speed;
+}
+
+- (void)setLidClosed:(BOOL)closed
+{
+    NSLog(@"Close: %ld", closed);
+    if (closed) {
+        EMU_buttonDown((BUTTON_ID)13);
+        EMU_buttonDown((BUTTON_ID)12);
+    } else {
+        EMU_buttonUp((BUTTON_ID)13);
+        EMU_buttonUp((BUTTON_ID)12);
+    }
 }
 
 - (void)controllerActivated:(NSNotification *)notification {
@@ -747,7 +767,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             [self.profile deselectView];
         }
     } else {
-        [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
+        for (UITouch *t in touches) {
+            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
+        }
     }
 }
 
@@ -761,7 +783,9 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
         } 
     } else {
-        [self touchScreenAtPoint:[touches.anyObject locationInView:glkView[1]]];
+        for (UITouch *t in touches) {
+            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
+        }
     }
 }
 

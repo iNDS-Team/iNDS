@@ -21,6 +21,7 @@
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *frameSkipControl;
 @property (weak, nonatomic) IBOutlet UISwitch *disableSoundSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *ignoreMuteSwitch;
 
 @property (weak, nonatomic) IBOutlet UILabel *controlPadStyleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *controlOpacityLabel;
@@ -113,6 +114,7 @@
     NSInteger frameSkip = [defaults integerForKey:@"frameSkip"];
     self.frameSkipControl.selectedSegmentIndex = frameSkip < 0 ? 5 : frameSkip;
     self.disableSoundSwitch.on = [defaults boolForKey:@"disableSound"];
+    self.ignoreMuteSwitch.on = [defaults boolForKey:@"ignoreMute"];
     
     self.controlPadStyleControl.selectedSegmentIndex = [defaults integerForKey:@"controlPadStyle"];
     self.controlOpacitySlider.value = [defaults floatForKey:@"controlOpacity"];
@@ -211,6 +213,8 @@
         [defaults setInteger:frameSkip forKey:@"frameSkip"];
     } else if (sender == self.disableSoundSwitch) {
         [defaults setBool:self.disableSoundSwitch.on forKey:@"disableSound"];
+    } else if (sender == self.ignoreMuteSwitch) {
+        [defaults setBool:self.ignoreMuteSwitch.on forKey:@"ignoreMute"];
     } else if (sender == self.synchSoundSwitch) {
         [defaults setBool:self.synchSoundSwitch.on forKey:@"synchSound"];
     } else if (sender == self.autoSaveSwitch) {

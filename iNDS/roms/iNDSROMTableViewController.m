@@ -30,12 +30,6 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
     
-    // watch for changes in documents folder
-    docWatchHelper = [MHWDirectoryWatcher directoryWatcherAtPath:AppDelegate.sharedInstance.documentsPath
-                                                        callback:^{
-                                                            [self reloadGames:self];
-                                                        }];
-    
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
 }
 
@@ -55,6 +49,11 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [AppDelegate.sharedInstance startBackgroundProcesses];
+    // watch for changes in documents folder
+    docWatchHelper = [MHWDirectoryWatcher directoryWatcherAtPath:AppDelegate.sharedInstance.documentsPath
+                                                        callback:^{
+                                                            [self reloadGames:self];
+                                                        }];
 }
 
 
@@ -63,7 +62,7 @@
     NSLog(@"Reloading");
     if (sender == self) {
         // do it later, the file may not be written yet
-        [self performSelector:_cmd withObject:nil afterDelay:1.5];
+        [self performSelector:_cmd withObject:nil afterDelay:1];
     } else  {
         // reload all games
         games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];

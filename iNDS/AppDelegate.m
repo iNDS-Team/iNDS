@@ -14,6 +14,7 @@
 #import "ZAActivityBar.h"
 
 
+
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
 
@@ -25,6 +26,7 @@
 #ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
 #endif
+
 
 @interface AppDelegate () {
     BOOL    backgroundProcessesStarted;
@@ -50,6 +52,8 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.batteryDir]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    
+    
     return YES;
 }
 
@@ -167,11 +171,10 @@
                     return NO;
                 }
 #else
-                [self showError:@"Rar support has been disabled due to singing issues."];
+                [self showError:@"Rar support has been disabled due to code singing issues."];
                 [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
                 return NO;
 #endif
-                
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];
@@ -266,6 +269,11 @@
 - (NSString *)rootDocumentsPath
 {
     return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+}
+
+- (NSString *)libraryPath
+{
+    return [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 }
 
 - (NSString *)appKey

@@ -117,6 +117,11 @@
     [emulationController toggleSettings:self];
 }
 
+- (IBAction)setLidClosed:(UISwitch *)sender
+{
+    [emulationController setLidClosed:sender.on];
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
