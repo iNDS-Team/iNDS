@@ -22,6 +22,7 @@
     BOOL anyLocalChanges;
     BOOL syncing;
     NSMutableArray *deletedFiles;
+    NSMutableArray *uploadedFiles;
 }
 - (NSDictionary*)getLocalStatus;
 @end
@@ -54,7 +55,8 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     client.delegate = self;
     
     // Start getting the remote file list
-    deletedFiles = [NSMutableArray new];
+    deletedFiles  = [NSMutableArray new];
+    uploadedFiles = [NSMutableArray new];
     [client loadMetadata:@"/"];
 }
 
@@ -144,7 +146,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // This re-starts the 'check the metadata' step again, which will then check for any syncing that needs doing, and then kick it off
 - (void)stepComplete {
     // Kick off the check the metadata with a little delay so we don't overdo things
-    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.15];
+    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.3];
 }
 
 #pragma mark - The async dropbox steps
@@ -158,8 +160,14 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 
 // Upload
 - (void)startTaskUpload:(NSString*)file rev:(NSString*)rev {
-    NSLog(@"Sync: Uploading file %@, %@", file, rev?@"overwriting":@"new");
-    [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+    if (![uploadedFiles containsObject:file]) {
+        NSLog(@"Sync: Uploading file %@, %@", file, rev?@"overwriting":@"new");
+        [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        [uploadedFiles addObject:file];
+    } else {
+        NSLog(@"Prevented double file upload");
+    }
+    
 }
 - (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
     // Now the file has uploaded, we need to set its 'last modified' date locally to match the date on dropbox.
@@ -179,7 +187,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
         NSLog(@"Sync: Downloading file %@", file);
         [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
     } else {
-        NSLog(@"Prevented DB Crash. Trying to DL deleted file");
+        NSLog(@"Prevented Dropbox Crash. Trying to download a deleted file");
     }
 }
 - (void)restClient:(DBRestClient*)client loadedFile:(NSString*)destPath contentType:(NSString*)contentType metadata:(DBMetadata*)metadata {
