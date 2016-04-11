@@ -66,9 +66,9 @@ u8 Mic_ReadSample(){
         s8 sample = (stream[index] - 128);
         s8 neg = sample < 0 ? -1 : 1;
         sample = ((sample * sample) / 7) * neg;
-        //
+        
         TPCircularBufferConsume(buf, index + 1);
-        printf("Sample: %d\n", sample + 128);
+        //printf("Sample: %d\n", sample + 128);
         return sample + 128;
     } else {
 #ifdef DEBUG
