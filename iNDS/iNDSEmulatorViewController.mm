@@ -77,7 +77,7 @@ const float textureVert[] =
 };
 
 @interface iNDSEmulatorViewController () <GLKViewDelegate, iCadeEventDelegate> {
-    int fps;
+    float coreFps;
     
     GLuint texHandle[2];
     GLint attribPos;
@@ -566,30 +566,27 @@ const float textureVert[] =
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        
         CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
+        CFTimeInterval now;
         while (execute) {
             framesToRender += self.speed;
             //framesToRender += MIN(MAX(60 / fps, 6), 1) * self.speed; //Will run game at full speed but lower FPS
-            BOOL runOther = framesToRender >= 1;
+            
+            now = CACurrentMediaTime();
             for (int i = 1; i <= framesToRender; i++) {
                 EMU_runCore();
             }
-            framesToRender -= (int)framesToRender; //Keep decimal
-            if (runOther) {
-                fps = EMU_runOther(); // Shouldn't we throttle after updating the display...?
-                EMU_copyMasterBuffer();
-                [self updateDisplay];
-                if (CACurrentMediaTime() - lastAutosave > 180 && [[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
-                    [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
-                    lastAutosave = CACurrentMediaTime();
-                }
-            } else {
-                iNDS_throttle();
+            if (framesToRender >= 1) { //Only calculate core fps when we actually rendered a frame
+                coreFps = coreFps * 0.99 + (1 / (CACurrentMediaTime() - now)) * 0.01;
             }
+            framesToRender -= (int)framesToRender; //Keep decimal
             
+            EMU_copyMasterBuffer();
+            [self updateDisplay]; //This will automatically throttle fps to 60
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -611,13 +608,15 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS", MIN(fps, 60)];
+        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d)", MIN((int)coreFps, 60), (int)coreFps];
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
+    
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
-    [glkView[0] display];
+    CFTimeInterval now = CACurrentMediaTime();
+    [glkView[0] display]; // This will automatically throttle to 60 fps
     
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + 256*192*4);

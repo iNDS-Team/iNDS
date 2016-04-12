@@ -15,7 +15,7 @@
 #define HORIZONTAL 1
 #define VERTICAL 2
 
-#define VERSION @"1.0.1"
+#define VERSION @"1.0.2"
 
 @interface iNDSEmulationProfile()
 {
@@ -52,7 +52,7 @@
             startButtonRects[i] = selectButtonRects[i] = CGRectMake(0, 0, 48, 28);
             leftTriggerRects[i] = rightTriggerRects[i] = CGRectMake(0, 0, 67, 44);
             directionalControlRects[i] = buttonControlRects[i] = CGRectMake(0, 0, 120, 120);
-            fpsLabelRects[i] = CGRectMake(40, 5, 70, 24);
+            fpsLabelRects[i] = CGRectMake(40, 5, 240, 24);
         }
         // Setup the default screen profile
         _name = name;
@@ -108,7 +108,7 @@
     self = [self initWithProfileName:[coder decodeObjectForKey:@"iNDSProfileName"]];
     if (self) {
         NSString * thisVersion = [coder decodeObjectForKey:@"iNDSProfileVersion"];
-        if ([VERSION isEqualOrNewerThanVersion:thisVersion]) { //VERSION >= thisVersion
+        if ([VERSION isEqualOrNewerThanVersion:thisVersion]) { // Was this profile
             //Probably a better way to do this but I wanted to have support for later versions
             mainScreenRects[0] = [coder decodeCGRectForKey:@"iNDSProfileMainScreenRectPortrait"];
             mainScreenRects[1] = [coder decodeCGRectForKey:@"iNDSProfileMainScreenRectLandscape"];
@@ -130,24 +130,27 @@
             settingsButtonRects[1] = [coder decodeCGRectForKey:@"iNDSSettingsButtonRectLandscape"];
             fpsLabelRects[0] = [coder decodeCGRectForKey:@"iNDSfpsLabelRectPortrait"];
             fpsLabelRects[1] = [coder decodeCGRectForKey:@"iNDSfpsLabelRectLandscape"];
-            //after everyone has updated you can remove the conditionals and just make then default
-            if ([thisVersion isEqualOrNewerThanVersion:@"1.0.1"]) {
-                if (!CGSizeEqualToSize([self currentScreenSizeAlwaysPortrait:YES], [coder decodeCGSizeForKey:@"iNDSScreenSize"])) {
-                    return nil; //This profile was created on a device of different size
+            
+            //after everyone has updated we can remove the conditionals and just make then default
+            if ([thisVersion isEqualOrNewerThanVersion:@"1.0.2"]) { //iNDS 1.5.0
+                for (int i = 0; i < 2; i++) {
+                    fpsLabelRects[i] = CGRectMake(40, 5, 240, 24);
                 }
             }
+            
             if ([VERSION isNewerThanVersion:thisVersion]) { //The loaded version is less, we should resave it and get it up to date
                 NSLog(@"Updating Profile %@ from %@ to %@", self.name, thisVersion, VERSION);
                 NSString * savePath = [iNDSEmulationProfile pathForProfileName:self.name];
                 [NSKeyedArchiver archiveRootObject:self toFile:savePath];
             }
+            
         } else {
             NSLog(@"Oh no, %@ was created with a newer version of iNDS", self.name);
             //Use this to alert every once and awhile that out of date profiles were not loaded.
             CFTimeInterval lastVersionAlert = [[NSUserDefaults standardUserDefaults] integerForKey:@"iNDSLastOutOfDateProfileAlert"];
-            if (CACurrentMediaTime() - lastVersionAlert > 120) {
+            if (CACurrentMediaTime() - lastVersionAlert > 500) {
                 SCLAlertView * alert = [[SCLAlertView alloc] init];
-                [alert showInfo:emulationView title:@"Unable to load Profiles" subTitle:@"Some profiles were used with a later version of iNDS. These profiles will be hidded until you upgrade iNDS." closeButtonTitle:@"Thanks.. I guess" duration:0.0];
+                [alert showInfo:emulationView title:@"Unable to load Profiles" subTitle:@"Some profiles were used with a later version of iNDS. These profiles will be hidded until you upgrade iNDS." closeButtonTitle:@"Thanks" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setInteger:CACurrentMediaTime() forKey:@"iNDSLastOutOfDateProfileAlert"];
             }
             return nil;

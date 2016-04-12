@@ -178,7 +178,7 @@ void EMU_init(int lang)
 	
 	InitSpeedThrottle();
 	
-	mainLoopData.freq = 1150;
+	mainLoopData.freq = 1000;
 	mainLoopData.lastticks = GetTickCount();
 }
 
