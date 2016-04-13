@@ -34,6 +34,7 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *showFPSSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *autoSaveSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *enableMicSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *fullScreenSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *bicubicSwitch;
 
@@ -121,6 +122,7 @@
     
     self.showFPSSwitch.on = [defaults boolForKey:@"showFPS"];
     self.autoSaveSwitch.on = [defaults boolForKey:@"periodicSave"];
+    self.enableMicSwitch.on = [defaults boolForKey:@"enableMic"];
     self.fullScreenSwitch.on = [defaults boolForKey:@"fullScreenSettings"];
     self.bicubicSwitch.on = [defaults boolForKey:@"highresGraphics"];
     self.synchSoundSwitch.on = [defaults boolForKey:@"synchSound"];
@@ -218,6 +220,8 @@
     } else if (sender == self.synchSoundSwitch) {
         [defaults setBool:self.synchSoundSwitch.on forKey:@"synchSound"];
     } else if (sender == self.autoSaveSwitch) {
+        [defaults setBool:self.enableMicSwitch.on forKey:@"enableMic"];
+    } else if (sender == self.enableMicSwitch) {
         [defaults setBool:self.autoSaveSwitch.on forKey:@"periodicSave"];
     } else if (sender == self.fullScreenSwitch) {
         [defaults setBool:self.fullScreenSwitch.on forKey:@"fullScreenSettings"];

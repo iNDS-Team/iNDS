@@ -576,17 +576,22 @@ const float textureVert[] =
             framesToRender += self.speed;
             //framesToRender += MIN(MAX(60 / fps, 6), 1) * self.speed; //Will run game at full speed but lower FPS
             
-            now = CACurrentMediaTime();
-            for (int i = 1; i <= framesToRender; i++) {
+            for (; framesToRender >= 1; framesToRender--) {
+                now = CACurrentMediaTime();
                 EMU_runCore();
+                coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - now)) * 0.05;
             }
-            if (framesToRender >= 1) { //Only calculate core fps when we actually rendered a frame
-                coreFps = coreFps * 0.99 + (1 / (CACurrentMediaTime() - now)) * 0.01;
+            
+            if (CACurrentMediaTime() - lastAutosave > 180) {
+                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
+                    [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
+                }
+                lastAutosave = CACurrentMediaTime();
             }
-            framesToRender -= (int)framesToRender; //Keep decimal
             
             EMU_copyMasterBuffer();
             [self updateDisplay]; //This will automatically throttle fps to 60
+            
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -608,14 +613,17 @@ const float textureVert[] =
 {
     if (texHandle[0] == 0) return;
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d)", MIN((int)coreFps, 60), (int)coreFps];
+        static CFTimeInterval fpsUpdateTime = 0;
+        if (CACurrentMediaTime() - fpsUpdateTime > 1) {
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d CORE)", MIN((int)coreFps, 60), (int)(coreFps / self.speed)];
+            fpsUpdateTime = CACurrentMediaTime();
+        }
     });
     
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
     
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
-    CFTimeInterval now = CACurrentMediaTime();
     [glkView[0] display]; // This will automatically throttle to 60 fps
     
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);

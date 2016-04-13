@@ -53,7 +53,6 @@
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
     
-    
     return YES;
 }
 

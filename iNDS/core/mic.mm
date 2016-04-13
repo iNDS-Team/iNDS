@@ -15,7 +15,7 @@
 
 iNDSMicrophone *microphone;
 TPCircularBuffer *buf;
-
+bool micEnabled;
 
 
 void Mic_DeInit(){
@@ -26,6 +26,7 @@ BOOL Mic_Init(){
     if (!microphone) {
         dispatch_async(dispatch_get_main_queue(), ^{
             microphone = [[iNDSMicrophone alloc] init];
+            micEnabled = microphone.micEnabled;
             buf = microphone.buffer;
             [microphone start];
         });
@@ -35,8 +36,7 @@ BOOL Mic_Init(){
 
 void Mic_Reset(){
     printf("Mic_Reset\n");
-    NSLog(@"%@", microphone);
-    
+    micEnabled = microphone.micEnabled;
 }
 
 // For debugging
@@ -53,27 +53,27 @@ void sampleRate() {
 
 // the closer the sample rate is to 16000, the better the microphone will work
 u8 Mic_ReadSample(){
-    if (!microphone)
+    if (!microphone || !micEnabled)
         return 128;
 #ifdef DEBUG
     sampleRate();
 #endif
     int32_t availableBytes;
     u8 *stream = (u8 *)TPCircularBufferTail(buf, &availableBytes);
-    int32_t index = availableBytes > 4096 ? 3082 : 0; // Skip when the buffer starts getting too big
+    int32_t index = availableBytes > 4096 ? 3082 : 0; // Skip when the buffer starts overflowing
     if (availableBytes > 0) {
-        // The ds mic is much less sensitive so the noise needs to be dampened
-        s8 sample = (stream[index] - 128);
-        s8 neg = sample < 0 ? -1 : 1;
-        sample = ((sample * sample) / 7) * neg;
-        
         TPCircularBufferConsume(buf, index + 1);
-        //printf("Sample: %d\n", sample + 128);
-        return sample + 128;
+        // The ds mic is much less sensitive so the sound needs to be dampened
+        s8 sample = (stream[index] - 128);
+        
+        //printf("Sample: %d -> %d\n", (stream[index] - 128), sample/5);
+        return sample / 5 + 128;
+        
     } else {
-#ifdef DEBUG
-        printf("No bytes to be read: %d (%p)\n", availableBytes, buf);
-#endif
+//#ifdef DEBUG
+//        printf("No bytes to be read: %d (%p)\n", availableBytes, buf);
+//#endif
+        micEnabled = microphone.micEnabled;
         [microphone start];
         buf = microphone.buffer;
         return 128;
@@ -87,6 +87,7 @@ void mic_savestate(EMUFILE* os){
 
 bool mic_loadstate(EMUFILE* is, int size){
     printf("mic_loadstate\n");
+    micEnabled = microphone.micEnabled;
     return true;
 }
 

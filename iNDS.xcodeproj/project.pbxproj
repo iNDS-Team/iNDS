@@ -208,9 +208,6 @@
 		CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43B1CB2D88500ED22BB /* iNDSRomDownloadManager.m */; };
 		CAB2C43E1CB2D89700ED22BB /* UIImage+Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C43D1CB2D89700ED22BB /* UIImage+Utilities.m */; };
 		CAB2C4421CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4411CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m */; };
-		CAB2C4431CB2E02700ED22BB /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CAB2C4441CB2E07600ED22BB /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CAB2C4451CB2E07600ED22BB /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CAB2C45B1CB4C5B300ED22BB /* mic.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4591CB4C5B300ED22BB /* mic.mm */; };
 		CAB2C4911CB5F29500ED22BB /* iNDSMicrophone.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4901CB5F29500ED22BB /* iNDSMicrophone.m */; };
 		CAB2C4B41CB5F2C300ED22BB /* EZAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4931CB5F2C300ED22BB /* EZAudio.m */; };

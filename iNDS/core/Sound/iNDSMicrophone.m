@@ -43,6 +43,11 @@ TPCircularBuffer buffer;
     return self;
 }
 
+- (BOOL)micEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"enableMic"];
+}
+
 - (void)start
 {
     if (!microphone.microphoneOn) {
