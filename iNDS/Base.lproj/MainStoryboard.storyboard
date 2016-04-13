@@ -653,40 +653,6 @@
                                         <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <size key="shadowOffset" width="1" height="1"/>
                                     </label>
-                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="V4S-vg-8Nm">
-                                        <rect key="frame" x="183" y="355" width="48" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" backgroundImage="Select.png">
-                                            <color key="titleColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="onButtonDown:" destination="WRM-pR-XCP" eventType="touchDown" id="y0V-BE-cP5"/>
-                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpInside" id="7lx-KM-ry2"/>
-                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpOutside" id="FJ2-Vv-RIY"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="DAf-Ip-ZfX">
-                                        <rect key="frame" x="183" y="355" width="48" height="26"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" backgroundImage="Start.png">
-                                            <color key="titleColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="highlighted">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="onButtonDown:" destination="WRM-pR-XCP" eventType="touchDown" id="8jl-EE-KAf"/>
-                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpInside" id="bhR-nm-NTG"/>
-                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpOutside" id="zhg-6O-SkF"/>
-                                        </connections>
-                                    </button>
                                     <view multipleTouchEnabled="YES" contentMode="scaleToFill" id="S6c-5v-781" userLabel="Controls Container">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
@@ -765,6 +731,40 @@
                                         </state>
                                         <connections>
                                             <action selector="toggleSettings:" destination="WRM-pR-XCP" eventType="touchUpInside" id="MXE-Gk-pLW"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="V4S-vg-8Nm">
+                                        <rect key="frame" x="183" y="355" width="48" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" backgroundImage="Select.png">
+                                            <color key="titleColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="onButtonDown:" destination="WRM-pR-XCP" eventType="touchDown" id="y0V-BE-cP5"/>
+                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpInside" id="7lx-KM-ry2"/>
+                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpOutside" id="FJ2-Vv-RIY"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" id="DAf-Ip-ZfX">
+                                        <rect key="frame" x="183" y="355" width="48" height="26"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                        <state key="normal" backgroundImage="Start.png">
+                                            <color key="titleColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="onButtonDown:" destination="WRM-pR-XCP" eventType="touchDown" id="8jl-EE-KAf"/>
+                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpInside" id="bhR-nm-NTG"/>
+                                            <action selector="onButtonUp:" destination="WRM-pR-XCP" eventType="touchUpOutside" id="zhg-6O-SkF"/>
                                         </connections>
                                     </button>
                                     <slider hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" id="2PQ-Xf-2qo">
@@ -1524,7 +1524,7 @@
                             <tableViewSection id="cPK-tV-LiU">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="x2E-FO-x01" style="IBUITableViewCellStyleDefault" id="3uA-hS-maE">
-                                        <rect key="frame" x="0.0" y="0.0" width="260" height="44"/>
+                                        <rect key="frame" x="0.0" y="44" width="260" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3uA-hS-maE" id="LhI-ok-HkQ">
                                             <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
@@ -1541,7 +1541,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="uco-au-tPw" style="IBUITableViewCellStyleDefault" id="o4v-21-vZ8">
-                                        <rect key="frame" x="0.0" y="44" width="260" height="44"/>
+                                        <rect key="frame" x="0.0" y="88" width="260" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="o4v-21-vZ8" id="kMC-BV-cpY">
                                             <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
@@ -1558,7 +1558,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="Z1L-fs-zh3" style="IBUITableViewCellStyleDefault" id="4a4-5W-vOu">
-                                        <rect key="frame" x="0.0" y="88" width="260" height="44"/>
+                                        <rect key="frame" x="0.0" y="132" width="260" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4a4-5W-vOu" id="Pio-KL-3kZ">
                                             <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
@@ -1575,7 +1575,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" textLabel="CRW-Js-4qm" style="IBUITableViewCellStyleDefault" id="z8J-uI-n0O">
-                                        <rect key="frame" x="0.0" y="132" width="260" height="44"/>
+                                        <rect key="frame" x="0.0" y="176" width="260" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z8J-uI-n0O" id="wZJ-UG-wEU">
                                             <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
@@ -1690,7 +1690,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Fpz-3z-sVQ">
-                                <rect key="frame" x="0.0" y="28" width="260" height="44"/>
+                                <rect key="frame" x="0.0" y="72" width="260" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Fpz-3z-sVQ" id="NLd-5T-m9Q">
                                     <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
@@ -1757,7 +1757,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="N0C-ts-Wli">
-                                <rect key="frame" x="0.0" y="28" width="260" height="44"/>
+                                <rect key="frame" x="0.0" y="72" width="260" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="N0C-ts-Wli" id="vht-9v-M2u">
                                     <rect key="frame" x="0.0" y="0.0" width="260" height="43.5"/>
