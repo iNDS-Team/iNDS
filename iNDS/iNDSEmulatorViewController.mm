@@ -352,6 +352,8 @@ const float textureVert[] =
     self.settingsContainer.subviews[0].frame = self.settingsContainer.bounds; //Set the inside view
     
     self.controllerContainerView.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
+    self.startButton.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
+    self.selectButton.alpha = [[NSUserDefaults standardUserDefaults] floatForKey:@"controlOpacity"];
     if ([UIScreen screens].count > 1) {
         CGSize screenSize = [UIScreen screens][1].bounds.size;
         CGSize viewSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333), MIN(screenSize.width, screenSize.height * 1.333) * 0.75);
@@ -671,13 +673,10 @@ const float textureVert[] =
 
 - (void)setLidClosed:(BOOL)closed
 {
-    NSLog(@"Close: %ld", closed);
     if (closed) {
         EMU_buttonDown((BUTTON_ID)13);
-        EMU_buttonDown((BUTTON_ID)12);
     } else {
         EMU_buttonUp((BUTTON_ID)13);
-        EMU_buttonUp((BUTTON_ID)12);
     }
 }
 
