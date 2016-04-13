@@ -83,7 +83,7 @@ static void volumeListenerCallback (
 
     AudioSessionInitialize(NULL, NULL, NULL, NULL);
 
-    const UInt32 sessionCategory = kAudioSessionCategory_AmbientSound;
+    const UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
     AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
 
     AudioSessionSetActive(YES);

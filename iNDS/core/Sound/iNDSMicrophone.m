@@ -70,6 +70,11 @@ TPCircularBuffer buffer;
     [self appendDataToCircularBuffer:&buffer fromAudioBufferList:bufferList];
 }
 
+- (void)microphone:(EZMicrophone *)microphone changedPlayingState:(BOOL)isPlaying
+{
+    NSLog(@"Microphone changed playing state to: %d", isPlaying);
+}
+
 -(void)appendDataToCircularBuffer:(TPCircularBuffer*)circularBuffer
               fromAudioBufferList:(AudioBufferList*)audioBufferList {
     TPCircularBufferProduceBytes(circularBuffer, audioBufferList->mBuffers[0].mData, audioBufferList->mBuffers[0].mDataByteSize);

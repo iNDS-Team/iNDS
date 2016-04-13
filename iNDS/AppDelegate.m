@@ -13,8 +13,6 @@
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
 
-
-
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
 
@@ -26,7 +24,6 @@
 #ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
 #endif
-
 
 @interface AppDelegate () {
     BOOL    backgroundProcessesStarted;
@@ -122,8 +119,8 @@
             }
             return YES;
         }
-    } else if (url.isFileURL && [[NSFileManager defaultManager] fileExistsAtPath:url.path] && ([url.path.stringByDeletingLastPathComponent.lastPathComponent isEqualToString:@"Inbox"] || [url.path.stringByDeletingLastPathComponent.lastPathComponent isEqualToString:@"tmp"])) {
-        NSLog(@"Zip File");
+    } else if (url.isFileURL && [[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
+        NSLog(@"Zip File (maybe)");
         NSFileManager *fm = [NSFileManager defaultManager];
         NSError *err = nil;
         if ([url.pathExtension.lowercaseString isEqualToString:@"zip"] || [url.pathExtension.lowercaseString isEqualToString:@"7z"] || [url.pathExtension.lowercaseString isEqualToString:@"rar"]) {
@@ -135,7 +132,7 @@
                 NSLog(@"Could not create directory to expand zip: %@ %@", dstDir, err);
                 [fm removeItemAtURL:url error:NULL];
                 [self showError:@"Unable to extract archive file."];
-                [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+                [fm removeItemAtPath:url.path error:NULL];
                 return NO;
             }
             
@@ -148,7 +145,7 @@
                 if (![LZMAExtractor extract7zArchive:url.path tmpDirName:@"extract"]) {
                     NSLog(@"Unable to extract 7z");
                     [self showError:@"Unable to extract .7z file."];
-                    [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+                    [fm removeItemAtPath:url.path error:NULL];
                     return NO;
                 }
             } else { //Rar
@@ -166,12 +163,12 @@
                 if (error) {
                     NSLog(@"Unable to extract rar: %@", archiveError);
                     [self showError:@"Unable to extract .rar file."];
-                    [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+                    [fm removeItemAtPath:url.path error:NULL];
                     return NO;
                 }
 #else
-                [self showError:@"Rar support has been disabled due to code singing issues."];
-                [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
+                [self showError:@"Rar support has been disabled due to code singing issues. It will return in a future update."];
+                [fm removeItemAtPath:url.path error:NULL];
                 return NO;
 #endif
             }
@@ -183,12 +180,10 @@
                 if ([path.pathExtension.lowercaseString isEqualToString:@"nds"] && ![[path.lastPathComponent substringToIndex:1] isEqualToString:@"."]) {
                     NSLog(@"found ROM in zip: %@", path);
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.documentsPath stringByAppendingPathComponent:path.lastPathComponent] error:&error];
-                    if (error) NSLog(@"%@", error);
                    [foundItems addObject:path.lastPathComponent];
                 } else if ([path.pathExtension.lowercaseString isEqualToString:@"dsv"]) {
                     NSLog(@"found save in zip: %@", path);
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:&error];
-                    if (error) NSLog(@"%@", error);
                     [foundItems addObject:path.lastPathComponent];
                 } else {
                     BOOL isDirectory;
@@ -197,6 +192,9 @@
                             [[NSFileManager defaultManager] removeItemAtPath:[dstDir stringByAppendingPathComponent:path] error:NULL];
                         }
                     }
+                }
+                if (error) {
+                    NSLog(@"Error searching archive: %@", error);
                 }
             }
             if (foundItems.count == 0) {
@@ -216,13 +214,15 @@
         } else {
             NSLog(@"Invalid File!");
             NSLog(@"%@", url.pathExtension.lowercaseString);
+            [fm removeItemAtPath:url.path error:NULL];
+            [self showError:@"Unable to open file: Unknown extension"];
+            
         }
-        // remove inbox (shouldn't be needed)
-        [fm removeItemAtPath:[self.rootDocumentsPath stringByAppendingPathComponent:@"Inbox"] error:NULL];
-        
+        [fm removeItemAtPath:url.path error:NULL];
         return YES;
     } else {
         [self showError:[NSString stringWithFormat:@"Unable to open file: Unknown Error (%i, %i, %@)", url.isFileURL, [[NSFileManager defaultManager] fileExistsAtPath:url.path], url]];
+        [[NSFileManager defaultManager] removeItemAtPath:url.path error:NULL];
         
     }
     return NO;

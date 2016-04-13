@@ -294,26 +294,30 @@ const float textureVert[] =
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (emuLoopLock) { //Only update these is the core has loaded
         EMU_setFrameSkip((int)[defaults integerForKey:@"frameSkip"]);
-        EMU_enableSound(![defaults boolForKey:@"disableSound"] && ![[AVAudioSession sharedInstance] secondaryAudioShouldBeSilencedHint]);
+        EMU_enableSound(![defaults boolForKey:@"disableSound"]);
         EMU_setSynchMode([defaults boolForKey:@"synchSound"]);
+        // Enable sound?
+        // (Mute on && don't ignore it) or user has sound disabled
+        BOOL muteSound = ([self muteButtonOn] && ![defaults boolForKey:@"ignoreMute"]) || [defaults boolForKey:@"disableSound"];
+        EMU_enableSound(!muteSound);
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
     
     // For some reason both of these disable the mic
-//    if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
-//        [volumeStealer startStealingVolumeButtonEvents];
-//    } else {
-//        [volumeStealer stopStealingVolumeButtonEvents];
-//    }
-    
-//    if ([defaults boolForKey:@"ignoreMute"]) {
-//        [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error:nil];
-//    } else {
-//        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:nil];
-//    }
+    if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
+        [volumeStealer startStealingVolumeButtonEvents];
+    } else {
+        [volumeStealer stopStealingVolumeButtonEvents];
+    }
     
     [self.view setNeedsLayout];
+}
+
+// Not sure if we can figure this out
+- (BOOL)muteButtonOn
+{
+    return NO;
 }
 
 -(BOOL) isPortrait
@@ -615,7 +619,8 @@ const float textureVert[] =
     dispatch_async(dispatch_get_main_queue(), ^{
         static CFTimeInterval fpsUpdateTime = 0;
         if (CACurrentMediaTime() - fpsUpdateTime > 1) {
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d CORE)", MIN((int)coreFps, 60), (int)(coreFps / self.speed)];
+            int fps = (int)(coreFps / self.speed);
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d CORE)", MIN(fps, 60), fps];
             fpsUpdateTime = CACurrentMediaTime();
         }
     });
