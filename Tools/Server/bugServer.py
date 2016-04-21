@@ -1,48 +1,40 @@
-import hashlib
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
-import json
+import tornado.ioloop
+import tornado.web
+import sqlite3
 import os
-import sqlite3 as sqlite
+import json
+import hashlib
 import time
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 
-# Create DB if it doesn't exist
-con = sqlite.connect(file_path + '/bugs.sqlite')
-cursor = con.cursor()
-cursor.execute("CREATE TABLE IF NOT EXISTS bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT, date TEXT)")
-con.commit()
+def _execute(query, values):
+    dbPath = file_path + '/bugs.sqlite'
+    connection = sqlite3.connect(dbPath)
+    cursorobj = connection.cursor()
+    try:
+        cursorobj.execute(query, values)
+        connection.commit()
+    except Exception:
+        raise
+    connection.close()
+
+class Application(tornado.web.Application):
+    def __init__(self):
+        handlers = [
+                    (r"/iNDS/bugreport", ServiceHandler)
+                    ]
+        super(Application, self).__init__(handlers)
 
 
-
-class S(BaseHTTPRequestHandler):
-    def _set_headers(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+class ServiceHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.write("Huh?")
     
-    def do_GET(self):
-        self._set_headers()
-        self.wfile.write("huh?")
-    
-    def do_HEAD(self):
-        self._set_headers()
-    
-    def do_POST(self):
-        # Create folders and DB
-        if not os.path.exists(file_path + '/images'):
-            os.makedirs(file_path + '/images')
-        if not os.path.exists(file_path + '/saves'):
-            os.makedirs(file_path + '/saves')
-        
+    def post(self):
         # Doesn't do anything with posted data
-        self._set_headers()
-        content_len = int(self.headers.getheader('content-length', 0))
-        print "Receiving post of length:", content_len / 1000000.0, "MB"
-        post_body = self.rfile.read(content_len)
-        jdata = json.loads(post_body)
-
+        jdata = json.loads(self.request.body)
+        
         if (not "game" in jdata):
             jdata["game"] = ""
             jdata["gameCode"] = ""
@@ -64,29 +56,33 @@ class S(BaseHTTPRequestHandler):
             jdata["image"] = imageHash
         else:
             jdata["image"] = ""
-        
+                
         cur = con.cursor()
-        cur.execute("""INSERT INTO bugs 
-                       (device, major, minor, isSystem, description, game, gameCode, save, image, date)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                       (jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],
-                       jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"], time.ctime()))
-        
-
+        _execute("""INSERT INTO bugs
+                    (device, major, minor, isSystem, description, game, gameCode, save, image, date)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (jdata["device"], jdata["major"], jdata["minor"], jdata["isSystem"], jdata["description"],jdata["game"], jdata["gameCode"], jdata["save"], jdata["image"], time.ctime()))
+                             
+                             
         print "Post Success"
-        self.wfile.write('{"result": "success"}')
-        con.commit()
+        self.write('{"result": "success"}')
 
-def run(server_class=HTTPServer, handler_class=S, port=6768):
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    print 'Starting server on port:', port
-    httpd.serve_forever()
+
 
 if __name__ == "__main__":
-    from sys import argv
+    print "Starting Server"
     
-    if len(argv) == 2:
-        run(port=int(argv[1]))
-    else:
-        run()
+    # Create folders and database if the don't exist
+    if not os.path.exists(file_path + '/images'):
+        os.makedirs(file_path + '/images')
+    if not os.path.exists(file_path + '/saves'):
+        os.makedirs(file_path + '/saves')
+
+    con = sqlite3.connect(file_path + '/bugs.sqlite')
+    cursor = con.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS bugs(Id INTEGER PRIMARY KEY, device TEXT, major TEXT, minor TEXT, isSystem INT, description TEXT, game TEXT, gameCode TEXT, save TEXT, image TEXT, date TEXT)")
+    con.commit()
+    
+    Application().listen(6768)
+    tornado.ioloop.IOLoop.instance().start()
+
