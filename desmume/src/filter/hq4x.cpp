@@ -114,7 +114,6 @@ void hq4x_32_def(u32* dst0, u32* dst1, u32* dst2, u32* dst3, const u32* src0, co
 
 void RenderHQ4X (SSurface Src, SSurface Dst)
 {
-
     u32 *lpSrc, *lpDst;
 
     lpSrc = (u32*)Src.Surface;

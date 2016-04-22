@@ -55,7 +55,11 @@ public:
         EPXPLUS,
         EPX1POINT5,
         EPXPLUS1POINT5,
-    HQ4X,
+        HQ4X,
+        BRZ2x,
+        BRZ3x,
+        BRZ4x,
+    BRZ5x,
 
 		NUM_FILTERS,
 	};
@@ -86,9 +90,18 @@ public:
 				width = 256*3/2;
 				height = 384*3/2;
 				break;
-      case HQ4X:
+            case BRZ3x:
+                width = 256*3;
+                height = 384*3;
+                break;
+            case HQ4X:
+            case BRZ4x:
 				width = 256*4;
 				height = 384*4;
+                break;
+            case BRZ5x:
+                width = 256*5;
+                height = 384*5;
         break;
 			default:
 				width = 256*2;
@@ -171,9 +184,21 @@ public:
 			case NEAREST1POINT5:
 				RenderNearest_1Point5x(src,dst);
 				break;
-			case NEARESTPLUS1POINT5:
-				RenderNearestPlus_1Point5x(src,dst);
-				break;
+            case NEARESTPLUS1POINT5:
+                RenderNearestPlus_1Point5x(src,dst);
+                break;
+            case BRZ2x:
+                Render2xBRZ(src,dst);
+                break;
+            case BRZ3x:
+                Render3xBRZ(src,dst);
+                break;
+            case BRZ4x:
+                Render4xBRZ(src,dst);
+                break;
+            case BRZ5x:
+                Render5xBRZ(src,dst);
+                break;
 		}
 	}
 

@@ -1,4 +1,6 @@
 Microphone
+Internal Resolution
+MiFi button mapping
 Keep Music playing when sound is disabled
 Single Screen Layout
 Add game recording

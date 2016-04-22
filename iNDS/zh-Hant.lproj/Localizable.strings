@@ -15,6 +15,7 @@ EXPERIMENTAL = "實驗設置";
 OVERLAY_PIXEL_GRID_DETAIL = "像素網格會使畫面看上去更清晰，但是黑色的網格會降低一半的亮度。";
 ENABLE_DROPBOX_DETAIL = "啟用Dropbox將會增加一個「iNDS」文件夾到您的Dropbox帳戶。這將同步您的游戲保存到該文件夾，它會進行跨設備同步。（iPhone、iPad、iPod touch、Android、PC）。";
 ARMLJIT_DETAIL = "GNU Lighting JIT將讓游戲運行得更快。您必須越獄您的iOS設備，否則iNDS會崩潰。";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 AUTO = "自動";
 DPAD = "方向鍵";

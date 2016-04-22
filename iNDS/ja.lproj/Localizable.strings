@@ -38,6 +38,7 @@ UNLINKED_DETAIL = "Dropboxから切断されました。セーブデータは同
 SUCCESS = "成功！";
 SUCCESS_DETAIL = "Dropbox接続されてしました！今から、Dropbox上の「iNDS」フォルダにあなたのセーブデータ（DSV）を同期します。";
 DROPBOX_CFG_ERROR = "Dropbox接続エラー";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 SHOW_FPS = "FPSを表示";
 VIBRATION = "振動";

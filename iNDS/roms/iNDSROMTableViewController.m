@@ -14,6 +14,8 @@
 #import "iNDSRomDownloadManager.h"
 #import "SCLAlertView.h"
 #import "MHWDirectoryWatcher.h"
+#import "WCEasySettingsViewController.h"
+
 
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
@@ -29,7 +31,6 @@
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
-    
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
 }
 
@@ -56,6 +57,22 @@
                                                         }];
 }
 
+
+- (IBAction)openSettings:(id)sender
+{
+    WCEasySettingsViewController *settingsView = AppDelegate.sharedInstance.settingsViewController;
+    settingsView.title = @"Emulator Settings";
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:settingsView];
+    UIColor *globalTint = [[[UIApplication sharedApplication] delegate] window].tintColor;
+    
+    nav.navigationBar.barTintColor = globalTint;
+    nav.navigationBar.translucent = NO;
+    nav.navigationBar.tintColor = [UIColor whiteColor];
+    [nav.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+    
+    [self presentViewController:nav animated:YES completion:nil];
+}
 
 - (void)reloadGames:(id)sender
 {

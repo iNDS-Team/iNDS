@@ -1,6 +1,6 @@
 iNDS
 =======
-###### Supports iOS 8.1 - 9.2.
+###### Supports iOS 8.1 and up.
 
 iNDS is a derivation of the previous Nintendo DS apps for iOS, nds4ios and Nitrogen. 
 
@@ -37,7 +37,7 @@ Reporting Bugs
 To-do
 ------------------------
 ###### Planned improvments
-* Microphone
+* Internal Resolution changes
 * GNU Lightning JIT (JAILBROKEN DEVICES ONLY)
 * Sharing roms between devices
 * Sharable game hacks

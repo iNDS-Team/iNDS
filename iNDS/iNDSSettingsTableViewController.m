@@ -12,6 +12,7 @@
 #import "iNDSEmulatorSettingsViewController.h"
 #import "iNDSEmulationProfile.h"
 #import <QuartzCore/QuartzCore.h>
+#import "WCEasySettingsViewController.h"
 @interface iNDSSettingsTableViewController () {
     iNDSEmulatorViewController * emulationController;
     
@@ -134,8 +135,11 @@
         case 3: //Save State
             [emulationController newSaveState]; //Request that the controller save
             break;
+        case 6:;
+            [self.navigationController pushViewController:AppDelegate.sharedInstance.settingsViewController animated:YES];
+            break;
         case 8: //Reload
-            [emulationController reloadEmulator]; //Request that the controller save
+            [emulationController reloadEmulator];
             break;
         default:
             break;

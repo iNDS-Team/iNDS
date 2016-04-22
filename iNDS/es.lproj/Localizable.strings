@@ -38,6 +38,7 @@ UNLINKED_DETAIL = "Dropbox ha sido desvinculado. Sus archivos ya no se sincroniz
 SUCCESS = "éxito";
 SUCCESS_DETAIL = "Dropbox se vinculó con éxito! Inds ahora comenzará a sincronizar tus archivos en una carpeta de Dropbox llamada 'inds' ubicado en el directorio raíz de Dropbox.";
 DROPBOX_CFG_ERROR = "Error al configurar Dropbox";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 SHOW_FPS = "Mostrar FPS";
 VIBRATION = "Vibración";

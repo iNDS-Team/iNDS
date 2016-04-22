@@ -8,11 +8,13 @@
 
 #import "iNDSMicrophone.h"
 #import "EZAudio.h"
+#import "AppDelegate.h"
 
 TPCircularBuffer buffer;
 
-@interface iNDSMicrophone () <EZMicrophoneDelegate> {
+@interface iNDSMicrophone () <EZMicrophoneDelegate, EZOutputDataSource> {
     EZMicrophone *microphone;
+    EZRecorder *recorder;
 }
 
 @end
@@ -34,10 +36,14 @@ TPCircularBuffer buffer;
         audioDescription.mFramesPerPacket   = 1;
         audioDescription.mBytesPerFrame     = sizeof(UInt8);
         audioDescription.mBitsPerChannel    = 8 * sizeof(UInt8);
-        audioDescription.mSampleRate        = 16000.0;
+        audioDescription.mSampleRate        = 48000.0;
         
         microphone = [EZMicrophone microphoneWithDelegate:self withAudioStreamBasicDescription:audioDescription];
         
+        //NSURL *url = [NSURL URLWithString:[AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:@"test.m4a"]];
+        //NSLog(@"Recording to: %@", url);
+        //recorder = [EZRecorder recorderWithURL:url clientFormat:microphone.audioStreamBasicDescription fileType:EZRecorderFileTypeM4A];
+
         NSLog(@"STarting Mic");
     }
     return self;
@@ -68,6 +74,7 @@ TPCircularBuffer buffer;
  withNumberOfChannels:(UInt32)numberOfChannels
 {
     [self appendDataToCircularBuffer:&buffer fromAudioBufferList:bufferList];
+    //[recorder appendDataFromBufferList:bufferList withBufferSize:bufferSize];
 }
 
 - (void)microphone:(EZMicrophone *)microphone changedPlayingState:(BOOL)isPlaying
@@ -85,6 +92,11 @@ TPCircularBuffer buffer;
         microphone.microphoneOn = NO;
         NSLog(@"Stopping Mic: %p", _buffer);
     }
+}
+
+- (void)dealloc
+{
+    [recorder closeAudioFile];
 }
 
 @end

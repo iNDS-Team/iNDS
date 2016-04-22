@@ -12,7 +12,6 @@
 
 @property TPCircularBuffer *buffer;
 
-- (id)initWithBuffer:(TPCircularBuffer *)buffer;
 - (void)start;
 - (BOOL)micEnabled;
 

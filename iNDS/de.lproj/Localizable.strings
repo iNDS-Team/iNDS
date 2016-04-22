@@ -15,6 +15,7 @@ EXPERIMENTAL = "Experimentell";
 OVERLAY_PIXEL_GRID_DETAIL = "Das Pixel-Raster erscheint weniger unscharf, reduziert jedoch auch die Helligkeit.";
 ENABLE_DROPBOX_DETAIL = "Das Aktivieren von Dropbox fügt einen \"iNDS\"-Ordner deiner Dropbox hinzu. Deine Spielstände werden in die Dropbox synchronisiert und auf deine Geräte verteilt (iPhone, iPad, iPod Touch, Androidm PC, etc).";
 ARMLJIT_DETAIL = "GNU Lightning JIT macht das Ausführen von Spielen schneller. Dein iPhone muss gejailbreaked sein oder iNDS wird abstürzen.";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 AUTO = "Auto";
 DPAD = "D-Pad";

@@ -18,6 +18,7 @@ DROPBOX_CFG_ERROR = "Lỗi thiết lập Dropbox";
 EXPERIMENTAL = "Thí nghiệm";
 FRAME_SKIP = "Frame Skip";
 ARMLJIT_DETAIL = "GNU Lighting JIT giúp game chạy nhanh hơn. Máy bạn phải được jailbreak nếu không iNDS sẽ văng.";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 JOYSTICK = "Joystick";
 LAUNCH_GAME = "Chạy game";
 LINKED = "Đã kết nối";

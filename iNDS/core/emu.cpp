@@ -156,7 +156,7 @@ void EMU_init(int lang)
 	LOG("Init sound core\n");
 	SPU_ChangeSoundCore(SNDCORE_COREAUDIO, DESMUME_SAMPLE_RATE*8/60);
 	
-	static const char* nickname = "iNDS"; //TODO: Add firmware cfg in settings
+	static const char* nickname = "iNDS";
 	fw_config.nickname_len = strlen(nickname);
 	for(int i = 0 ; i < fw_config.nickname_len ; ++i)
 		fw_config.nickname[i] = nickname[i];
@@ -172,7 +172,7 @@ void EMU_init(int lang)
 	fw_config.birth_day = 17;
 	fw_config.ds_type = NDS_CONSOLE_TYPE_LITE;
     
-	video.setfilter(video.NONE); //figure out why this doesn't seem to work (also add to cfg)
+	video.setfilter(video.NONE);
 	
 	NDS_CreateDummyFirmware(&fw_config);
 	
@@ -212,7 +212,7 @@ void EMU_loadSettings()
     autoframeskipenab = true;
 	frameskiprate = 2;
     CommonSettings.CpuMode = 1;
-	CommonSettings.spuInterpolationMode = SPUInterpolation_None; //Will
+	CommonSettings.spuInterpolationMode = SPUInterpolation_Cosine; //Will
 	CommonSettings.GFX3D_HighResolutionInterpolateColor = 1;
 	CommonSettings.GFX3D_EdgeMark = 0;
 	CommonSettings.GFX3D_Fog = 1;
@@ -220,7 +220,7 @@ void EMU_loadSettings()
 	CommonSettings.GFX3D_LineHack = 0;
 	useMmapForRomLoading = true;
 	fw_config.language = 1;
-	enableMicrophone = true; //doesn't do anything yet
+	enableMicrophone = true;
 }
 
 void iNDS_unpause()
@@ -479,7 +479,10 @@ bool EMU_saveState(const char *filename)
 void* EMU_getVideoBuffer(size_t *outSize)
 {
     if (outSize) *outSize = video.size();
-    return video.buffer;
+    //return video.buffer;
+    // Will
+    video.filter();
+    return video.finalBuffer();
 }
 
 void EMU_copyMasterBuffer()
@@ -494,7 +497,6 @@ void EMU_copyMasterBuffer()
     u32* dest = video.buffer;
     for(int i=0;i<size;++i)
         *dest++ = 0xFF000000 | RGB15TO32_NOALPHA(src[i]);
-	
 }
 
 void EMU_touchScreenTouch(int x, int y)
@@ -560,6 +562,10 @@ void EMU_setABXY(bool a, bool b, bool x, bool y)
     NDS_setPad(all_button);
 }
 
+void EMU_setFilter(int filter)
+{
+    video.setfilter(filter);
+}
 
 const char* EMU_version()
 {

@@ -21,6 +21,10 @@
 
 #import "AFHTTPSessionManager.h"
 
+#import "WCEasySettingsViewController.h"
+
+#import "iNDSSpeedTest.h"
+
 #ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
 #endif
@@ -49,6 +53,8 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.batteryDir]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    
+    [self.window setTintColor:[UIColor colorWithRed:1 green:59/255.0 blue:48/255.0 alpha:1]];
     
     return YES;
 }
@@ -184,6 +190,11 @@
                 } else if ([path.pathExtension.lowercaseString isEqualToString:@"dsv"]) {
                     NSLog(@"found save in zip: %@", path);
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:&error];
+                    [foundItems addObject:path.lastPathComponent];
+                } else if ([path.pathExtension.lowercaseString isEqualToString:@"dst"]) {
+                    NSLog(@"found dst save in zip: %@", path);
+                    NSString *newPath = [[path stringByDeletingPathExtension] stringByAppendingPathExtension:@"dsv"];
+                    [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:newPath.lastPathComponent] error:&error];
                     [foundItems addObject:path.lastPathComponent];
                 } else {
                     BOOL isDirectory;
@@ -378,6 +389,118 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (WCEasySettingsViewController *)getSettingsViewController
+{
+    
+    if (!_settingsViewController) {
+        _settingsViewController = [[WCEasySettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+        
+        //Controls
+        WCEasySettingsSection *controlsSection = [[WCEasySettingsSection alloc] initWithTitle:@"CONTROLS" subTitle:@""];
+        controlsSection.items = @[[[WCEasySettingsSegment alloc] initWithIdentifier:@"controlPadStyle"
+                                                                              title:@"Control Pad Style"
+                                                                              items:@[
+                                                                                      @"D-Pad",
+                                                                                      @"Joystick"]],
+                                  [[WCEasySettingsSlider alloc] initWithIdentifier:@"controlOpacity"
+                                                                             title:@"Controller Opacity"],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"vibrate"
+                                                                             title:@"Vibration"],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"volumeBumper"
+                                                                             title:@"Volume Button Bumpers"],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableTouchScreen"
+                                                                             title:@"Disable Touchscreen"]
+                                  
+                                  ];
+        
+        // Video
+        WCEasySettingsSection *graphicsSection = [[WCEasySettingsSection alloc] initWithTitle:@"Video" subTitle:@"Video Options"];
+        WCEasySettingsOption *filterOptions = [[WCEasySettingsOption alloc] initWithIdentifier:@"videoFilter"
+                                                                             title:@"Video Filter"
+                                                                        options:@[@"None",
+                                                                                  @"EPX",
+                                                                                  @"Super Eagle",
+                                                                                  @"2xSaI",
+                                                                                  @"Super 2xSaI",
+                                                                                  @"BRZ 2x",
+                                                                                  @"Low Quality 2x",
+                                                                                  @"BRZ 3x",
+                                                                                  @"High Quality 2x",
+                                                                                  @"High Quality 4x",
+                                                                                  @"BRZ 4x",
+                                                                                  @"BRZ 5x"]
+                                                                   optionSubtitles:nil
+                                                                        subtitle:@"Video filters make the picture sharper but can cause the emulator to run slower. Filters are ordered by lowest quality at the top to best at the bottom. If you're not sure, you can experiment or pick the highest quality that still makes games run at 60fps."];
+        graphicsSection.items = @[filterOptions];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x), @(BRZ5x)];
+            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
+            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+            NSMutableArray *filterSubtitles = [NSMutableArray new];
+            for (NSNumber *time in filterTimes) {
+                CGFloat estimatedFps = 1/([time floatValue] + coreTime);
+                [filterSubtitles addObject:[NSString stringWithFormat:@"%d FPS", MAX(60, (int)estimatedFps)]];
+            }
+            filterOptions.optionSubtitles = filterSubtitles;
+        });
+        
+        // Audio
+        WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
+        audioSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableSound"
+                                                                             title:@"Disable Sound"],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"synchSound"
+                                                                             title:@"Synchronous Audio"],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableMic"
+                                                                             title:@"Enable Mic"]];
+        
+        // Auto Save
+        WCEasySettingsSection *emulatorSection = [[WCEasySettingsSection alloc] initWithTitle:@"Auto Save" subTitle:@""];
+        emulatorSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"periodicSave"
+                                                                             title:@"Auto Save"]];
+        
+        // UI
+        WCEasySettingsSection *interfaceSection = [[WCEasySettingsSection alloc] initWithTitle:@"Interface" subTitle:@""];
+        interfaceSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"fullScreenSettings"
+                                                                              title:@"Full Screen Settings"]];
+        
+        
+        //Dropbox
+        WCEasySettingsSection *dropboxSection = [[WCEasySettingsSection alloc] initWithTitle:@"DROPBOX" subTitle:NSLocalizedString(@"ENABLE_DROPBOX", nil)];
+        
+        // Credits
+        NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        WCEasySettingsSection *creditsSection = [[WCEasySettingsSection alloc]
+                                                 initWithTitle:@"Info"
+                                                 subTitle:[NSString stringWithFormat:@"Version %@", myVersion]];
+        
+        creditsSection.items = @[[[WCEasySettingsUrl alloc] initWithTitle:@"Will Cobb"
+                                                                 subtitle:@"Developer"
+                                                                      url:@"https://twitter.com/miniroo321"],
+                                 [[WCEasySettingsUrl alloc] initWithTitle:@"Twitter"
+                                                                 subtitle:@"@iNDSapp"
+                                                                      url:@"https://twitter.com/iNDSapp"],
+                                 [[WCEasySettingsUrl alloc] initWithTitle:@"NDS4iOS Team"
+                                                                 subtitle:@"Ported DeSmuME to iOS"
+                                                                      url:nil],
+                                 [[WCEasySettingsUrl alloc] initWithTitle:@"DeSmuME"
+                                                                 subtitle:@"Emulatiion Core"
+                                                                      url:@"http://www.desmume.org/"],
+                                 [[WCEasySettingsUrl alloc] initWithTitle:@"Wiki Creator"
+                                                                 subtitle:@"Pmp174"
+                                                                      url:@"https://twitter.com/Pmp174"],
+                                 [[WCEasySettingsUrl alloc] initWithTitle:@"Source"
+                                                                 subtitle:@"Github"
+                                                                      url:@"https://github.com/WilliamLCobb/iNDS"]];
+                                 
+        
+        
+        
+        _settingsViewController.sections = @[controlsSection, graphicsSection, emulatorSection, audioSection, interfaceSection, creditsSection];
+    }
+    
+    return _settingsViewController;
 }
 
 @end

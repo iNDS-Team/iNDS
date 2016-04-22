@@ -1,0 +1,50 @@
+ROM_LIST = "ROM-Lijst";
+ABOUT_INDS = "Over iNDS";
+SETTINGS = "Emulatie voorkeuren";
+DONATE = "Doneren";
+
+SHARE = "Delen";
+
+EMULATOR_CORE_CODE = "Emulator Kern Code";
+
+EMULATOR = "Emulator";
+CONTROLS = "Besturing";
+DEVELOPER = "Ontwikkelaar";
+EXPERIMENTAL = "Experimenteel";
+
+OVERLAY_PIXEL_GRID_DETAIL = "Het pixelrooster laat spellen minder wazig lijken, maar verminderd tegelijkertijd de helderheid.";
+ENABLE_DROPBOX_DETAIL = "Het activeren van Dropbox voegt een \"iNDS\" map toe aan je Dropbox account. De opgeslagen spelbestanden worden gesynchroniseerd in die map zodat over te dragen zijn tussen apparaten (iPhone, iPad, iPod touch, Android, PC, enz.).";
+ARMLJIT_DETAIL = "GNU Lighting JIT maakt spellen sneller lopen. Je moet je apparaat gejailbreakt hebben anders crasht iNDS.";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
+
+AUTO = "Auto";
+DPAD = "D-Pad";
+JOYSTICK = "Joystick";
+TOP = "Boven";
+BOTTOM = "Onder";
+
+FRAME_SKIP = "Overslaan van frames";
+DISABLE_SOUND = "Geluid uit";
+OVERLAY_PIXEL_GRID = "Bedekkende pixelrooster";
+
+CONTROL_PAD_STYLE = "Besturingstype";
+CONTROL_POSITION_PORTRAIT = "Besturingspositie (Portretmode)";
+CONTROL_OPACITY_PORTRAIT = "Transparantie besturing (Portretmode)";
+
+ENABLE_DROPBOX = "Dropbox synch activeren";
+NOT_LINKED = "Niet gekoppeld";
+LINKED = "Gekoppeld";
+UNLINKED = "Ontkoppeld!";
+UNLINKED_DETAIL = "Dropbox is ontkoppeld. Jouw opgeslagen spelbestanden worden niet meer gesynchroniseerd.";
+SUCCESS = "Succes";
+SUCCESS_DETAIL = "Dropbox is succesvol gekoppeld! iNDS begint nu met het synchroniseren van jouw spelbestanden naar een Dropbox map genaamd 'iNDS' die zich bevind in de hoofdmap van jouw Dropbox map.";
+DROPBOX_CFG_ERROR = "Fout configuratie Dropbox.";
+
+SHOW_FPS = "FPS tonen";
+VIBRATION = "Trillen";
+
+LAUNCH_GAME = "Spel starten";
+LAUNCH_GAME_DETAIL = "Opent het spel normaal";
+RESUME_AUTOSAVE = "Hervat van Autosave";
+
+ARMLJIT = "GNU Lightning JIT";

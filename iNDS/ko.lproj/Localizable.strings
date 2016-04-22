@@ -15,6 +15,7 @@ EXPERIMENTAL = "실험적";
 OVERLAY_PIXEL_GRID_DETAIL = "픽셀 격자를 사용하면 게임이 흐릿함이 줄어들지만, 동시에 밝기도 감소됩니다.";
 ENABLE_DROPBOX_DETAIL = "드롭박스를 활성화하면 당신의 드롭박스 계정에 \"iNDS\" 폴더를 추가합니다. 당신의 게임 저장은 해당 폴더에 저장되며 다른 기기와도 연동됩니다.(iPhone, iPad, iPod touch, Android, PC 및 기타)";
 ARMLJIT_DETAIL = "GNU Lighting JIT는 게임을 빠르게 해줍니다. 기기가 탈옥되어 있어야 사용 가능합니다.";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 AUTO = "자동";
 DPAD = "십자패드";

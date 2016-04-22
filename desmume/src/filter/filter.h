@@ -40,3 +40,7 @@ void RenderEPX_1Point5x( SSurface Src, SSurface Dst);
 void RenderEPXPlus_1Point5x( SSurface Src, SSurface Dst);
 void RenderNearest_1Point5x( SSurface Src, SSurface Dst);
 void RenderNearestPlus_1Point5x( SSurface Src, SSurface Dst);
+void Render2xBRZ(SSurface Src, SSurface Dst);
+void Render3xBRZ(SSurface Src, SSurface Dst);
+void Render4xBRZ(SSurface Src, SSurface Dst);
+void Render5xBRZ(SSurface Src, SSurface Dst);

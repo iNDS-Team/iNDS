@@ -20,12 +20,14 @@
 //#define kBugUrl @"http://www.williamlcobb.com/iNDS/bugreport"
 
 @class SCLAlertView;
+@class WCEasySettingsViewController;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) iNDSGame *currentGame;
 @property (strong, nonatomic) iNDSEmulatorViewController *currentEmulatorViewController;
 @property (strong, nonatomic) NSURL *lastUrl;
+@property (strong, nonatomic, getter=getSettingsViewController) WCEasySettingsViewController *settingsViewController;
 
 
 + (AppDelegate *)sharedInstance;
@@ -40,6 +42,8 @@
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState;
 - (void)startBackgroundProcesses;
 
--(BOOL)isSystemApplication;
+- (BOOL)isSystemApplication;
 
 @end
+
+

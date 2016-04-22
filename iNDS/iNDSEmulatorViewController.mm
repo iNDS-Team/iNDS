@@ -23,6 +23,7 @@
 #import <GameController/GameController.h>
 
 #include "emu.h"
+//#include "mic.h"
 #import "SCLAlertView.h"
 
 #import "iNDSMFIControllerSupport.h"
@@ -35,6 +36,8 @@
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
 #define SHADER_STRING(text) @ STRINGIZE2(text)
+
+
 
 NSString *const kVertShader = SHADER_STRING
 (
@@ -74,6 +77,31 @@ const float textureVert[] =
     1.0f, 0.0f,
     0.0f, 1.0f,
     1.0f, 1.0f
+};
+
+enum VideoFilter : NSUInteger {
+    NONE,
+    HQ2X,
+    _2XSAI,
+    SUPER2XSAI,
+    SUPEREAGLE,
+    SCANLINE,
+    BILINEAR,
+    NEAREST2X,
+    HQ2XS,
+    LQ2X,
+    LQ2XS,
+    EPX,
+    NEARESTPLUS1POINT5,
+    NEAREST1POINT5,
+    EPXPLUS,
+    EPX1POINT5,
+    EPXPLUS1POINT5,
+    HQ4X,
+    BRZ2x,
+    BRZ3x,
+    BRZ4x,
+    BRZ5x
 };
 
 @interface iNDSEmulatorViewController () <GLKViewDelegate, iCadeEventDelegate> {
@@ -300,6 +328,16 @@ const float textureVert[] =
         // (Mute on && don't ignore it) or user has sound disabled
         BOOL muteSound = ([self muteButtonOn] && ![defaults boolForKey:@"ignoreMute"]) || [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+                                         withOptions:(AVAudioSessionCategoryOptionAllowBluetooth |
+                                                      AVAudioSessionCategoryOptionMixWithOthers |
+                                                      AVAudioSessionCategoryOptionDefaultToSpeaker)
+                                               error:nil];
+        
+        // Filter
+        int filterTranslate[] = {NONE, EPX, SUPEREAGLE, _2XSAI, SUPER2XSAI, BRZ2x, LQ2X, BRZ3x, HQ2X, HQ4X, BRZ4x, BRZ5x};
+        NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
+        EMU_setFilter(filterTranslate[filter]);
     }
     self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
     self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
@@ -411,6 +449,8 @@ const float textureVert[] =
     NSLog(@"Initiaizing GL");
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
+    //self.context.multiThreaded = YES;
+    NSLog(@"Is multi: %d", self.context.isMultiThreaded);
     
     if ([UIScreen screens].count > 1) {
         UIScreen *extScreen = [UIScreen screens][1];
@@ -510,20 +550,12 @@ const float textureVert[] =
 
 - (UIImage*)screenSnapshot:(NSInteger)num
 {
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    size_t dataSize = 0;
-    UInt8 *dataBytes = (UInt8*)EMU_getVideoBuffer(&dataSize);
-    if (num >= 0) dataSize /= 2;
-    if (num == 1) dataBytes += dataSize;
-    CFDataRef videoData = CFDataCreate(NULL, dataBytes, dataSize*4);
-    CGDataProviderRef dataProvider = CGDataProviderCreateWithCFData(videoData);
-    CGImageRef screenImage = CGImageCreate(256, num < 0 ? 384 : 192, 8, 32, 256*4, colorSpace, kCGBitmapByteOrderDefault, dataProvider, NULL, false, kCGRenderingIntentDefault);
-    CGColorSpaceRelease(colorSpace);
-    CGDataProviderRelease(dataProvider);
-    CFRelease(videoData);
+    UIGraphicsBeginImageContextWithOptions(self.view.bounds.size, NO, [UIScreen mainScreen].scale);
     
-    UIImage *image = [UIImage imageWithCGImage:screenImage];
-    CGImageRelease(screenImage);
+    [self.view drawViewHierarchyInRect:self.view.bounds afterScreenUpdates:YES];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     return image;
 }
 
@@ -536,7 +568,6 @@ const float textureVert[] =
     if (!inEditingMode) { //Discard the changes
         [self shutdownGL];
     }
-    
 }
 
 - (void)pauseEmulation
@@ -577,18 +608,20 @@ const float textureVert[] =
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
-        CFTimeInterval now;
+        CFTimeInterval coreStart, loopStart;
         while (execute) {
+            loopStart = CACurrentMediaTime();
             framesToRender += self.speed;
-            //framesToRender += MIN(MAX(60 / fps, 6), 1) * self.speed; //Will run game at full speed but lower FPS
             
-            for (; framesToRender >= 1; framesToRender--) {
-                now = CACurrentMediaTime();
+            for (;framesToRender >= 1; framesToRender--) {
+                coreStart = CACurrentMediaTime();
                 EMU_runCore();
-                coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - now)) * 0.05;
+                coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - coreStart)) * 0.05;
             }
             
             if (CACurrentMediaTime() - lastAutosave > 180) {
+                CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+                coreTime = coreTime * 0.95 + (CACurrentMediaTime() - coreStart) * 0.05;
                 if ([[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
                     [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 }
@@ -596,7 +629,10 @@ const float textureVert[] =
             }
             
             EMU_copyMasterBuffer();
-            [self updateDisplay]; //This will automatically throttle fps to 60
+            //This will automatically throttle fps to 60
+            [self updateDisplay];
+            
+            //framesToRender += MIN(CACurrentMediaTime() - loopStart, 3) - 1/60.0;
             
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
@@ -622,19 +658,25 @@ const float textureVert[] =
         static CFTimeInterval fpsUpdateTime = 0;
         if (CACurrentMediaTime() - fpsUpdateTime > 1) {
             int fps = (int)(coreFps / self.speed);
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS (%d CORE)", MIN(fps, 60), fps];
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN(fps, 60), fps];
             fpsUpdateTime = CACurrentMediaTime();
         }
     });
     
-    GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(NULL);
+    size_t bufferSize;
+    GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(&bufferSize);
+    
+    int scale = (int)sqrt(bufferSize/98304);//1, 3, 4
+    
+    int width = 256 * scale;
+    int height = 192 * scale;
     
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
     [glkView[0] display]; // This will automatically throttle to 60 fps
     
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 192, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + 256*192*4);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + width * height * 4);
     [glkView[1] display];
     
 }
@@ -662,11 +704,6 @@ const float textureVert[] =
         EMU_setSynchMode(0);
     } else {
         EMU_setSynchMode([[NSUserDefaults standardUserDefaults] boolForKey:@"synchSound"]);
-    }
-    if (speed <= 1.0) {
-        //EMU_setFrameSkip(userFrameSkip);
-    } else {
-        //EMU_setFrameSkip(MAX((int)speed, userFrameSkip));
     }
     _speed = speed;
 }

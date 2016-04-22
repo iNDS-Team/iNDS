@@ -16,7 +16,9 @@
 iNDSMicrophone *microphone;
 TPCircularBuffer *buf;
 bool micEnabled;
+volatile float micSampleRate = 0.0;
 
+#define SampleRateModifer 3
 
 void Mic_DeInit(){
     printf("Mic_DeInit\n");
@@ -40,13 +42,13 @@ void Mic_Reset(){
 }
 
 // For debugging
-void sampleRate() {
+static inline void calcSampleRate() {
     static CFTimeInterval now = 0;
-    static long count = 100000;
-    if (count == 100000) {
-        printf("Sample Rate: %f\n", 1 / ((CACurrentMediaTime() - now) / count));
+    static long count = 16000;
+    if (count == 16000) {
         count = 0;
         now = CACurrentMediaTime();
+        micSampleRate = 1 / ((CACurrentMediaTime() - now) / count);
     }
     count++;
 }
@@ -55,14 +57,14 @@ void sampleRate() {
 u8 Mic_ReadSample(){
     if (!microphone || !micEnabled)
         return 128;
-#ifdef DEBUG
-    sampleRate();
-#endif
+
+    calcSampleRate();
+    
     int32_t availableBytes;
     u8 *stream = (u8 *)TPCircularBufferTail(buf, &availableBytes);
-    int32_t index = availableBytes > 4096 ? 3082 : 0; // Skip when the buffer starts overflowing
+    int32_t index = availableBytes > 4096 ? (3081/SampleRateModifer) : 0; // Skip when the buffer starts overflowing
     if (availableBytes > 0) {
-        TPCircularBufferConsume(buf, index + 1);
+        TPCircularBufferConsume(buf, (index + 1) * SampleRateModifer);
         // The ds mic is much less sensitive so the sound needs to be dampened
         s8 sample = (stream[index] - 128);
         

@@ -13,7 +13,8 @@
 
 #include <iostream>
 #include "emufile.h"
-#include "types.h"
+
+extern volatile float micSampleRate;
 
 BOOL Mic_Init(void);
 void Mic_Reset(void);

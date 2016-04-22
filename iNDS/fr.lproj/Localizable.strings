@@ -38,6 +38,7 @@ UNLINKED_DETAIL = "Dropbox has been unlinked. Your save files will no longer be 
 SUCCESS = "Success";
 SUCCESS_DETAIL = "Dropbox was linked successfully! iNDS will now start syncing your saves to a Dropbox folder called 'iNDS' located in the root directory of your Dropbox folder.";
 DROPBOX_CFG_ERROR = "Error Configuring Dropbox";
+AUTO_SAVE = "Auto Save will save the game every 3 minutes.";
 
 SHOW_FPS = "Montrer Le FPS";
 VIBRATION = "Vibration";
