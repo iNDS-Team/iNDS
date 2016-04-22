@@ -21,6 +21,7 @@
     [self.tableView registerClass:[WCEasySettingsOptionCell class] forCellReuseIdentifier:@"Option"];
     [self.tableView registerClass:[WCEasySettingsSliderCell class] forCellReuseIdentifier:@"Slider"];
     [self.tableView registerClass:[WCEasySettingsUrlCell class] forCellReuseIdentifier:@"Url"];
+    [self.tableView registerClass:[WCEasySettingsCustomCell class] forCellReuseIdentifier:@"Custom"];
     if (self.navigationController.viewControllers[0] == self) { // We are the main view so add an exit
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]
                                        initWithTitle:@"Done"

@@ -102,7 +102,7 @@ public:
             case BRZ5x:
                 width = 256*5;
                 height = 384*5;
-        break;
+                break;
 			default:
 				width = 256*2;
 				height = 384*2;

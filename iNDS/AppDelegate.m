@@ -24,6 +24,7 @@
 #import "WCEasySettingsViewController.h"
 
 #import "iNDSSpeedTest.h"
+#import "iNDSDropboxTableViewController.h"
 
 #ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
@@ -455,6 +456,16 @@
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableMic"
                                                                              title:@"Enable Mic"]];
         
+        
+        //Dropbox
+        WCEasySettingsSection *dropboxSection = [[WCEasySettingsSection alloc] initWithTitle:@"DROPBOX" subTitle:NSLocalizedString(@"ENABLE_DROPBOX", nil)];
+        
+        
+        
+        WCEasySettingsCustom *dropBox = [[WCEasySettingsCustom alloc] initWithTitle:@"Dropbox" subtitle:nil viewController:[[iNDSDropboxTableViewController alloc] initWithStyle:UITableViewStyleGrouped]];
+        
+        dropboxSection.items = @[dropBox];
+        
         // Auto Save
         WCEasySettingsSection *emulatorSection = [[WCEasySettingsSection alloc] initWithTitle:@"Auto Save" subTitle:@""];
         emulatorSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"periodicSave"
@@ -465,9 +476,6 @@
         interfaceSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"fullScreenSettings"
                                                                               title:@"Full Screen Settings"]];
         
-        
-        //Dropbox
-        WCEasySettingsSection *dropboxSection = [[WCEasySettingsSection alloc] initWithTitle:@"DROPBOX" subTitle:NSLocalizedString(@"ENABLE_DROPBOX", nil)];
         
         // Credits
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
@@ -497,7 +505,7 @@
         
         
         
-        _settingsViewController.sections = @[controlsSection, graphicsSection, emulatorSection, audioSection, interfaceSection, creditsSection];
+        _settingsViewController.sections = @[controlsSection, dropboxSection, graphicsSection, emulatorSection, audioSection, interfaceSection, creditsSection];
     }
     
     return _settingsViewController;

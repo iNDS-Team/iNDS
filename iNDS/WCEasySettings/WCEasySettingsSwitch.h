@@ -12,9 +12,11 @@ typedef void (^ActionBlock)();
 
 @interface WCEasySettingsSwitch : WCEasySettingsItem {
     ActionBlock onEnableBlock;
+    ActionBlock onDisableBlock;
 }
 
 - (void)setEnableBlock:(ActionBlock)block;
+- (void)setDisableBlock:(ActionBlock)block;
 - (id)initWithIdentifier:(NSString *)identifier title:(NSString *)title;
 
 - (void)onSwitch:(UISwitch *)s;

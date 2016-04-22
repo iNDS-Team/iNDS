@@ -24,6 +24,8 @@
     [[NSUserDefaults standardUserDefaults] setBool:s.on forKey:self.identifier];
     if (s.on && onEnableBlock) {
         onEnableBlock();
+    } else if (!s.on && onDisableBlock) {
+        onDisableBlock();
     }
     
 }
@@ -31,6 +33,11 @@
 - (void)setEnableBlock:(ActionBlock)block
 {
     onEnableBlock = block;
+}
+
+- (void)setDisableBlock:(ActionBlock)block
+{
+    onDisableBlock = block;
 }
 
 @end

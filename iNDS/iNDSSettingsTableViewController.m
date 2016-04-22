@@ -13,6 +13,7 @@
 #import "iNDSEmulationProfile.h"
 #import <QuartzCore/QuartzCore.h>
 #import "WCEasySettingsViewController.h"
+
 @interface iNDSSettingsTableViewController () {
     iNDSEmulatorViewController * emulationController;
     

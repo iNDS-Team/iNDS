@@ -14,7 +14,7 @@
 #import "WCEasySettingsSection.h"
 #import "WCEasySettingsOption.h"
 #import "WCEasySettingsUrl.h"
-
+#import "WCEasySettingsCustom.h"
 
 @interface WCEasySettingsViewController : UITableViewController <WCEasySettingsItemDelegate>
 

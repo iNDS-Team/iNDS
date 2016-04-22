@@ -170,6 +170,8 @@
 		CA3224501CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32244F1CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m */; };
 		CA3224541CC9DEF300C5BEA7 /* iNDSSpeedTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = CA3224531CC9DEF300C5BEA7 /* iNDSSpeedTest.mm */; };
 		CA3224571CC9EF9700C5BEA7 /* xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3224551CC9EF9700C5BEA7 /* xbrz.cpp */; };
+		CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */; };
+		CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
@@ -597,6 +599,10 @@
 		CA3224531CC9DEF300C5BEA7 /* iNDSSpeedTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSSpeedTest.mm; sourceTree = "<group>"; };
 		CA3224551CC9EF9700C5BEA7 /* xbrz.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xbrz.cpp; sourceTree = "<group>"; };
 		CA3224561CC9EF9700C5BEA7 /* xbrz.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xbrz.h; sourceTree = "<group>"; };
+		CA3224581CCA86FC00C5BEA7 /* WCEasySettingsCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsCustom.h; path = WCEasySettings/WCEasySettingsCustom.h; sourceTree = "<group>"; };
+		CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsCustom.m; path = WCEasySettings/WCEasySettingsCustom.m; sourceTree = "<group>"; };
+		CA32245B1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSDropboxTableViewController.h; sourceTree = "<group>"; };
+		CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSDropboxTableViewController.m; sourceTree = "<group>"; };
 		CA42580C1CADA89F00BFD05E /* UIImage+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Utilities.h"; sourceTree = "<group>"; };
 		CA42580F1CADADF200BFD05E /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice-Hardware.h"; sourceTree = "<group>"; };
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
@@ -961,6 +967,8 @@
 				8BEA096317872C080060B347 /* iNDSEmulatorSettingsViewController.h */,
 				8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */,
 				28E7A6ED1787D110003A9C5B /* Defaults.plist */,
+				CA32245B1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.h */,
+				CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1620,6 +1628,8 @@
 				CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */,
 				CA32244E1CC9BEBC00C5BEA7 /* WCEasySettingsUrl.h */,
 				CA32244F1CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m */,
+				CA3224581CCA86FC00C5BEA7 /* WCEasySettingsCustom.h */,
+				CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */,
 			);
 			name = WCEasySettings;
 			sourceTree = "<group>";
@@ -1861,6 +1871,7 @@
 				CABE38A81C34460B00BE8857 /* iNDSCheatsFolderTableViewController.mm in Sources */,
 				CA6E60971CB056A0000B269D /* AFSecurityPolicy.m in Sources */,
 				BFCFE19F17650FB0000A70CF /* rtc.cpp in Sources */,
+				CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */,
 				BFCFE1A017650FB0000A70CF /* saves.cpp in Sources */,
 				8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */,
 				CAB2C4C11CB5F2C300ED22BB /* EZPlot.m in Sources */,
@@ -1980,6 +1991,7 @@
 				CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */,
 				BFCFE26B1766379F000A70CF /* addons.cpp in Sources */,
 				CA3224501CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m in Sources */,
+				CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */,
 				CAE6738B1CC824F900E46EDF /* WCEasySettingsItem.m in Sources */,
 				BF9D514317865CD800B5864B /* SndOut.cpp in Sources */,
 				CA031D231BEBE1EB00EDE98D /* 7zIn.c in Sources */,
