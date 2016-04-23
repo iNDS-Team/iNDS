@@ -106,6 +106,7 @@ enum VideoFilter : NSUInteger {
 
 @interface iNDSEmulatorViewController () <GLKViewDelegate, iCadeEventDelegate> {
     float coreFps;
+    float videoFps;
     
     GLuint texHandle[2];
     GLint attribPos;
@@ -131,6 +132,8 @@ enum VideoFilter : NSUInteger {
     UINavigationController * settingsNav;
     
     RBVolumeButtons *volumeStealer;
+    
+    dispatch_semaphore_t displaySemaphore;
 }
 
 
@@ -442,6 +445,7 @@ enum VideoFilter : NSUInteger {
     
     if (self.saveState) EMU_loadState(self.saveState.fileSystemRepresentation);
     [self startEmulatorLoop];
+    [self defaultsChanged:nil];
 }
 
 - (void)initGL
@@ -603,12 +607,13 @@ enum VideoFilter : NSUInteger {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        
+        displaySemaphore = dispatch_semaphore_create(1);
         CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
         [emuLoopLock lock];
         [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
         CFTimeInterval coreStart, loopStart;
+        coreFps = videoFps = 30;
         while (execute) {
             loopStart = CACurrentMediaTime();
             framesToRender += self.speed;
@@ -628,12 +633,14 @@ enum VideoFilter : NSUInteger {
                 lastAutosave = CACurrentMediaTime();
             }
             
-            EMU_copyMasterBuffer();
-            //This will automatically throttle fps to 60
-            [self updateDisplay];
-            
-            //framesToRender += MIN(CACurrentMediaTime() - loopStart, 3) - 1/60.0;
-            
+            // Core will always be one frame ahead
+            dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                EMU_copyMasterBuffer();
+                //This will automatically throttle fps to 60
+                [self updateDisplay];
+                dispatch_semaphore_signal(displaySemaphore);
+            }); 
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -654,11 +661,12 @@ enum VideoFilter : NSUInteger {
 - (void)updateDisplay
 {
     if (texHandle[0] == 0) return;
+    static CFTimeInterval lastDisplayTime = 0;
+    videoFps = videoFps * 0.95 + (1 / (CACurrentMediaTime() - lastDisplayTime)) * 0.05;
     dispatch_async(dispatch_get_main_queue(), ^{
         static CFTimeInterval fpsUpdateTime = 0;
         if (CACurrentMediaTime() - fpsUpdateTime > 1) {
-            int fps = (int)(coreFps / self.speed);
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN(fps, 60), fps];
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
             fpsUpdateTime = CACurrentMediaTime();
         }
     });
@@ -678,7 +686,7 @@ enum VideoFilter : NSUInteger {
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + width * height * 4);
     [glkView[1] display];
-    
+    lastDisplayTime = CACurrentMediaTime();
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect

@@ -28,14 +28,11 @@
     
     client = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
     client.delegate = self;
-    [client loadAccountInfo];
     
     dropBoxSwitch = [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableDropbox" title:@"Enable Dropbox Sync"];
     __weak id weakSelf = self;
     [dropBoxSwitch setEnableBlock:^{
-        NSLog(@"Enabled");
         [[DBSession sharedSession] linkFromController:weakSelf];
-        [client loadAccountInfo];
     }];
     [dropBoxSwitch setDisableBlock:^{
         [CHBgDropboxSync forceStopIfRunning];
@@ -46,10 +43,19 @@
         
         [[NSUserDefaults standardUserDefaults] setBool:false forKey:@"enableDropbox"];
         userName = @"";
-        NSLog(@"Disabled");
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSRange range = NSMakeRange(0, [self numberOfSectionsInTableView:self.tableView]);
+            NSIndexSet *sections = [NSIndexSet indexSetWithIndexesInRange:range];
+            [self.tableView reloadSections:sections withRowAnimation:UITableViewRowAnimationAutomatic];
+        });
     }];
     
     [self.tableView registerClass:[WCEasySettingsSwitchCell class] forCellReuseIdentifier:dropBoxSwitch.cellIdentifier];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [client loadAccountInfo];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,9 +64,10 @@
 
 - (void)restClient:(DBRestClient*)client loadedAccountInfo:(DBAccountInfo*)info {
     userName = info.displayName;
-    NSLog(@"Uname 2%@", userName);
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.tableView reloadData];
+        NSRange range = NSMakeRange(0, [self numberOfSectionsInTableView:self.tableView]);
+        NSIndexSet *sections = [NSIndexSet indexSetWithIndexesInRange:range];
+        [self.tableView reloadSections:sections withRowAnimation:UITableViewRowAnimationAutomatic];
     });
 }
 
@@ -68,7 +75,6 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Hey");
     if (indexPath.row == 0) {
         WCEasySettingsSwitchCell * cell = [tableView dequeueReusableCellWithIdentifier:dropBoxSwitch.cellIdentifier];
         cell.controller = dropBoxSwitch;
@@ -80,6 +86,7 @@
         cell.textLabel.text = @"Account Name";
         cell.detailTextLabel.text = userName;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.clipsToBounds = YES;
         NSLog(@"Uname %@", userName);
         return cell;
     }
@@ -91,7 +98,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableDropbox"])
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableDropbox"] && userName.length > 0)
             return 2;
         return 1;
     }

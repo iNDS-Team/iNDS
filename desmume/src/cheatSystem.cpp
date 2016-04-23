@@ -388,7 +388,7 @@ void CHEATS::ARparser(CHEATS_LIST& list)
 					}
 				}
 				
-				i += (lo / 8);
+				i += ((lo + 7) / 8);
 			}
 			break;
 

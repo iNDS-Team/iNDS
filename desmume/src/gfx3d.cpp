@@ -2242,7 +2242,10 @@ static bool gfx3d_ysort_compare(int num1, int num2)
 	//this may be verified by checking the game create menus in harvest moon island of happiness
 	//also the buttons in the knights in the nightmare frontend depend on this and the perspective division
     //Added by Will
-    if (num1 > polylist->count || num2 > polylist->count || num1 < 0 || num2 < 0) return false;
+    if (num1 > polylist->count || num2 > polylist->count || num1 < 0 || num2 < 0) {
+        //printf("gfx3d_ysort_compare error\n");
+        return true;
+    }
     //
 	if (poly1.maxy < poly2.maxy) return true;
 	if (poly1.maxy > poly2.maxy) return false;
@@ -2350,8 +2353,7 @@ static void gfx3d_doFlush()
 	//should this be done after clipping??
     
     //This causes a ton of crashing and disabling has no apparent effects that I've seen - Will
-    BOOL shouldSort = false;
-    if (shouldSort) {
+    if (/* DISABLES CODE */ (false)) {
         std::sort(gfx3d.indexlist.list, gfx3d.indexlist.list + opaqueCount, gfx3d_ysort_compare);
         
         if(!gfx3d.state.sortmode)
