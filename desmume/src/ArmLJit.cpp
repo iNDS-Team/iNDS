@@ -7454,16 +7454,12 @@ bool ready;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
-
-    //printf("Time to execute JIT\n");
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
-    if (!opfun) { //We need to compile a new set of instructions
-        //printf("Compiling new JIT\n");
+    if (!opfun) {
         opfun = armcpu_compile<PROCNUM>();
         if (!opfun) {
             printf("JIT Broke\n");
         }
-        //usleep(4000);
     }
     return opfun();
 }
