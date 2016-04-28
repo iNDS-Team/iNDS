@@ -184,7 +184,7 @@ void EMU_init(int lang)
 
 void EMU_loadSettings()
 {
-	CommonSettings.num_cores = sysconf( _SC_NPROCESSORS_ONLN );
+    CommonSettings.num_cores = sysconf( _SC_NPROCESSORS_ONLN );
 	LOGI("%i cores detected", CommonSettings.num_cores);
 	CommonSettings.advanced_timing = false;
 	CommonSettings.cheatsDisable = false;

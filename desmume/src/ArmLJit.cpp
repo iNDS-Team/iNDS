@@ -7097,7 +7097,7 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
 									PSR_N_BITMASK, PSR_N_BITMASK, 
 									PSR_V_BITMASK, PSR_V_BITMASK};
 
-	static const u32 estimate_size = 64 * 1024;
+	static const u32 estimate_size = 64*1024;
 	u8 *ptr = AllocCodeBuffer(estimate_size);
 	if (!ptr)
 	{
@@ -7393,8 +7393,8 @@ static void cpuReserve()
 	s_pArmAnalyze = new ArmAnalyze(CommonSettings.jit_max_block_size);
 	s_pRegisterMap = new RegisterMapImp(HostRegCount);
 
-	s_pArmAnalyze->m_MergeSubBlocks = true;
-	s_pArmAnalyze->m_OptimizeFlag = true;
+	s_pArmAnalyze->m_MergeSubBlocks = false; //Was true
+	s_pArmAnalyze->m_OptimizeFlag = false; //Was true
 	//s_pArmAnalyze->m_JumpEndDecode = true;
 }
 
@@ -7450,59 +7450,26 @@ bool ready;
 
 #define iNDS_JIT_SIZE 1024
 
+#include <mutex>  
+std::mutex mtx;
+
 TEMPLATE static u32 cpuExecuteLJIT()
 {
 
-    printf("Time to execute JIT\n");
+    //printf("Time to execute JIT\n");
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) { //We need to compile a new set of instructions
-        printf("Compiling new JIT\n");
-        opfun = armcpu_compile<PROCNUM>(); //This is how they do it in android
-        // The above magically started working... I'm not sure what changed protecting below isn't needed anymore like is was a few days ago...
-        
-        //but we need to make sure we have execution privalleges
-        
-        /*int pagesize = getpagesize(); //4096
-        
-        if (!p)
-        {
-            printf("Assigning Protection\n");
-            posix_memalign((void **)&p, pagesize, iNDS_JIT_SIZE); //malloc and align
-            if (mprotect(p, iNDS_JIT_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC)) {
-                perror("Couldn't mprotect");
-                exit(errno);
-            }
-        }
-        if (!p) {
-            perror("Couldn't malloc(1024)\n");
-            exit(errno);
-        }
-        //memset(p, 0, 1024); //Clear memory
-        
-        u32 *result = (uint32_t *)armcpu_compile<PROCNUM>();
-        
-        //*p = *result; //Store compiled JIT (Wrong: only stores 4 bytes!)
-        memcpy(p, result, iNDS_JIT_SIZE);
-        printf("JIT Compiled to address: %p\n", p);
-        
-        opfun = (ArmOpCompiled)p;*/
-        
-
-    } else {
-        printf("Executing same JIT block\n");
-        // Even though we're executing an address very far from p,
-        // it still manages to have execution protection
-        
-        /*if (mprotect(&opfun, iNDS_JIT_SIZE, PROT_READ | PROT_EXEC)) {
-            perror("Couldn't mprotect\n");
-            exit(errno);
-        }*/
+        //printf("Compiling new JIT\n");
+        opfun = armcpu_compile<PROCNUM>();
     }
     //Execute the instructions stored in memory
     //return opfun();
-    printf("Executing code at address: %p\n", opfun);
+    //printf("Executing code at address: %p\n", opfun);
+    //mtx.lock();
+    usleep(1500);
     u32 cycles = opfun(); // Number of cycles
-    printf("Successful execution with cycles: %d\n", cycles);
+    //mtx.unlock();
+    //printf("Successful execution with cycles: %d\n", cycles);
     return cycles;
     
 }

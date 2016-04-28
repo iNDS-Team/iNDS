@@ -52,7 +52,6 @@
 -(BOOL) navigationShouldPopOnBackButton {
     if (showConfirmation) {
         showConfirmation = NO;
-        NSLog(@"BYE: %ld %ld", self.cheatCode.text.length + 1, (self.cheatCode.text.length + 1) % 18);
         if ((self.cheatCode.text.length + 1) % 18 == 0) { //A valid cheat code is entered
             dispatch_async(dispatch_get_main_queue(), ^{
                 SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -64,7 +63,6 @@
             return NO;
         }
         return YES;
-        
     }
     return YES; 
 }
@@ -75,15 +73,21 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showInfo:self title:@"Error!" subTitle:@"Please enter a name for the cheat." closeButtonTitle:@"Okay" duration:0.0];
-            return;
         });
+        return;
     }
     NSString *code = [self.cheatCode.text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     NSString *description = [NSString stringWithFormat:@"||%@||", self.cheatName.text];
-    cheats->add_AR([code UTF8String], [description UTF8String], NO);
-    cheats->save();
-    showConfirmation = NO;
-    [self.navigationController popViewControllerAnimated:YES];
+    if (cheats->add_AR([code UTF8String], [description UTF8String], NO)) {
+        cheats->save();
+        showConfirmation = NO;
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showInfo:self title:@"Error!" subTitle:@"Unable to parse cheat. Double check it is entered correctly." closeButtonTitle:@"Okay" duration:0.0];
+        });
+    }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section

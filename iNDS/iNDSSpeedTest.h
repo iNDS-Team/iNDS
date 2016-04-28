@@ -37,6 +37,7 @@ enum {
 
 @interface iNDSSpeedTest : NSObject
 
++ (CFTimeInterval)averageCoreSpeed;
 + (NSArray *)filterTimesForFilters:(NSArray *)filters;
 
 @end

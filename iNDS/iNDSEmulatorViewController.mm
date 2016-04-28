@@ -435,7 +435,7 @@ enum VideoFilter : NSUInteger {
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
     EMU_init([iNDSGame preferredLanguage]);
     //2 for JIT
-    EMU_setCPUMode(1);//[[NSUserDefaults standardUserDefaults] boolForKey:@"enableLightningJIT"] ? 2 : 1);
+    EMU_setCPUMode(2);//[[NSUserDefaults standardUserDefaults] boolForKey:@"enableLightningJIT"] ? 2 : 1);
     EMU_loadRom([self.game.path fileSystemRepresentation]);
     EMU_change3D(1);
         
@@ -607,6 +607,7 @@ enum VideoFilter : NSUInteger {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    //dispatch_async(dispatch_get_main_queue(), ^{
         displaySemaphore = dispatch_semaphore_create(1);
         CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
@@ -622,11 +623,13 @@ enum VideoFilter : NSUInteger {
                 coreStart = CACurrentMediaTime();
                 EMU_runCore();
                 coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - coreStart)) * 0.05;
+                NSLog(@"Core per say");
             }
             
             if (CACurrentMediaTime() - lastAutosave > 180) {
                 CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
                 coreTime = coreTime * 0.95 + (CACurrentMediaTime() - coreStart) * 0.05;
+                [[NSUserDefaults standardUserDefaults] setFloat:coreTime forKey:@"coreTime"];
                 if ([[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
                     [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 }

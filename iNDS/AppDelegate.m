@@ -435,17 +435,18 @@
                                                                    optionSubtitles:nil
                                                                         subtitle:@"Video filters make the picture sharper but can cause the emulator to run slower. Filters are ordered by lowest quality at the top to best at the bottom. If you're not sure, you can experiment or pick the highest quality that still makes games run at 60fps."];
         graphicsSection.items = @[filterOptions];
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x), @(BRZ5x)];
-            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
-            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
-            NSMutableArray *filterSubtitles = [NSMutableArray new];
-            for (NSNumber *time in filterTimes) {
-                CGFloat estimatedFps = 1/([time floatValue] + coreTime);
-                [filterSubtitles addObject:[NSString stringWithFormat:@"%d FPS", MAX(60, (int)estimatedFps)]];
-            }
-            filterOptions.optionSubtitles = filterSubtitles;
-        });
+//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x), @(BRZ5x)];
+//            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
+//            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+//            NSMutableArray *filterSubtitles = [NSMutableArray new];
+//            for (NSNumber *time in filterTimes) {
+//                NSLog(@"%f (%f + %f)", ([time floatValue] + coreTime), [time floatValue], coreTime);
+//                CGFloat estimatedFps = 1/([time floatValue] + coreTime);
+//                [filterSubtitles addObject:[NSString stringWithFormat:@"%d FPS", MAX(60, (int)estimatedFps)]];
+//            }
+//            //filterOptions.optionSubtitles = filterSubtitles;
+//        });
         
         // Audio
         WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
@@ -474,7 +475,9 @@
         // UI
         WCEasySettingsSection *interfaceSection = [[WCEasySettingsSection alloc] initWithTitle:@"Interface" subTitle:@""];
         interfaceSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"fullScreenSettings"
-                                                                              title:@"Full Screen Settings"]];
+                                                                              title:@"Full Screen Settings"],
+                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"showFPS"
+                                                                              title:@"Show FPS"]];
         
         
         // Credits

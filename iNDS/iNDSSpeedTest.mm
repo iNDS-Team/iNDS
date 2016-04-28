@@ -18,6 +18,11 @@ u32 filteredSpeedBuffer[16*256*192*2];
 
 @implementation iNDSSpeedTest
 
++(CFTimeInterval)averageCoreSpeed
+{
+    return [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+}
+
 + (NSArray *)filterTimesForFilters:(NSArray *)filters
 {
     NSMutableArray *times = [NSMutableArray array];
@@ -32,7 +37,6 @@ u32 filteredSpeedBuffer[16*256*192*2];
     for (NSNumber *filter in filters) {
         int width, height;
         switch([filter integerValue]) {
-                
             case NONE:
                 width = 256;
                 height = 384;
@@ -44,9 +48,18 @@ u32 filteredSpeedBuffer[16*256*192*2];
                 width = 256*3/2;
                 height = 384*3/2;
                 break;
+            case BRZ3x:
+                width = 256*3;
+                height = 384*3;
+                break;
             case HQ4X:
+            case BRZ4x:
                 width = 256*4;
                 height = 384*4;
+                break;
+            case BRZ5x:
+                width = 256*5;
+                height = 384*5;
                 break;
             default:
                 width = 256*2;
@@ -59,7 +72,7 @@ u32 filteredSpeedBuffer[16*256*192*2];
         dst.Pitch = width*2;
         dst.Surface = (u8*)filteredSpeedBuffer;
         
-        CFTimeInterval now = CACurrentMediaTime();
+        CFTimeInterval now = CACurrentMediaTime() ;
         for (int i = 0; i < 100; i++) {
             switch([filter integerValue])
             {

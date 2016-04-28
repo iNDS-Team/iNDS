@@ -603,6 +603,7 @@
 		CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsCustom.m; path = WCEasySettings/WCEasySettingsCustom.m; sourceTree = "<group>"; };
 		CA32245B1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSDropboxTableViewController.h; sourceTree = "<group>"; };
 		CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSDropboxTableViewController.m; sourceTree = "<group>"; };
+		CA32245F1CCD4C2400C5BEA7 /* iNDS.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = iNDS.profdata; sourceTree = "<group>"; };
 		CA42580C1CADA89F00BFD05E /* UIImage+Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+Utilities.h"; sourceTree = "<group>"; };
 		CA42580F1CADADF200BFD05E /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice-Hardware.h"; sourceTree = "<group>"; };
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
@@ -1009,6 +1010,7 @@
 				BF9D515517865E1300B5864B /* Resources */,
 				BFCFE0F11764FBD3000A70CF /* Frameworks */,
 				BFCFE0F01764FBD3000A70CF /* Products */,
+				CA32245E1CCD4C2400C5BEA7 /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1356,6 +1358,14 @@
 				CA031D321BEBE36200EDE98D /* 7zMain.c */,
 			);
 			name = 7z;
+			sourceTree = "<group>";
+		};
+		CA32245E1CCD4C2400C5BEA7 /* OptimizationProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				CA32245F1CCD4C2400C5BEA7 /* iNDS.profdata */,
+			);
+			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 		CA6E60871CB05695000B269D /* AFNetworking */ = {
@@ -1808,7 +1818,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "GIT=`which git`\nif [ \"$GIT\" -a -d .git ]; then\n  GIT_VERSION=`$GIT describe --tags --always`\nelse\n  GIT_VERSION=unknown\nfi\ndefaults write $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Info GitVersionString -string $GIT_VERSION\n";
+			shellScript = "GIT=`which git`\nif [ \"$GIT\" -a -d .git ]; then\n  GIT_VERSION=`$GIT describe --tags --always`\nelse\n  GIT_VERSION=unknown\nfi\ndefaults write $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Info GitVersionString -string $GIT_VERSION";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2184,10 +2195,11 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = Alpha;
 				BUNDLE_ICON_SET_SUFFIX = Debug;
 				BUNDLE_ID_SUFFIX = .debug;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.5.0;
+				CURRENT_PROJECT_VERSION = 1.5.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2237,10 +2249,11 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ICON_SET_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.5.0;
+				CURRENT_PROJECT_VERSION = 1.5.1;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",

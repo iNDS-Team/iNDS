@@ -8338,6 +8338,7 @@ static void* AllocCacheAlign(u32 size)
 
 static u32 GetCacheRemain()
 {
+    //printf("Cache Remaining: %d (%d - %d)\n", s_CacheReserve - s_ReserveBufferUsed, s_CacheReserve, s_ReserveBufferUsed);
 	return s_CacheReserve - s_ReserveBufferUsed;
 }
 
@@ -8496,11 +8497,14 @@ TEMPLATE Block* armcpu_compile()
 
 	//	DO_FB_BLOCK
 	//}
-
-	if (GetCacheRemain() < 1 * 64 * 1024)
+    
+    
+	if (GetCacheRemain() < 1024 * 64 * 64)
 	{
+        // Black: 0226035C
 		INFO("cache full, reset cpu[%d].\n", PROCNUM);
-
+        INFO("Proc: %d\n", PROCNUM);
+        // This causes the SoulSilver black screen bug
 		arm_threadedinterpreter.Reset();
 	}
 

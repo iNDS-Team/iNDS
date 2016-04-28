@@ -370,7 +370,7 @@ protected:
 			delete [] GuestRegs;
 			delete [] HostRegs;
 		}
-	}m_State;
+	} m_State;
 
 	u32 m_HostRegCount;
 

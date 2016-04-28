@@ -7,7 +7,7 @@ Add game recording
 Simulate physical actions (Lid Close)
 Color Change
 Overhaul layout once everything is done
-JIT
+JIT rewrite
 
 Done:
 X Use volume buttons as bumpers

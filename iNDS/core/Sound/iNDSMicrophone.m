@@ -12,9 +12,8 @@
 
 TPCircularBuffer buffer;
 
-@interface iNDSMicrophone () <EZMicrophoneDelegate, EZOutputDataSource> {
+@interface iNDSMicrophone () <EZMicrophoneDelegate> {
     EZMicrophone *microphone;
-    EZRecorder *recorder;
 }
 
 @end
@@ -96,7 +95,6 @@ TPCircularBuffer buffer;
 
 - (void)dealloc
 {
-    [recorder closeAudioFile];
 }
 
 @end

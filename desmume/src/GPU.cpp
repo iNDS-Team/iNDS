@@ -611,7 +611,7 @@ FORCEINLINE FASTCALL void GPU::_master_setFinal3dColor(int dstX, int srcX)
 	{
 		final = R6G6B6TORGB15(red,green,blue);
 		//perform the special effect
-		if(windowEffect)
+        if(windowEffect) {
 			switch(FUNC) {
 				case Increase: final = currentFadeInColors[final&0x7FFF]; break;
 				case Decrease: final = currentFadeOutColors[final&0x7FFF]; break;
@@ -619,6 +619,7 @@ FORCEINLINE FASTCALL void GPU::_master_setFinal3dColor(int dstX, int srcX)
 				case Blend:
 					break;
 			}
+        }
 	}
 
 	HostWriteWord(dst, passing, (final | 0x8000));
@@ -1513,7 +1514,7 @@ void GPU::_spriteRender(u8 * dst, u8 * dst_alpha, u8 * typeTab, u8 * prioTab)
 		if(cost>=2130)
 		{
 			//out of sprite rendering time
-			//printf("sprite overflow!\n");
+			printf("sprite overflow!\n");
 			//return;		
 		}
 
