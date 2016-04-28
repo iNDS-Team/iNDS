@@ -7343,7 +7343,8 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
 	else
 		FreeCodeBuffer(estimate_size - used_size);
 
-	FlushIcacheSection((u8*)ptr, *(u8*)ptr_end);
+	//FlushIcacheSection((u8*)ptr, *(u8*)ptr_end);
+    FlushIcacheSection((u8*)ptr, used_size);
 
 	return;
 }
@@ -7462,7 +7463,7 @@ TEMPLATE static u32 cpuExecuteLJIT()
         if (!opfun) {
             printf("JIT Broke\n");
         }
-        usleep(4000);
+        //usleep(4000);
     }
     return opfun();
 }
