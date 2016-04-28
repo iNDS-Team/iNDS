@@ -435,7 +435,7 @@ enum VideoFilter : NSUInteger {
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
     EMU_init([iNDSGame preferredLanguage]);
     //2 for JIT
-    EMU_setCPUMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"cpuMode"]);
+    EMU_setCPUMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"cpuMode"] + 1);
     EMU_loadRom([self.game.path fileSystemRepresentation]);
     EMU_change3D(1);
         

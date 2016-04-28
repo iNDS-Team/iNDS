@@ -7463,12 +7463,8 @@ TEMPLATE static u32 cpuExecuteLJIT()
             printf("JIT Broke\n");
         }
         usleep(4000);
-    } else {
-        //usleep(100);
     }
     return opfun();
-    
-    
 }
 
 static u32 cpuGetCacheReserve()
