@@ -435,7 +435,7 @@ enum VideoFilter : NSUInteger {
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
     EMU_init([iNDSGame preferredLanguage]);
     //2 for JIT
-    EMU_setCPUMode(2);//[[NSUserDefaults standardUserDefaults] boolForKey:@"enableLightningJIT"] ? 2 : 1);
+    EMU_setCPUMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"cpuMode"]);
     EMU_loadRom([self.game.path fileSystemRepresentation]);
     EMU_change3D(1);
         
@@ -623,7 +623,6 @@ enum VideoFilter : NSUInteger {
                 coreStart = CACurrentMediaTime();
                 EMU_runCore();
                 coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - coreStart)) * 0.05;
-                NSLog(@"Core per say");
             }
             
             if (CACurrentMediaTime() - lastAutosave > 180) {
@@ -643,7 +642,7 @@ enum VideoFilter : NSUInteger {
                 //This will automatically throttle fps to 60
                 [self updateDisplay];
                 dispatch_semaphore_signal(displaySemaphore);
-            }); 
+            });
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -664,15 +663,20 @@ enum VideoFilter : NSUInteger {
 - (void)updateDisplay
 {
     if (texHandle[0] == 0) return;
+    // Clacl fps
     static CFTimeInterval lastDisplayTime = 0;
     videoFps = videoFps * 0.95 + (1 / (CACurrentMediaTime() - lastDisplayTime)) * 0.05;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        static CFTimeInterval fpsUpdateTime = 0;
-        if (CACurrentMediaTime() - fpsUpdateTime > 1) {
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
-            fpsUpdateTime = CACurrentMediaTime();
-        }
-    });
+    lastDisplayTime = CACurrentMediaTime();
+    
+    
+    static CFTimeInterval fpsUpdateTime = 0;
+    if (CACurrentMediaTime() - fpsUpdateTime > 1) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps + 5, 60), (int)(coreFps / self.speed)];
+        });
+        fpsUpdateTime = CACurrentMediaTime();
+    }
+    
     
     size_t bufferSize;
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(&bufferSize);
@@ -689,7 +693,6 @@ enum VideoFilter : NSUInteger {
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer + width * height * 4);
     [glkView[1] display];
-    lastDisplayTime = CACurrentMediaTime();
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect

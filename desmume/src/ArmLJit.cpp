@@ -6968,7 +6968,7 @@ static const IROpDecoder iropdecoder_set[IR_MAXNUM] = {
 //                         Code Buffer
 //------------------------------------------------------------
 static const u32 s_CacheReserveMin = 4 * 1024 * 1024;
-static u32 s_CacheReserve = 16 * 1024 * 1024;
+static u32 s_CacheReserve = 16 * 1024 * 1024 * 16;
 static MemBuffer* s_CodeBuffer = NULL;
 
 static void ReleaseCodeBuffer()
@@ -7373,6 +7373,8 @@ TEMPLATE static ArmOpCompiled armcpu_compile()
 	{
 		armcpu_compileblock<PROCNUM>(BlockInfos[BlockNum], BlockNum == 0);
 	}
+    
+    //printf("Block Num: %u\n", BlockInfoNum);
 
 	return (ArmOpCompiled)JITLUT_HANDLE(adr, PROCNUM);
 }
@@ -7393,8 +7395,8 @@ static void cpuReserve()
 	s_pArmAnalyze = new ArmAnalyze(CommonSettings.jit_max_block_size);
 	s_pRegisterMap = new RegisterMapImp(HostRegCount);
 
-	s_pArmAnalyze->m_MergeSubBlocks = false; //Was true
-	s_pArmAnalyze->m_OptimizeFlag = false; //Was true
+	s_pArmAnalyze->m_MergeSubBlocks = true;
+	s_pArmAnalyze->m_OptimizeFlag = true;
 	//s_pArmAnalyze->m_JumpEndDecode = true;
 }
 
@@ -7448,10 +7450,6 @@ inc_t _inc = NULL;
 u32 *p;
 bool ready;
 
-#define iNDS_JIT_SIZE 1024
-
-#include <mutex>  
-std::mutex mtx;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
@@ -7461,16 +7459,15 @@ TEMPLATE static u32 cpuExecuteLJIT()
     if (!opfun) { //We need to compile a new set of instructions
         //printf("Compiling new JIT\n");
         opfun = armcpu_compile<PROCNUM>();
+        if (!opfun) {
+            printf("JIT Broke\n");
+        }
+        usleep(4000);
+    } else {
+        //usleep(100);
     }
-    //Execute the instructions stored in memory
-    //return opfun();
-    //printf("Executing code at address: %p\n", opfun);
-    //mtx.lock();
-    usleep(1500);
-    u32 cycles = opfun(); // Number of cycles
-    //mtx.unlock();
-    //printf("Successful execution with cycles: %d\n", cycles);
-    return cycles;
+    return opfun();
+    
     
 }
 

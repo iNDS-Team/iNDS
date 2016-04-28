@@ -57,6 +57,9 @@
     
     [self.window setTintColor:[UIColor colorWithRed:1 green:59/255.0 blue:48/255.0 alpha:1]];
     
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60)
+                                                         forBarMetrics:UIBarMetricsDefault];
+    
     return YES;
 }
 
@@ -467,6 +470,27 @@
         
         dropboxSection.items = @[dropBox];
         
+        // Core
+        WCEasySettingsSection *coreSection = [[WCEasySettingsSection alloc] initWithTitle:@"Core" subTitle:@""];
+        WCEasySettingsOption *engineOption;
+        if (sizeof(void*) == 4) {
+            engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"
+                                                                      title:@"Emulator Engine"
+                                                                    options:@[@"Interpretor",
+                                                                              @"JIT Recompiler (Beta)"
+                                                                              ]
+                                                            optionSubtitles:nil
+                                                                   subtitle:@"Warning, JIT is still experimental and can slow down or even crash iNDS"];
+        } else if (sizeof(void*) == 8) {
+            engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"
+                                                                      title:@"Emulator Engine"
+                                                                    options:@[@"Interpretor"]
+                                                            optionSubtitles:nil
+                                                                   subtitle:@"JIT is not yet available for your device."];
+        }
+        coreSection.items = @[engineOption];
+        
+        
         // Auto Save
         WCEasySettingsSection *emulatorSection = [[WCEasySettingsSection alloc] initWithTitle:@"Auto Save" subTitle:@""];
         emulatorSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"periodicSave"
@@ -508,7 +532,7 @@
         
         
         
-        _settingsViewController.sections = @[controlsSection, dropboxSection, graphicsSection, emulatorSection, audioSection, interfaceSection, creditsSection];
+        _settingsViewController.sections = @[controlsSection, dropboxSection, graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, creditsSection];
     }
     
     return _settingsViewController;
