@@ -172,6 +172,7 @@
 		CA3224571CC9EF9700C5BEA7 /* xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA3224551CC9EF9700C5BEA7 /* xbrz.cpp */; };
 		CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */; };
 		CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */; };
+		CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D4178E73B500E6809E /* Security.framework */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
@@ -790,6 +791,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */,
 				CA6E609C1CB0574B000B269D /* MobileCoreServices.framework in Frameworks */,
 				CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */,
 				1A5BAE8117D184AD00BABC01 /* AudioToolbox.framework in Frameworks */,

@@ -507,7 +507,7 @@
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         NSString *noRar = @"";
 #ifndef UseRarKit
-        noRar = @"NO RAR";
+        noRar = @"No Rar";
 #endif
         WCEasySettingsSection *creditsSection = [[WCEasySettingsSection alloc]
                                                  initWithTitle:@"Info"
