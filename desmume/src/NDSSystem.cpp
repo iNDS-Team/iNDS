@@ -1519,6 +1519,7 @@ static void execHardware_hblank()
 
 		//BUT! this was removed in order to make glitches in megaman zero collection (mmz 4 1st level) work.
 		//and, it seems that it is no longer necessary in nsmb. perhaps something else fixed it
+		GPU_swapScreens();
 	}
 
 

@@ -433,13 +433,12 @@
                                                                                   @"BRZ 3x",
                                                                                   @"High Quality 2x",
                                                                                   @"High Quality 4x",
-                                                                                  @"BRZ 4x",
-                                                                                  @"BRZ 5x"]
+                                                                                  @"BRZ 4x"]
                                                                    optionSubtitles:nil
                                                                         subtitle:@"Video filters make the picture sharper but can cause the emulator to run slower. Filters are ordered by lowest quality at the top to best at the bottom. If you're not sure, you can experiment or pick the highest quality that still makes games run at 60fps."];
         graphicsSection.items = @[filterOptions];
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x), @(BRZ5x)];
+//            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x)];
 //            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
 //            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
 //            NSMutableArray *filterSubtitles = [NSMutableArray new];

@@ -28,7 +28,7 @@
 
 #define LOGI(...) printf(__VA_ARGS__);printf("\n")
 
-CACHE_ALIGN u8 __GPU_screen[4*256*192];
+CACHE_ALIGN u8 __GPU_screen[2][4*256*192];
 
 extern VideoInfo video;
 
@@ -244,13 +244,13 @@ bool doRomLoad(const char* path, const char* logical)
 
 bool EMU_loadRom(const char* path)
 {
+    paused = 0;
 	return doRomLoad(path, path);
 }
 
 bool NDS_Pause(bool showMsg)
 {
-	if(paused) return false;
-    
+	if(paused == 1) return false;
 	emu_halt();
 	paused = TRUE;
 	SPU_Pause(1);
@@ -487,7 +487,7 @@ void* EMU_getVideoBuffer(size_t *outSize)
 
 void EMU_copyMasterBuffer()
 {
-	video.srcBuffer = (u8*)GPU_screen;
+	video.srcBuffer = GPU_getDisplayBuffer();
 	
 	//convert pixel format to 32bpp for compositing
 	//why do we do this over and over? well, we are compositing to

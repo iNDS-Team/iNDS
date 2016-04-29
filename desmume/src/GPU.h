@@ -868,8 +868,7 @@ static void REG_DISPx_pack_test(GPU * gpu)
 }
 #endif
 
-CACHE_ALIGN extern u8 GPU_screen[4*256*192];
-
+CACHE_ALIGN extern u8 GPU_screen[2][4*256*192];
 
 GPU * GPU_Init(u8 l);
 void GPU_Reset(GPU *g, u8 l);
@@ -937,6 +936,8 @@ int GPU_ChangeGraphicsCore(int coreid);
 void GPU_set_DISPCAPCNT(u32 val) ;
 void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip = false) ;
 void GPU_setMasterBrightness (GPU *gpu, u16 val);
+void GPU_swapScreens();
+u8*  GPU_getDisplayBuffer();
 
 inline void GPU_setWIN0_H(GPU* gpu, u16 val) { gpu->WIN0H0 = val >> 8; gpu->WIN0H1 = val&0xFF; gpu->need_update_winh[0] = true; }
 inline void GPU_setWIN0_H0(GPU* gpu, u8 val) { gpu->WIN0H0 = val;  gpu->need_update_winh[0] = true; }

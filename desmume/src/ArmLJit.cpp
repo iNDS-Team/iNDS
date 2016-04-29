@@ -7457,9 +7457,6 @@ TEMPLATE static u32 cpuExecuteLJIT()
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) {
         opfun = armcpu_compile<PROCNUM>();
-        if (!opfun) {
-            printf("JIT Broke\n");
-        }
     }
     return opfun();
 }
@@ -7476,7 +7473,7 @@ static void cpuSetCacheReserve(u32 reserveInMegs)
 
 static const char* cpuDescription()
 {
-	return "Arm LJit";
+	return "Arm LJitV3";
 }
 
 CpuBase arm_ljit =

@@ -50,11 +50,12 @@ GPU::MosaicLookup GPU::mosaicLookup;
 
 //#define DEBUG_TRI
 
-CACHE_ALIGN u8 GPU_screen[4*256*192];
+CACHE_ALIGN u8 GPU_screen[2][4*256*192];
 CACHE_ALIGN u8 sprWin[256];
 
 
 u16			gpu_angle = 0;
+int         screenNum = 0;
 
 const size sprSizeTab[4][4] = 
 {
@@ -176,6 +177,8 @@ static CACHE_ALIGN GPU GPU_main, GPU_sub;
 GPU * GPU_Init(u8 l)
 {
 	GPU * g;
+    
+    screenNum = 0;
 
 	if(l==0) g = &GPU_main;
 	else g = &GPU_sub;
@@ -197,7 +200,9 @@ GPU * GPU_Init(u8 l)
 void GPU_Reset(GPU *g, u8 l)
 {
 	memset(g, 0, sizeof(GPU));
-
+    
+    screenNum = 0;
+    
 	//important for emulator stability for this to initialize, since we have to setup a table based on it
 	g->BLDALPHA_EVA = 0;
 	g->BLDALPHA_EVB = 0;
@@ -1856,9 +1861,9 @@ int Screen_Init(int coreid)
 	MainScreen.gpu = GPU_Init(0);
 	SubScreen.gpu = GPU_Init(1);
 
-	memset(GPU_screen, 0, sizeof(GPU_screen));
-	for(int i = 0; i < (256*192*2); i++)
-		((u16*)GPU_screen)[i] = 0x7FFF;
+	//memset(GPU_screen, 0, sizeof(GPU_screen));
+	//for(int i = 0; i < (256*192*2); i++)
+	//	((u16*)GPU_screen)[i] = 0x7FFF;
 	disp_fifo.head = disp_fifo.tail = 0;
 
 	if (osd)  {delete osd; osd =NULL; }
@@ -1872,9 +1877,9 @@ void Screen_Reset(void)
 	GPU_Reset(MainScreen.gpu, 0);
 	GPU_Reset(SubScreen.gpu, 1);
 
-	memset(GPU_screen, 0, sizeof(GPU_screen));
-	for(int i = 0; i < (256*192*2); i++)
-		((u16*)GPU_screen)[i] = 0x7FFF;
+	//memset(GPU_screen, 0, sizeof(GPU_screen));
+	//for(int i = 0; i < (256*192*2); i++)
+	//	((u16*)GPU_screen)[i] = 0x7FFF;
 
 	disp_fifo.head = disp_fifo.tail = 0;
 	osd->clear();
@@ -2380,7 +2385,7 @@ static INLINE void GPU_RenderLine_MasterBrightness(NDS_Screen * screen, u16 l)
 {
 	GPU * gpu = screen->gpu;
 
-	u8 * dst =  GPU_screen + (screen->offset + l) * 512;
+	u8 * dst =  GPU_screen[screenNum] + (screen->offset + l) * 512;
 	u16 i16;
 
 	//isn't it odd that we can set uselessly high factors here?
@@ -2563,7 +2568,7 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 	//blacken the screen if it is turned off by the user
 	if(!CommonSettings.showGpu.screens[gpu->core])
 	{
-		u8 * dst =  GPU_screen + (screen->offset + l) * 512;
+		u8 * dst =  GPU_screen[screenNum] + (screen->offset + l) * 512;
 		memset(dst,0,512);
 		return;
 	}
@@ -2603,7 +2608,7 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 	//generate the 2d engine output
 	if(gpu->dispMode == 1) {
 		//optimization: render straight to the output buffer when thats what we are going to end up displaying anyway
-		gpu->tempScanline = screen->gpu->currDst = (u8 *)(GPU_screen) + (screen->offset + l) * 512;
+		gpu->tempScanline = screen->gpu->currDst = (u8 *)(GPU_screen[screenNum]) + (screen->offset + l) * 512;
 	} else {
 		//otherwise, we need to go to a temp buffer
 		gpu->tempScanline = screen->gpu->currDst = (u8 *)gpu->tempScanlineBuffer;
@@ -2615,7 +2620,7 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 	{
 		case 0: // Display Off(Display white)
 			{
-				u8 * dst =  GPU_screen + (screen->offset + l) * 512;
+				u8 * dst =  GPU_screen[screenNum] + (screen->offset + l) * 512;
 
 				for (int i=0; i<256; i++)
 					HostWriteWord(dst, i << 1, 0x7FFF);
@@ -2628,7 +2633,7 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 
 		case 2: // Display vram framebuffer
 			{
-				u8 * dst = GPU_screen + (screen->offset + l) * 512;
+				u8 * dst = GPU_screen[screenNum] + (screen->offset + l) * 512;
 				u8 * src = gpu->VRAMaddr + (l*512);
 				memcpy (dst, src, 512);
 			}
@@ -2637,7 +2642,7 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 			{
 				//this has not been tested since the dma timing for dispfifo was changed around the time of
 				//newemuloop. it may not work.
-				u8 * dst =  GPU_screen + (screen->offset + l) * 512;
+				u8 * dst =  GPU_screen[screenNum] + (screen->offset + l) * 512;
 				for (int i=0; i < 128; i++)
 					T1WriteLong(dst, i << 2, DISP_FIFOrecv() & 0x7FFF7FFF);
 			}
@@ -2658,12 +2663,22 @@ void GPU_RenderLine(NDS_Screen * screen, u16 l, bool skip)
 	GPU_RenderLine_MasterBrightness(screen, l);
 }
 
+void GPU_swapScreens()
+{
+    screenNum = !screenNum;
+}
+
+u8* GPU_getDisplayBuffer()
+{
+    return GPU_screen[!screenNum];
+}
+
 void gpu_savestate(EMUFILE* os)
 {
 	//version
 	write32le(1,os);
 	
-	os->fwrite((char*)GPU_screen,sizeof(GPU_screen));
+	os->fwrite((char*)GPU_screen[screenNum],sizeof(GPU_screen));
 	
 	write32le(MainScreen.gpu->affineInfo[0].x,os);
 	write32le(MainScreen.gpu->affineInfo[0].y,os);
@@ -2694,7 +2709,7 @@ bool gpu_loadstate(EMUFILE* is, int size)
 
 	if(version<0||version>1) return false;
 
-	is->fread((char*)GPU_screen,sizeof(GPU_screen));
+	is->fread((char*)GPU_screen[screenNum],sizeof(GPU_screen[screenNum]));
 
 	if(version==1)
 	{
