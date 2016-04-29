@@ -7457,6 +7457,8 @@ TEMPLATE static u32 cpuExecuteLJIT()
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) {
         opfun = armcpu_compile<PROCNUM>();
+        if (!opfun)
+            printf("Unable to compile JIT\n");
     }
     return opfun();
 }

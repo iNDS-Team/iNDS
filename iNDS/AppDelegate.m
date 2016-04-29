@@ -428,7 +428,7 @@
                                                                                   @"Super Eagle",
                                                                                   @"2xSaI",
                                                                                   @"Super 2xSaI",
-                                                                                  @"BRZ 2x",
+                                                                                  @"BRZ 2x (Recommended)",
                                                                                   @"Low Quality 2x",
                                                                                   @"BRZ 3x",
                                                                                   @"High Quality 2x",
@@ -470,7 +470,7 @@
         dropboxSection.items = @[dropBox];
         
         // Core
-        WCEasySettingsSection *coreSection = [[WCEasySettingsSection alloc] initWithTitle:@"Core" subTitle:@""];
+        WCEasySettingsSection *coreSection = [[WCEasySettingsSection alloc] initWithTitle:@"Core" subTitle:@"JIT can be used to speedup emulation but only a few devices are capable of running it right now."];
         WCEasySettingsOption *engineOption;
         if (sizeof(void*) == 4) {
             engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"
@@ -505,9 +505,13 @@
         
         // Credits
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+        NSString *noRar = @"";
+#ifndef UseRarKit
+        noRar = @"NO RAR";
+#endif
         WCEasySettingsSection *creditsSection = [[WCEasySettingsSection alloc]
                                                  initWithTitle:@"Info"
-                                                 subTitle:[NSString stringWithFormat:@"Version %@", myVersion]];
+                                                 subTitle:[NSString stringWithFormat:@"Version %@ %@", myVersion, noRar]];
         
         creditsSection.items = @[[[WCEasySettingsUrl alloc] initWithTitle:@"Will Cobb"
                                                                  subtitle:@"Developer"
