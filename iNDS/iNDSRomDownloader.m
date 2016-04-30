@@ -45,10 +45,10 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    urlField.text = @"http://www.google.com/search?q=Nintendo+DS+Roms";
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.google.com/search?q=Nintendo+DS+Roms"]]];
     //[webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://10.0.1.20:8000"]]];
     webView.scrollView.delegate = self;
-    urlField.text = @"http://www.google.com/search?q=Nintendo+DS+Roms";
     lastURL = urlField.text;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
