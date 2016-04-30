@@ -6968,7 +6968,7 @@ static const IROpDecoder iropdecoder_set[IR_MAXNUM] = {
 //                         Code Buffer
 //------------------------------------------------------------
 static const u32 s_CacheReserveMin = 4 * 1024 * 1024;
-static u32 s_CacheReserve = 16 * 1024 * 1024 * 16;
+static u32 s_CacheReserve = 16 * 1024 * 1024;
 static MemBuffer* s_CodeBuffer = NULL;
 
 static void ReleaseCodeBuffer()

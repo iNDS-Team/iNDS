@@ -22,19 +22,22 @@
     [self.tableView registerClass:[WCEasySettingsSliderCell class] forCellReuseIdentifier:@"Slider"];
     [self.tableView registerClass:[WCEasySettingsUrlCell class] forCellReuseIdentifier:@"Url"];
     [self.tableView registerClass:[WCEasySettingsCustomCell class] forCellReuseIdentifier:@"Custom"];
-    if (self.navigationController.viewControllers[0] == self) { // We are the main view so add an exit
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.tableView reloadData];
+    NSLog(@"%@", self.navigationController.viewControllers);
+    if (self.navigationController.viewControllers.count == 1) { // We are the main view so add an exit
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]
                                        initWithTitle:@"Done"
                                        style:UIBarButtonItemStyleDone
                                        target:self
                                        action:@selector(done)];
         self.navigationItem.leftBarButtonItem = doneButton;
+    } else {
+        self.navigationItem.leftBarButtonItem = nil; 
     }
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [self.tableView reloadData];
 }
 
 - (void)done

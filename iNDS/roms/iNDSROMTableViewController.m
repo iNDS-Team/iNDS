@@ -32,6 +32,17 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
+#ifdef DEBUG
+    self.title = @"DEBUG MODE";
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"debugAlert"]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            SCLAlertView * alert = [[SCLAlertView alloc] init];
+            alert.iconTintColor = [UIColor whiteColor];
+            alert.shouldDismissOnTapOutside = YES;
+            [alert showWarning:self title:@"Debug Mode" subTitle:@"Warning you are running iNDS in debug mode which is very slow. Please change the build configuration to Release if you are not planning on debugging." closeButtonTitle:@"Got it" duration:0.0];
+        });
+    }
+#endif
 }
 
 - (void)didReceiveMemoryWarning

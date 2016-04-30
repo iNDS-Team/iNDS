@@ -119,10 +119,9 @@ static u32 GetPageSize()
 	return (u32)sysconf(_SC_PAGESIZE);
 }
 
-static int ConvertToLnxApi(int mode)
+int MemBuffer::ConvertToLnxApi(int mode)
 {
 	int lnxmode = 0;
-
 	if (mode & MemBuffer::kExec)
 		lnxmode |= PROT_EXEC | PROT_READ;
 	if (mode & MemBuffer::kRead)
@@ -145,8 +144,16 @@ u8* MemBuffer::Reserve(u32 size)
 	m_CommittedSize = 0;
 
 	m_Baseptr = (u8*)mmap(NULL, m_ReservedSize, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-	if (m_Baseptr == MAP_FAILED || !Commit(m_DefSize))
+    //m_Baseptr = (u8*)mmap(NULL, m_ReservedSize, PROT_EXEC | PROT_READ | PROT_WRITE , MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (m_Baseptr == MAP_FAILED) {
+        printf("MMAP failed: %u\n", m_ReservedSize);
 		Release();
+        return m_Baseptr;
+    }
+    if (!Commit(m_DefSize)) {
+        printf("Commit failed\n");
+        Release();
+    }
 
 	return m_Baseptr;
 }

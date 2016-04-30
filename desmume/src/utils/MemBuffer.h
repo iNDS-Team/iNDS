@@ -52,6 +52,8 @@ public:
 	u32 GetCommittedSize();
 
 	u32 GetUsedSize();
+    
+    int ConvertToLnxApi(int mode);
 
 protected:
 	bool Commit(u32 size);

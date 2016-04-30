@@ -1,13 +1,14 @@
-Microphone
-Internal Resolution
 MiFi button mapping
-Keep Music playing when sound is disabled
 Single Screen Layout
 Add game recording
 Simulate physical actions (Lid Close)
 Color Change
 Overhaul layout once everything is done
-JIT rewrite
+
+In Progress:
+Microphone
+JIT
+Arm 64 JIT
 
 Done:
 X Use volume buttons as bumpers
