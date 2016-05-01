@@ -173,9 +173,6 @@
 		CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */; };
 		CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */; };
 		CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D4178E73B500E6809E /* Security.framework */; };
-		CA3224E41CD5BB2A00C5BEA7 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CA3224E61CD5BB2E00C5BEA7 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
@@ -280,7 +277,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CA3224E61CD5BB2E00C5BEA7 /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -809,9 +805,7 @@
 				D32C39D3178E73A600E6809E /* CFNetwork.framework in Frameworks */,
 				4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */,
 				BFAE6F9B17674D93000911CF /* libz.dylib in Frameworks */,
-				CA3224E41CD5BB2A00C5BEA7 /* UnrarKit.framework in Frameworks */,
 				BFAE6F931767490A000911CF /* OpenGLES.framework in Frameworks */,
-				CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */,
 				BFAE6F9117674902000911CF /* GLKit.framework in Frameworks */,
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
