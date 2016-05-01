@@ -2678,7 +2678,7 @@ void gpu_savestate(EMUFILE* os)
 	//version
 	write32le(1,os);
 	
-	os->fwrite((char*)GPU_screen[screenNum],sizeof(GPU_screen));
+	os->fwrite((char*)GPU_screen[screenNum],sizeof(GPU_screen[0]));
 	
 	write32le(MainScreen.gpu->affineInfo[0].x,os);
 	write32le(MainScreen.gpu->affineInfo[0].y,os);
