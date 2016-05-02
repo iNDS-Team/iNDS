@@ -475,7 +475,7 @@
         if (sizeof(void*) == 4) {
             engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"
                                                                       title:@"Emulator Engine"
-                                                                    options:@[@"Interpretor",
+                                                                    options:@[@"Interpreter",
                                                                               @"JIT Recompiler (Beta)"
                                                                               ]
                                                             optionSubtitles:nil

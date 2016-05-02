@@ -565,6 +565,7 @@ enum VideoFilter : NSUInteger {
 
 - (void)suspendEmulation
 {
+    [self setLidClosed:YES];
     NSLog(@"Suspending");
     [self pauseEmulation];
     // Shutting down while editing a layout causes a ton of problems.
@@ -662,8 +663,8 @@ enum VideoFilter : NSUInteger {
 
 - (void)updateDisplay
 {
-    if (texHandle[0] == 0) return;
-    // Clacl fps
+    if (texHandle[0] == 0 || !execute) return;
+    // Calculate fps
     static CFTimeInterval lastDisplayTime = 0;
     videoFps = videoFps * 0.95 + (1 / (CACurrentMediaTime() - lastDisplayTime)) * 0.05;
     lastDisplayTime = CACurrentMediaTime();
@@ -891,25 +892,30 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 {
     UIView * statusBar = [self statuBarView];
     if (!settingsShown) { //About to show settings
-        [volumeStealer performSelector:@selector(stopStealingVolumeButtonEvents) withObject:nil afterDelay:0.1]; //Non blocking
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
-           [[UIApplication sharedApplication] setStatusBarHidden:NO];
-            statusBar.alpha = 0;
-        }
-        [self.settingsContainer setHidden:NO];
-        [self pauseEmulation];
-        [UIView animateWithDuration:0.3 animations:^{
-            self.darkenView.hidden = NO;
-            self.darkenView.alpha = 0.6;
-            self.settingsContainer.alpha = 1;
+        [self setLidClosed:YES];
+        // Give time for lid close
+        //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [volumeStealer performSelector:@selector(stopStealingVolumeButtonEvents) withObject:nil afterDelay:0.1]; //Non blocking
             if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
-                statusBar.alpha = 1;
+                [[UIApplication sharedApplication] setStatusBarHidden:NO];
+                statusBar.alpha = 0;
             }
-        } completion:^(BOOL finished) {
-            settingsShown = YES;
-            if (!inEditingMode)
-                [CHBgDropboxSync start];
-        }];
+            [self.settingsContainer setHidden:NO];
+            [self pauseEmulation];
+            [UIView animateWithDuration:0.3 animations:^{
+                self.darkenView.hidden = NO;
+                self.darkenView.alpha = 0.6;
+                self.settingsContainer.alpha = 1;
+                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+                    statusBar.alpha = 1;
+                }
+            } completion:^(BOOL finished) {
+                settingsShown = YES;
+                if (!inEditingMode)
+                    [CHBgDropboxSync start];
+            }];
+        //});
+        
     } else {
         if ([[NSUserDefaults standardUserDefaults] integerForKey:@"volumeBumper"]) {
             [volumeStealer performSelector:@selector(startStealingVolumeButtonEvents) withObject:nil afterDelay:0.1];
@@ -927,6 +933,8 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         }];
 
         disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
+        
+        [self setLidClosed:NO];
     }
     
 }
@@ -987,6 +995,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         [self toggleSettings:self];
     });
     [self saveStateWithName:@"iNDSReloadState"];
+    //[self setLidClosed:NO];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

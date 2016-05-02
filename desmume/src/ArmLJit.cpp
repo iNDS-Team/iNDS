@@ -7451,16 +7451,27 @@ inc_t _inc = NULL;
 u32 *p;
 bool ready;
 
+#define PAGESIZE 4096
+uintptr_t * opPtr;
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) {
+        if (opPtr) {
+            //Reprotect old page
+        }
         opfun = armcpu_compile<PROCNUM>();
         if (!opfun)
             printf("Unable to compile JIT\n");
     }
-    return opfun();
+    
+    opPtr = (uintptr_t*)opfun;
+    opPtr = (uintptr_t *)((uintptr_t)opPtr & 0xFFFFF000); //Assuming page size is 4096
+    mprotect(opPtr, PAGESIZE* 2, PROT_READ | PROT_EXEC);
+    u32 cycles = opfun();
+    mprotect(opPtr, PAGESIZE * 2, PROT_WRITE);
+    return cycles;
 }
 
 static u32 cpuGetCacheReserve()
@@ -7475,7 +7486,7 @@ static void cpuSetCacheReserve(u32 reserveInMegs)
 
 static const char* cpuDescription()
 {
-	return "Arm LJitV3";
+	return "Arm LJitV4";
 }
 
 CpuBase arm_ljit =

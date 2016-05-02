@@ -55,17 +55,19 @@ public:
     
     int ConvertToLnxApi(int mode);
 
+    u8* m_Baseptr;
+    
+    u32 m_ReservedSize;
+    
 protected:
 	bool Commit(u32 size);
 
 private:
-	u8* m_Baseptr;
 
 	u32 m_Mode;
 
 	u32 m_DefSize;
 
-	u32 m_ReservedSize;
 	u32 m_ReservedPages;
 
 	u32 m_CommittedSize;
