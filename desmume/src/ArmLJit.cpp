@@ -7112,8 +7112,13 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
 			return;
 		}
 	}
-
-	uintptr_t opfun = (uintptr_t)jit_set_ip(ptr).ptr;
+    uintptr_t opfun = (uintptr_t)jit_set_ip(ptr).ptr;
+	
+    // Protect region for writing -Will
+//    uintptr_t * opPtr = (uintptr_t*)opfun;
+//    opPtr = (uintptr_t *)((uintptr_t)opPtr & 0xFFFFF000); //Assuming page size is 4096
+//    mprotect(opPtr, 4096 * 2, PROT_WRITE);
+    //
 
 	s_pRegisterMap->Start(NULL, GETCPUPTR);
 
@@ -7334,6 +7339,9 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
 	//}
 
 	JITLUT_HANDLE(Address, PROCNUM) = opfun;
+    
+    // Reprotect page for execution
+    //mprotect(opPtr, 4096 * 2, PROT_READ | PROT_EXEC);
 
 	u8* ptr_end = (u8*)jit_get_ip().ptr;
 	u32 used_size = (u8*)ptr_end - (u8*)ptr;
@@ -7452,26 +7460,17 @@ u32 *p;
 bool ready;
 
 #define PAGESIZE 4096
-uintptr_t * opPtr;
+
 
 TEMPLATE static u32 cpuExecuteLJIT()
 {
     ArmOpCompiled opfun = (ArmOpCompiled)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
     if (!opfun) {
-        if (opPtr) {
-            //Reprotect old page
-        }
         opfun = armcpu_compile<PROCNUM>();
         if (!opfun)
             printf("Unable to compile JIT\n");
     }
-    
-    opPtr = (uintptr_t*)opfun;
-    opPtr = (uintptr_t *)((uintptr_t)opPtr & 0xFFFFF000); //Assuming page size is 4096
-    mprotect(opPtr, PAGESIZE* 2, PROT_READ | PROT_EXEC);
-    u32 cycles = opfun();
-    mprotect(opPtr, PAGESIZE * 2, PROT_WRITE);
-    return cycles;
+    return opfun();
 }
 
 static u32 cpuGetCacheReserve()
