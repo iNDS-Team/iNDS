@@ -35,7 +35,7 @@ TPCircularBuffer buffer;
         audioDescription.mFramesPerPacket   = 1;
         audioDescription.mBytesPerFrame     = sizeof(UInt8);
         audioDescription.mBitsPerChannel    = 8 * sizeof(UInt8);
-        audioDescription.mSampleRate        = 48000.0;
+        audioDescription.mSampleRate        = 16000.0;
         
         microphone = [EZMicrophone microphoneWithDelegate:self withAudioStreamBasicDescription:audioDescription];
         
