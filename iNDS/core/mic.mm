@@ -18,7 +18,7 @@ TPCircularBuffer *buf;
 bool micEnabled;
 volatile float micSampleRate = 0.0;
 
-#define SampleRateModifer 3
+#define SampleRateModifer 1
 
 void Mic_DeInit(){
     printf("Mic_DeInit\n");

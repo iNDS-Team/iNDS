@@ -608,7 +608,7 @@ enum VideoFilter : NSUInteger {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-    //dispatch_async(dispatch_get_main_queue(), ^{
+        NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
         displaySemaphore = dispatch_semaphore_create(1);
         CGFloat framesToRender = 0;
         lastAutosave = CACurrentMediaTime();
@@ -634,16 +634,22 @@ enum VideoFilter : NSUInteger {
                     [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
                 }
                 lastAutosave = CACurrentMediaTime();
+                filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
             }
-            
-            // Core will always be one frame ahead
-            dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            if (filter == 0) {
                 EMU_copyMasterBuffer();
-                //This will automatically throttle fps to 60
                 [self updateDisplay];
-                dispatch_semaphore_signal(displaySemaphore);
-            });
+            } else {
+                // Run the filter on a seperate thread to increase performance
+                // Core will always be one frame ahead
+                dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                    EMU_copyMasterBuffer();
+                    //This will automatically throttle fps to 60
+                    [self updateDisplay];
+                    dispatch_semaphore_signal(displaySemaphore);
+                });
+            }
         }
         [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
         [emuLoopLock unlock];
@@ -725,6 +731,7 @@ enum VideoFilter : NSUInteger {
 
 - (void)setLidClosed:(BOOL)closed
 {
+    return; //Disabled until freezing is fixed
     if (closed) {
         EMU_buttonDown((BUTTON_ID)13);
     } else {
