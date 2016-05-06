@@ -15,6 +15,8 @@ typedef void (^ActionBlock)();
     ActionBlock onDisableBlock;
 }
 
+@property BOOL readOnlyIdentifier;
+
 - (void)setEnableBlock:(ActionBlock)block;
 - (void)setDisableBlock:(ActionBlock)block;
 - (id)initWithIdentifier:(NSString *)identifier title:(NSString *)title;

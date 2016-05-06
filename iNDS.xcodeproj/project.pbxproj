@@ -26,7 +26,6 @@
 		4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3F2AEC178E017600AE10B8 /* Twitter.framework */; };
 		8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */; };
 		8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */; };
-		8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */; };
 		8BEA096A17872C190060B347 /* iNDSButtonControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096717872C190060B347 /* iNDSButtonControl.m */; };
 		8BEA096B17872C190060B347 /* iNDSDirectionalControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096917872C190060B347 /* iNDSDirectionalControl.m */; };
 		8BEA097117872C320060B347 /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA096F17872C320060B347 /* GLProgram.m */; };
@@ -176,6 +175,9 @@
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
+		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
+		CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */; };
+		CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */; };
 		CA6E60951CB056A0000B269D /* AFHTTPSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6E60891CB056A0000B269D /* AFHTTPSessionManager.m */; };
 		CA6E60961CB056A0000B269D /* AFNetworkReachabilityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6E608C1CB056A0000B269D /* AFNetworkReachabilityManager.m */; };
 		CA6E60971CB056A0000B269D /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6E608E1CB056A0000B269D /* AFSecurityPolicy.m */; };
@@ -308,8 +310,6 @@
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSROMTableViewController.h; path = iNDS/roms/iNDSROMTableViewController.h; sourceTree = SOURCE_ROOT; };
-		8BEA096317872C080060B347 /* iNDSEmulatorSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSEmulatorSettingsViewController.h; path = iNDS/settings/iNDSEmulatorSettingsViewController.h; sourceTree = SOURCE_ROOT; };
-		8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSEmulatorSettingsViewController.m; path = iNDS/settings/iNDSEmulatorSettingsViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096617872C190060B347 /* iNDSButtonControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSButtonControl.h; path = iNDS/controls/iNDSButtonControl.h; sourceTree = SOURCE_ROOT; };
 		8BEA096717872C190060B347 /* iNDSButtonControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSButtonControl.m; path = iNDS/controls/iNDSButtonControl.m; sourceTree = SOURCE_ROOT; };
 		8BEA096817872C190060B347 /* iNDSDirectionalControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSDirectionalControl.h; path = iNDS/controls/iNDSDirectionalControl.h; sourceTree = SOURCE_ROOT; };
@@ -609,9 +609,16 @@
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		CA4258121CADBD4900BFD05E /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		CA4258131CADBD4900BFD05E /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		CA4846591CDC574D005030EF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		CA570B631C3B8AA300918E3A /* MHWDirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHWDirectoryWatcher.h; sourceTree = "<group>"; };
 		CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHWDirectoryWatcher.m; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
+		CA68821B1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSBuildStoreTableViewController.h; sourceTree = "<group>"; };
+		CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSBuildStoreTableViewController.m; sourceTree = "<group>"; };
+		CA6882221CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCBuildStoreAuthenticateViewController.h; path = WCBuildStoreClient/WCBuildStoreAuthenticateViewController.h; sourceTree = "<group>"; };
+		CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCBuildStoreAuthenticateViewController.m; path = WCBuildStoreClient/WCBuildStoreAuthenticateViewController.m; sourceTree = "<group>"; };
+		CA6882251CDC19B400B0ED05 /* WCBuildStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCBuildStoreClient.h; path = WCBuildStoreClient/WCBuildStoreClient.h; sourceTree = "<group>"; };
+		CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCBuildStoreClient.m; path = WCBuildStoreClient/WCBuildStoreClient.m; sourceTree = "<group>"; };
 		CA6E60881CB056A0000B269D /* AFHTTPSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPSessionManager.h; sourceTree = "<group>"; };
 		CA6E60891CB056A0000B269D /* AFHTTPSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPSessionManager.m; sourceTree = "<group>"; };
 		CA6E608A1CB056A0000B269D /* AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFNetworking.h; sourceTree = "<group>"; };
@@ -964,12 +971,13 @@
 		BF9D51751786A60E00B5864B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				CA6882211CDC194000B0ED05 /* WCBuildStore */,
 				CAE6736A1CC804DD00E46EDF /* WCEasySettings */,
-				8BEA096317872C080060B347 /* iNDSEmulatorSettingsViewController.h */,
-				8BEA096417872C080060B347 /* iNDSEmulatorSettingsViewController.m */,
 				28E7A6ED1787D110003A9C5B /* Defaults.plist */,
 				CA32245B1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.h */,
 				CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */,
+				CA68821B1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.h */,
+				CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -1025,6 +1033,7 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CA4846591CDC574D005030EF /* WebKit.framework */,
 				CA6E609B1CB0574B000B269D /* MobileCoreServices.framework */,
 				CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */,
 				CABE38971C30FA9800BE8857 /* libsqlite3.tbd */,
@@ -1366,6 +1375,17 @@
 				CA32245F1CCD4C2400C5BEA7 /* iNDS.profdata */,
 			);
 			path = OptimizationProfiles;
+			sourceTree = "<group>";
+		};
+		CA6882211CDC194000B0ED05 /* WCBuildStore */ = {
+			isa = PBXGroup;
+			children = (
+				CA6882251CDC19B400B0ED05 /* WCBuildStoreClient.h */,
+				CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */,
+				CA6882221CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.h */,
+				CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */,
+			);
+			name = WCBuildStore;
 			sourceTree = "<group>";
 		};
 		CA6E60871CB05695000B269D /* AFNetworking */ = {
@@ -1838,6 +1858,7 @@
 				BFCFE18817650FB0000A70CF /* cp15.cpp in Sources */,
 				BFCFE18917650FB0000A70CF /* CpuBase.cpp in Sources */,
 				BFCFE18A17650FB0000A70CF /* debug.cpp in Sources */,
+				CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */,
 				BFCFE18B17650FB0000A70CF /* Disassembler.cpp in Sources */,
 				BFCFE18C17650FB0000A70CF /* driver.cpp in Sources */,
 				CAB2C4911CB5F29500ED22BB /* iNDSMicrophone.m in Sources */,
@@ -1884,7 +1905,6 @@
 				BFCFE19F17650FB0000A70CF /* rtc.cpp in Sources */,
 				CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */,
 				BFCFE1A017650FB0000A70CF /* saves.cpp in Sources */,
-				8BEA096517872C080060B347 /* iNDSEmulatorSettingsViewController.m in Sources */,
 				CAB2C4C11CB5F2C300ED22BB /* EZPlot.m in Sources */,
 				CAA59B131CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m in Sources */,
 				8BEA097E17872C5E0060B347 /* main.m in Sources */,
@@ -1928,6 +1948,7 @@
 				CAE6738E1CC824F900E46EDF /* WCEasySettingsSlider.m in Sources */,
 				BFCFE1D717651076000A70CF /* dlditool.cpp in Sources */,
 				BFCFE1D817651076000A70CF /* emufat.cpp in Sources */,
+				CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */,
 				BFCFE1D917651076000A70CF /* FileMap.cpp in Sources */,
 				CA031CC91BEBDC4F00EDE98D /* mztools.c in Sources */,
 				BFCFE1DA17651076000A70CF /* guid.cpp in Sources */,
@@ -1959,6 +1980,7 @@
 				BFCFE222176634AF000A70CF /* libfat.cpp in Sources */,
 				BFCFE223176634AF000A70CF /* lock.cpp in Sources */,
 				8BEA097117872C320060B347 /* GLProgram.m in Sources */,
+				CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */,
 				CAB2C4B71CB5F2C300ED22BB /* EZAudioFFT.m in Sources */,
 				BFCFE224176634AF000A70CF /* partition.cpp in Sources */,
 				BFCFE22B176634C6000A70CF /* tinystr.cpp in Sources */,

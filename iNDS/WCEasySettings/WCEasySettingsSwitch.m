@@ -21,13 +21,13 @@
 
 - (void)onSwitch:(UISwitch *)s
 {
-    [[NSUserDefaults standardUserDefaults] setBool:s.on forKey:self.identifier];
+    if (!self.readOnlyIdentifier)
+        [[NSUserDefaults standardUserDefaults] setBool:s.on forKey:self.identifier];
     if (s.on && onEnableBlock) {
         onEnableBlock();
     } else if (!s.on && onDisableBlock) {
         onDisableBlock();
     }
-    
 }
 
 - (void)setEnableBlock:(ActionBlock)block

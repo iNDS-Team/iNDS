@@ -3,6 +3,7 @@ Single Screen Layout
 Add game recording
 Simulate physical actions (Lid Close)
 Color Change
+Import saves and roms from nds4ios
 Overhaul layout once everything is done
 
 In Progress:

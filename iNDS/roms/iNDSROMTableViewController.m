@@ -15,7 +15,7 @@
 #import "SCLAlertView.h"
 #import "MHWDirectoryWatcher.h"
 #import "WCEasySettingsViewController.h"
-
+#import "WCBuildStoreClient.h"
 
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
@@ -184,5 +184,5 @@
 }
 
 
-
 @end
+

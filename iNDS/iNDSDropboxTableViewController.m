@@ -30,6 +30,7 @@
     client.delegate = self;
     
     dropBoxSwitch = [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableDropbox" title:@"Enable Dropbox Sync"];
+    dropBoxSwitch.readOnlyIdentifier = YES;
     __weak id weakSelf = self;
     [dropBoxSwitch setEnableBlock:^{
         [[DBSession sharedSession] linkFromController:weakSelf];
@@ -56,6 +57,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [client loadAccountInfo];
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
