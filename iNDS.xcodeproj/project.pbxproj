@@ -930,6 +930,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CA4846611CDFDF2E005030EF /* Test */,
 				CABE38BF1C34B8B800BE8857 /* Icons */,
 				CAB2C42F1CB222AF00ED22BB /* cheats.rar */,
 				CAB2C42B1CB21C2000ED22BB /* cheats.7z */,
@@ -1380,6 +1381,14 @@
 				CA32245F1CCD4C2400C5BEA7 /* iNDS.profdata */,
 			);
 			path = OptimizationProfiles;
+			sourceTree = "<group>";
+		};
+		CA4846611CDFDF2E005030EF /* Test */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Test;
+			path = iNDS/Test;
 			sourceTree = "<group>";
 		};
 		CA6882211CDC194000B0ED05 /* WCBuildStore */ = {

@@ -355,9 +355,9 @@ void iNDS_user()
 	}
 }
 
-void iNDS_throttle()
+bool iNDS_frameSkip()
 {
-    
+    bool skipped;
     //Change in skip rate
 	if(lastskiprate != frameskiprate)
 	{
@@ -373,6 +373,7 @@ void iNDS_throttle()
         
 		if (mainLoopData.framestoskip > 0)
 			mainLoopData.skipnextframe = 1;
+        skipped = false;
 	}
 	else //Skip
 	{
@@ -386,22 +387,11 @@ void iNDS_throttle()
 		mainLoopData.framesskipped++;
         
 		NDS_SkipNextFrame();
+        skipped = true;
 	}
     
-	if (autoframeskipenab && frameskiprate)
-	{
-		if(!frameAdvance && !continuousframeAdvancing)
-		{
-			AutoFrameSkip_NextFrame();
-			if (mainLoopData.framestoskip < 1)
-				mainLoopData.framestoskip += AutoFrameSkip_GetSkipAmount(0, frameskiprate);
-		}
-	}
-    
-	else
-	{
-		if (mainLoopData.framestoskip < 1)
-			mainLoopData.framestoskip += frameskiprate;
+    if (mainLoopData.framestoskip < 1) {
+        mainLoopData.framestoskip += frameskiprate;
 	}
     
 	if(execute && emu_paused && !frameAdvance)
@@ -411,6 +401,7 @@ void iNDS_throttle()
 	}
     
 	//ServiceDisplayThreadInvocations();
+    return skipped;
 }
 
 int EMU_runOther()
@@ -418,7 +409,7 @@ int EMU_runOther()
 	if(execute)
 	{
 		iNDS_user();
-		iNDS_throttle();
+		iNDS_frameSkip();
 		return mainLoopData.fps > 0 ? mainLoopData.fps : 1;
 	}
 	return 1;

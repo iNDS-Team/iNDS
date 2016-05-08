@@ -38,7 +38,7 @@ bool EMU_loadRom(const char* path);
 void EMU_change3D(int type);
 void EMU_changeSound(int type);
 void EMU_enableSound(bool enable);
-void iNDS_throttle();
+bool iNDS_frameSkip();
 void EMU_setFrameSkip(int skip);
 void EMU_setCPUMode(int cpuMode);
 void EMU_setSynchMode(bool enabled);

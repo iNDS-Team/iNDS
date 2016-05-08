@@ -502,7 +502,16 @@
                                                             optionSubtitles:nil
                                                                    subtitle:@"JIT is not yet available for your device."];
         }
-        coreSection.items = @[engineOption];
+        
+        coreSection.items = @[engineOption,
+                              [[WCEasySettingsSegment alloc] initWithIdentifier:@"frameSkip"
+                                                                          title:@"Frame Skip"
+                                                                          items:@[@"None",
+                                                                                  @"1",
+                                                                                  @"2",
+                                                                                  @"3",
+                                                                                  @"4"]]
+                              ];
         
         
         // Auto Save

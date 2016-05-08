@@ -136,6 +136,7 @@ enum VideoFilter : NSUInteger {
     RBVolumeButtons *volumeStealer;
     SharkfoodMuteSwitchDetector *muteDetector;
     
+    CADisplayLink *coreLink;
     dispatch_semaphore_t displaySemaphore;
 }
 
@@ -261,6 +262,15 @@ enum VideoFilter : NSUInteger {
     control.delegate = self;
     
     disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
+    
+    coreLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(emulatorLoop)];
+    coreLink.paused = YES;
+    NSLog(@"Time Interval: %f", coreLink.duration);
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        [coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+        [[NSRunLoop currentRunLoop] run];
+    });
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -433,6 +443,8 @@ enum VideoFilter : NSUInteger {
 
 #pragma mark - Playing ROM
 
+
+
 - (void)loadROM {
     NSLog(@"Loading ROM %@", self.game.path);
     EMU_setWorkingDir([[self.game.path stringByDeletingLastPathComponent] fileSystemRepresentation]);
@@ -488,12 +500,7 @@ enum VideoFilter : NSUInteger {
     self.profile.mainScreen = glkView[0];
     self.profile.touchScreen = glkView[1];
     
-    //ToDo: make this better
-    BOOL bicubic = [[NSUserDefaults standardUserDefaults] boolForKey:@"highresGraphics"];
-    if (bicubic) {
-        kFragShader = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Shader" ofType:@"fsh"] encoding:NSUTF8StringEncoding error:nil];
-    } else {
-        kFragShader = SHADER_STRING (
+    kFragShader = SHADER_STRING (
                        uniform sampler2D inputImageTexture;
                        varying highp vec2 texCoord;
                        
@@ -503,7 +510,7 @@ enum VideoFilter : NSUInteger {
                            gl_FragColor = color;
                        }
                        );
-    }
+    
     
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
     
@@ -528,7 +535,7 @@ enum VideoFilter : NSUInteger {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, bicubic ? GL_NEAREST : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
@@ -536,7 +543,7 @@ enum VideoFilter : NSUInteger {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, bicubic ? GL_NEAREST : GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
@@ -610,53 +617,71 @@ enum VideoFilter : NSUInteger {
 {
     [self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
-        displaySemaphore = dispatch_semaphore_create(1);
-        CGFloat framesToRender = 0;
-        lastAutosave = CACurrentMediaTime();
-        [emuLoopLock lock];
-        [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
-        CFTimeInterval coreStart, loopStart;
-        coreFps = videoFps = 30;
-        while (execute) {
-            loopStart = CACurrentMediaTime();
-            framesToRender += self.speed;
-            
-            for (;framesToRender >= 1; framesToRender--) {
-                coreStart = CACurrentMediaTime();
-                EMU_runCore();
-                coreFps = coreFps * 0.95 + (1 / (CACurrentMediaTime() - coreStart)) * 0.05;
-            }
-            
-            if (CACurrentMediaTime() - lastAutosave > 180) {
-                CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
-                coreTime = coreTime * 0.95 + (CACurrentMediaTime() - coreStart) * 0.05;
-                [[NSUserDefaults standardUserDefaults] setFloat:coreTime forKey:@"coreTime"];
-                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
-                    [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
-                }
-                lastAutosave = CACurrentMediaTime();
-                filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
-            }
-            if (filter == 0) {
-                EMU_copyMasterBuffer();
-                [self updateDisplay];
-            } else {
-                // Run the filter on a seperate thread to increase performance
-                // Core will always be one frame ahead
-                dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                    EMU_copyMasterBuffer();
-                    //This will automatically throttle fps to 60
-                    [self updateDisplay];
-                    dispatch_semaphore_signal(displaySemaphore);
-                });
-            }
+    
+    displaySemaphore = dispatch_semaphore_create(1);
+    
+    lastAutosave = CACurrentMediaTime();
+    [emuLoopLock lock];
+    [[iNDSMFIControllerSupport instance] startMonitoringGamePad];
+    
+    coreFps = videoFps = 30;
+    
+    coreLink.paused = NO;
+}
+
+- (void)endEmulatorLoop
+{
+    NSLog(@"Ending loop");
+    [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
+    [emuLoopLock unlock];
+    coreLink.paused = YES;
+}
+
+//Relocate
+CFTimeInterval coreStart, loopStart;
+CGFloat framesToRender = 0;
+NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
+
+- (void)emulatorLoop
+{
+    if (!execute) {
+        [self endEmulatorLoop];
+    }
+    loopStart = CACurrentMediaTime();
+    framesToRender += self.speed;
+    
+    for (;framesToRender >= 1; framesToRender--) {
+        coreStart = CACurrentMediaTime();
+        EMU_runCore();
+        coreFps = coreFps * 0.99 + (1 / (CACurrentMediaTime() - coreStart)) * 0.01;
+    }
+    
+    if (CACurrentMediaTime() - lastAutosave > 180) {
+        CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+        coreTime = coreTime * 0.95 + (CACurrentMediaTime() - coreStart) * 0.05;
+        [[NSUserDefaults standardUserDefaults] setFloat:coreTime forKey:@"coreTime"];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"periodicSave"]) {
+            [self saveStateWithName:[NSString stringWithFormat:@"Auto Save"]];
         }
-        [[iNDSMFIControllerSupport instance] stopMonitoringGamePad];
-        [emuLoopLock unlock];
-    });
+        lastAutosave = CACurrentMediaTime();
+        filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
+    }
+    if (!iNDS_frameSkip()) {
+        if (filter == -1) {
+            EMU_copyMasterBuffer();
+            [self updateDisplay];
+        } else {
+            // Run the filter on a seperate thread to increase performance
+            // Core will always be one frame ahead
+            dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+                EMU_copyMasterBuffer();
+                //This will automatically throttle fps to 60
+                [self updateDisplay];
+                dispatch_semaphore_signal(displaySemaphore);
+            });
+        }
+    }
 }
 
 - (void)saveStateWithName:(NSString*)saveStateName
@@ -682,7 +707,7 @@ enum VideoFilter : NSUInteger {
     static CFTimeInterval fpsUpdateTime = 0;
     if (CACurrentMediaTime() - fpsUpdateTime > 1) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps + 5, 60), (int)(coreFps / self.speed)];
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
         });
         fpsUpdateTime = CACurrentMediaTime();
     }
