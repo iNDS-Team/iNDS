@@ -353,53 +353,21 @@ void iNDS_user()
 		mainLoopData.fpsframecount = 0;
 		mainLoopData.fpsticks = GetTickCount();
 	}
-    
-    //Don't think this does very much
-	return;
-    if(nds.idleFrameCounter==0 || oneSecond)
-	{
-		//calculate a 16 frame arm9 load average
-		for(int cpu=0;cpu<2;cpu++)
-		{
-			int load = 0;
-			//printf("%d: ",cpu);
-			for(int i=0;i<16;i++)
-			{
-				//blend together a few frames to keep low-framerate games from having a jittering load average
-				//(they will tend to work 100% for a frame and then sleep for a while)
-				//4 frames should handle even the slowest of games
-				s32 sample =
-                nds.runCycleCollector[cpu][(i+0+nds.idleFrameCounter)&15]
-				+	nds.runCycleCollector[cpu][(i+1+nds.idleFrameCounter)&15]
-				+	nds.runCycleCollector[cpu][(i+2+nds.idleFrameCounter)&15]
-				+	nds.runCycleCollector[cpu][(i+3+nds.idleFrameCounter)&15];
-				sample /= 4;
-				load = load/8 + sample*7/8;
-			}
-			//printf("\n");
-			load = std::min(100,std::max(0,(int)(load*100/1120380)));
-			//Hud.cpuload[cpu] = load;
-		}
-	}
-    
-	//Hud.cpuloopIterationCount = nds.cpuloopIterationCount;
 }
 
-void iNDS_throttle(bool allowSleep, int forceFrameSkip)
+void iNDS_throttle()
 {
-	int skipRate = (forceFrameSkip < 0) ? frameskiprate : forceFrameSkip;
-	int ffSkipRate = (forceFrameSkip < 0) ? 9 : forceFrameSkip;
     
     //Change in skip rate
-	if(lastskiprate != skipRate)
+	if(lastskiprate != frameskiprate)
 	{
-		lastskiprate = skipRate;
+		lastskiprate = frameskiprate;
 		mainLoopData.framestoskip = 0; // otherwise switches to lower frameskip rates will lag behind
 	}
     
     
     //Load a frame
-	if(!mainLoopData.skipnextframe || forceFrameSkip == 0 || frameAdvance || (continuousframeAdvancing && !FastForward))
+	if(!mainLoopData.skipnextframe)
 	{
 		mainLoopData.framesskipped = 0;
         
@@ -420,32 +388,22 @@ void iNDS_throttle(bool allowSleep, int forceFrameSkip)
 		NDS_SkipNextFrame();
 	}
     
-    if ((/*autoframeskipenab && frameskiprate ||*/ FrameLimit) && allowSleep)
-	{
-		SpeedThrottle();
-	}
-    
 	if (autoframeskipenab && frameskiprate)
 	{
 		if(!frameAdvance && !continuousframeAdvancing)
 		{
 			AutoFrameSkip_NextFrame();
 			if (mainLoopData.framestoskip < 1)
-				mainLoopData.framestoskip += AutoFrameSkip_GetSkipAmount(0,skipRate);
+				mainLoopData.framestoskip += AutoFrameSkip_GetSkipAmount(0, frameskiprate);
 		}
 	}
+    
 	else
 	{
 		if (mainLoopData.framestoskip < 1)
-			mainLoopData.framestoskip += skipRate;
+			mainLoopData.framestoskip += frameskiprate;
 	}
     
-	if (frameAdvance && allowSleep)
-	{
-		frameAdvance = false;
-		emu_halt();
-		SPU_Pause(1);
-	}
 	if(execute && emu_paused && !frameAdvance)
 	{
 		// safety net against running out of control in case this ever happens.

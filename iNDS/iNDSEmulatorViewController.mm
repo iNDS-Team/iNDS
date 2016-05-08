@@ -14,8 +14,10 @@
 #import "iNDSDirectionalControl.h"
 #import "iNDSButtonControl.h"
 #import "CHBgDropboxSync.h"
+
 #import "UIDevice+Private.h"
 #import "RBVolumeButtons.h"
+#import "SharkfoodMuteSwitchDetector.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
@@ -132,6 +134,7 @@ enum VideoFilter : NSUInteger {
     UINavigationController * settingsNav;
     
     RBVolumeButtons *volumeStealer;
+    SharkfoodMuteSwitchDetector *muteDetector;
     
     dispatch_semaphore_t displaySemaphore;
 }
@@ -224,6 +227,12 @@ enum VideoFilter : NSUInteger {
                 EMU_buttonUp((BUTTON_ID)10);
             }
         });
+    };
+    
+    muteDetector = [SharkfoodMuteSwitchDetector shared];
+    __weak iNDSEmulatorViewController* weakself = self;
+    muteDetector.silentNotify = ^(BOOL silent){
+        [weakself defaultsChanged:nil];
     };
     
     
@@ -325,13 +334,12 @@ enum VideoFilter : NSUInteger {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if (emuLoopLock) { //Only update these is the core has loaded
         EMU_setFrameSkip((int)[defaults integerForKey:@"frameSkip"]);
-        EMU_enableSound(![defaults boolForKey:@"disableSound"]);
         EMU_setSynchMode([defaults boolForKey:@"synchSound"]);
-        // Enable sound?
+        
         // (Mute on && don't ignore it) or user has sound disabled
-        BOOL muteSound = ([self muteButtonOn] && ![defaults boolForKey:@"ignoreMute"]) || [defaults boolForKey:@"disableSound"];
+        BOOL muteSound = (muteDetector.isMute && ![defaults boolForKey:@"ignoreMute"]) || [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
+                [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
                                          withOptions:(AVAudioSessionCategoryOptionAllowBluetooth |
                                                       AVAudioSessionCategoryOptionMixWithOthers |
                                                       AVAudioSessionCategoryOptionDefaultToSpeaker)
@@ -355,11 +363,6 @@ enum VideoFilter : NSUInteger {
     [self.view setNeedsLayout];
 }
 
-// Not sure if we can figure this out
-- (BOOL)muteButtonOn
-{
-    return NO;
-}
 
 -(BOOL) isPortrait
 {
@@ -720,7 +723,6 @@ enum VideoFilter : NSUInteger {
 - (void) setSpeed:(CGFloat)speed
 {
     if (!self.program) return;
-    int userFrameSkip = (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"frameSkip"];
     if (speed < 1) { //Force this. Audio sounds so bad < 1 when synched
         EMU_setSynchMode(0);
     } else {
@@ -924,6 +926,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
         //});
         
     } else {
+        
         if ([[NSUserDefaults standardUserDefaults] integerForKey:@"volumeBumper"]) {
             [volumeStealer performSelector:@selector(startStealingVolumeButtonEvents) withObject:nil afterDelay:0.1];
         }
@@ -938,7 +941,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
             [self resumeEmulation];
             self.darkenView.hidden = YES;
         }];
-
+        
         disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
         
         [self setLidClosed:NO];

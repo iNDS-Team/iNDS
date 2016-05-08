@@ -456,11 +456,13 @@
         // Audio
         WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
         audioSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableSound"
-                                                                             title:@"Disable Sound"],
-                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"synchSound"
-                                                                             title:@"Synchronous Audio"],
-                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableMic"
-                                                                             title:@"Enable Mic"]];
+                                                                          title:@"Disable Sound"],
+                               [[WCEasySettingsSwitch alloc] initWithIdentifier:@"ignoreMute"
+                                                                          title:@"Ignore Mute Button"],
+                               [[WCEasySettingsSwitch alloc] initWithIdentifier:@"synchSound"
+                                                                          title:@"Synchronous Audio"],
+                               [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableMic"
+                                                                          title:@"Enable Mic"]];
         
         
         //Dropbox

@@ -172,8 +172,12 @@
 		CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */; };
 		CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */; };
 		CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D4178E73B500E6809E /* Security.framework */; };
+		CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
+		CA48465B1CDD7131005030EF /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CA48465E1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
+		CA4846601CDFA8A1005030EF /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
 		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
 		CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */; };
@@ -279,6 +283,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CA48465B1CDD7131005030EF /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -609,7 +614,9 @@
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		CA4258121CADBD4900BFD05E /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		CA4258131CADBD4900BFD05E /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		CA4846591CDC574D005030EF /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		CA48465C1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharkfoodMuteSwitchDetector.h; sourceTree = "<group>"; };
+		CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharkfoodMuteSwitchDetector.m; sourceTree = "<group>"; };
+		CA48465F1CDFA47D005030EF /* mute.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mute.caf; sourceTree = "<group>"; };
 		CA570B631C3B8AA300918E3A /* MHWDirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHWDirectoryWatcher.h; sourceTree = "<group>"; };
 		CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHWDirectoryWatcher.m; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
@@ -661,7 +668,6 @@
 		CA908C041C2356F700B2A864 /* SCLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTextView.m; sourceTree = "<group>"; };
 		CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		CA908C0E1C235AA000B2A864 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		CA908C161C239D0000B2A864 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
 		CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfile.m; sourceTree = "<group>"; };
 		CA908C1D1C23B2BE00B2A864 /* Twitter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Twitter.png; path = Resources/Twitter.png; sourceTree = "<group>"; };
@@ -813,6 +819,7 @@
 				4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */,
 				BFAE6F9B17674D93000911CF /* libz.dylib in Frameworks */,
 				BFAE6F931767490A000911CF /* OpenGLES.framework in Frameworks */,
+				CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */,
 				BFAE6F9117674902000911CF /* GLKit.framework in Frameworks */,
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
@@ -1033,11 +1040,9 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CA4846591CDC574D005030EF /* WebKit.framework */,
 				CA6E609B1CB0574B000B269D /* MobileCoreServices.framework */,
 				CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */,
 				CABE38971C30FA9800BE8857 /* libsqlite3.tbd */,
-				CA908C161C239D0000B2A864 /* Fabric.framework */,
 				CA908C0E1C235AA000B2A864 /* Accelerate.framework */,
 				CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */,
 				CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */,
@@ -1595,6 +1600,9 @@
 		CABE38421C30BFC600BE8857 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CA48465C1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.h */,
+				CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */,
+				CA48465F1CDFA47D005030EF /* mute.caf */,
 				CA8EA13A1C375D860082A3F8 /* UITapticEngine.h */,
 				CA8EA13B1C375D870082A3F8 /* UIDevice+Private.h */,
 				CA8EA13C1C375D870082A3F8 /* UIDevice+Private.m */,
@@ -1785,6 +1793,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA4846601CDFA8A1005030EF /* mute.caf in Resources */,
 				CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */,
 				CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
@@ -2040,6 +2049,7 @@
 				CA6E60951CB056A0000B269D /* AFHTTPSessionManager.m in Sources */,
 				CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */,
 				CAB2C4BE1CB5F2C300ED22BB /* EZAudioUtilities.m in Sources */,
+				CA48465E1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m in Sources */,
 				CAB2C4B91CB5F2C300ED22BB /* EZAudioFloatConverter.m in Sources */,
 				D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */,
 				D31CC8B317927C3B0098FB9C /* NSArray+ConciseKit.m in Sources */,

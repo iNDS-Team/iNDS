@@ -2180,7 +2180,7 @@ void gfx3d_execute3D()
 	for(i=0;i<HACK_FIFO_BATCH_SIZE;i++) {
 		if(GFX_PIPErecv(&cmd, &param))
 		{
-			//if (isSwapBuffers) printf("Executing while swapbuffers is pending: %d:%08X\n",cmd,param);
+			if (isSwapBuffers) printf("Executing while swapbuffers is pending: %d:%08X\n",cmd,param);
 
 			//since we did anything at all, incur a pipeline motion cost.
 			//also, we can't let gxfifo sequencer stall until the fifo is empty.

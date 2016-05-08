@@ -16,6 +16,7 @@
 #import "MHWDirectoryWatcher.h"
 #import "WCEasySettingsViewController.h"
 #import "WCBuildStoreClient.h"
+#import "SharkfoodMuteSwitchDetector.h"
 
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
@@ -43,6 +44,7 @@
         });
     }
 #endif
+    [SharkfoodMuteSwitchDetector shared]; //Start detecting
 }
 
 - (void)didReceiveMemoryWarning
