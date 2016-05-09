@@ -930,7 +930,6 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				CA4846611CDFDF2E005030EF /* Test */,
 				CABE38BF1C34B8B800BE8857 /* Icons */,
 				CAB2C42F1CB222AF00ED22BB /* cheats.rar */,
 				CAB2C42B1CB21C2000ED22BB /* cheats.7z */,
@@ -1383,14 +1382,6 @@
 			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
-		CA4846611CDFDF2E005030EF /* Test */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Test;
-			path = iNDS/Test;
-			sourceTree = "<group>";
-		};
 		CA6882211CDC194000B0ED05 /* WCBuildStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -1764,11 +1755,6 @@
 				CLASSPREFIX = iNDS;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = iNDS;
-				TargetAttributes = {
-					BFCFE0EE1764FBD3000A70CF = {
-						DevelopmentTeam = 65UT5H6UZR;
-					};
-				};
 			};
 			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2240,7 +2226,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.5.1.2;
+				CURRENT_PROJECT_VERSION = 1.6.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2294,7 +2280,7 @@
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1.5.1.2;
+				CURRENT_PROJECT_VERSION = 1.6.0;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
