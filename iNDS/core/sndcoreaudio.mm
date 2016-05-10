@@ -42,7 +42,7 @@ static bool audioQueueStarted = false;
 static AudioQueueBufferRef aqBuffer[NUM_BUFFERS];
 static AudioQueueRef audioQueue;
 
-void SNDCoreAudioCallback (void *data, AudioQueueRef mQueue, AudioQueueBufferRef mBuffer) {
+void SNDCoreAudioCallback(void *data, AudioQueueRef mQueue, AudioQueueBufferRef mBuffer) {
     mBuffer->mAudioDataByteSize = sndBufferSize;
     void *mAudioData = mBuffer->mAudioData;
     if (numFullBuffers == 0) {

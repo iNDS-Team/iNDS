@@ -265,7 +265,6 @@ enum VideoFilter : NSUInteger {
     
     coreLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(emulatorLoop)];
     coreLink.paused = YES;
-    NSLog(@"Time Interval: %f", coreLink.duration);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
         [[NSRunLoop currentRunLoop] run];
@@ -648,9 +647,14 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
         [self endEmulatorLoop];
     }
     loopStart = CACurrentMediaTime();
-    framesToRender += self.speed;
-    
-    for (;framesToRender >= 1; framesToRender--) {
+    // Running under 60 fps makes the sound terrible
+    // so going a little over isn't bad
+    framesToRender += self.speed + 0.02;// ~61 fps.
+    NSInteger framesRendered = 0;
+    for (;framesToRender >= 1; framesToRender--, framesRendered++) {
+        if (framesToRender >= 2) {
+            EMU_frameSkip(true);
+        }
         coreStart = CACurrentMediaTime();
         EMU_runCore();
         coreFps = coreFps * 0.99 + (1 / (CACurrentMediaTime() - coreStart)) * 0.01;
@@ -666,7 +670,9 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
         lastAutosave = CACurrentMediaTime();
         filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
     }
-    if (!iNDS_frameSkip()) {
+    
+    if (!EMU_frameSkip(false)) {
+        [self calculateFPS:1];
         if (filter == -1) {
             EMU_copyMasterBuffer();
             [self updateDisplay];
@@ -684,6 +690,22 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
     }
 }
 
+- (void)calculateFPS:(NSInteger) frames
+{
+    static CFTimeInterval lastDisplayTime = 0;
+    videoFps = videoFps * 0.95 + (frames / (CACurrentMediaTime() - lastDisplayTime)) * 0.05;
+    lastDisplayTime = CACurrentMediaTime();
+    
+    
+    static CFTimeInterval fpsUpdateTime = 0;
+    if (CACurrentMediaTime() - fpsUpdateTime > 1) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", (int)videoFps/*MIN((int)videoFps, 60)*/, (int)(coreFps / self.speed)];
+        });
+        fpsUpdateTime = CACurrentMediaTime();
+    }
+}
+
 - (void)saveStateWithName:(NSString*)saveStateName
 {
     NSLog(@"Saving: %@", saveStateName);
@@ -698,20 +720,6 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 - (void)updateDisplay
 {
     if (texHandle[0] == 0 || !execute) return;
-    // Calculate fps
-    static CFTimeInterval lastDisplayTime = 0;
-    videoFps = videoFps * 0.95 + (1 / (CACurrentMediaTime() - lastDisplayTime)) * 0.05;
-    lastDisplayTime = CACurrentMediaTime();
-    
-    
-    static CFTimeInterval fpsUpdateTime = 0;
-    if (CACurrentMediaTime() - fpsUpdateTime > 1) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
-        });
-        fpsUpdateTime = CACurrentMediaTime();
-    }
-    
     
     size_t bufferSize;
     GLubyte *screenBuffer = (GLubyte*)EMU_getVideoBuffer(&bufferSize);

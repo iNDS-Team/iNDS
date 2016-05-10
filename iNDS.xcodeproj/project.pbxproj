@@ -172,13 +172,11 @@
 		CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */ = {isa = PBXBuildFile; fileRef = CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */; };
 		CA32245D1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32245C1CCAA0D100C5BEA7 /* iNDSDropboxTableViewController.m */; };
 		CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D4178E73B500E6809E /* Security.framework */; };
-		CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
-		CA48465B1CDD7131005030EF /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CA48465E1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
-		CA4846601CDFA8A1005030EF /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
+		CA5F11D81CE0EE7500AA1419 /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
+		CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
 		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
 		CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */; };
 		CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */; };
@@ -283,7 +281,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CA48465B1CDD7131005030EF /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -819,7 +816,6 @@
 				4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */,
 				BFAE6F9B17674D93000911CF /* libz.dylib in Frameworks */,
 				BFAE6F931767490A000911CF /* OpenGLES.framework in Frameworks */,
-				CA3224E51CD5BB2E00C5BEA7 /* UnrarKit.framework in Frameworks */,
 				BFAE6F9117674902000911CF /* GLKit.framework in Frameworks */,
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
@@ -1788,7 +1784,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA4846601CDFA8A1005030EF /* mute.caf in Resources */,
+				CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */,
 				CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */,
 				CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */,
 				28DA4A481787FD7F002236A4 /* Select.png in Resources */,
@@ -1853,6 +1849,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFCFE18017650FB0000A70CF /* arm_instructions.cpp in Sources */,
+				CA5F11D81CE0EE7500AA1419 /* SharkfoodMuteSwitchDetector.m in Sources */,
 				BFCFE18117650FB0000A70CF /* ArmAnalyze.cpp in Sources */,
 				BFCFE18317650FB0000A70CF /* armcpu.cpp in Sources */,
 				BFCFE18417650FB0000A70CF /* ArmThreadedInterpreter.cpp in Sources */,
@@ -2044,7 +2041,6 @@
 				CA6E60951CB056A0000B269D /* AFHTTPSessionManager.m in Sources */,
 				CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */,
 				CAB2C4BE1CB5F2C300ED22BB /* EZAudioUtilities.m in Sources */,
-				CA48465E1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m in Sources */,
 				CAB2C4B91CB5F2C300ED22BB /* EZAudioFloatConverter.m in Sources */,
 				D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */,
 				D31CC8B317927C3B0098FB9C /* NSArray+ConciseKit.m in Sources */,

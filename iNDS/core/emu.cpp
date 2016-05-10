@@ -355,8 +355,12 @@ void iNDS_user()
 	}
 }
 
-bool iNDS_frameSkip()
+bool EMU_frameSkip(bool force)
 {
+    if (force) {
+        NDS_SkipNextFrame();
+        return true;
+    }
     bool skipped;
     //Change in skip rate
 	if(lastskiprate != frameskiprate)
@@ -409,7 +413,7 @@ int EMU_runOther()
 	if(execute)
 	{
 		iNDS_user();
-		iNDS_frameSkip();
+		EMU_frameSkip(false);
 		return mainLoopData.fps > 0 ? mainLoopData.fps : 1;
 	}
 	return 1;

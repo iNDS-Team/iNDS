@@ -31,6 +31,7 @@ FOUNDATION_EXPORT NSString * const iNDSGameSaveStatesChangedNotification;
 - (NSString*)nameOfSaveStateAtPath:(NSString*)path;
 - (NSDate*)dateOfSaveStateAtIndex:(NSInteger)idx;
 - (BOOL)deleteSaveStateAtIndex:(NSInteger)idx;
+- (BOOL)deleteSaveStateWithName:(NSString *)name;
 - (void)reloadSaveStates;
 - (NSArray*)saveStates;
 

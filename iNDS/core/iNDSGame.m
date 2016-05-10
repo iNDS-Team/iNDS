@@ -195,9 +195,17 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     return saveStates.count;
 }
 
+- (BOOL)deleteSaveStateWithName:(NSString *)name
+{
+    if (![[NSFileManager defaultManager] removeItemAtPath:[self pathForSaveStateWithName:name] error:NULL]) return NO;
+    [self reloadSaveStates];
+    return YES;
+}
+
 - (BOOL)deleteSaveStateAtIndex:(NSInteger)idx
 {
     if (idx < 0 || idx >= saveStates.count) return NO;
+    NSLog(@"Deleting: %@", [self pathForSaveStateAtIndex:idx]);
     if (![[NSFileManager defaultManager] removeItemAtPath:[self pathForSaveStateAtIndex:idx] error:NULL]) return NO;
     [self reloadSaveStates];
     return YES;
