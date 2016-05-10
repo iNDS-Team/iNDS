@@ -177,6 +177,8 @@
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
 		CA5F11D81CE0EE7500AA1419 /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
 		CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
+		CA5F11F01CE28AD400AA1419 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
+		CA5F11F11CE28AE500AA1419 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
 		CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */; };
 		CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */; };
@@ -281,6 +283,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CA5F11F11CE28AE500AA1419 /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -821,6 +824,7 @@
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
 				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
+				CA5F11F01CE28AD400AA1419 /* UnrarKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
