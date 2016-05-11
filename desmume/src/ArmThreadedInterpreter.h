@@ -51,7 +51,7 @@ template<int PROCNUM> static u32 cpuExecute()
 {
 	Block *block = (Block*)JITLUT_HANDLE(ARMPROC.instruct_adr, PROCNUM);
 	if (!block)
-		block = armcpu_compile<PROCNUM>();
+        block = armcpu_compile<PROCNUM>();
 
 #ifdef DUMPLOG
 	extern unsigned long long RawGetTickCount();
@@ -80,7 +80,7 @@ template<int PROCNUM> static u32 cpuExecute()
 		exec_info[PROCNUM][ARMPROC.instruct_adr] = info;
 	}
 #endif
-
+    //printf("Cycles: %d\n", block->cycles);
 	return block->cycles;
 }
 

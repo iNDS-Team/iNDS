@@ -72,65 +72,67 @@ static void volumeListenerCallback (
 
 - (void)startStealingVolumeButtonEvents
 {
-    NSAssert([[NSThread currentThread] isMainThread], @"This must be called from the main thread");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSAssert([[NSThread currentThread] isMainThread], @"This must be called from the main thread");
 
-    if (self.isStealingVolumeButtons)
-    {
-        return;
-    }
+        if (self.isStealingVolumeButtons)
+        {
+            return;
+        }
 
-    self.isStealingVolumeButtons = YES;
+        self.isStealingVolumeButtons = YES;
 
-    AudioSessionInitialize(NULL, NULL, NULL, NULL);
+        AudioSessionInitialize(NULL, NULL, NULL, NULL);
 
-    //const UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
-    //AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
+        //const UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
+        //AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
 
-    AudioSessionSetActive(YES);
+        AudioSessionSetActive(YES);
 
-    self.launchVolume = [[MPMusicPlayerController applicationMusicPlayer] volume];
-    self.hadToLowerVolume = self.launchVolume == 1.0;
-    self.hadToRaiseVolume = self.launchVolume == 0.0;
+        self.launchVolume = [[MPMusicPlayerController applicationMusicPlayer] volume];
+        self.hadToLowerVolume = self.launchVolume == 1.0;
+        self.hadToRaiseVolume = self.launchVolume == 0.0;
 
-    // Avoid flashing the volume indicator
-    if (self.hadToLowerVolume || self.hadToRaiseVolume)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.hadToLowerVolume)
-            {
-                [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.95];
-                self.launchVolume = 0.95;
-            }
+        // Avoid flashing the volume indicator
+        if (self.hadToLowerVolume || self.hadToRaiseVolume)
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.hadToLowerVolume)
+                {
+                    [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.95];
+                    self.launchVolume = 0.95;
+                }
 
-            if (self.hadToRaiseVolume)
-            {
-                [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.05];
-                self.launchVolume = 0.05;
-            }
-        });
-    }
+                if (self.hadToRaiseVolume)
+                {
+                    [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.05];
+                    self.launchVolume = 0.05;
+                }
+            });
+        }
 
-    CGRect frame = CGRectMake(0, -100, 10, 0);
-    self.volumeView = [[[MPVolumeView alloc] initWithFrame:frame] autorelease];
-    [self.volumeView sizeToFit];
-    [[[[UIApplication sharedApplication] windows] firstObject] insertSubview:self.volumeView atIndex:0];
+        CGRect frame = CGRectMake(0, -100, 10, 0);
+        self.volumeView = [[[MPVolumeView alloc] initWithFrame:frame] autorelease];
+        [self.volumeView sizeToFit];
+        [[[[UIApplication sharedApplication] windows] firstObject] insertSubview:self.volumeView atIndex:0];
 
-    [self initializeVolumeButtonStealer];
+        [self initializeVolumeButtonStealer];
 
-    if (!self.suspended)
-    {
-        // Observe notifications that trigger suspend
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(suspendStealingVolumeButtonEvents:)
-                                                     name:UIApplicationWillResignActiveNotification     // -> Inactive
-                                                   object:nil];
+        if (!self.suspended)
+        {
+            // Observe notifications that trigger suspend
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(suspendStealingVolumeButtonEvents:)
+                                                         name:UIApplicationWillResignActiveNotification     // -> Inactive
+                                                       object:nil];
 
-        // Observe notifications that trigger resume
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(resumeStealingVolumeButtonEvents:)
-                                                     name:UIApplicationDidBecomeActiveNotification      // <- Active
-                                                   object:nil];
-    }
+            // Observe notifications that trigger resume
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(resumeStealingVolumeButtonEvents:)
+                                                         name:UIApplicationDidBecomeActiveNotification      // <- Active
+                                                       object:nil];
+        }
+    });
 }
 
 - (void)suspendStealingVolumeButtonEvents:(NSNotification *)notification
@@ -153,37 +155,39 @@ static void volumeListenerCallback (
 
 - (void)stopStealingVolumeButtonEvents
 {
-    NSAssert([[NSThread currentThread] isMainThread], @"This must be called from the main thread");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSAssert([[NSThread currentThread] isMainThread], @"This must be called from the main thread");
 
-    if (!self.isStealingVolumeButtons)
-    {
-        return;
-    }
+        if (!self.isStealingVolumeButtons)
+        {
+            return;
+        }
 
-    // Stop observing all notifications
-    if (!self.suspended)
-    {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
+        // Stop observing all notifications
+        if (!self.suspended)
+        {
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+        }
 
-    AudioSessionRemovePropertyListenerWithUserData(kAudioSessionProperty_CurrentHardwareOutputVolume, volumeListenerCallback, self);
+        AudioSessionRemovePropertyListenerWithUserData(kAudioSessionProperty_CurrentHardwareOutputVolume, volumeListenerCallback, self);
 
-    if (self.hadToLowerVolume)
-    {
-        [[MPMusicPlayerController applicationMusicPlayer] setVolume:1.0];
-    }
+        if (self.hadToLowerVolume)
+        {
+            [[MPMusicPlayerController applicationMusicPlayer] setVolume:1.0];
+        }
 
-    if (self.hadToRaiseVolume)
-    {
-        [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.0];
-    }
+        if (self.hadToRaiseVolume)
+        {
+            [[MPMusicPlayerController applicationMusicPlayer] setVolume:0.0];
+        }
 
-    [self.volumeView removeFromSuperview];
-    self.volumeView = nil;
+        [self.volumeView removeFromSuperview];
+        self.volumeView = nil;
 
-    //AudioSessionSetActive(NO);
+        //AudioSessionSetActive(NO);
 
-    self.isStealingVolumeButtons = NO;
+        self.isStealingVolumeButtons = NO;
+    });
 }
 
 - (void)dealloc

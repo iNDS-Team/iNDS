@@ -350,8 +350,7 @@ enum VideoFilter : NSUInteger {
         EMU_enableSound(!muteSound);
                 [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
                                          withOptions:(AVAudioSessionCategoryOptionAllowBluetooth |
-                                                      AVAudioSessionCategoryOptionMixWithOthers |
-                                                      AVAudioSessionCategoryOptionDefaultToSpeaker)
+                                                      AVAudioSessionCategoryOptionMixWithOthers)
                                                error:nil];
         
         // Filter

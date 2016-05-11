@@ -857,7 +857,7 @@ public:
 			left->Step();
 			right->Step();
 
-			if(!RENDERER && _debug_thisPoly)
+			if(0)//!RENDERER && _debug_thisPoly)
 			{
 				//debug drawing
 				bool top = (horizontal&&first);
@@ -1107,7 +1107,7 @@ static char SoftRastInit(void)
 		_HACK_viewer_rasterizerUnit.SLI_MASK = 1;
 		_HACK_viewer_rasterizerUnit.SLI_VALUE = 0;
 
-		rasterizerCores = CommonSettings.num_cores;
+        rasterizerCores = 1;//CommonSettings.num_cores;
 		if (rasterizerCores > _MAX_CORES) 
 			rasterizerCores = _MAX_CORES;
 		if(CommonSettings.num_cores <= 1)
@@ -1490,7 +1490,9 @@ void SoftRasterizerEngine::performClipping(bool hirez)
 			clipper.clipPoly<true>(poly,clipVerts);
 		else
 			clipper.clipPoly<false>(poly,clipVerts);
+    
 	}
+    //printf("Clipped poly counter: %d (%d)\n", clipper.clippedPolyCounter, polylist->count);
 	clippedPolyCounter = clipper.clippedPolyCounter;
 }
 

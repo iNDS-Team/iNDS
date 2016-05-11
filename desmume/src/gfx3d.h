@@ -777,4 +777,7 @@ bool gfx3d_loadstate(EMUFILE* is, int size);
 
 void gfx3d_ClearStack();
 
+POLYLIST* getPolyList();
+
+
 #endif //_GFX3D_H_

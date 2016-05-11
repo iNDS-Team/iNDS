@@ -48,10 +48,10 @@ static inline s8 read_s8(u32 addr) { return (s8)_MMU_read08<ARMCPU_ARM7,MMU_AT_D
 #define K_ADPCM_LOOPING_RECOVERY_INDEX 99999
 #define COSINE_INTERPOLATION_RESOLUTION 8192
 
-//#ifdef FASTBUILD
-	#undef FORCEINLINE
-	#define FORCEINLINE
-//#endif
+#ifdef FASTBUILD
+	//#undef FORCEINLINE
+	//#define FORCEINLINE
+#endif
 
 //static ISynchronizingAudioBuffer* synchronizer = metaspu_construct(ESynchMethod_Z);
 static ISynchronizingAudioBuffer* synchronizer = metaspu_construct(ESynchMethod_N);

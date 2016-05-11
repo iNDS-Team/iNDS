@@ -660,10 +660,14 @@ static void SetVertex()
 
 	//refuse to do anything if we have too many verts or polys
 	polygonListCompleted = 0;
-	if(vertlist->count >= VERTLIST_SIZE) 
-			return;
-	if(polylist->count >= POLYLIST_SIZE) 
-			return;
+    if(vertlist->count >= VERTLIST_SIZE) {
+        //printf("Error, vertlist->count >= VERTLIST_SIZE");
+        return;
+    }
+    if(polylist->count >= POLYLIST_SIZE) {
+        //printf("Error, polylist->count >= POLYLIST_SIZE");
+        return;
+    }
 	
 	//TODO - think about keeping the clip matrix concatenated,
 	//so that we only have to multiply one matrix here
@@ -734,7 +738,7 @@ static void SetVertex()
 					break;
 				polygonListCompleted = 1;
 				//vertlist->list[polylist->list[polylist->count].vertIndexes[i] = vertlist->count++] = tempVertList.list[n];
-				SUBMITVERTEX(0,0);
+                SUBMITVERTEX(0,0);
 				SUBMITVERTEX(1,1);
 				SUBMITVERTEX(2,2);
 				vertlist->count+=3;
@@ -793,7 +797,7 @@ static void SetVertex()
 				tempVertInfo.first = false;
 				tempVertInfo.count = 2;
 				break;
-			default: 
+			default:
 				return;
 		}
 
@@ -830,6 +834,7 @@ static void SetVertex()
 			poly.texPalette = texturePalette;
 			poly.viewport = viewport;
 			polylist->count++;
+            //printf("PLC: %d\n", polylist->count);
 		}
 	}
 }
@@ -2180,7 +2185,9 @@ void gfx3d_execute3D()
 	for(i=0;i<HACK_FIFO_BATCH_SIZE;i++) {
 		if(GFX_PIPErecv(&cmd, &param))
 		{
-			if (isSwapBuffers) printf("Executing while swapbuffers is pending: %d:%08X\n",cmd,param);
+            if (isSwapBuffers) {
+                printf("Executing while swapbuffers is pending: %d:%08X\n",cmd,param);
+            }
 
 			//since we did anything at all, incur a pipeline motion cost.
 			//also, we can't let gxfifo sequencer stall until the fifo is empty.
@@ -2353,16 +2360,15 @@ static void gfx3d_doFlush()
 	//should this be done after clipping??
     
     //This causes a ton of crashing and disabling has no apparent effects that I've seen - Will
-    if (/* DISABLES CODE */ (false)) {
-        std::sort(gfx3d.indexlist.list, gfx3d.indexlist.list + opaqueCount, gfx3d_ysort_compare);
-        
-        if(!gfx3d.state.sortmode)
-        {
-            //if we are autosorting translucent polys, we need to do this also
-            //TODO - this is unverified behavior. need a test case
-            std::sort(gfx3d.indexlist.list + opaqueCount, gfx3d.indexlist.list + polycount, gfx3d_ysort_compare);
-        }
-    }
+//    std::sort(gfx3d.indexlist.list, gfx3d.indexlist.list + opaqueCount, gfx3d_ysort_compare);
+//    
+//    if(!gfx3d.state.sortmode)
+//    {
+//        //if we are autosorting translucent polys, we need to do this also
+//        //TODO - this is unverified behavior. need a test case
+//        std::sort(gfx3d.indexlist.list + opaqueCount, gfx3d.indexlist.list + polycount, gfx3d_ysort_compare);
+//    }
+    
 
 	//switch to the new lists
 	twiddleLists();

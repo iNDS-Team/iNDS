@@ -35,10 +35,10 @@
 #include "readwrite.h"
 
 #ifdef FASTBUILD
-	#undef FORCEINLINE
-	#define FORCEINLINE
+	//#undef FORCEINLINE
+	//#define FORCEINLINE
 	//compilation speed hack (cuts time exactly in half by cutting out permutations)
-	#define DISABLE_MOSAIC
+	//#define DISABLE_MOSAIC
 #endif
 
 extern BOOL click;

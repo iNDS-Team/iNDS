@@ -8281,7 +8281,8 @@ struct Cond_SubBlockStart
 };
 
 ////////////////////////////////////////////////////////////////////
-static u32 s_CacheReserve = 16 * 1024 * 1024;
+#define kCacheSize 16 * 1024 * 1024 * 4
+static u32 s_CacheReserve = kCacheSize;
 static u32 s_ReserveBufferUsed = 0;
 static u8* s_ReserveBuffer = NULL;
 
@@ -8499,13 +8500,13 @@ TEMPLATE Block* armcpu_compile()
 	//}
     
     
-	if (GetCacheRemain() < 1024 * 64 * 64)
+	if (GetCacheRemain() < 1024 * 64)
 	{
         // Black: 0226035C
 		INFO("cache full, reset cpu[%d].\n", PROCNUM);
         INFO("Proc: %d\n", PROCNUM);
         // This causes the SoulSilver black screen bug
-		arm_threadedinterpreter.Reset();
+        arm_threadedinterpreter.Reset();
 	}
 
 	if (!s_pArmAnalyze->Decode(GETCPUPTR) || !s_pArmAnalyze->CreateBlocks())
