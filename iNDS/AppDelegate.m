@@ -30,7 +30,12 @@
 
 #ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
+#import <dlfcn.h>
 #endif
+
+#define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
+
+#import <objc/runtime.h>
 
 @interface AppDelegate () {
     BOOL    backgroundProcessesStarted;
@@ -61,6 +66,7 @@
     
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60)
                                                          forBarMetrics:UIBarMetricsDefault];
+    
     
     return YES;
 }
@@ -163,6 +169,23 @@
                 }
             } else { //Rar
 #ifdef UseRarKit
+                // Hack to use csbypass to load rarkit
+                if (SYSTEM_VERSION_GREATER_THAN(@"9.3.2")) {
+                    [self showError:@"Rar support has been disabled due to code singing issues in this version of iOS."];
+                    [fm removeItemAtPath:url.path error:NULL];
+                    return NO;
+                }
+                
+                // Csbypass
+                NSString *unRarPath = [[NSBundle mainBundle] pathForResource:@"Frameworks/UnrarKit.framework/UnrarKit" ofType:nil];
+                NSLog(@"UP: %@", unRarPath);
+                void *handle = dlopen([unRarPath UTF8String], RTLD_NOW);
+                if (!handle) {
+                    [self showError:@"Unable to open Rarkit Framework. Please report."];
+                    [fm removeItemAtPath:url.path error:NULL];
+                    return NO;
+                }
+                
                 NSError *archiveError = nil;
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
@@ -485,7 +508,7 @@
         
         
         // Core
-        WCEasySettingsSection *coreSection = [[WCEasySettingsSection alloc] initWithTitle:@"Core" subTitle:@"JIT can be used to speedup emulation but only a few devices are capable of running it right now."];
+        WCEasySettingsSection *coreSection = [[WCEasySettingsSection alloc] initWithTitle:@"Core" subTitle:@"Frame Skip with speed up emulation."];
         WCEasySettingsOption *engineOption;
         if (sizeof(void*) == 4) { //32bit
             engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"

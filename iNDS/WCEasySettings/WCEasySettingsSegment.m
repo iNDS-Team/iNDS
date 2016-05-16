@@ -62,7 +62,7 @@
     
     [cellSegment removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
     [cellSegment addTarget:controller action:@selector(onSegment:) forControlEvents:UIControlEventValueChanged];
-    cellSegment.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:controller.identifier];
+    cellSegment.selectedSegmentIndex = MAX([[NSUserDefaults standardUserDefaults] integerForKey:controller.identifier], 0);
     cellSegment.hidden = NO;
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;

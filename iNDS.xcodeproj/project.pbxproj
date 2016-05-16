@@ -177,10 +177,6 @@
 		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
 		CA5F11D81CE0EE7500AA1419 /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
 		CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
-		CA5F11F01CE28AD400AA1419 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CA5F11F11CE28AE500AA1419 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CA5F11F81CE28FB100AA1419 /* cs_bypass.m in Sources */ = {isa = PBXBuildFile; fileRef = CA5F11F61CE28FB100AA1419 /* cs_bypass.m */; };
-		CA5F11F91CE28FB100AA1419 /* cs_tramp.s in Sources */ = {isa = PBXBuildFile; fileRef = CA5F11F71CE28FB100AA1419 /* cs_tramp.s */; };
 		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
 		CA6882241CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882231CDC19A800B0ED05 /* WCBuildStoreAuthenticateViewController.m */; };
 		CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */ = {isa = PBXBuildFile; fileRef = CA6882261CDC19B400B0ED05 /* WCBuildStoreClient.m */; };
@@ -260,6 +256,10 @@
 		CAE673901CC824F900E46EDF /* WCEasySettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673881CC824F900E46EDF /* WCEasySettingsViewController.m */; };
 		CAE673911CC824F900E46EDF /* WCEasySettingsOption.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */; };
 		CAE6739A1CC8257C00E46EDF /* WCEasySettingsOptionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */; };
+		CAE8C0C21CEA5D3700082785 /* cs_bypass.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE8C0C01CEA5D3700082785 /* cs_bypass.m */; };
+		CAE8C0C31CEA5D3700082785 /* cs_tramp.s in Sources */ = {isa = PBXBuildFile; fileRef = CAE8C0C11CEA5D3700082785 /* cs_tramp.s */; };
+		CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
+		CAE8C0C51CEA65AB00082785 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -285,7 +285,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CA5F11F11CE28AE500AA1419 /* UnrarKit.framework in Embed Frameworks */,
+				CAE8C0C51CEA65AB00082785 /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -621,8 +621,6 @@
 		CA48465F1CDFA47D005030EF /* mute.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mute.caf; sourceTree = "<group>"; };
 		CA570B631C3B8AA300918E3A /* MHWDirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHWDirectoryWatcher.h; sourceTree = "<group>"; };
 		CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHWDirectoryWatcher.m; sourceTree = "<group>"; };
-		CA5F11F61CE28FB100AA1419 /* cs_bypass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = cs_bypass.m; path = core/cs_bypass.m; sourceTree = "<group>"; };
-		CA5F11F71CE28FB100AA1419 /* cs_tramp.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; name = cs_tramp.s; path = core/cs_tramp.s; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
 		CA68821B1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSBuildStoreTableViewController.h; sourceTree = "<group>"; };
 		CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSBuildStoreTableViewController.m; sourceTree = "<group>"; };
@@ -772,6 +770,8 @@
 		CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsOption.m; path = WCEasySettings/WCEasySettingsOption.m; sourceTree = "<group>"; };
 		CAE673981CC8257C00E46EDF /* WCEasySettingsOptionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsOptionViewController.h; path = WCEasySettings/WCEasySettingsOptionViewController.h; sourceTree = "<group>"; };
 		CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsOptionViewController.m; path = WCEasySettings/WCEasySettingsOptionViewController.m; sourceTree = "<group>"; };
+		CAE8C0C01CEA5D3700082785 /* cs_bypass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cs_bypass.m; sourceTree = "<group>"; };
+		CAE8C0C11CEA5D3700082785 /* cs_tramp.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cs_tramp.s; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -817,6 +817,7 @@
 				CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */,
 				9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */,
 				D32C39DB178E749C00E6809E /* libc++.dylib in Frameworks */,
+				CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */,
 				D32C39D9178E748000E6809E /* QuartzCore.framework in Frameworks */,
 				D32C39D7178E73C200E6809E /* SystemConfiguration.framework in Frameworks */,
 				D32C39D3178E73A600E6809E /* CFNetwork.framework in Frameworks */,
@@ -828,7 +829,6 @@
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
 				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
-				CA5F11F01CE28AD400AA1419 /* UnrarKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -872,8 +872,6 @@
 				28387162179561F5009B8E84 /* iNDSGame.m */,
 				CAB2C48F1CB5F29500ED22BB /* iNDSMicrophone.h */,
 				CAB2C4901CB5F29500ED22BB /* iNDSMicrophone.m */,
-				CA5F11F61CE28FB100AA1419 /* cs_bypass.m */,
-				CA5F11F71CE28FB100AA1419 /* cs_tramp.s */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -895,6 +893,8 @@
 				CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */,
 				CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */,
 				CA7079CC1C095147005A1B19 /* toDo.txt */,
+				CAE8C0C01CEA5D3700082785 /* cs_bypass.m */,
+				CAE8C0C11CEA5D3700082785 /* cs_tramp.s */,
 				CAA59B091CAC6C850084AB5D /* Bug Reporting */,
 			);
 			name = "App Init";
@@ -1948,7 +1948,7 @@
 				BFCFE1B917651005000A70CF /* lq2x.cpp in Sources */,
 				CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */,
 				CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */,
-				CA5F11F91CE28FB100AA1419 /* cs_tramp.s in Sources */,
+				CAE8C0C31CEA5D3700082785 /* cs_tramp.s in Sources */,
 				BFCFE1BA17651005000A70CF /* scanline.cpp in Sources */,
 				CAB2C4BF1CB5F2C300ED22BB /* EZMicrophone.m in Sources */,
 				CA908C071C2356F700B2A864 /* SCLButton.m in Sources */,
@@ -2006,7 +2006,7 @@
 				CA031CCB1BEBDC4F00EDE98D /* zip.c in Sources */,
 				BFCFE23E176634EE000A70CF /* slot1_retail_nand.cpp in Sources */,
 				BFCFE23F176634EE000A70CF /* slot1_retail.cpp in Sources */,
-				CA5F11F81CE28FB100AA1419 /* cs_bypass.m in Sources */,
+				CAE8C0C21CEA5D3700082785 /* cs_bypass.m in Sources */,
 				CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */,
 				CAB2C4B41CB5F2C300ED22BB /* EZAudio.m in Sources */,
 				8BEA098D17872CF40060B347 /* throttle.cpp in Sources */,

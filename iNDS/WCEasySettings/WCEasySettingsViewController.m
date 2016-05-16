@@ -22,6 +22,9 @@
     [self.tableView registerClass:[WCEasySettingsSliderCell class] forCellReuseIdentifier:@"Slider"];
     [self.tableView registerClass:[WCEasySettingsUrlCell class] forCellReuseIdentifier:@"Url"];
     [self.tableView registerClass:[WCEasySettingsCustomCell class] forCellReuseIdentifier:@"Custom"];
+    if([self.tableView respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)]) {
+        self.tableView.cellLayoutMarginsFollowReadableWidth = NO;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -109,6 +112,7 @@
     WCEasySettingsItem *item = [self itemForIndexPath:indexPath];
     [item itemSelected];
 }
+
 
 
 

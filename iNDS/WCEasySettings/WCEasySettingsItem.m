@@ -28,4 +28,9 @@
 
 @implementation WCEasySettingsItemCell
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+}
+
 @end

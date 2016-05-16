@@ -76,7 +76,7 @@
 #ifdef UseRarKit
     if ([fileExtension isEqualToString:@"nds"] || [fileExtension isEqualToString:@"rar"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]) {
 #else
-    if ([fileExtension isEqualToString:@"ds"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]) {
+    if ([fileExtension isEqualToString:@"nds"] || [fileExtension isEqualToString:@"zip"] || [fileExtension isEqualToString:@"7z"]) {
 #endif
         NSLog(@"Downloading %@", request.URL);
         lastProgress = 0.0;

@@ -17,6 +17,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    if([self.tableView respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)]) {
+        self.tableView.cellLayoutMarginsFollowReadableWidth = NO;
+    }
 }
 
 - (void)didReceiveMemoryWarning {

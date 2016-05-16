@@ -69,7 +69,7 @@ u8 Mic_ReadSample(){
         s8 sample = (stream[index] - 128);
         
         //printf("Sample: %d -> %d\n", (stream[index] - 128), sample/5);
-        return sample / 1 + 128;
+        return sample / 5 + 128;
         
     } else {
 //#ifdef DEBUG
