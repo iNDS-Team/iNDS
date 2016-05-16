@@ -521,7 +521,7 @@
         } else if (sizeof(void*) == 8) {
             engineOption = [[WCEasySettingsOption alloc] initWithIdentifier:@"cpuMode"
                                                                       title:@"Emulator Engine"
-                                                                    options:@[@"Interpretor"]
+                                                                    options:@[@"Interpreter"]
                                                             optionSubtitles:nil
                                                                    subtitle:@"JIT is not yet available for your device."];
         }
