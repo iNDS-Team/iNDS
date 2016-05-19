@@ -256,8 +256,6 @@
 		CAE673901CC824F900E46EDF /* WCEasySettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673881CC824F900E46EDF /* WCEasySettingsViewController.m */; };
 		CAE673911CC824F900E46EDF /* WCEasySettingsOption.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */; };
 		CAE6739A1CC8257C00E46EDF /* WCEasySettingsOptionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */; };
-		CAE8C0C21CEA5D3700082785 /* cs_bypass.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE8C0C01CEA5D3700082785 /* cs_bypass.m */; };
-		CAE8C0C31CEA5D3700082785 /* cs_tramp.s in Sources */ = {isa = PBXBuildFile; fileRef = CAE8C0C11CEA5D3700082785 /* cs_tramp.s */; };
 		CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
 		CAE8C0C51CEA65AB00082785 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
@@ -770,8 +768,6 @@
 		CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsOption.m; path = WCEasySettings/WCEasySettingsOption.m; sourceTree = "<group>"; };
 		CAE673981CC8257C00E46EDF /* WCEasySettingsOptionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsOptionViewController.h; path = WCEasySettings/WCEasySettingsOptionViewController.h; sourceTree = "<group>"; };
 		CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsOptionViewController.m; path = WCEasySettings/WCEasySettingsOptionViewController.m; sourceTree = "<group>"; };
-		CAE8C0C01CEA5D3700082785 /* cs_bypass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cs_bypass.m; sourceTree = "<group>"; };
-		CAE8C0C11CEA5D3700082785 /* cs_tramp.s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = cs_tramp.s; sourceTree = "<group>"; };
 		D31CC8A017927BCB0098FB9C /* CHBgDropboxSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CHBgDropboxSync.h; sourceTree = "<group>"; };
 		D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CHBgDropboxSync.m; sourceTree = "<group>"; };
 		D31CC8A217927BCB0098FB9C /* DropboxClearer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropboxClearer.h; sourceTree = "<group>"; };
@@ -817,7 +813,6 @@
 				CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */,
 				9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */,
 				D32C39DB178E749C00E6809E /* libc++.dylib in Frameworks */,
-				CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */,
 				D32C39D9178E748000E6809E /* QuartzCore.framework in Frameworks */,
 				D32C39D7178E73C200E6809E /* SystemConfiguration.framework in Frameworks */,
 				D32C39D3178E73A600E6809E /* CFNetwork.framework in Frameworks */,
@@ -829,6 +824,7 @@
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
 				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
+				CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,8 +889,6 @@
 				CA7079C71C08FA63005A1B19 /* iNDSInitialViewController.h */,
 				CA7079C81C08FA64005A1B19 /* iNDSInitialViewController.m */,
 				CA7079CC1C095147005A1B19 /* toDo.txt */,
-				CAE8C0C01CEA5D3700082785 /* cs_bypass.m */,
-				CAE8C0C11CEA5D3700082785 /* cs_tramp.s */,
 				CAA59B091CAC6C850084AB5D /* Bug Reporting */,
 			);
 			name = "App Init";
@@ -1948,7 +1942,6 @@
 				BFCFE1B917651005000A70CF /* lq2x.cpp in Sources */,
 				CABE38361C27E4C200BE8857 /* iNDSSettingsTableViewController.m in Sources */,
 				CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */,
-				CAE8C0C31CEA5D3700082785 /* cs_tramp.s in Sources */,
 				BFCFE1BA17651005000A70CF /* scanline.cpp in Sources */,
 				CAB2C4BF1CB5F2C300ED22BB /* EZMicrophone.m in Sources */,
 				CA908C071C2356F700B2A864 /* SCLButton.m in Sources */,
@@ -2006,7 +1999,6 @@
 				CA031CCB1BEBDC4F00EDE98D /* zip.c in Sources */,
 				BFCFE23E176634EE000A70CF /* slot1_retail_nand.cpp in Sources */,
 				BFCFE23F176634EE000A70CF /* slot1_retail.cpp in Sources */,
-				CAE8C0C21CEA5D3700082785 /* cs_bypass.m in Sources */,
 				CAB2C43C1CB2D88500ED22BB /* iNDSRomDownloadManager.m in Sources */,
 				CAB2C4B41CB5F2C300ED22BB /* EZAudio.m in Sources */,
 				8BEA098D17872CF40060B347 /* throttle.cpp in Sources */,
