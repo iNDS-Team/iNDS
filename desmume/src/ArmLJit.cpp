@@ -7115,9 +7115,9 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
     uintptr_t opfun = (uintptr_t)jit_set_ip(ptr).ptr;
 	
     // Protect region for writing -Will
-//    uintptr_t * opPtr = (uintptr_t*)opfun;
-//    opPtr = (uintptr_t *)((uintptr_t)opPtr & 0xFFFFF000); //Assuming page size is 4096
-//    mprotect(opPtr, 4096 * 2, PROT_WRITE);
+    uintptr_t * opPtr = (uintptr_t*)opfun;
+    opPtr = (uintptr_t *)((uintptr_t)opPtr & 0xFFFFF000); //Assuming page size is 4096
+    mprotect(opPtr, 4096 * 2, PROT_WRITE);
     //
 
 	s_pRegisterMap->Start(NULL, GETCPUPTR);
@@ -7341,7 +7341,7 @@ TEMPLATE static void armcpu_compileblock(BlockInfo &blockinfo, bool runblock)
 	JITLUT_HANDLE(Address, PROCNUM) = opfun;
     
     // Reprotect page for execution
-    //mprotect(opPtr, 4096 * 2, PROT_READ | PROT_EXEC);
+    mprotect(opPtr, 4096 * 2, PROT_READ | PROT_EXEC);
 
 	u8* ptr_end = (u8*)jit_get_ip().ptr;
 	u32 used_size = (u8*)ptr_end - (u8*)ptr;
