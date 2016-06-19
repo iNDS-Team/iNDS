@@ -44,7 +44,6 @@
         });
     }
 #endif
-    [SharkfoodMuteSwitchDetector shared]; //Start detecting
 }
 
 - (void)didReceiveMemoryWarning

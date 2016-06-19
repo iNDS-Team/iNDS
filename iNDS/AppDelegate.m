@@ -28,9 +28,7 @@
 #import "WCBuildStoreClient.h"
 #import "iNDSBuildStoreTableViewController.h"
 
-#ifdef UseRarKit
 #import <UnrarKit/UnrarKit.h>
-#endif
 
 #import <objc/runtime.h>
 
@@ -165,7 +163,6 @@
                     return NO;
                 }
             } else { //Rar
-#ifdef UseRarKit
                 NSError *archiveError = nil;
                 URKArchive *archive = [[URKArchive alloc] initWithPath:url.path error:&archiveError];
                 if (!archive) {
@@ -182,11 +179,6 @@
                     [fm removeItemAtPath:url.path error:NULL];
                     return NO;
                 }
-#else
-                [self showError:@"Rar support has been disabled due to code singing issues. It will return in a future update."];
-                [fm removeItemAtPath:url.path error:NULL];
-                return NO;
-#endif
             }
             NSLog(@"Searching");
             NSMutableArray * foundItems = [NSMutableArray array];
@@ -533,9 +525,6 @@
         // Credits
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         NSString *noRar = @"";
-#ifndef UseRarKit
-        noRar = @"(No Rar)";
-#endif
         WCEasySettingsSection *creditsSection = [[WCEasySettingsSection alloc]
                                                  initWithTitle:@"Info"
                                                  subTitle:[NSString stringWithFormat:@"Version %@ %@", myVersion, noRar]];
