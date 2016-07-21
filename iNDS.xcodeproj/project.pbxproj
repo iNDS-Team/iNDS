@@ -796,6 +796,7 @@
 		D3B8BB951794ACEF0061D1D8 /* ZAActivityBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZAActivityBar.m; path = iNDS/ZAActivityBar/ZAActivityBar.m; sourceTree = SOURCE_ROOT; };
 		D3B8BB981794ACFE0061D1D8 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SKBounceAnimation.h; path = iNDS/ZAActivityBar/SKBounceAnimation/SKBounceAnimation.h; sourceTree = SOURCE_ROOT; };
 		D3B8BB991794ACFE0061D1D8 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SKBounceAnimation.m; path = iNDS/ZAActivityBar/SKBounceAnimation/SKBounceAnimation.m; sourceTree = SOURCE_ROOT; };
+		DFE61E841D409CC000C3E6E9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/MainStoryboard.storyboard"; sourceTree = "<group>"; };
 		EE9CCDC6190BDBFB000875C4 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2071,6 +2072,7 @@
 			children = (
 				17DAE2A31C76F0FC00FD74E6 /* Base */,
 				17DAE2A61C76F18600FD74E6 /* es */,
+				DFE61E841D409CC000C3E6E9 /* zh-Hans */,
 			);
 			name = MainStoryboard.storyboard;
 			path = iNDS;
