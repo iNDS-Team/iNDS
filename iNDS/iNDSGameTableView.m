@@ -21,6 +21,8 @@
 {
     [super viewDidLoad];
     self.navigationItem.title = _game.gameTitle;
+    
+    [[AppDelegate sharedInstance].currentEmulatorViewController.settingsContainer addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 -(void) viewWillAppear:(BOOL)animated
@@ -28,6 +30,20 @@
     [super viewWillAppear:animated];
     [self.tableView reloadData];
     
+}
+
+- (void)dealloc
+{
+    [[AppDelegate sharedInstance].currentEmulatorViewController.settingsContainer removeObserver:self forKeyPath:@"hidden" context:nil];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if (object == [AppDelegate sharedInstance].currentEmulatorViewController.settingsContainer) {
+        if ([change[NSKeyValueChangeNewKey] isEqual:@(NO)]) {
+            [self.tableView reloadData];
+        }
+    }
 }
 
 #pragma mark - Table View
