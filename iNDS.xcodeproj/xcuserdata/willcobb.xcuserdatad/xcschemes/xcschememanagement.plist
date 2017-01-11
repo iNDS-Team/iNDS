@@ -4,20 +4,40 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>iNDS.xcscheme</key>
+		<key>DeSmuME (OpenEmu Plug-in).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>iNDSDebug.xcscheme</key>
+		<key>iNDS.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>BFCFE0EE1764FBD3000A70CF</key>
+		<key>8D1107260486CEB800E47090</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AB796CA415CDCBA200C59155</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AB8F3C171A53AC2600A80BF6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ABB3C6461501BC6D00E0C22E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CA2C6BA01E207C20007F7F64</key>
 		<dict>
 			<key>primary</key>
 			<true/>
