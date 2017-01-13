@@ -8,9 +8,11 @@
 
 #import "iNDSEmulationController.h"
 #import "iNDSEmulationView.h"
+#import "iNDSGamePadView.h"
 #import "iNDSROM.h"
 #import "iNDSSettings.h"
 
+#include "emu.h"
 #include "types.h"
 #include "render3D.h"
 #include "rasterize.h"
@@ -25,10 +27,14 @@
 #include "version.h"
 #include "metaspu.h"
 
+#define FRAME_TIME 0.01666 //60fps
+
 @interface iNDSEmulationController () {
     struct NDS_fw_config_data fw_config;
     
     iNDSEmulationView   *_emulatorView;
+    CGFloat timeOverlap;
+    CGFloat _fps;
 }
 
 @property (nonatomic, strong) CADisplayLink *coreLink;
@@ -48,52 +54,18 @@
         
         self.coreLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(executeFrame)];
         self.coreLink.paused = NO;
+        self.coreLink.preferredFramesPerSecond = 60;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self.coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-            [[NSRunLoop currentRunLoop] run];
+            [NSThread sleepForTimeInterval:1];
+//            [self.coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+//            [[NSRunLoop currentRunLoop] run];
+            for (int i = 0; i < 6000; i++) {
+                [self executeFrame];
+            }
         });
-        
+        self.speed = 1;
     }
     return self;
-}
-
-- (void)loadSettings {
-    CommonSettings.num_cores = (int)sysconf( _SC_NPROCESSORS_ONLN );
-    NSLog(@"%i cores detected", CommonSettings.num_cores);
-    CommonSettings.advanced_timing = false;
-    CommonSettings.cheatsDisable = false;
-    CommonSettings.autodetectBackupMethod = 0;
-    CommonSettings.use_jit = false;
-
-    CommonSettings.hud.FpsDisplay = true;
-    CommonSettings.hud.FrameCounterDisplay = false;
-    CommonSettings.hud.ShowInputDisplay = false;
-    CommonSettings.hud.ShowGraphicalInputDisplay = false;
-    CommonSettings.hud.ShowLagFrameCounter = false;
-    CommonSettings.hud.ShowMicrophone = false;
-    CommonSettings.hud.ShowRTC = false;
-    
-    CommonSettings.micMode = TCommonSettings::Physical;
-    CommonSettings.showGpu.main = 1;
-    CommonSettings.showGpu.sub = 1;
-    
-    // Wifif
-    CommonSettings.wifi.mode = 0;
-    CommonSettings.wifi.infraBridgeAdapter = 0;
-    
-    // Graphics
-    CommonSettings.GFX3D_HighResolutionInterpolateColor = 1;
-    CommonSettings.GFX3D_EdgeMark = 0;
-    CommonSettings.GFX3D_Fog = 1;
-    CommonSettings.GFX3D_Texture = 1;
-    CommonSettings.GFX3D_LineHack = 0;
-    CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = 1;
-    
-    // Sound
-    CommonSettings.spuInterpolationMode = SPUInterpolation_Cosine;
-    CommonSettings.spu_advanced = false;
-    //CommonSettings.SPU_sync_mode = SPU_SYNC_MODE_SYNCHRONOUS;
-    //CommonSettings.SPU_sync_method = SPU_SYNC_METHOD_N;
 }
 
 - (void)initWithLanguage:(int)lang
@@ -107,7 +79,7 @@
     //        video.layout = video.layout_old = 0;
     //    }
     
-    [self loadSettings];
+    EMU_loadDefaultSettings();
     
     Desmume_InitOnce();
     //gpu_SetRotateScreen(video.rotation);
@@ -154,15 +126,33 @@
     [self executeFrame];
 }
 
+CFTimeInterval lastExecute = 0;
+int xx = 0;
 - (void)executeFrame
 {
-   // [cdsController flush];
-    NSLog(@"Executing frame");
+    CFTimeInterval duration = CACurrentMediaTime() - lastExecute;
+    lastExecute = CACurrentMediaTime();
+    _fps = _fps * 0.99 + (1.0 / duration) * 0.01;
+    
     NDS_beginProcessingInput();
     NDS_endProcessingInput();
-    NDS_exec<false>();
+//    timeOverlap += self.coreLink.duration;
+//    timeOverlap = MIN(timeOverlap, FRAME_TIME * 4);
+//
+//    NSInteger framesRendered = 0;
+//    for (;timeOverlap >= FRAME_TIME; timeOverlap -= FRAME_TIME) {
+//        NDS_exec<false>();
+//        framesRendered++;
+//    }
+    for (int i = 0; i < self.speed; i++) {
+        NDS_exec<false>();
+    }
+    
     [_emulatorView updateDisplay];
     
+    if (xx++ % 60 == 0) {
+        NSLog(@"FPS: %f", _fps);
+    }
     //SPU_Emulate_user();
 }
 
@@ -176,6 +166,10 @@
 
 - (iNDSEmulationView *)emulatorView {
     return _emulatorView;
+}
+
+- (CGFloat)fps {
+    return _fps;
 }
 
 - (BOOL)loadRom:(NSString*)path

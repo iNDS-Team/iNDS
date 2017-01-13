@@ -72,67 +72,68 @@ void disableExtensions(uint dwDisableMask)
 /// Checks which instruction set extensions are supported by the CPU.
 uint detectCPUextensions(void)
 {
-#ifndef __i386__
-    return 0; // always disable extensions on non-x86 platforms.
-#else
-    uint res = 0;
-
-    if (_dwDisabledISA == 0xffffffff) return 0;
-
-    asm volatile(
-        "\n\txor     %%esi, %%esi"       // clear %%esi = result register
-        // check if 'cpuid' instructions is available by toggling eflags bit 21
-
-        "\n\tpushf"                      // save eflags to stack
-        "\n\tpop     %%eax"              // load eax from stack (with eflags)
-        "\n\tmovl    %%eax, %%ecx"       // save the original eflags values to ecx
-        "\n\txor     $0x00200000, %%eax" // toggle bit 21
-        "\n\tpush    %%eax"              // store toggled eflags to stack
-        "\n\tpopf"                       // load eflags from stack
-        "\n\tpushf"                      // save updated eflags to stack
-        "\n\tpop     %%eax"              // load from stack
-        "\n\txor     %%edx, %%edx"       // clear edx for defaulting no mmx
-        "\n\tcmp     %%ecx, %%eax"       // compare to original eflags values
-        "\n\tjz      end"                // jumps to 'end' if cpuid not present
-
-        // cpuid instruction available, test for presence of mmx instructions
-
-        "\n\tmovl    $1, %%eax"
-        "\n\tcpuid"
-//        movl       $0x00800000, %edx   // force enable MMX
-        "\n\ttest    $0x00800000, %%edx"
-        "\n\tjz      end"                // branch if MMX not available
-
-        "\n\tor      $0x01, %%esi"       // otherwise add MMX support bit
-
-        "\n\ttest    $0x02000000, %%edx"
-        "\n\tjz      test3DNow"          // branch if SSE not available
-
-        "\n\tor      $0x08, %%esi"       // otherwise add SSE support bit
-
-    "\n\ttest3DNow:"
-        // test for precense of AMD extensions
-        "\n\tmov     $0x80000000, %%eax"
-        "\n\tcpuid"
-        "\n\tcmp     $0x80000000, %%eax"
-        "\n\tjbe     end"                 // branch if no AMD extensions detected
-
-        // test for precense of 3DNow! extension
-        "\n\tmov     $0x80000001, %%eax"
-        "\n\tcpuid"
-        "\n\ttest    $0x80000000, %%edx"
-        "\n\tjz      end"                  // branch if 3DNow! not detected
-
-        "\n\tor      $0x02, %%esi"         // otherwise add 3DNow support bit
-
-    "\n\tend:"
-
-        "\n\tmov     %%esi, %0"
-
-      : "=r" (res)
-      : /* no inputs */
-      : "%edx", "%eax", "%ecx", "%esi" );
-      
-    return res & ~_dwDisabledISA;
-#endif
+    return 0;
+//#ifndef __i386__
+//    return 0; // always disable extensions on non-x86 platforms.
+//#else
+//    uint res = 0;
+//
+//    if (_dwDisabledISA == 0xffffffff) return 0;
+//
+//    asm volatile(
+//        "\n\txor     %%esi, %%esi"       // clear %%esi = result register
+//        // check if 'cpuid' instructions is available by toggling eflags bit 21
+//
+//        "\n\tpushf"                      // save eflags to stack
+//        "\n\tpop     %%eax"              // load eax from stack (with eflags)
+//        "\n\tmovl    %%eax, %%ecx"       // save the original eflags values to ecx
+//        "\n\txor     $0x00200000, %%eax" // toggle bit 21
+//        "\n\tpush    %%eax"              // store toggled eflags to stack
+//        "\n\tpopf"                       // load eflags from stack
+//        "\n\tpushf"                      // save updated eflags to stack
+//        "\n\tpop     %%eax"              // load from stack
+//        "\n\txor     %%edx, %%edx"       // clear edx for defaulting no mmx
+//        "\n\tcmp     %%ecx, %%eax"       // compare to original eflags values
+//        "\n\tjz      end"                // jumps to 'end' if cpuid not present
+//
+//        // cpuid instruction available, test for presence of mmx instructions
+//
+//        "\n\tmovl    $1, %%eax"
+//        "\n\tcpuid"
+////        movl       $0x00800000, %edx   // force enable MMX
+//        "\n\ttest    $0x00800000, %%edx"
+//        "\n\tjz      end"                // branch if MMX not available
+//
+//        "\n\tor      $0x01, %%esi"       // otherwise add MMX support bit
+//
+//        "\n\ttest    $0x02000000, %%edx"
+//        "\n\tjz      test3DNow"          // branch if SSE not available
+//
+//        "\n\tor      $0x08, %%esi"       // otherwise add SSE support bit
+//
+//    "\n\ttest3DNow:"
+//        // test for precense of AMD extensions
+//        "\n\tmov     $0x80000000, %%eax"
+//        "\n\tcpuid"
+//        "\n\tcmp     $0x80000000, %%eax"
+//        "\n\tjbe     end"                 // branch if no AMD extensions detected
+//
+//        // test for precense of 3DNow! extension
+//        "\n\tmov     $0x80000001, %%eax"
+//        "\n\tcpuid"
+//        "\n\ttest    $0x80000000, %%edx"
+//        "\n\tjz      end"                  // branch if 3DNow! not detected
+//
+//        "\n\tor      $0x02, %%esi"         // otherwise add 3DNow support bit
+//
+//    "\n\tend:"
+//
+//        "\n\tmov     %%esi, %0"
+//
+//      : "=r" (res)
+//      : /* no inputs */
+//      : "%edx", "%eax", "%ecx", "%esi" );
+//      
+//    return res & ~_dwDisabledISA;
+//#endif
 }

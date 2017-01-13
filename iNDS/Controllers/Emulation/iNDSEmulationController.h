@@ -10,10 +10,14 @@
 
 @class iNDSROM;
 @class iNDSEmulationView;
+@class iNDSGamePadView;
 
 @interface iNDSEmulationController : NSObject
 
 @property (nonatomic, readonly) iNDSEmulationView *emulatorView;
+@property (nonatomic, readonly) CGFloat fps;
+
+@property (nonatomic, assign) NSInteger speed;
 
 - (id)initWithRom:(iNDSROM *)rom;
 

@@ -43,7 +43,6 @@
 		ABB3C6891501C04F00E0C22E /* lq2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE150414C92FF5005D6699 /* lq2x.cpp */; };
 		ABB3C68A1501C04F00E0C22E /* scanline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE150614C92FF5005D6699 /* scanline.cpp */; };
 		ABB3C68B1501C04F00E0C22E /* AAFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6513AF1D6D00502E1E /* AAFilter.cpp */; };
-		ABB3C68C1501C04F00E0C22E /* cpu_detect_x86_gcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6613AF1D6D00502E1E /* cpu_detect_x86_gcc.cpp */; };
 		ABB3C68D1501C04F00E0C22E /* FIFOSampleBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6813AF1D6D00502E1E /* FIFOSampleBuffer.cpp */; };
 		ABB3C68E1501C04F00E0C22E /* FIRFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6913AF1D6D00502E1E /* FIRFilter.cpp */; };
 		ABB3C68F1501C04F00E0C22E /* mmx_optimized.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6A13AF1D6D00502E1E /* mmx_optimized.cpp */; };
@@ -125,7 +124,6 @@
 		CA2C6BB31E207C20007F7F64 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA2C6BB11E207C20007F7F64 /* LaunchScreen.storyboard */; };
 		CA2C6C2B1E2082CF007F7F64 /* mic_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA2C6C291E208246007F7F64 /* mic_iOS.cpp */; };
 		CA2C6C2E1E20837E007F7F64 /* snd_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA2C6C2C1E208346007F7F64 /* snd_iOS.cpp */; };
-		CA2C6C321E20846B007F7F64 /* main_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CA2C6C301E20843F007F7F64 /* main_iOS.cpp */; };
 		CA2C6C371E208B59007F7F64 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2C6C361E208B59007F7F64 /* AVFoundation.framework */; };
 		CA2C6C391E208B83007F7F64 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2C6C381E208B83007F7F64 /* AudioToolbox.framework */; };
 		CA2C6C3B1E208B95007F7F64 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2C6C3A1E208B95007F7F64 /* libz.tbd */; };
@@ -142,9 +140,13 @@
 		CAF4D2231E23EC9A000BE522 /* iNDSEmulationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2221E23EC9A000BE522 /* iNDSEmulationView.mm */; };
 		CAF4D2281E23EFB1000BE522 /* GLProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2271E23EFB1000BE522 /* GLProgram.m */; };
 		CAF4D22D1E24125A000BE522 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = CAF4D22B1E24125A000BE522 /* Shader.fsh */; };
-		CAF4D22E1E24125A000BE522 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = CAF4D22C1E24125A000BE522 /* Shader.vsh */; };
 		CAF4D2311E254732000BE522 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF4D2301E254732000BE522 /* OpenGLES.framework */; };
 		CAF4D2331E254765000BE522 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF4D2321E254765000BE522 /* GLKit.framework */; };
+		CAF4D2641E28498A000BE522 /* emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2621E28498A000BE522 /* emu.cpp */; };
+		CAF4D2671E2849E4000BE522 /* iNDSGamePadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2661E2849E4000BE522 /* iNDSGamePadView.m */; };
+		CAF4D26A1E284AA4000BE522 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2691E284AA4000BE522 /* iNDSEmulationProfile.m */; };
+		CAF4D26D1E284AE1000BE522 /* NSString+CompareToVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D26C1E284AE1000BE522 /* NSString+CompareToVersion.m */; };
+		CAF4D26E1E284BF7000BE522 /* cpu_detect_x86_gcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABAD3E6613AF1D6D00502E1E /* cpu_detect_x86_gcc.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -491,7 +493,6 @@
 		CA2C6C291E208246007F7F64 /* mic_iOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mic_iOS.cpp; sourceTree = "<group>"; };
 		CA2C6C2C1E208346007F7F64 /* snd_iOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = snd_iOS.cpp; sourceTree = "<group>"; };
 		CA2C6C2F1E2083B4007F7F64 /* snd_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = snd_iOS.h; sourceTree = "<group>"; };
-		CA2C6C301E20843F007F7F64 /* main_iOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main_iOS.cpp; sourceTree = "<group>"; };
 		CA2C6C361E208B59007F7F64 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		CA2C6C381E208B83007F7F64 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		CA2C6C3A1E208B95007F7F64 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -517,10 +518,16 @@
 		CAF4D2261E23EFB1000BE522 /* GLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLProgram.h; sourceTree = "<group>"; };
 		CAF4D2271E23EFB1000BE522 /* GLProgram.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLProgram.m; sourceTree = "<group>"; };
 		CAF4D22B1E24125A000BE522 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
-		CAF4D22C1E24125A000BE522 /* Shader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.vsh; sourceTree = "<group>"; };
-		CAF4D22F1E253FBA000BE522 /* main_iOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main_iOS.h; sourceTree = "<group>"; };
 		CAF4D2301E254732000BE522 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		CAF4D2321E254765000BE522 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS9.3.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		CAF4D2621E28498A000BE522 /* emu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = emu.cpp; sourceTree = "<group>"; };
+		CAF4D2631E28498A000BE522 /* emu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emu.h; sourceTree = "<group>"; };
+		CAF4D2651E2849E4000BE522 /* iNDSGamePadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSGamePadView.h; sourceTree = "<group>"; };
+		CAF4D2661E2849E4000BE522 /* iNDSGamePadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSGamePadView.m; sourceTree = "<group>"; };
+		CAF4D2681E284AA4000BE522 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
+		CAF4D2691E284AA4000BE522 /* iNDSEmulationProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationProfile.m; sourceTree = "<group>"; };
+		CAF4D26B1E284AE1000BE522 /* NSString+CompareToVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareToVersion.h"; sourceTree = "<group>"; };
+		CAF4D26C1E284AE1000BE522 /* NSString+CompareToVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareToVersion.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1078,8 +1085,8 @@
 		CA2C6C281E20822C007F7F64 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				CAF4D22F1E253FBA000BE522 /* main_iOS.h */,
-				CA2C6C301E20843F007F7F64 /* main_iOS.cpp */,
+				CAF4D2631E28498A000BE522 /* emu.h */,
+				CAF4D2621E28498A000BE522 /* emu.cpp */,
 				CA2C6C291E208246007F7F64 /* mic_iOS.cpp */,
 				CA2C6C2F1E2083B4007F7F64 /* snd_iOS.h */,
 				CA2C6C2C1E208346007F7F64 /* snd_iOS.cpp */,
@@ -1117,6 +1124,8 @@
 				CAF4D21E1E23EB88000BE522 /* iNDSDirectionalControl.m */,
 				CAF4D2211E23EC9A000BE522 /* iNDSEmulationView.h */,
 				CAF4D2221E23EC9A000BE522 /* iNDSEmulationView.mm */,
+				CAF4D2651E2849E4000BE522 /* iNDSGamePadView.h */,
+				CAF4D2661E2849E4000BE522 /* iNDSGamePadView.m */,
 			);
 			path = Emulation;
 			sourceTree = "<group>";
@@ -1144,6 +1153,8 @@
 			children = (
 				CAF4D2121E23EA38000BE522 /* iNDSEmulationController.h */,
 				CAF4D2131E23EA38000BE522 /* iNDSEmulationController.mm */,
+				CAF4D2681E284AA4000BE522 /* iNDSEmulationProfile.h */,
+				CAF4D2691E284AA4000BE522 /* iNDSEmulationProfile.m */,
 			);
 			path = Emulation;
 			sourceTree = "<group>";
@@ -1160,6 +1171,8 @@
 		CAF4D2241E23EFA5000BE522 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				CAF4D26B1E284AE1000BE522 /* NSString+CompareToVersion.h */,
+				CAF4D26C1E284AE1000BE522 /* NSString+CompareToVersion.m */,
 				CAF4D2251E23EFA5000BE522 /* GLUtilities */,
 			);
 			path = Utilities;
@@ -1186,7 +1199,6 @@
 			isa = PBXGroup;
 			children = (
 				CAF4D22B1E24125A000BE522 /* Shader.fsh */,
-				CAF4D22C1E24125A000BE522 /* Shader.vsh */,
 			);
 			path = Shaders;
 			sourceTree = "<group>";
@@ -1286,7 +1298,6 @@
 			files = (
 				CA2C6BB31E207C20007F7F64 /* LaunchScreen.storyboard in Resources */,
 				CAF4D1FE1E21E9A8000BE522 /* ROMS in Resources */,
-				CAF4D22E1E24125A000BE522 /* Shader.vsh in Resources */,
 				CA2C6BB01E207C20007F7F64 /* Assets.xcassets in Resources */,
 				CA2C6BAE1E207C20007F7F64 /* Main.storyboard in Resources */,
 				CAF4D22D1E24125A000BE522 /* Shader.fsh in Resources */,
@@ -1300,7 +1311,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA2C6C321E20846B007F7F64 /* main_iOS.cpp in Sources */,
+				CAF4D26E1E284BF7000BE522 /* cpu_detect_x86_gcc.cpp in Sources */,
 				CA2C6C2E1E20837E007F7F64 /* snd_iOS.cpp in Sources */,
 				CA2C6C2B1E2082CF007F7F64 /* mic_iOS.cpp in Sources */,
 				ABE9EEEB1501C78700D3FB19 /* fs-linux.cpp in Sources */,
@@ -1329,7 +1340,6 @@
 				ABB3C6891501C04F00E0C22E /* lq2x.cpp in Sources */,
 				ABB3C68A1501C04F00E0C22E /* scanline.cpp in Sources */,
 				ABB3C68B1501C04F00E0C22E /* AAFilter.cpp in Sources */,
-				ABB3C68C1501C04F00E0C22E /* cpu_detect_x86_gcc.cpp in Sources */,
 				ABB3C68D1501C04F00E0C22E /* FIFOSampleBuffer.cpp in Sources */,
 				AB9038A817C5ECFD00F410BD /* advanscene.cpp in Sources */,
 				ABB3C68E1501C04F00E0C22E /* FIRFilter.cpp in Sources */,
@@ -1416,15 +1426,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAF4D2671E2849E4000BE522 /* iNDSGamePadView.m in Sources */,
 				CAF4D2111E23E6C0000BE522 /* iNDSROMCollectionController.m in Sources */,
 				CA5AC5931E21C8AD00433286 /* iNDSSettings.m in Sources */,
 				CA5AC5901E209A2400433286 /* iNDSROM.m in Sources */,
 				CA2C6BA81E207C20007F7F64 /* AppDelegate.m in Sources */,
+				CAF4D26A1E284AA4000BE522 /* iNDSEmulationProfile.m in Sources */,
 				CAF4D2201E23EB88000BE522 /* iNDSDirectionalControl.m in Sources */,
 				CAF4D2281E23EFB1000BE522 /* GLProgram.m in Sources */,
 				CAF4D2141E23EA38000BE522 /* iNDSEmulationController.mm in Sources */,
+				CAF4D26D1E284AE1000BE522 /* NSString+CompareToVersion.m in Sources */,
 				CAF4D21F1E23EB88000BE522 /* iNDSButtonControl.m in Sources */,
 				CAF4D2231E23EC9A000BE522 /* iNDSEmulationView.mm in Sources */,
+				CAF4D2641E28498A000BE522 /* emu.cpp in Sources */,
 				CAF4D20B1E23E68B000BE522 /* iNDSROMCollectionViewController.mm in Sources */,
 				CA2C6BA51E207C20007F7F64 /* main.m in Sources */,
 				CAF4D20A1E23E68B000BE522 /* iNDSEmulationViewController.m in Sources */,
@@ -1482,6 +1496,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREFIX_HEADER = openemu/DeSmuME_Prefix_OpenEmu.pch;
@@ -1508,6 +1523,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PREFIX_HEADER = openemu/DeSmuME_Prefix_OpenEmu.pch;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/metaspu/SoundTouch\"";
 				INFOPLIST_FILE = "openemu/Info (OpenEmu Plug-in).plist";
@@ -1636,6 +1652,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MRGX8T9A4Y;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

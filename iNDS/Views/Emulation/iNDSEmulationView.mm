@@ -8,10 +8,9 @@
 
 #import "iNDSEmulationView.h"
 
-#import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
 #import "GLProgram.h"
-#import "main_iOS.h"
+#import "emu.h"
 
 #include "GPU.h"
 #include "gfx3d.h"
@@ -22,17 +21,17 @@
 
 NSString *const kVertShader = SHADER_STRING
 (
- attribute vec4 position;
- attribute vec2 inputTextureCoordinate;
- 
- varying highp vec2 texCoord;
- 
- void main()
- {
+    attribute vec4 position;
+    attribute vec2 inputTextureCoordinate;
+
+    varying highp vec2 texCoord;
+
+    void main()
+    {
      texCoord = inputTextureCoordinate;
      gl_Position = position;
- }
- );
+    }
+);
 
 NSString * kFragShader = SHADER_STRING (
                                         uniform sampler2D inputImageTexture;
@@ -72,14 +71,9 @@ const float textureVert[] =
     GLint texUniform;
     
     u32* outputBuffer;
-    
-    GLKView *movingView;
 }
 
 
-
-@property GLKView *topView; // NDS main top screen
-@property GLKView *bottomView; // NDS Touch screen
 @property GLProgram *program;
 @property EAGLContext *context;
 
@@ -101,15 +95,15 @@ const float textureVert[] =
     self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:self.context];
     
-    self.topView = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
-    self.bottomView = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
-    self.topView.delegate = self;
-    self.bottomView.delegate = self;
-    [self insertSubview:self.bottomView atIndex:0];
-    [self insertSubview:self.topView atIndex:0];
+    self.mainScreen = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
+    self.touchScreen = [[GLKView alloc] initWithFrame:CGRectMake(0, 0, 4, 3) context:self.context];
+    self.mainScreen.delegate = self;
+    self.touchScreen.delegate = self;
+    [self insertSubview:self.touchScreen atIndex:0];
+    [self insertSubview:self.mainScreen atIndex:0];
     
-    self.topView.frame = CGRectMake(0, 0, 256, 192);
-    self.bottomView.frame = CGRectMake(0, 200, 256, 192);
+    self.mainScreen.frame = CGRectMake(0, 0, 256, 192);
+    self.touchScreen.frame = CGRectMake(0, 200, 256, 192);
     
     
     self.program = [[GLProgram alloc] initWithVertexShaderString:kVertShader fragmentShaderString:kFragShader];
@@ -146,8 +140,6 @@ const float textureVert[] =
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    
-    outputBuffer = (u32 *)malloc([self bufferSize] * sizeof(uint32));
 }
 
 - (NSInteger)bufferSize
@@ -155,55 +147,30 @@ const float textureVert[] =
     return 256 * 192 * 2;
 }
 
-- (u8 *)videoBuffer
-{
-    return GPU_screen;
-}
 
-// Should offload this to GPU
-- (void)RBG555:(u16 *)inBuffer TORBGA8888:(u32 *)outBuffer {
-    int size = 256*192*2;
-    for(int i=0;i<size;++i)
-        *(outBuffer+i) = 0xFF000000 | RGB15TO32_NOALPHA(inBuffer[i]);
-}
-
-// Doesn't work right
-- (void)RBG555:(u16 *)inBuffer TORBGA15:(u16 *)outBuffer {
-    int size = 256*192*2;
-    for(int i=0;i<size;++i) {
-        *(outBuffer+i) = 0x8000 | inBuffer[i];
-    }
-}
 
 - (void)updateDisplay
 {
     if (texHandle[0] == 0 || !execute) return;
-    
-    NSLog(@"Updating Display2");
-    size_t bufferSize = [self bufferSize];
-    u16 *screenBuffer = (u16 *)[self videoBuffer];
-    
-    [self RBG555:screenBuffer TORBGA8888:outputBuffer];
-    //[self RBG555:screenBuffer TORBGA15:outputBuffer];
-    
+    u32 *screenBuffer = EMU_RBGA8Buffer();
     int scale = 1;//(int)sqrt(bufferSize/98304);//1, 3, 4
     
     int width = 256 * scale;
     int height = 192 * scale;
     
     glBindTexture(GL_TEXTURE_2D, texHandle[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outputBuffer);
-    [self.topView display]; 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, screenBuffer);
+    [self.mainScreen display];
     
     glBindTexture(GL_TEXTURE_2D, texHandle[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, outputBuffer + width * height);
-    [self.bottomView display];
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &screenBuffer[width * height]);
+    [self.touchScreen display];
 }
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, (view == self.topView) ? texHandle[0] : texHandle[1]);
+    glBindTexture(GL_TEXTURE_2D, (view == self.mainScreen) ? texHandle[0] : texHandle[1]);
     glUniform1i(texUniform, 1);
     
     glVertexAttribPointer(attribPos, 2, GL_FLOAT, 0, 0, (const GLfloat*)&positionVert);
@@ -211,5 +178,6 @@ const float textureVert[] =
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
+
 
 @end
