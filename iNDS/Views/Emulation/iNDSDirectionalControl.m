@@ -13,7 +13,6 @@
     CFTimeInterval lastMove;
 }
 
-@property (readwrite, nonatomic) iNDSDirectionalControlDirection direction;
 @property (assign, nonatomic) CGSize deadZone; // dead zone in the middle of the control
 @property (strong, nonatomic) UIImageView *backgroundImageView;
 @property (assign, nonatomic) CGRect deadZoneRect;
@@ -26,26 +25,37 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        // Initialization code
-        _backgroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
-        _backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [self addSubview:_backgroundImageView];
-        
-        buttonImage = [[CALayer alloc] init];
-        buttonImage.frame = CGRectMake(0, 0, self.frame.size.width/2.2, self.frame.size.width/2.2);
-        buttonImage.contents = (id)[UIImage imageNamed:@"JoystickButton"].CGImage;
-        buttonImage.anchorPoint = CGPointMake(0.5, 0.5);
-        buttonImage.actions = @{@"position": [NSNull null]};
-        [self.layer addSublayer:buttonImage];
-        
-        self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
-        self.direction = iNDSDirectionalControlDirectionDown;
-        
-        
-        [self setStyle:iNDSDirectionalControlStyleDPad];
+        [self commonInit];
     }
     return self;
 }
+
+- (id)init
+{
+    if (self = [super init]) {
+        [self commonInit];
+    }
+    return self;
+}
+
+- (void)commonInit {
+    _backgroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+    _backgroundImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    [self addSubview:_backgroundImageView];
+    
+    buttonImage = [[CALayer alloc] init];
+    buttonImage.frame = CGRectMake(0, 0, self.frame.size.width/2.2, self.frame.size.width/2.2);
+    buttonImage.contents = (id)[UIImage imageNamed:@"JoystickButton"].CGImage;
+    buttonImage.anchorPoint = CGPointMake(0.5, 0.5);
+    buttonImage.actions = @{@"position": [NSNull null]};
+    [self.layer addSublayer:buttonImage];
+    
+    self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
+    self.direction = iNDSDirectionalControlDirectionDown;
+    
+    [self setStyle:iNDSDirectionalControlStyleDPad];
+}
+
 - (void) frameUpdated
 {
     self.deadZone = CGSizeMake(self.frame.size.width/3, self.frame.size.height/3);
@@ -53,7 +63,6 @@
     buttonImage.frame = CGRectMake(0, 0, self.frame.size.width/2.2, self.frame.size.width/2.2);
     buttonImage.position = self.backgroundImageView.center;
 }
-
 
 
 - (void) layoutSubviews

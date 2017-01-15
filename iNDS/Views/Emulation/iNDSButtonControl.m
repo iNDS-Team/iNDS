@@ -12,9 +12,14 @@
 
 @property (strong, nonatomic) UIImageView *backgroundImageView;
 
+- (iNDSDirectionalControlDirection)directionForTouch:(UITouch *)touch;
+
 @end
 
-@interface iNDSButtonControl ()
+@interface iNDSButtonControl () {
+    iNDSButtonControlButton _selectedButtons;
+    UITouch *touches[4];
+}
 
 @property (readwrite, nonatomic) iNDSButtonControlButton selectedButtons;
 
@@ -27,12 +32,60 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         self.backgroundImageView.image = [UIImage imageNamed:@"ABXYPad"];
+        self.multipleTouchEnabled = YES;
     }
     return self;
 }
 
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.backgroundImageView.image = [UIImage imageNamed:@"ABXYPad"];
+        self.multipleTouchEnabled = YES;
+    }
+    return self;
+}
+
+
+
+- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    for (int i = 0; i < 4; i++) {
+        if (!touches[i]) {
+            touches[i] = touch;
+            break;
+        }
+    }
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+    return YES;
+}
+
+- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+    return YES;
+}
+
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    for (int i = 0; i < 4; i++) {
+        if (touch == touches[i]) {
+            touches[i] = NULL;
+            break;
+        }
+    }
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+}
+
 - (iNDSButtonControlButton)selectedButtons {
-    return (iNDSButtonControlButton)self.direction;
+    iNDSButtonControlButton buttons = 0;
+    for (int i = 0; i < 4; i++) {
+        if (touches[i]) {
+            buttons |= [self directionForTouch:touches[i]];
+        }
+    }
+    return buttons;
 }
 
 @end

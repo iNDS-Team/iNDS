@@ -147,8 +147,6 @@ const float textureVert[] =
     return 256 * 192 * 2;
 }
 
-
-
 - (void)updateDisplay
 {
     if (texHandle[0] == 0 || !execute) return;
@@ -179,5 +177,31 @@ const float textureVert[] =
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
+#pragma mark Touch
+
+- (void)touchScreenAtPoint:(CGPoint)point
+{
+    point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/self.touchScreen.bounds.size.width, 192/self.touchScreen.bounds.size.height));
+    EMU_touchScreenTouch(point.x, point.y);
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    for (UITouch *t in touches) {
+        [self touchScreenAtPoint:[t locationInView:self.touchScreen]];
+    }
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    for (UITouch *t in touches) {
+        [self touchScreenAtPoint:[t locationInView:self.touchScreen]];
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    EMU_touchScreenRelease();
+}
 
 @end

@@ -31,8 +31,13 @@
         self.controllerView = [[iNDSGamePadView alloc] initWithFrame:self.view.bounds];
         [self.view addSubview:self.controllerView];
         [self setProfile:[[iNDSEmulationProfile alloc] initWithProfileName:@"Default"]];
+        [self loadSettings];
     }
     return self;
+}
+
+- (void)loadSettings {
+    self.controllerView.alpha = 0.5;
 }
 
 - (void)setProfile:(iNDSEmulationProfile *)profile {

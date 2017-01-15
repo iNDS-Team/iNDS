@@ -22,7 +22,7 @@ typedef NS_ENUM(NSInteger, iNDSDirectionalControlStyle) {
 
 @interface iNDSDirectionalControl : UIControl
 
-@property (readonly, nonatomic) iNDSDirectionalControlDirection direction;
+@property (assign, nonatomic) iNDSDirectionalControlDirection direction;
 @property (assign, nonatomic) iNDSDirectionalControlStyle style;
 
 - (void) frameUpdated;

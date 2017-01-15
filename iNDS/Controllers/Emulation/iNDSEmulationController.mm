@@ -57,11 +57,11 @@
         self.coreLink.preferredFramesPerSecond = 60;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             [NSThread sleepForTimeInterval:1];
-//            [self.coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-//            [[NSRunLoop currentRunLoop] run];
-            for (int i = 0; i < 6000; i++) {
-                [self executeFrame];
-            }
+            [self.coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            [[NSRunLoop currentRunLoop] run];
+//            for (int i = 0; i < 6000; i++) {
+//                [self executeFrame];
+//            }
         });
         self.speed = 1;
     }
@@ -136,15 +136,16 @@ int xx = 0;
     
     NDS_beginProcessingInput();
     NDS_endProcessingInput();
-//    timeOverlap += self.coreLink.duration;
-//    timeOverlap = MIN(timeOverlap, FRAME_TIME * 4);
-//
-//    NSInteger framesRendered = 0;
-//    for (;timeOverlap >= FRAME_TIME; timeOverlap -= FRAME_TIME) {
-//        NDS_exec<false>();
-//        framesRendered++;
-//    }
+    
     for (int i = 0; i < self.speed; i++) {
+//        timeOverlap += self.coreLink.duration;
+//        timeOverlap = MIN(timeOverlap, FRAME_TIME * 4);
+//    
+//        NSInteger framesRendered = 0;
+//        for (;timeOverlap >= FRAME_TIME; timeOverlap -= FRAME_TIME) {
+//            NDS_exec<false>();
+//            framesRendered++;
+//        }
         NDS_exec<false>();
     }
     
@@ -177,7 +178,6 @@ int xx = 0;
     NSLog(@"Loading Rom: %@", path);
     return NDS_LoadROM([path UTF8String]) > 0;
 }
-
 
 
 @end
