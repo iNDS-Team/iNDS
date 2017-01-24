@@ -18,5 +18,3 @@ DerivedData
 *.xccheckout
 *.xcworkspacedata
 build/*
-
-ROMS/
