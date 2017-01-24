@@ -11,6 +11,7 @@
 #import "iNDSROM.h"
 #import "iNDSEmulationViewController.h"
 #import "iNDSEmulationController.h"
+#import "iNDSROMViewCell.h"
 
 @interface iNDSROMCollectionViewController ()
 
@@ -25,24 +26,35 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     self.romCollection = [[iNDSROMCollectionController alloc] init];
     [self.romCollection updateRoms];
+    [self.collectionView registerClass:[iNDSROMViewCell class] forCellWithReuseIdentifier:@"iNDSROM"];
+    
+    self.collectionView.backgroundColor = [UIColor colorWithWhite:50/255.0 alpha:1];
+    //self.navigationController.navigationBar.barStyle = UIBarStyleDefault;
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.romCollection.roms.count;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSROM"];
+    iNDSROMViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"iNDSROM" forIndexPath:indexPath];
     
     iNDSROM *rom = self.romCollection.roms[indexPath.row];
-    cell.textLabel.text = rom.title;
+    
+    cell.rom = rom;
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    return CGSizeMake(90, 150);
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [collectionView deselectItemAtIndexPath:indexPath animated:YES];
     [self launchROM:self.romCollection.roms[indexPath.row]];
 }
 

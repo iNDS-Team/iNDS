@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C571D6FDDE2A0F1C41D5348 /* libPods-DeSmuME_JIT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 24DE089D99BE6F1EDA4DCEEB /* libPods-DeSmuME_JIT.a */; };
 		AB1773FF182ECA8A009F29DD /* slot2_passme.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB1773FC182ECA8A009F29DD /* slot2_passme.cpp */; };
 		AB29B16418313AF5009B7982 /* slot2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB29B16118313AF5009B7982 /* slot2.cpp */; };
 		AB29B16818313C14009B7982 /* slot2_auto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB29B16518313C14009B7982 /* slot2_auto.cpp */; };
@@ -117,6 +118,7 @@
 		ABC503B11AAC4355002FCD43 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ABB0FBC41A9E5CEA0060C55A /* CoreAudio.framework */; };
 		ABCFA9F6178BDE920030C8BA /* encrypt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABCFA9F3178BDE920030C8BA /* encrypt.cpp */; };
 		ABE9EEEB1501C78700D3FB19 /* fs-linux.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABD1FEB21345AC8400AF11D1 /* fs-linux.cpp */; };
+		BA881404124FFA3835BFC660 /* libPods-DeSmuME.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D35955226A4F3ECC3EF5C3D /* libPods-DeSmuME.a */; };
 		CA2C6BA51E207C20007F7F64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CA2C6BA41E207C20007F7F64 /* main.m */; };
 		CA2C6BA81E207C20007F7F64 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA2C6BA71E207C20007F7F64 /* AppDelegate.m */; };
 		CA2C6BAE1E207C20007F7F64 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CA2C6BAC1E207C20007F7F64 /* Main.storyboard */; };
@@ -130,6 +132,7 @@
 		CA5AC5871E208DEC00433286 /* DeSmuME.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ABB3C6471501BC6D00E0C22E /* DeSmuME.dylib */; };
 		CA5AC5901E209A2400433286 /* iNDSROM.m in Sources */ = {isa = PBXBuildFile; fileRef = CA5AC58F1E209A2400433286 /* iNDSROM.m */; };
 		CA5AC5931E21C8AD00433286 /* iNDSSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = CA5AC5921E21C8AD00433286 /* iNDSSettings.m */; };
+		CAB45F681E312FC2007BBBF8 /* iNDSEmulationMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB45F671E312FC2007BBBF8 /* iNDSEmulationMenuView.m */; };
 		CAF4D1FE1E21E9A8000BE522 /* ROMS in Resources */ = {isa = PBXBuildFile; fileRef = CAF4D1FD1E21E9A8000BE522 /* ROMS */; };
 		CAF4D20A1E23E68B000BE522 /* iNDSEmulationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2061E23E68B000BE522 /* iNDSEmulationViewController.m */; };
 		CAF4D20B1E23E68B000BE522 /* iNDSROMCollectionViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D2091E23E68B000BE522 /* iNDSROMCollectionViewController.mm */; };
@@ -289,6 +292,8 @@
 		CAF4D31A1E2990A9000BE522 /* x86func.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB405672169F5DCC0016AC3E /* x86func.cpp */; };
 		CAF4D31B1E2990A9000BE522 /* x86operand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB405674169F5DCC0016AC3E /* x86operand.cpp */; };
 		CAF4D31C1E2990A9000BE522 /* x86util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB405676169F5DCC0016AC3E /* x86util.cpp */; };
+		CAF4D3231E2AFC4C000BE522 /* iNDSROMViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CAF4D3221E2AFC4C000BE522 /* iNDSROMViewCell.m */; };
+		CE832EC067ABB5FF6EA4A9D8 /* libPods-iNDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B90EC305E00962333AF80569 /* libPods-iNDS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -302,9 +307,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0D35955226A4F3ECC3EF5C3D /* libPods-DeSmuME.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DeSmuME.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D41BC79D672E5A3E6BF493B /* Pods-DeSmuME_JIT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeSmuME_JIT.release.xcconfig"; path = "Pods/Target Support Files/Pods-DeSmuME_JIT/Pods-DeSmuME_JIT.release.xcconfig"; sourceTree = "<group>"; };
+		24DE089D99BE6F1EDA4DCEEB /* libPods-DeSmuME_JIT.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DeSmuME_JIT.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5BA32A8EE0D5EF6BC8425761 /* Pods-DeSmuME_JIT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeSmuME_JIT.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DeSmuME_JIT/Pods-DeSmuME_JIT.debug.xcconfig"; sourceTree = "<group>"; };
+		70B3AC8820D52E680ECCDF53 /* Pods-iNDS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.release.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.release.xcconfig"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9FE2B1A1383D1DE96560E8E1 /* Pods-iNDS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.debug.xcconfig"; sourceTree = "<group>"; };
+		A0933C4E46E4209327550C30 /* Pods-DeSmuME.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeSmuME.release.xcconfig"; path = "Pods/Target Support Files/Pods-DeSmuME/Pods-DeSmuME.release.xcconfig"; sourceTree = "<group>"; };
 		AB00E89114205ECC00DE561F /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; lineEnding = 0; name = English; path = translations/English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AB02475B13886BF300E9F9AB /* KeyNames.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = KeyNames.plist; sourceTree = "<group>"; };
 		AB02791814415E4C0075E58C /* Info (Debug).plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info (Debug).plist"; sourceTree = "<group>"; };
@@ -624,6 +636,7 @@
 		ABFE150414C92FF5005D6699 /* lq2x.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lq2x.cpp; sourceTree = "<group>"; };
 		ABFE150514C92FF5005D6699 /* lq2x.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lq2x.h; sourceTree = "<group>"; };
 		ABFE150614C92FF5005D6699 /* scanline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scanline.cpp; sourceTree = "<group>"; };
+		B90EC305E00962333AF80569 /* libPods-iNDS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iNDS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA2C6BA11E207C20007F7F64 /* iNDS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iNDS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA2C6BA41E207C20007F7F64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CA2C6BA61E207C20007F7F64 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -642,6 +655,8 @@
 		CA5AC58F1E209A2400433286 /* iNDSROM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSROM.m; sourceTree = "<group>"; };
 		CA5AC5911E21C8AD00433286 /* iNDSSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSSettings.h; sourceTree = "<group>"; };
 		CA5AC5921E21C8AD00433286 /* iNDSSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSSettings.m; sourceTree = "<group>"; };
+		CAB45F661E312FC2007BBBF8 /* iNDSEmulationMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationMenuView.h; sourceTree = "<group>"; };
+		CAB45F671E312FC2007BBBF8 /* iNDSEmulationMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationMenuView.m; sourceTree = "<group>"; };
 		CAF4D1FD1E21E9A8000BE522 /* ROMS */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ROMS; sourceTree = "<group>"; };
 		CAF4D2051E23E68B000BE522 /* iNDSEmulationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationViewController.h; sourceTree = "<group>"; };
 		CAF4D2061E23E68B000BE522 /* iNDSEmulationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSEmulationViewController.m; sourceTree = "<group>"; };
@@ -692,6 +707,9 @@
 		CAF4D2961E28846C000BE522 /* UIDevice+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Private.m"; sourceTree = "<group>"; };
 		CAF4D3111E29908D000BE522 /* DeSmuME_JIT.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = DeSmuME_JIT.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF4D3121E29908D000BE522 /* DeSmuME copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "DeSmuME copy-Info.plist"; path = "/Users/willcobb/Dropbox/Xcode/iNDS2/DeSmuME copy-Info.plist"; sourceTree = "<absolute>"; };
+		CAF4D3211E2AFC4C000BE522 /* iNDSROMViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSROMViewCell.h; sourceTree = "<group>"; };
+		CAF4D3221E2AFC4C000BE522 /* iNDSROMViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSROMViewCell.m; sourceTree = "<group>"; };
+		CC2EE5BF5CB5AA4B7182A70D /* Pods-DeSmuME.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DeSmuME.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DeSmuME/Pods-DeSmuME.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -704,6 +722,7 @@
 				ABACB8DE1710B65F003B845D /* AudioToolbox.framework in Frameworks */,
 				ABB3C6671501BF8A00E0C22E /* Foundation.framework in Frameworks */,
 				ABC503B11AAC4355002FCD43 /* CoreAudio.framework in Frameworks */,
+				BA881404124FFA3835BFC660 /* libPods-DeSmuME.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,6 +735,7 @@
 				CA5AC5871E208DEC00433286 /* DeSmuME.dylib in Frameworks */,
 				CA2C6C3B1E208B95007F7F64 /* libz.tbd in Frameworks */,
 				CA2C6C391E208B83007F7F64 /* AudioToolbox.framework in Frameworks */,
+				CE832EC067ABB5FF6EA4A9D8 /* libPods-iNDS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -728,6 +748,7 @@
 				CAF4D30B1E29908D000BE522 /* AudioToolbox.framework in Frameworks */,
 				CAF4D30C1E29908D000BE522 /* Foundation.framework in Frameworks */,
 				CAF4D30D1E29908D000BE522 /* CoreAudio.framework in Frameworks */,
+				2C571D6FDDE2A0F1C41D5348 /* libPods-DeSmuME_JIT.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -772,6 +793,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				AB407F381A620D6E00313213 /* OptimizationProfiles */,
 				CAF4D3121E29908D000BE522 /* DeSmuME copy-Info.plist */,
+				C1F748CDC93389958C0FE351 /* Pods */,
 			);
 			name = DeSmuME;
 			sourceTree = "<group>";
@@ -810,6 +832,9 @@
 				CA2C6C381E208B83007F7F64 /* AudioToolbox.framework */,
 				CA2C6C361E208B59007F7F64 /* AVFoundation.framework */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				0D35955226A4F3ECC3EF5C3D /* libPods-DeSmuME.a */,
+				24DE089D99BE6F1EDA4DCEEB /* libPods-DeSmuME_JIT.a */,
+				B90EC305E00962333AF80569 /* libPods-iNDS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1231,6 +1256,19 @@
 			path = src/filter;
 			sourceTree = SOURCE_ROOT;
 		};
+		C1F748CDC93389958C0FE351 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CC2EE5BF5CB5AA4B7182A70D /* Pods-DeSmuME.debug.xcconfig */,
+				A0933C4E46E4209327550C30 /* Pods-DeSmuME.release.xcconfig */,
+				5BA32A8EE0D5EF6BC8425761 /* Pods-DeSmuME_JIT.debug.xcconfig */,
+				0D41BC79D672E5A3E6BF493B /* Pods-DeSmuME_JIT.release.xcconfig */,
+				9FE2B1A1383D1DE96560E8E1 /* Pods-iNDS.debug.xcconfig */,
+				70B3AC8820D52E680ECCDF53 /* Pods-iNDS.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		CA2C6BA21E207C20007F7F64 /* iNDS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1296,6 +1334,8 @@
 			children = (
 				CAF4D2051E23E68B000BE522 /* iNDSEmulationViewController.h */,
 				CAF4D2061E23E68B000BE522 /* iNDSEmulationViewController.m */,
+				CAB45F661E312FC2007BBBF8 /* iNDSEmulationMenuView.h */,
+				CAB45F671E312FC2007BBBF8 /* iNDSEmulationMenuView.m */,
 				CAF4D21B1E23EB88000BE522 /* iNDSButtonControl.h */,
 				CAF4D21C1E23EB88000BE522 /* iNDSButtonControl.m */,
 				CAF4D21D1E23EB88000BE522 /* iNDSDirectionalControl.h */,
@@ -1313,6 +1353,8 @@
 			children = (
 				CAF4D2081E23E68B000BE522 /* iNDSROMCollectionViewController.h */,
 				CAF4D2091E23E68B000BE522 /* iNDSROMCollectionViewController.mm */,
+				CAF4D3211E2AFC4C000BE522 /* iNDSROMViewCell.h */,
+				CAF4D3221E2AFC4C000BE522 /* iNDSROMViewCell.m */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -1432,9 +1474,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ABB3C6571501BC6D00E0C22E /* Build configuration list for PBXNativeTarget "DeSmuME" */;
 			buildPhases = (
+				F78AD0FEB1EE29DFD77CB599 /* [CP] Check Pods Manifest.lock */,
 				ABB3C6611501BF3700E0C22E /* Resources */,
 				ABB3C6431501BC6D00E0C22E /* Sources */,
 				ABB3C6441501BC6D00E0C22E /* Frameworks */,
+				13CDC1D63DBE3820D73DEF6C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1449,9 +1493,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CA2C6BB51E207C20007F7F64 /* Build configuration list for PBXNativeTarget "iNDS" */;
 			buildPhases = (
+				D92A8E9990A79D25DE05046C /* [CP] Check Pods Manifest.lock */,
 				CA2C6B9D1E207C20007F7F64 /* Sources */,
 				CA2C6B9E1E207C20007F7F64 /* Frameworks */,
 				CA2C6B9F1E207C20007F7F64 /* Resources */,
+				14AB1AB8ACEEAFD700910099 /* [CP] Embed Pods Frameworks */,
+				02FF6A2B680A2AA6443E679C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1467,9 +1514,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CAF4D30E1E29908D000BE522 /* Build configuration list for PBXNativeTarget "DeSmuME_JIT" */;
 			buildPhases = (
+				7F598D5DCFE3D2EE2127A25B /* [CP] Check Pods Manifest.lock */,
 				CAF4D2991E29908D000BE522 /* Resources */,
 				CAF4D29B1E29908D000BE522 /* Sources */,
 				CAF4D3081E29908D000BE522 /* Frameworks */,
+				B604BD06BD828CB71C8973AF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1570,6 +1619,114 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		02FF6A2B680A2AA6443E679C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iNDS/Pods-iNDS-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		13CDC1D63DBE3820D73DEF6C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DeSmuME/Pods-DeSmuME-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		14AB1AB8ACEEAFD700910099 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iNDS/Pods-iNDS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7F598D5DCFE3D2EE2127A25B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		B604BD06BD828CB71C8973AF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DeSmuME_JIT/Pods-DeSmuME_JIT-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D92A8E9990A79D25DE05046C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F78AD0FEB1EE29DFD77CB599 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		ABB3C6431501BC6D00E0C22E /* Sources */ = {
@@ -1703,10 +1860,12 @@
 				CAF4D26D1E284AE1000BE522 /* NSString+CompareToVersion.m in Sources */,
 				CAF4D21F1E23EB88000BE522 /* iNDSButtonControl.m in Sources */,
 				CAF4D2231E23EC9A000BE522 /* iNDSEmulationView.mm in Sources */,
+				CAF4D3231E2AFC4C000BE522 /* iNDSROMViewCell.m in Sources */,
 				CAF4D2641E28498A000BE522 /* emu.cpp in Sources */,
 				CAF4D20B1E23E68B000BE522 /* iNDSROMCollectionViewController.mm in Sources */,
 				CA2C6BA51E207C20007F7F64 /* main.m in Sources */,
 				CAF4D20A1E23E68B000BE522 /* iNDSEmulationViewController.m in Sources */,
+				CAB45F681E312FC2007BBBF8 /* iNDSEmulationMenuView.m in Sources */,
 				CAF4D2971E28846C000BE522 /* UIDevice+Private.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1884,6 +2043,7 @@
 /* Begin XCBuildConfiguration section */
 		ABB3C6581501BC6D00E0C22E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CC2EE5BF5CB5AA4B7182A70D /* Pods-DeSmuME.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -1909,6 +2069,7 @@
 		};
 		ABB3C6591501BC6D00E0C22E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0933C4E46E4209327550C30 /* Pods-DeSmuME.release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2027,6 +2188,7 @@
 		};
 		CA2C6BB61E207C20007F7F64 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9FE2B1A1383D1DE96560E8E1 /* Pods-iNDS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2074,6 +2236,7 @@
 		};
 		CA2C6BB71E207C20007F7F64 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 70B3AC8820D52E680ECCDF53 /* Pods-iNDS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2116,6 +2279,7 @@
 		};
 		CAF4D30F1E29908D000BE522 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5BA32A8EE0D5EF6BC8425761 /* Pods-DeSmuME_JIT.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -2141,6 +2305,7 @@
 		};
 		CAF4D3101E29908D000BE522 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0D41BC79D672E5A3E6BF493B /* Pods-DeSmuME_JIT.release.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LIBRARY = "libc++";

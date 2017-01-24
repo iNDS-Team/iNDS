@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface iNDSROMCollectionViewController : UITableViewController
+@interface iNDSROMCollectionViewController : UICollectionViewController
 
 
 @end
