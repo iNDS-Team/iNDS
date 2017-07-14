@@ -38,8 +38,9 @@
 #define STRINGIZE(x) #x
 #define STRINGIZE2(x) STRINGIZE(x)
 #define SHADER_STRING(text) @ STRINGIZE2(text)
+#define ICADE_BTN_NUMBER(button) [NSNumber numberWithInt:button]
 
-
+NSDictionary *iCadeMapping;
 
 NSString *const kVertShader = SHADER_STRING
 (
@@ -260,6 +261,7 @@ enum VideoFilter : NSUInteger {
     [self.view addSubview:control];
     control.active = YES;
     control.delegate = self;
+    [self setICadeMapping];
     
     disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
     
@@ -610,7 +612,7 @@ enum VideoFilter : NSUInteger {
 
 - (void)startEmulatorLoop
 {
-    [self.view endEditing:YES];
+    //[self.view endEditing:YES];
     [self updateDisplay]; //This has to be called once before we touch or move any glk views
     
     displaySemaphore = dispatch_semaphore_create(1);
@@ -744,165 +746,6 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
     glVertexAttribPointer(attribTexCoord, 2, GL_FLOAT, 0, 0, (const GLfloat*)&textureVert);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-}
-
-
-#pragma mark - Controls
-
-- (void) setSpeed:(CGFloat)speed
-{
-    if (!self.program) return;
-    if (speed < 1) { //Force this. Audio sounds so bad < 1 when synched
-        EMU_setSynchMode(0);
-    } else {
-        EMU_setSynchMode([[NSUserDefaults standardUserDefaults] boolForKey:@"synchSound"]);
-    }
-    _speed = speed;
-}
-
-- (void)setLidClosed:(BOOL)closed
-{
-    return; //Disabled until freezing is fixed
-    if (closed) {
-        EMU_buttonDown((BUTTON_ID)13);
-    } else {
-        EMU_buttonUp((BUTTON_ID)13);
-    }
-}
-
-- (void)controllerActivated:(NSNotification *)notification {
-    if (_controllerContainerView.superview) {
-        [_controllerContainerView removeFromSuperview];
-    }
-}
-
-- (void)controllerDeactivated:(NSNotification *)notification {
-    if ([[GCController controllers] count] == 0) {
-        [self.view addSubview:_controllerContainerView];
-    }
-}
-
-- (IBAction)pressedDPad:(iNDSDirectionalControl *)sender
-{
-    iNDSDirectionalControlDirection state = sender.direction;
-    
-    EMU_setDPad(state & iNDSDirectionalControlDirectionUp, state & iNDSDirectionalControlDirectionDown, state & iNDSDirectionalControlDirectionLeft, state & iNDSDirectionalControlDirectionRight);
-    
-    _previousDirection = state;
-}
-
-- (IBAction)pressedABXY:(iNDSButtonControl *)sender
-{
-    iNDSButtonControlButton state = sender.selectedButtons;
-    if (state != _previousButtons && state != 0)
-    {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
-        {
-            [self vibrate];
-        }
-    }
-    
-    EMU_setABXY(state & iNDSButtonControlButtonA, state & iNDSButtonControlButtonB, state & iNDSButtonControlButtonX, state & iNDSButtonControlButtonY);
-    
-    _previousButtons = state;
-}
-
-- (IBAction)onButtonUp:(UIControl*)sender
-{
-    EMU_buttonUp((BUTTON_ID)sender.tag);
-}
-
-- (IBAction)onButtonDown:(UIControl*)sender
-{
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
-    {
-        [self vibrate];
-    }
-    EMU_buttonDown((BUTTON_ID)sender.tag);
-}
-
-FOUNDATION_EXTERN void AudioServicesStopSystemSound(int);
-FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, objc_object*, NSDictionary*);
-
-- (void)vibrate
-{
-    if (settingsShown || inEditingMode) return;
-    // If force touch is avaliable we can assume taptic vibration is too
-    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
-        [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
-    } else {
-        AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
-        
-        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-        NSArray *pattern = @[@YES, @20, @NO, @1];
-        
-        dictionary[@"VibePattern"] = pattern;
-        dictionary[@"Intensity"] = @1;
-        
-        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
-    }
-}
-
-- (void)touchScreenAtPoint:(CGPoint)point
-{
-    if (!disableTouchScreen) {
-        point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
-        EMU_touchScreenTouch(point.x, point.y);
-    }
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (settingsShown && !inEditingMode) {
-        [self toggleSettings:self];
-        return;
-    } else if (inEditingMode) { // gesture recognizers don't work on glkviews so we need to do it manually
-        CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location) && !extWindow) {
-            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
-            movingView = glkView[0];
-        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
-            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
-            movingView = glkView[1];
-        } else {
-            [self.profile deselectView];
-        }
-    } else {
-        for (UITouch *t in touches) {
-            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
-        }
-    }
-}
-
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (inEditingMode) { // promatically adding gesture recognizers to glkviews doesn't work
-        CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0] && !extWindow) {
-            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
-        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
-            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
-        } 
-    } else {
-        for (UITouch *t in touches) {
-            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
-        }
-    }
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
-        CGPoint location = [touches.anyObject locationInView:self.view];
-        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
-            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
-        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
-            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateEnded];
-        }
-        movingView = nil;
-    } else {
-        EMU_touchScreenRelease();
-    }
 }
 
 #pragma mark - API
@@ -1044,100 +887,50 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     }
 }
 
+#pragma mark - Controls
 
-#pragma mark - iCade Mode
-- (void)setState:(BOOL)state forButton:(iCadeState)button {
-    if (state) {
-        switch (button) {
-            case iCadeButtonA:
-                [self oniCadeButtonDown:BUTTON_SELECT];
-                break;
-            case iCadeButtonB:
-                [self oniCadeButtonDown:BUTTON_L];
-                break;
-            case iCadeButtonC:
-                [self oniCadeButtonDown:BUTTON_START];
-                break;
-            case iCadeButtonD:
-                [self oniCadeButtonDown:BUTTON_R];
-                break;
-            case iCadeButtonE:
-                [self pressediCadeABXY:iNDSButtonControlButtonY];
-                break;
-            case iCadeButtonF:
-                [self pressediCadeABXY:iNDSButtonControlButtonX];
-                break;
-            case iCadeButtonG:
-                [self pressediCadeABXY:iNDSButtonControlButtonB];
-                break;
-            case iCadeButtonH:
-                [self pressediCadeABXY:iNDSButtonControlButtonA];
-                break;
-                
-            case iCadeJoystickUp:
-                [self pressediCadePad:iNDSDirectionalControlDirectionUp];
-                break;
-            case iCadeJoystickRight:
-                [self pressediCadePad:iNDSDirectionalControlDirectionRight];
-                break;
-            case iCadeJoystickDown:
-                [self pressediCadePad:iNDSDirectionalControlDirectionDown];
-                break;
-            case iCadeJoystickLeft:
-                [self pressediCadePad:iNDSDirectionalControlDirectionLeft];
-                break;
-            default:
-                break;
-        }
+- (void) setSpeed:(CGFloat)speed
+{
+    if (!self.program) return;
+    if (speed < 1) { //Force this. Audio sounds so bad < 1 when synched
+        EMU_setSynchMode(0);
+    } else {
+        EMU_setSynchMode([[NSUserDefaults standardUserDefaults] boolForKey:@"synchSound"]);
     }
-    else {
-        switch (button) {
-            case iCadeButtonE:
-                [self pressediCadeABXY:0];
-                break;
-            case iCadeButtonF:
-                [self pressediCadeABXY:0];
-                break;
-            case iCadeButtonG:
-                [self pressediCadeABXY:0];
-                break;
-            case iCadeButtonH:
-                [self pressediCadeABXY:0];
-                break;
+    _speed = speed;
+}
 
-            case iCadeJoystickUp:
-                [self pressediCadePad:0];
-                break;
-            case iCadeJoystickRight:
-                [self pressediCadePad:0];
-                break;
-            case iCadeJoystickDown:
-                [self pressediCadePad:0];
-                break;
-            case iCadeJoystickLeft:
-                [self pressediCadePad:0];
-                break;
-            default:
-                break;
-        }
+- (void)setLidClosed:(BOOL)closed
+{
+    return; //Disabled until freezing is fixed
+    if (closed) {
+        EMU_buttonDown((BUTTON_ID)13);
+    } else {
+        EMU_buttonUp((BUTTON_ID)13);
     }
 }
 
-- (void)pressediCadePad:(iNDSDirectionalControlDirection)state {
-    if (state != _previousDirection && state != 0)
-    {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
-        {
-            [self vibrate];
-        }
+- (void)controllerActivated:(NSNotification *)notification {
+    if (_controllerContainerView.superview) {
+        [_controllerContainerView removeFromSuperview];
     }
-    
+}
+
+- (void)controllerDeactivated:(NSNotification *)notification {
+    if ([[GCController controllers] count] == 0) {
+        [self.view addSubview:_controllerContainerView];
+    }
+}
+
+- (void)controllerPressedDPad:(iNDSDirectionalControlDirection) state
+{
     EMU_setDPad(state & iNDSDirectionalControlDirectionUp, state & iNDSDirectionalControlDirectionDown, state & iNDSDirectionalControlDirectionLeft, state & iNDSDirectionalControlDirectionRight);
     
     _previousDirection = state;
 }
 
-- (void)pressediCadeABXY:(iNDSButtonControlButton)state {
+- (void)controllerPressedABXY:(iNDSButtonControlButton) state
+{
     if (state != _previousButtons && state != 0)
     {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
@@ -1151,15 +944,182 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     _previousButtons = state;
 }
 
-- (void)oniCadeButtonUp:(BUTTON_ID)buttonId {
-    EMU_buttonUp(buttonId);
+- (void)controllerOnButtonUp:(BUTTON_ID) button
+{
+    EMU_buttonUp(button);
 }
 
-- (void)oniCadeButtonDown:(BUTTON_ID)buttonId {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"]) {
+- (void) controllerOnButtonDown:(BUTTON_ID) button
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+    {
         [self vibrate];
     }
-    EMU_buttonDown(buttonId);
+    EMU_buttonDown(button);
+}
+
+#pragma mark - Controls Delegate
+
+- (IBAction)pressedDPad:(iNDSDirectionalControl *)sender
+{
+    iNDSDirectionalControlDirection state = sender.direction;
+    [self controllerPressedDPad:state];
+}
+
+- (IBAction)pressedABXY:(iNDSButtonControl *)sender
+{
+    iNDSButtonControlButton state = sender.selectedButtons;
+    [self controllerPressedABXY:state];
+}
+
+- (IBAction)onButtonUp:(UIControl*)sender
+{
+    EMU_buttonUp((BUTTON_ID)sender.tag);
+}
+
+- (IBAction)onButtonDown:(UIControl*)sender
+{
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+    {
+        [self vibrate];
+    }
+    EMU_buttonDown((BUTTON_ID)sender.tag);
+}
+
+FOUNDATION_EXTERN void AudioServicesStopSystemSound(int);
+FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, objc_object*, NSDictionary*);
+
+- (void)vibrate
+{
+    if (settingsShown || inEditingMode) return;
+    // If force touch is avaliable we can assume taptic vibration is too
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+        [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
+    } else {
+        AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+        
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        NSArray *pattern = @[@YES, @20, @NO, @1];
+        
+        dictionary[@"VibePattern"] = pattern;
+        dictionary[@"Intensity"] = @1;
+        
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    }
+}
+
+- (void)touchScreenAtPoint:(CGPoint)point
+{
+    if (!disableTouchScreen) {
+        point = CGPointApplyAffineTransform(point, CGAffineTransformMakeScale(256/glkView[1].bounds.size.width, 192/glkView[1].bounds.size.height));
+        EMU_touchScreenTouch(point.x, point.y);
+    }
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (settingsShown && !inEditingMode) {
+        [self toggleSettings:self];
+        return;
+    } else if (inEditingMode) { // gesture recognizers don't work on glkviews so we need to do it manually
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        if (CGRectContainsPoint(glkView[0].frame, location) && !extWindow) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateBegan];
+            movingView = glkView[0];
+        } else if (CGRectContainsPoint(glkView[1].frame, location)) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateBegan];
+            movingView = glkView[1];
+        } else {
+            [self.profile deselectView];
+        }
+    } else {
+        for (UITouch *t in touches) {
+            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
+        }
+    }
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (inEditingMode) { // promatically adding gesture recognizers to glkviews doesn't work
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0] && !extWindow) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateChanged];
+        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateChanged];
+        }
+    } else {
+        for (UITouch *t in touches) {
+            [self touchScreenAtPoint:[t locationInView:glkView[1]]];
+        }
+    }
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (inEditingMode) { //esture recognizers don't work on glkviews so we need to do it manually
+        CGPoint location = [touches.anyObject locationInView:self.view];
+        if (CGRectContainsPoint(glkView[0].frame, location) && movingView == glkView[0]) {
+            [self.profile handlePan:glkView[0] Location:location state:UIGestureRecognizerStateEnded];
+        } else if (CGRectContainsPoint(glkView[1].frame, location) && movingView == glkView[1]) {
+            [self.profile handlePan:glkView[1] Location:location state:UIGestureRecognizerStateEnded];
+        }
+        movingView = nil;
+    } else {
+        EMU_touchScreenRelease();
+    }
+}
+
+#pragma mark - iCade Mode
+
+- (void) setICadeMapping {
+    //    TODO: Allow users to change this
+    NSDictionary *_8BitdoNES30ProMapping = @{
+                              ICADE_BTN_NUMBER(iCadeJoystickUp):    @{@"buttonDown": ^{[self controllerPressedDPad:iNDSDirectionalControlDirectionUp];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedDPad:0];}},
+                              
+                              ICADE_BTN_NUMBER(iCadeJoystickRight): @{@"buttonDown": ^{[self controllerPressedDPad:iNDSDirectionalControlDirectionRight];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedDPad:0];}},
+                                             
+                              ICADE_BTN_NUMBER(iCadeJoystickDown):  @{@"buttonDown": ^{[self controllerPressedDPad:iNDSDirectionalControlDirectionDown];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedDPad:0];}},
+                                             
+                              ICADE_BTN_NUMBER(iCadeJoystickLeft):  @{@"buttonDown": ^{[self controllerPressedDPad:iNDSDirectionalControlDirectionLeft];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedDPad:0];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonA):       @{@"buttonDown": ^{[self controllerPressedABXY:iNDSButtonControlButtonX];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedABXY:0];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonB):       @{@"buttonDown": ^{[self controllerPressedABXY:iNDSButtonControlButtonB];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedABXY:0];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonC):       @{@"buttonDown": ^{[self controllerPressedABXY:iNDSButtonControlButtonA];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedABXY:0];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonD):       @{@"buttonDown": ^{[self controllerPressedABXY:iNDSButtonControlButtonY];},
+                                                                      @"buttonUp"  : ^{[self controllerPressedABXY:0];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonE):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_R];},
+                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_START];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonF):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_L];},
+                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_L];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonG):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_START];},
+                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_START];}},
+
+                              ICADE_BTN_NUMBER(iCadeButtonH):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_SELECT];},
+                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_SELECT];}},
+                                             };
+    
+    iCadeMapping = _8BitdoNES30ProMapping;
+}
+
+- (void)setState:(BOOL)state forButton:(iCadeState)button {
+    NSString *buttonState = state ? @"buttonDown" : @"buttonUp";
+    
+    void (^keyCallback)(void) = iCadeMapping [ICADE_BTN_NUMBER(button)] [buttonState];
+    keyCallback();
 }
 
 #pragma mark - iCadeDelegate
