@@ -1027,6 +1027,7 @@
 				BFCFE0F11764FBD3000A70CF /* Frameworks */,
 				BFCFE0F01764FBD3000A70CF /* Products */,
 				CA32245E1CCD4C2400C5BEA7 /* OptimizationProfiles */,
+				C053F72E20444EBF00927158 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1289,6 +1290,14 @@
 			);
 			name = JIT;
 			path = ../desmume/src/JIT;
+			sourceTree = "<group>";
+		};
+		C053F72E20444EBF00927158 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		CA031CBB1BEBDC3500EDE98D /* Zip */ = {
@@ -1756,6 +1765,11 @@
 				CLASSPREFIX = iNDS;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = iNDS;
+				TargetAttributes = {
+					BFCFE0EE1764FBD3000A70CF = {
+						DevelopmentTeam = PGNG7584J8;
+					};
+				};
 			};
 			buildConfigurationList = BFCFE0EA1764FBD3000A70CF /* Build configuration list for PBXProject "iNDS" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2229,6 +2243,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.6.0;
+				DEVELOPMENT_TEAM = PGNG7584J8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2238,6 +2253,7 @@
 					"\"$(SRCROOT)/iNDS/Reveal\"",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
+					"\"$(SRCROOT)/\"",
 				);
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2261,7 +2277,7 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ApprenticeMediaLLC.iNDS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Shvier.iNDS;
 				PRODUCT_NAME = iNDS;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2283,6 +2299,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.6.0;
+				DEVELOPMENT_TEAM = PGNG7584J8;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2292,6 +2309,7 @@
 					"\"$(SRCROOT)/iNDS/Reveal\"",
 					"$(PROJECT_DIR)",
 					"$(PROJECT_DIR)/iNDS/frameworks",
+					"\"$(SRCROOT)/\"",
 				);
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -2315,7 +2333,7 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ApprenticeMediaLLC.iNDS;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Shvier.iNDS;
 				PRODUCT_NAME = iNDS;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
