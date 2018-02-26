@@ -27,9 +27,15 @@
 
 @implementation iNDSROMTableViewController
 
+- (void)configUI
+{
+    self.tableView.tableFooterView = [UIView new];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self configUI];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
     self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
     activeDownloads = [[iNDSRomDownloadManager sharedManager] activeDownloads];
