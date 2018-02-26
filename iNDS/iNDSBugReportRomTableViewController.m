@@ -11,8 +11,15 @@
 #import "iNDSGame.h"
 @implementation iNDSBugReportRomTableViewController
 
+- (void)configUI
+{
+    self.tableView.tableFooterView = [UIView new];
+}
+
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    [self configUI];
     self.navigationItem.title = NSLocalizedString(@"ROM_LIST", nil);
 }
 
