@@ -35,8 +35,21 @@
 @end
 
 @implementation iNDSBugReportTableViewController
+
+- (void)configUI
+{
+    // Add gesture for hiding keyboard
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureAction:)];
+    [self.tableView addGestureRecognizer:tapGesture];
+    // Hide tableView footerView
+    self.tableView.tableFooterView = [UIView new];
+    self.tableView.sectionFooterHeight = CGFLOAT_MIN;
+}
+
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
+    [self configUI];
     submit.backgroundColor = self.view.tintColor;
     submit.layer.cornerRadius = 4;
 }
@@ -52,6 +65,23 @@
         selectImageCell.separatorInset = UIEdgeInsetsMake(0, 0, 0, self.tableView.frame.size.width);
     else
         selectImageCell.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (void)tapGestureAction:(UITapGestureRecognizer *)tapGesture
+{
+    CGPoint hintPoint = [tapGesture locationInView:self.tableView];
+    NSIndexPath *hintIndexPath = [self.tableView indexPathForRowAtPoint:hintPoint];
+    if (hintIndexPath)
+    {
+        [self tableView:self.tableView didSelectRowAtIndexPath:hintIndexPath];
+    }
+    else
+    {
+        if ([description isFirstResponder])
+        {
+            [description resignFirstResponder];
+        }
+    }
 }
 
 - (IBAction)cancel:(id)sender
