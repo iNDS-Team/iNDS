@@ -17,9 +17,15 @@
 
 @implementation iNDSGameTableView
 
+- (void)configUI
+{
+    self.tableView.tableFooterView = [UIView new];
+}
+
 -(void) viewDidLoad
 {
     [super viewDidLoad];
+    [self configUI];
     self.navigationItem.title = _game.gameTitle;
     
     [[AppDelegate sharedInstance].currentEmulatorViewController.settingsContainer addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:nil];

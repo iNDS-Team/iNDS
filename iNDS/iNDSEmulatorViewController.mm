@@ -698,7 +698,11 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
     static CFTimeInterval fpsUpdateTime = 0;
     if (CACurrentMediaTime() - fpsUpdateTime > 1) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.fpsLabel.text = [NSString stringWithFormat:@"%d FPS %d Max Core", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
+            if (IsiPhoneX) {
+                self.fpsLabel.text = [NSString stringWithFormat:@"FPS %d\nMax Core %d", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
+            } else {
+                self.fpsLabel.text = [NSString stringWithFormat:@"FPS %d Max Core %d", MIN((int)videoFps, 60), (int)(coreFps / self.speed)];
+            }
         });
         fpsUpdateTime = CACurrentMediaTime();
     }

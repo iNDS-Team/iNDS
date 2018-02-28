@@ -140,6 +140,8 @@
 		BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE23A176634EE000A70CF /* slot2_piano.cpp */; };
 		BFCFE247176634EE000A70CF /* slot2_rumblepak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE23B176634EE000A70CF /* slot2_rumblepak.cpp */; };
 		BFCFE26B1766379F000A70CF /* addons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13017650FB0000A70CF /* addons.cpp */; };
+		C0521478204505F100B6C336 /* iNDS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C052147A204505F100B6C336 /* iNDS-Info.plist */; };
+		C052147E20450E8100B6C336 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C052147D20450E8100B6C336 /* Photos.framework */; };
 		C345B67218906BB40065A795 /* iNDSMFIControllerSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */; };
 		CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA031AAF1BE951B700EDE98D /* Images.xcassets */; };
 		CA031ADF1BEB103B00EDE98D /* iNDSRomDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = CA031ADE1BEB103B00EDE98D /* iNDSRomDownloader.m */; };
@@ -210,7 +212,6 @@
 		CAA59B131CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAA59B121CAC778D0084AB5D /* iNDSBugReportSaveStateTableViewController.m */; };
 		CAB2C40E1CB2033600ED22BB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C40D1CB2033600ED22BB /* AppDelegate.m */; };
 		CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */; };
-		CAB2C42A1CB2041900ED22BB /* iNDS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */; };
 		CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42F1CB222AF00ED22BB /* cheats.rar */; };
 		CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */ = {isa = PBXBuildFile; fileRef = CAB2C42B1CB21C2000ED22BB /* cheats.7z */; };
 		CAB2C4391CB2D86C00ED22BB /* iNDSGameTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = CAB2C4371CB2D86C00ED22BB /* iNDSGameTableView.m */; };
@@ -545,6 +546,11 @@
 		BFCFE239176634EE000A70CF /* slot2_paddle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = slot2_paddle.cpp; path = desmume/src/addons/slot2_paddle.cpp; sourceTree = SOURCE_ROOT; };
 		BFCFE23A176634EE000A70CF /* slot2_piano.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = slot2_piano.cpp; path = desmume/src/addons/slot2_piano.cpp; sourceTree = SOURCE_ROOT; };
 		BFCFE23B176634EE000A70CF /* slot2_rumblepak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = slot2_rumblepak.cpp; path = desmume/src/addons/slot2_rumblepak.cpp; sourceTree = SOURCE_ROOT; };
+		C01A07F520446752003E5852 /* CommonMacro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonMacro.h; sourceTree = "<group>"; };
+		C0521479204505F100B6C336 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Base; path = "Base.lproj/iNDS-Info.plist"; sourceTree = "<group>"; };
+		C052147B204505F800B6C336 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hans"; path = "zh-Hans.lproj/iNDS-Info.plist"; sourceTree = "<group>"; };
+		C052147C204505FE00B6C336 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "zh-Hant"; path = "zh-Hant.lproj/iNDS-Info.plist"; sourceTree = "<group>"; };
+		C052147D20450E8100B6C336 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		C345B67018906BB40065A795 /* iNDSMFIControllerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSMFIControllerSupport.h; path = iNDS/controls/iNDSMFIControllerSupport.h; sourceTree = SOURCE_ROOT; };
 		C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = iNDSMFIControllerSupport.mm; path = iNDS/controls/iNDSMFIControllerSupport.mm; sourceTree = SOURCE_ROOT; };
 		CA031AAF1BE951B700EDE98D /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -681,7 +687,6 @@
 		CAB2C40C1CB2033600ED22BB /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CAB2C40D1CB2033600ED22BB /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSEmulatorViewController.mm; sourceTree = "<group>"; };
-		CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iNDS-Info.plist"; sourceTree = "<group>"; };
 		CAB2C42B1CB21C2000ED22BB /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.7z; path = Resources/cheats/cheats.7z; sourceTree = "<group>"; };
 		CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnrarKit.framework; sourceTree = "<group>"; };
 		CAB2C42F1CB222AF00ED22BB /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
@@ -805,6 +810,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C052147E20450E8100B6C336 /* Photos.framework in Frameworks */,
 				CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */,
 				CA6E609C1CB0574B000B269D /* MobileCoreServices.framework in Frameworks */,
 				CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */,
@@ -1042,6 +1048,7 @@
 		BFCFE0F11764FBD3000A70CF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C052147D20450E8100B6C336 /* Photos.framework */,
 				CA6E609B1CB0574B000B269D /* MobileCoreServices.framework */,
 				CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */,
 				CABE38971C30FA9800BE8857 /* libsqlite3.tbd */,
@@ -1071,6 +1078,7 @@
 		BFCFE0F81764FBD3000A70CF /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				C01A07F420446740003E5852 /* Global */,
 				9C8DDCCD19FDD8D500D03AB2 /* App Init */,
 				BFCFE12F17650ED0000A70CF /* DeSmuME */,
 				BF9D51751786A60E00B5864B /* Settings */,
@@ -1095,7 +1103,7 @@
 			children = (
 				AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */,
 				8BEA0991178733DB0060B347 /* iNDS-Prefix.pch */,
-				CAB2C4291CB2041900ED22BB /* iNDS-Info.plist */,
+				C052147A204505F100B6C336 /* iNDS-Info.plist */,
 				8BEA097B17872C5E0060B347 /* main.m */,
 			);
 			name = "Supporting Files";
@@ -1290,6 +1298,14 @@
 			);
 			name = JIT;
 			path = ../desmume/src/JIT;
+			sourceTree = "<group>";
+		};
+		C01A07F420446740003E5852 /* Global */ = {
+			isa = PBXGroup;
+			children = (
+				C01A07F520446752003E5852 /* CommonMacro.h */,
+			);
+			path = Global;
 			sourceTree = "<group>";
 		};
 		C053F72E20444EBF00927158 /* Recovered References */ = {
@@ -1829,7 +1845,7 @@
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
 				CABE38C71C34B8C600BE8857 /* Sync@2x.png in Resources */,
 				CABE38C61C34B8C600BE8857 /* Sync.png in Resources */,
-				CAB2C42A1CB2041900ED22BB /* iNDS-Info.plist in Resources */,
+				C0521478204505F100B6C336 /* iNDS-Info.plist in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
 				BF9D516D17867F7D00B5864B /* JoystickBackground@2x.png in Resources */,
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
@@ -2108,6 +2124,16 @@
 				CAE673661CC168B100E46EDF /* nl */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		C052147A204505F100B6C336 /* iNDS-Info.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C0521479204505F100B6C336 /* Base */,
+				C052147B204505F800B6C336 /* zh-Hans */,
+				C052147C204505FE00B6C336 /* zh-Hant */,
+			);
+			name = "iNDS-Info.plist";
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
