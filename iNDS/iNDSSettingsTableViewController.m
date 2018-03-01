@@ -23,8 +23,14 @@
 
 @implementation iNDSSettingsTableViewController
 
+- (void)configUI
+{
+    self.tableView.tableFooterView = [UIView new];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self configUI];
     self.navigationController.delegate = self;
 }
 
