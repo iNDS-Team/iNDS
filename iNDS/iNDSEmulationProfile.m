@@ -102,7 +102,12 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
         
         // Landscape
         screenSize = CGSizeMake(screenSize.height, screenSize.width);
-        gameScreenSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333 * 0.5), MIN(screenSize.width, screenSize.height * 1.333 * 0.5) * 0.75);
+        if (IsiPhoneX) {
+            gameScreenSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333 * 0.5), MIN(screenSize.width, screenSize.height * 1.333 * 0.5) * 0.75);
+            gameScreenSize = CGSizeMake(gameScreenSize.width-iPhoneXBottomSafeAreaWhenLandscape, gameScreenSize.height-iPhoneXBottomSafeAreaWhenLandscape);
+        } else {
+            gameScreenSize = CGSizeMake(MIN(screenSize.width, screenSize.height * 1.333 * 0.5), MIN(screenSize.width, screenSize.height * 1.333 * 0.5) * 0.75);
+        }
         
         view = 1;
         
