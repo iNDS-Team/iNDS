@@ -17,7 +17,6 @@
 
 #define VERSION @"1.0.2"
 
-static CGFloat const iPhoneXStatusSafeAreaWhenPortrait = 44.f;
 static CGFloat const iPhoneXBottomSafeAreaWhenLandscape = 21.f;
 static CGFloat const iPhoneXHorizontalMarginWhenLandscape = 44.f;
 static CGFloat const OffsetYForScreenOniPhoneX = 80.f;
@@ -25,7 +24,7 @@ static CGFloat const OffsetYForStartButtonOniPhoneX = 50.f;
 static CGFloat const OffsetYForSelectButtonOniPhoneX = 50.f;
 static CGFloat const OffsetYForDirectionControlOniPhoneX = 65.f;
 static CGFloat const OffsetYForButtonControlOniPhoneX = 65.f;
-static CGFloat const OffsetYForTriggerOniPhoneX = 180.f;
+static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
 
 @interface iNDSEmulationProfile()
 {
