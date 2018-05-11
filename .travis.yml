@@ -7,4 +7,4 @@ podfile: Podfile
 before_install:
   - pod repo update
 script:
-  - xcodebuild -workspace iNDS.xcworkspace -scheme iNDS build | xcpretty
+  - xcodebuild -workspace iNDS.xcworkspace -allowProvisioningUpdates -scheme iNDS build CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | xcpretty; test ${PIPESTATUS[0]} -eq 0
