@@ -9,7 +9,8 @@
 
 #import "CHBgDropboxSync.h"
 #import <QuartzCore/QuartzCore.h>
-#import <DropboxSDK/DropboxSDK.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
+//#import <DropboxSDK/DropboxSDK.h>
 #import "ConciseKit.h"
 #import "AppDelegate.h"
 #import "ZAActivityBar.h"
@@ -18,7 +19,7 @@
 // Privates
 @interface CHBgDropboxSync() {
     UILabel* workingLabel;
-    DBRestClient* client;
+    DBUserClient* client;
     BOOL anyLocalChanges;
     BOOL syncing;
     NSMutableArray *deletedFiles;
@@ -35,6 +36,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 #pragma mark - Showing and hiding the syncing indicator
 
 - (void)showWorking {
+    NSLog(@"Syncing started!");
     [ZAActivityBar showSuccessWithStatus:@"Syncing started!" duration:2];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"iNDSDropboxSyncStarted" object:self];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
@@ -51,13 +53,12 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     
     [self showWorking];
     
-    client = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-    client.delegate = self;
+    client = [DBClientsManager authorizedClient];
     
     // Start getting the remote file list
     deletedFiles  = [NSMutableArray new];
     uploadedFiles = [NSMutableArray new];
-    [client loadMetadata:@"/"];
+    [self grabMetadata];
 }
 
 #pragma mark - For keeping track of the last synced status of a file in the nsuserdefaults
@@ -100,14 +101,15 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 
 // Shutdown code that's common for success/fail/forced shutdowns
 - (void)internalCommonShutdown {
+    NSLog(@"CHBgDropboxSync internalCommonShutdown");
     // Autorelease the client using the following two lines, because we don't want it to release *just yet* because it probably called the function that called this, and would crash when the stack pops back to it.
-    __autoreleasing DBRestClient* autoreleaseClient = client;
+    __autoreleasing DBUserClient* autoreleaseClient = client;
     [autoreleaseClient description];
     
     // Now release the client
-    client.delegate = nil;
+    //    client.delegate = nil;
     client = nil;
-
+    
     // Free this singleton (put it on the autorelease pool, for safety's sake)
     __autoreleasing CHBgDropboxSync* autoreleaseSingleton = bgDropboxSyncInstance;
     [autoreleaseSingleton description];
@@ -121,12 +123,14 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // For forced shutdowns eg closing the app
 - (void)internalShutdownForced {
     //[self hideWorking];
+    NSLog(@"internalShutdownForced");
     [self internalCommonShutdown];
 }
 
 // For clean shutdowns on sync success
 - (void)internalShutdownSuccess {
     [self lastSyncCompletionRescan];
+    NSLog(@"Synced Completed!");
     [ZAActivityBar showSuccessWithStatus:@"Synced Completed!" duration:2];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"iNDSDropboxSyncEnded" object:self];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -135,6 +139,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 
 // For failed shutdowns
 - (void)internalShutdownFailed {
+    NSLog(@"Failed to sync!");
     [ZAActivityBar showErrorWithStatus:@"Failed to sync!" duration:3];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"iNDSDropboxSyncEnded" object:self];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
@@ -146,38 +151,128 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // This re-starts the 'check the metadata' step again, which will then check for any syncing that needs doing, and then kick it off
 - (void)stepComplete {
     // Kick off the check the metadata with a little delay so we don't overdo things
-    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.3];
+    //    [client performSelector:@selector(loadMetadata:) withObject:@"/" afterDelay:.3];
+    [self performSelector:@selector(grabMetadata) withObject:nil afterDelay:0.3];
 }
+
+- (void)grabMetadata {
+    [[client.filesRoutes listFolder:@""] setResponseBlock:^(DBFILESListFolderResult * _Nullable result, DBFILESListFolderError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+        if (result) {
+            NSMutableDictionary* remoteFiles = [NSMutableDictionary dictionary];
+            NSMutableDictionary* remoteFileRevs = [NSMutableDictionary dictionary];
+            
+            for (DBFILESMetadata* item in result.entries) {
+                if ([item isKindOfClass:[DBFILESFileMetadata class]]) {
+                    DBFILESFileMetadata* casted = (DBFILESFileMetadata *) item;
+                    [remoteFiles setObject:casted.serverModified forKey:[self noSlash:casted.pathDisplay]];
+                    [remoteFileRevs setObject:casted.rev forKey:[self noSlash:item.pathDisplay]];
+                }
+            }
+            // Now do the comparisons to figure out what needs doing
+            BOOL allComplete = [self syncStepWithRemoteFiles:remoteFiles andRevs:remoteFileRevs];
+            
+            if (allComplete) { // All done - nothing to do!
+                [self internalShutdownSuccess];
+            } else {
+                NSLog(@"Not done.");
+            }
+        } else {
+            NSLog(@"%@\n%@\n", routeError, networkError);
+            [self internalShutdownFailed];
+        }
+    }];
+}
+
 
 #pragma mark - The async dropbox steps
 
 - (void)startTaskLocalDelete:(NSString*)file {
     NSLog(@"Sync: Deleting local file %@", file);
-    [[NSFileManager defaultManager] removeItemAtPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file] error:nil];
+    NSError *fileErr;
+    [[NSFileManager defaultManager] removeItemAtPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file] error:&fileErr];
+    
+    if (fileErr) {
+        NSLog(@"Error: %@", fileErr);
+    }
+    
     [self stepComplete];
     anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
 }
 
 // Upload
 - (void)startTaskUpload:(NSString*)file rev:(NSString*)rev {
+    NSLog(@"%@", file);
     if (![uploadedFiles containsObject:file]) {
         NSLog(@"Sync: Uploading file %@, %@", file, rev?@"overwriting":@"new");
-        [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        /*
+         [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+         */
+        
+        NSMutableDictionary<NSURL *, DBFILESCommitInfo *> *uploadFilesUrlsToCommitInfo = [NSMutableDictionary new];
+        DBFILESCommitInfo *commitInfo = [[DBFILESCommitInfo alloc] initWithPath:[@"/" stringByAppendingPathComponent:file]];
+        NSURL *localFile = [NSURL fileURLWithPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        [uploadFilesUrlsToCommitInfo setObject:commitInfo forKey:localFile];
+        
         [uploadedFiles addObject:file];
+        [client.filesRoutes batchUploadFiles:uploadFilesUrlsToCommitInfo
+                                       queue:nil
+                               progressBlock:^(int64_t uploaded, int64_t uploadedTotal, int64_t expectedToUploadTotal) {
+                                   NSLog(@"Uploaded: %lld  UploadedTotal: %lld  ExpectedToUploadTotal: %lld", uploaded, uploadedTotal,
+                                         expectedToUploadTotal);
+                               }
+                               responseBlock:^(NSDictionary<NSURL *, DBFILESUploadSessionFinishBatchResultEntry *> *fileUrlsToBatchResultEntries,
+                                               DBASYNCPollError *finishBatchRouteError, DBRequestError *finishBatchRequestError,
+                                               NSDictionary<NSURL *, DBRequestError *> *fileUrlsToRequestErrors) {
+                                   if (fileUrlsToBatchResultEntries) {
+                                       NSLog(@"Call to `/upload_session/finish_batch/check` succeeded");
+                                       for (NSURL *clientSideFileUrl in fileUrlsToBatchResultEntries) {
+                                           DBFILESUploadSessionFinishBatchResultEntry *resultEntry = fileUrlsToBatchResultEntries[clientSideFileUrl];
+                                           if ([resultEntry isSuccess]) {
+                                               NSString *dropboxFilePath = resultEntry.success.pathDisplay;
+                                               NSLog(@"File successfully uploaded from %@ on local machine to %@ in Dropbox.",
+                                                     [clientSideFileUrl path], dropboxFilePath);
+                                               
+                                               // Now the file has uploaded, we need to set its 'last modified' date locally to match the date on dropbox.
+                                               // Unfortunately we can't change the dropbox date to match the local date, which would be more appropriate, really.
+                                               NSDictionary* attr = $dict(resultEntry.success.serverModified, NSFileModificationDate);
+                                               NSError *attrErr;
+                                               [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:clientSideFileUrl.path error:&attrErr];
+                                               if (attrErr) {
+                                                   NSLog(@"Error: %@", attrErr);
+                                               }
+                                               [self stepComplete];
+                                           } else if ([resultEntry isFailure]) {
+                                               // This particular file was not uploaded successfully, although the other
+                                               // files may have been uploaded successfully. Perhaps implement some retry
+                                               // logic here based on `uploadNetworkError` or `uploadSessionFinishError`
+                                               DBRequestError *uploadNetworkError = fileUrlsToRequestErrors[clientSideFileUrl];
+                                               DBFILESUploadSessionFinishError *uploadSessionFinishError = resultEntry.failure;
+                                               
+                                               // implement appropriate retry logic
+                                               NSLog(@"%@, %@", uploadNetworkError, uploadSessionFinishError);
+                                           }
+                                       }
+                                   }
+                                   
+                                   if (finishBatchRouteError) {
+                                       NSLog(@"Either bug in SDK code, or transient error on Dropbox server");
+                                       NSLog(@"%@", finishBatchRouteError);
+                                       [self internalShutdownFailed];
+                                   } else if (finishBatchRequestError) {
+                                       NSLog(@"Request error from calling `/upload_session/finish_batch/check`");
+                                       NSLog(@"%@", finishBatchRequestError);
+                                       [self internalShutdownFailed];
+                                   } else if ([fileUrlsToRequestErrors count] > 0) {
+                                       NSLog(@"Other additional errors (e.g. file doesn't exist client-side, etc.).");
+                                       NSLog(@"%@", fileUrlsToRequestErrors);
+                                       [self internalShutdownFailed];
+                                   }
+                               }];
+        
     } else {
         NSLog(@"Prevented double file upload");
     }
     
-}
-- (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
-    // Now the file has uploaded, we need to set its 'last modified' date locally to match the date on dropbox.
-    // Unfortunately we can't change the dropbox date to match the local date, which would be more appropriate, really.
-    NSDictionary* attr = $dict(metadata.lastModifiedDate, NSFileModificationDate);
-    [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:srcPath error:nil];
-    [self stepComplete];
-}
-- (void)restClient:(DBRestClient*)client uploadFileFailedWithError:(NSError*)error {
-    [self internalShutdownFailed];
 }
 // End upload
 
@@ -185,21 +280,25 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 - (void)startTaskDownload:(NSString*)file {
     if (![deletedFiles containsObject:file]) {
         NSLog(@"Sync: Downloading file %@", file);
-        [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        /*
+         [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+         */
+        NSURL *dest = [NSURL fileURLWithPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        [[client.filesRoutes downloadUrl:$str(@"/%@", file) overwrite:YES destination:dest] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESDownloadError * _Nullable routeError, DBRequestError * _Nullable networkError, NSURL * _Nonnull destination) {
+            if (result) {
+                NSLog(@"Downloaded >%@<, it's DB date is: %@", destination, [result.serverModified descriptionWithLocale:[NSLocale currentLocale]]);
+                NSDictionary* attr = $dict(result.serverModified, NSFileModificationDate);
+                [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:destination.path error:nil];
+                [self stepComplete];
+                anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
+            } else {
+                NSLog(@"%@\n%@\n", routeError, networkError);
+                [self internalShutdownFailed];
+            }
+        }];
     } else {
         NSLog(@"Prevented Dropbox Crash. Trying to download a deleted file");
     }
-}
-- (void)restClient:(DBRestClient*)client loadedFile:(NSString*)destPath contentType:(NSString*)contentType metadata:(DBMetadata*)metadata {
-    // Now the file has downloaded, we need to set its 'last modified' date locally to match the date on dropbox
-    NSLog(@"Downloaded >%@<, it's DB date is: %@", destPath, [metadata.lastModifiedDate descriptionWithLocale:[NSLocale currentLocale]]);
-    NSDictionary* attr = $dict(metadata.lastModifiedDate, NSFileModificationDate);
-    [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:destPath error:nil];
-    [self stepComplete];
-    anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
-}
-- (void)restClient:(DBRestClient *)client loadFileFailedWithError:(NSError *)error {
-    [self internalShutdownFailed];
 }
 // End download
 
@@ -207,14 +306,14 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 - (void)startTaskRemoteDelete:(NSString*)file {
     NSLog(@"Sync: Deleting remote file %@", file);
     [deletedFiles addObject:file];
-    [client deletePath:$str(@"/%@", file)];
+    [[client.filesRoutes deleteV2:$str(@"/%@", file)] setResponseBlock:^(DBFILESMetadata * _Nullable result, DBFILESDeleteError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+        if (result) {
+            [self stepComplete];
+        } else {
+            [self internalShutdownFailed];
+        }
+    }];
     [self stepComplete];
-}
-- (void)restClient:(DBRestClient *)client deletedPath:(NSString *)path {
-    [self stepComplete];
-}
-- (void)restClient:(DBRestClient *)client deletePathFailedWithError:(NSError *)error {
-    [self internalShutdownFailed];
 }
 // End remote delete
 
@@ -227,12 +326,12 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     for (NSString* item in [[NSFileManager defaultManager] contentsOfDirectoryAtPath:root error:nil]) {
         // Skip hidden/system files - you may want to change this if your files start with ., however dropbox errors on many 'ignored' files such as .DS_Store which you'll want to skip
         if ([item hasPrefix:@"."]) continue;
-
+        
         // Get the full path and attribs
         NSString* itemPath = [root stringByAppendingPathComponent:item];
         NSDictionary* attribs = [[NSFileManager defaultManager] attributesOfItemAtPath:itemPath error:nil];
         BOOL isFile = $eql(attribs.fileType, NSFileTypeRegular);
-                
+        
         if (isFile) {
             [localFiles setObject:attribs.fileModificationDate forKey:item];
         }
@@ -244,7 +343,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 - (BOOL)syncStepWithRemoteFiles:(NSDictionary*)remoteFiles andRevs:(NSDictionary*)remoteRevs {
     NSDictionary* localFiles = [self getLocalStatus]; // Get the local filesystem
     [[NSUserDefaults standardUserDefaults] synchronize]; // Make sure the user defaults data is up to date
-
+    
     NSMutableSet* all = [NSMutableSet set]; // Get a complete list of all files both local and remote
     [all addObjectsFromArray:localFiles.allKeys];
     [all addObjectsFromArray:remoteFiles.allKeys];
@@ -323,34 +422,6 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     return [file stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]];
 }
 
-// Called by dropbox when the metadata for a folder has returned
-- (void)restClient:(DBRestClient*)_client loadedMetadata:(DBMetadata*)metadata {
-    NSMutableDictionary* remoteFiles = [NSMutableDictionary dictionary];
-    NSMutableDictionary* remoteFileRevs = [NSMutableDictionary dictionary];
-    
-    for (DBMetadata* item in metadata.contents) {
-        if (item.isDirectory) {
-            // Ignore directories for simplicity's sake
-        } else {
-            [remoteFiles setObject:item.lastModifiedDate forKey:[self noSlash:item.path]];
-            [remoteFileRevs setObject:item.rev forKey:[self noSlash:item.path]];
-        }
-    }
-    
-    // Now do the comparisons to figure out what needs doing
-    BOOL allComplete = [self syncStepWithRemoteFiles:remoteFiles andRevs:remoteFileRevs];
-    
-    if (allComplete) { // All done - nothing to do!
-        [self internalShutdownSuccess];
-    }
-}
-- (void)restClient:(DBRestClient*)client metadataUnchangedAtPath:(NSString*)path {
-    [self internalShutdownFailed];
-}
-- (void)restClient:(DBRestClient*)client loadMetadataFailedWithError:(NSError*)error {
-    [self internalShutdownFailed];
-}
-
 #pragma mark - Singleton management
 
 + (CHBgDropboxSync*)i {
@@ -365,7 +436,11 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 // Call me in your app delegate's applicationDidBecomeActive (eg at startup and become-active) and when you link
 // and basically any time you've changed data and want to sync again
 + (void)start {
-    if (![[DBSession sharedSession] isLinked]) return; // Not linked, so nothing to do
+    NSLog(@"Starting Dropbox Sync...");
+    if (![[DBClientsManager authorizedClient] isAuthorized]) {
+        NSLog(@"Dropbox not linked, so nothing to do");
+        return;
+    } // Not linked, so nothing to do
     [[self i] startup];
 }
 
@@ -376,7 +451,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 
 // Called when they pair or unpair or restore a backup, clears the lastsync status so we dont inadvertantly delete things next time we sync
 + (void)clearLastSyncData {
-    [[self i] lastSyncClear]; // Clear the last sync status so 
+    [[self i] lastSyncClear]; // Clear the last sync status so
     // Since last sync status is only used to justify deletes, it is safe to clear (it'll only possibly cause data un-deletion)
 }
 

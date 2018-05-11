@@ -10,12 +10,11 @@
 #import "WCEasySettingsSwitch.h"
 
 #import "CHBgDropboxSync.h"
-#import <DropboxSDK/DropboxSDK.h>
+//#import <DropboxSDK/DropboxSDK.h>
 #import "SCLAlertView.h"
 
-@interface iNDSDropboxTableViewController () <DBRestClientDelegate> {
+@interface iNDSDropboxTableViewController () {
     WCEasySettingsSwitch    *dropBoxSwitch;
-    DBRestClient            *client;
     NSString                *userName;
 }
 
@@ -26,19 +25,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    client = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-    client.delegate = self;
+    
     
     dropBoxSwitch = [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableDropbox" title:@"Enable Dropbox Sync"];
     dropBoxSwitch.readOnlyIdentifier = YES;
     __weak id weakSelf = self;
     [dropBoxSwitch setEnableBlock:^{
-        [[DBSession sharedSession] linkFromController:weakSelf];
+        //        [[DBSession sharedSession] linkFromController:weakSelf];
+        [DBClientsManager authorizeFromController:[UIApplication sharedApplication] controller:weakSelf openURL:^(NSURL *url) {
+            [[UIApplication sharedApplication] openURL:url];
+        }];
     }];
     [dropBoxSwitch setDisableBlock:^{
         [CHBgDropboxSync forceStopIfRunning];
         [CHBgDropboxSync clearLastSyncData];
-        [[DBSession sharedSession] unlinkAll];
+        //        [[DBSession sharedSession] unlinkAll];
+        [DBClientsManager unlinkAndResetClients];
         SCLAlertView * alert = [[SCLAlertView alloc] init];
         [alert showInfo:weakSelf title:NSLocalizedString(@"UNLINKED", nil) subTitle:NSLocalizedString(@"UNLINKED_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
         
@@ -54,23 +56,33 @@
     [self.tableView registerClass:[WCEasySettingsSwitchCell class] forCellReuseIdentifier:dropBoxSwitch.cellIdentifier];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-    [client loadAccountInfo];
-    [self.tableView reloadData];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
-- (void)restClient:(DBRestClient*)client loadedAccountInfo:(DBAccountInfo*)info {
-    userName = info.displayName;
+- (void)loadedAccountInfo:(DBUSERSFullAccount *)info {
+    userName = info.email;
     dispatch_async(dispatch_get_main_queue(), ^{
         NSRange range = NSMakeRange(0, [self numberOfSectionsInTableView:self.tableView]);
         NSIndexSet *sections = [NSIndexSet indexSetWithIndexesInRange:range];
         [self.tableView reloadSections:sections withRowAnimation:UITableViewRowAnimationAutomatic];
     });
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    DBUserClient *client = [DBClientsManager authorizedClient];
+    [[client.usersRoutes getCurrentAccount]
+     setResponseBlock:^(DBUSERSFullAccount * result, DBNilObject * _Nullable routeError, DBRequestError * _Nullable networkError) {
+         if (result) {
+             NSLog(@"%@\n", result);
+             [self loadedAccountInfo:result];
+         } else {
+             NSLog(@"%@\n%@\n", routeError, networkError);
+         }
+     }];
+}
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
 }
 
 #pragma mark - Table view data source

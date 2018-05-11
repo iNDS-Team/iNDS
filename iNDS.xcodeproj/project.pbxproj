@@ -272,7 +272,6 @@
 		D32C39D7178E73C200E6809E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D6178E73C200E6809E /* SystemConfiguration.framework */; };
 		D32C39D9178E748000E6809E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D8178E748000E6809E /* QuartzCore.framework */; };
 		D32C39DB178E749C00E6809E /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39DA178E749C00E6809E /* libc++.dylib */; };
-		D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3B8BB911794ACCE0061D1D8 /* DropboxSDK.framework */; };
 		D3B8BB961794ACEF0061D1D8 /* ZAActivityBar.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D3B8BB931794ACEF0061D1D8 /* ZAActivityBar.bundle */; };
 		D3B8BB971794ACEF0061D1D8 /* ZAActivityBar.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B8BB951794ACEF0061D1D8 /* ZAActivityBar.m */; };
 		D3B8BB9A1794ACFE0061D1D8 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = D3B8BB991794ACFE0061D1D8 /* SKBounceAnimation.m */; };
@@ -834,7 +833,6 @@
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
 				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
-				D3B8BB921794ACCE0061D1D8 /* DropboxSDK.framework in Frameworks */,
 				CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */,
 				2A27F31D285FBD21DB9DA186 /* Pods_iNDS.framework in Frameworks */,
 			);
@@ -1801,7 +1799,7 @@
 				ORGANIZATIONNAME = iNDS;
 				TargetAttributes = {
 					BFCFE0EE1764FBD3000A70CF = {
-						DevelopmentTeam = PGNG7584J8;
+						DevelopmentTeam = 9DA4RFE7AJ;
 					};
 				};
 			};
@@ -2324,7 +2322,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.6.0;
-				DEVELOPMENT_TEAM = PGNG7584J8;
+				DEVELOPMENT_TEAM = 9DA4RFE7AJ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2346,7 +2344,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
+				INFOPLIST_FILE = "iNDS/Base.lproj/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -2381,7 +2379,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1.6.0;
-				DEVELOPMENT_TEAM = PGNG7584J8;
+				DEVELOPMENT_TEAM = 9DA4RFE7AJ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)",
@@ -2403,7 +2401,7 @@
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
 				);
-				INFOPLIST_FILE = "iNDS/support/iNDS-Info.plist";
+				INFOPLIST_FILE = "iNDS/Base.lproj/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
