@@ -11,17 +11,17 @@ Currently, emulation is powered by the DeSmuME threaded ARM interpreter and runs
 
 Due to the need to mmap the entire ROM into memory, older devices with only 256MB of RAM are not supported. These devices include the iPod touch 4, iPad 1, iPhone 3GS, and anything below those devices.
 
-[iNDS](http://www.williamlcobb.com/iNDS.html)
+[iNDS](https://inds.nerd.net)
 
 [DeSmuME](http://desmume.org/) 
 
 Installing iNDS
 ------------------------
-All Instructions on building and installing iNDS can be found [here](https://github.com/WilliamLCobb/iNDS/wiki)
+All Instructions on building and installing iNDS can be found [here](https://github.com/iNDS-Team/iNDS/wiki)
 
 Reporting Bugs
 ------------------------
-#### When something in iNDS isn't working correctly for you, please [open a GitHub issue ticket here](https://github.com/williamlcobb/iNDS/issues/new).
+#### When something in iNDS isn't working correctly for you, please [open a GitHub issue ticket here](https://github.com/iNDS-Team/iNDS/issues/new).
 ##### Please include the following information:
 * iOS device
 * iOS version
