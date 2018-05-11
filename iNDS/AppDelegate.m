@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import <DropboxSDK/DropboxSDK.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 #import "CHBgDropboxSync.h"
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
@@ -62,8 +62,58 @@
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
     
+    [self authDropbox];
     
     return YES;
+}
+
+- (void)authDropbox {
+    NSString* errorMsg = nil;
+    if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
+        errorMsg = @"You must set the App Key correctly for Dropbox to work!";
+    } else if ([[self appSecret] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
+        errorMsg = @"You must set the App Secret correctly for Dropbox to work!";
+    } else {
+        NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
+        NSData *plistData = [NSData dataWithContentsOfFile:plistPath];
+        NSDictionary *loadedPlist =
+        [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:0 format:NULL errorDescription:NULL];
+        NSString *scheme = [[[[loadedPlist objectForKey:@"CFBundleURLTypes"] objectAtIndex:0] objectForKey:@"CFBundleURLSchemes"] objectAtIndex:0];
+        if ([scheme isEqual:@"db-APP_KEY"]) {
+            errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
+        }
+    }
+    
+    if (errorMsg != nil) {
+        NSLog(@"Error: %@", errorMsg);
+    } else {
+        
+        BOOL willPerformMigration = [DBClientsManager checkAndPerformV1TokenMigration:^(BOOL shouldRetry, BOOL invalidAppKeyOrSecret,
+                                                                                        NSArray<NSArray<NSString *> *> *unsuccessfullyMigratedTokenData) {
+            
+            if (shouldRetry) {
+                // Store this BOOL somewhere to retry when network connection has returned
+            }
+            
+            if ([unsuccessfullyMigratedTokenData count] != 0) {
+                NSLog(@"The following tokens were unsucessfully migrated:");
+                for (NSArray<NSString *> *tokenData in unsuccessfullyMigratedTokenData) {
+                    NSLog(@"DropboxUserID: %@, AccessToken: %@, AccessTokenSecret: %@, StoredAppKey: %@", tokenData[0],
+                          tokenData[1], tokenData[2], tokenData[3]);
+                }
+            }
+            
+            if (!invalidAppKeyOrSecret && !shouldRetry && [unsuccessfullyMigratedTokenData count] == 0) {
+                [DBClientsManager setupWithAppKey:[self appKey]];
+                [CHBgDropboxSync start];
+            }
+        } queue:nil appKey:[self appKey] appSecret:[self appSecret]];
+        
+        if (!willPerformMigration) {
+            [DBClientsManager setupWithAppKey:[self appKey]];
+            [CHBgDropboxSync start];
+        }
+    }
 }
 
 - (void)startBackgroundProcesses
@@ -73,31 +123,6 @@
     }
     backgroundProcessesStarted = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSString* errorMsg = nil;
-        if ([[self appKey] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
-            errorMsg = @"You must set the App Key correctly for Dropbox to work!";
-        } else if ([[self appSecret] rangeOfCharacterFromSet:[[NSCharacterSet alphanumericCharacterSet] invertedSet]].location != NSNotFound) {
-            errorMsg = @"You must set the App Secret correctly for Dropbox to work!";
-        } else {
-            NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
-            NSData *plistData = [NSData dataWithContentsOfFile:plistPath];
-            NSDictionary *loadedPlist =
-            [NSPropertyListSerialization propertyListFromData:plistData mutabilityOption:0 format:NULL errorDescription:NULL];
-            NSString *scheme = [[[[loadedPlist objectForKey:@"CFBundleURLTypes"] objectAtIndex:0] objectForKey:@"CFBundleURLSchemes"] objectAtIndex:0];
-            if ([scheme isEqual:@"db-APP_KEY"]) {
-                errorMsg = @"You must set the URL Scheme correctly in iNDS-Info.plist for Dropbox to work!";
-            }
-        }
-        
-        if (errorMsg != nil) {
-            NSLog(@"%@", errorMsg);
-        } else {
-            DBSession* dbSession = [[DBSession alloc] initWithAppKey:[self appKey] appSecret:[self appSecret] root:kDBRootAppFolder];
-            [DBSession setSharedSession:dbSession];
-            [CHBgDropboxSync start];
-        }
-        
-        
         //Show Twitter alert
         if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
             [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"TwitterAlert"];
@@ -122,17 +147,26 @@
     NSLog(@"Opening: %@", url);
     if ([[[NSString stringWithFormat:@"%@", url] substringToIndex:2] isEqualToString: @"db"]) {
         NSLog(@"DB");
-        if ([[DBSession sharedSession] handleOpenURL:url]) {
-            if ([[DBSession sharedSession] isLinked]) {
+        //        if ([[DBSession sharedSession] handleOpenURL:url]) {
+        //            if ([[DBSession sharedSession] isLinked]) {
+        DBOAuthResult *authResult = [DBClientsManager handleRedirectURL:url];
+        if (authResult != nil) {
+            if ([authResult isSuccess]) {
+                NSLog(@"Success! User is logged into Dropbox.");
                 SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert showInfo:NSLocalizedString(@"SUCCESS", nil) subTitle:NSLocalizedString(@"SUCCESS_DETAIL", nil) closeButtonTitle:@"Okay!" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setBool:true forKey:@"enableDropbox"];
                 [CHBgDropboxSync clearLastSyncData];
                 [CHBgDropboxSync start];
-                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"enableDropbox"];
+            } else if ([authResult isCancel]) {
+                NSLog(@"Authorization flow was manually canceled by user!");
+            } else if ([authResult isError]) {
+                NSLog(@"Error: %@", authResult);
             }
-            return YES;
         }
+        //            }
+        return YES;
+        //        }
     } else if (url.isFileURL && [[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
         NSLog(@"Zip File (maybe)");
         NSFileManager *fm = [NSFileManager defaultManager];
@@ -188,7 +222,7 @@
                 if ([path.pathExtension.lowercaseString isEqualToString:@"nds"] && ![[path.lastPathComponent substringToIndex:1] isEqualToString:@"."]) {
                     NSLog(@"found ROM in zip: %@", path);
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.documentsPath stringByAppendingPathComponent:path.lastPathComponent] error:&error];
-                   [foundItems addObject:path.lastPathComponent];
+                    [foundItems addObject:path.lastPathComponent];
                 } else if ([path.pathExtension.lowercaseString isEqualToString:@"dsv"]) {
                     NSLog(@"found save in zip: %@", path);
                     [fm moveItemAtPath:[dstDir stringByAppendingPathComponent:path] toPath:[self.batteryDir stringByAppendingPathComponent:path.lastPathComponent] error:&error];
@@ -355,7 +389,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
@@ -420,33 +454,33 @@
         // Video
         WCEasySettingsSection *graphicsSection = [[WCEasySettingsSection alloc] initWithTitle:@"Video" subTitle:@"Video Options"];
         WCEasySettingsOption *filterOptions = [[WCEasySettingsOption alloc] initWithIdentifier:@"videoFilter"
-                                                                             title:@"Video Filter"
-                                                                        options:@[@"None",
-                                                                                  @"EPX",
-                                                                                  @"Super Eagle",
-                                                                                  @"2xSaI",
-                                                                                  @"Super 2xSaI",
-                                                                                  @"BRZ 2x (Recommended)",
-                                                                                  @"Low Quality 2x",
-                                                                                  @"BRZ 3x",
-                                                                                  @"High Quality 2x",
-                                                                                  @"High Quality 4x",
-                                                                                  @"BRZ 4x"]
-                                                                   optionSubtitles:nil
-                                                                        subtitle:@"Video filters make the picture sharper but can cause the emulator to run slower. Filters are ordered by lowest quality at the top to best at the bottom. If you're not sure, you can experiment or pick the highest quality that still makes games run at 60fps."];
+                                                                                         title:@"Video Filter"
+                                                                                       options:@[@"None",
+                                                                                                 @"EPX",
+                                                                                                 @"Super Eagle",
+                                                                                                 @"2xSaI",
+                                                                                                 @"Super 2xSaI",
+                                                                                                 @"BRZ 2x (Recommended)",
+                                                                                                 @"Low Quality 2x",
+                                                                                                 @"BRZ 3x",
+                                                                                                 @"High Quality 2x",
+                                                                                                 @"High Quality 4x",
+                                                                                                 @"BRZ 4x"]
+                                                                               optionSubtitles:nil
+                                                                                      subtitle:@"Video filters make the picture sharper but can cause the emulator to run slower. Filters are ordered by lowest quality at the top to best at the bottom. If you're not sure, you can experiment or pick the highest quality that still makes games run at 60fps."];
         graphicsSection.items = @[filterOptions];
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x)];
-//            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
-//            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
-//            NSMutableArray *filterSubtitles = [NSMutableArray new];
-//            for (NSNumber *time in filterTimes) {
-//                NSLog(@"%f (%f + %f)", ([time floatValue] + coreTime), [time floatValue], coreTime);
-//                CGFloat estimatedFps = 1/([time floatValue] + coreTime);
-//                [filterSubtitles addObject:[NSString stringWithFormat:@"%d FPS", MAX(60, (int)estimatedFps)]];
-//            }
-//            //filterOptions.optionSubtitles = filterSubtitles;
-//        });
+        //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //            NSArray *filters = @[@(NONE), @(EPX), @(SUPEREAGLE), @(_2XSAI), @(SUPER2XSAI), @(BRZ2x), @(LQ2X), @(BRZ3x), @(HQ2X), @(HQ4X), @(BRZ4x)];
+        //            NSArray *filterTimes = [iNDSSpeedTest filterTimesForFilters:filters];
+        //            CGFloat coreTime = [[NSUserDefaults standardUserDefaults] floatForKey:@"coreTime"];
+        //            NSMutableArray *filterSubtitles = [NSMutableArray new];
+        //            for (NSNumber *time in filterTimes) {
+        //                NSLog(@"%f (%f + %f)", ([time floatValue] + coreTime), [time floatValue], coreTime);
+        //                CGFloat estimatedFps = 1/([time floatValue] + coreTime);
+        //                [filterSubtitles addObject:[NSString stringWithFormat:@"%d FPS", MAX(60, (int)estimatedFps)]];
+        //            }
+        //            //filterOptions.optionSubtitles = filterSubtitles;
+        //        });
         
         // Audio
         WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
@@ -547,7 +581,7 @@
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"Source"
                                                                  subtitle:@"Github"
                                                                       url:@"https://github.com/WilliamLCobb/iNDS"]];
-                                 
+        
         
         
         

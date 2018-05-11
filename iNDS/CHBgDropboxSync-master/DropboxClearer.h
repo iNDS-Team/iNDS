@@ -6,11 +6,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <DropboxSDK/DropboxSDK.h>
+//#import <DropboxSDK/DropboxSDK.h>
 
 typedef void(^dropboxCleared)(BOOL success);
 
-@interface DropboxClearer : NSObject<DBRestClientDelegate>
+@interface DropboxClearer : NSObject
 
 + (void)doClear:(dropboxCleared)complete;
 

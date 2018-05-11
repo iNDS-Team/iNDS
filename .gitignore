@@ -16,5 +16,5 @@ DerivedData
 .idea/
 *.hmap
 *.xccheckout
-*.xcworkspacedata
 build/*
+Pods/

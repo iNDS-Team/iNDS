@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
 @interface iNDSDropboxTableViewController : UITableViewController
+
+- (void)loadedAccountInfo:(DBUSERSFullAccount *)info;
 
 @end

@@ -6,11 +6,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <DropboxSDK/DBRestClient.h>
+//#import <DropboxSDK/DBRestClient.h>
+#import <ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.h>
 
-@interface CHBgDropboxSync : NSObject<DBRestClientDelegate, UIAlertViewDelegate>
+@interface CHBgDropboxSync : NSObject<UIAlertViewDelegate>
 
 + (void)start;
 + (void)forceStopIfRunning;
 + (void)clearLastSyncData;
+- (void)grabMetadata;
+
 @end
