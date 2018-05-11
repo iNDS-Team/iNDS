@@ -6,3 +6,5 @@ xcode_scheme: iNDS
 podfile: Podfile
 before_install:
   - pod repo update
+script:
+  - xcodebuild -workspace iNDS.xcworkspace -scheme iNDS build test | xcpretty
