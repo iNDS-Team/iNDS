@@ -59,7 +59,7 @@
     
     [self.window setTintColor:[UIColor colorWithRed:1 green:59/255.0 blue:48/255.0 alpha:1]];
     
-    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60)
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
     
     
