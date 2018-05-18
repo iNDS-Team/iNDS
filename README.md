@@ -1,7 +1,7 @@
 iNDS
 =======
 ###### Supports iOS 9.0 and up.
-[![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS)
+[![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS) [![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 iNDS is a derivation of the previous Nintendo DS apps for iOS, nds4ios and Nitrogen. 
 
