@@ -141,7 +141,6 @@
 		BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE23A176634EE000A70CF /* slot2_piano.cpp */; };
 		BFCFE247176634EE000A70CF /* slot2_rumblepak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE23B176634EE000A70CF /* slot2_rumblepak.cpp */; };
 		BFCFE26B1766379F000A70CF /* addons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BFCFE13017650FB0000A70CF /* addons.cpp */; };
-		C0521478204505F100B6C336 /* iNDS-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C052147A204505F100B6C336 /* iNDS-Info.plist */; };
 		C052147E20450E8100B6C336 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C052147D20450E8100B6C336 /* Photos.framework */; };
 		C345B67218906BB40065A795 /* iNDSMFIControllerSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = C345B67118906BB40065A795 /* iNDSMFIControllerSupport.mm */; };
 		CA031AB01BE951B700EDE98D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CA031AAF1BE951B700EDE98D /* Images.xcassets */; };
@@ -1861,7 +1860,6 @@
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
 				CABE38C71C34B8C600BE8857 /* Sync@2x.png in Resources */,
 				CABE38C61C34B8C600BE8857 /* Sync.png in Resources */,
-				C0521478204505F100B6C336 /* iNDS-Info.plist in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,
 				BF9D516D17867F7D00B5864B /* JoystickBackground@2x.png in Resources */,
 				BF9D516E17867F7D00B5864B /* JoystickButton.png in Resources */,
@@ -2205,8 +2203,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Evan Deere (26X84RWVW3)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Evan Deere (26X84RWVW3)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2247,7 +2245,7 @@
 					"-DHAVE_LIBZ",
 					"-marm",
 				);
-				PROVISIONING_PROFILE = "a51b8e32-6c4c-459c-a5a4-d6349a98270d";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
@@ -2267,8 +2265,8 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Evan Deere (26X84RWVW3)";
-				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer: Evan Deere (26X84RWVW3)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2301,7 +2299,7 @@
 					"-DIOS",
 					"-DHAVE_LIBZ",
 				);
-				PROVISIONING_PROFILE = "a51b8e32-6c4c-459c-a5a4-d6349a98270d";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				VALIDATE_PRODUCT = YES;
