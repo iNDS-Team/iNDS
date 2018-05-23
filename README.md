@@ -21,7 +21,7 @@ All Instructions on building and installing iNDS can be found [here](https://git
 
 Reporting Bugs
 ------------------------
-#### When something in iNDS isn't working correctly for you, please [open a GitHub issue ticket here](https://github.com/iNDS-Team/iNDS/issues/new).
+#### When something in iNDS isn't working correctly for you, please [open a GitHub issue ticket here](https://github.com/iNDS-Team/iNDS/issues/new/choose).
 ##### Please include the following information:
 * iOS device
 * iOS version
