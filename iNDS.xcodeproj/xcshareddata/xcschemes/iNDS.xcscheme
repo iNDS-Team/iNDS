@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8607920AA12CBAE4DEC7CD49BE5C2CDD"
-               BuildableName = "Pods_iNDS.framework"
+               BlueprintIdentifier = "711B04D5E2C572F17F366B7AEE4CAB68"
+               BuildableName = "libPods-iNDS.a"
                BlueprintName = "Pods-iNDS"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
@@ -28,8 +28,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D58E5CAE0C7CB24223DBE44A15D9435E"
-               BuildableName = "ObjectiveDropboxOfficial.framework"
+               BlueprintIdentifier = "054BA1DD82C5AEF9D8983F3FC4E1EE9E"
+               BuildableName = "libObjectiveDropboxOfficial.a"
                BlueprintName = "ObjectiveDropboxOfficial"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>

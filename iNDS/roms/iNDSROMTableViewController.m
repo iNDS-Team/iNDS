@@ -161,7 +161,7 @@
             cell.textLabel.text = game.title;
             cell.detailTextLabel.text = nil;
         }
-        cell.imageView.image = game.icon;
+//        cell.imageView.image = game.icon;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSDownload"];
@@ -170,7 +170,7 @@
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;
         cell.detailTextLabel.text = @"Waiting...";
-        cell.imageView.image = nil;
+//        cell.imageView.image = nil;
     }
     return cell;
 }
