@@ -67,6 +67,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     DBUserClient *client = [DBClientsManager authorizedClient];
     [[client.usersRoutes getCurrentAccount]
      setResponseBlock:^(DBUSERSFullAccount * result, DBNilObject * _Nullable routeError, DBRequestError * _Nullable networkError) {

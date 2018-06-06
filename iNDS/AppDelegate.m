@@ -42,7 +42,7 @@
 
 + (AppDelegate*)sharedInstance
 {
-    return [[UIApplication sharedApplication] delegate];
+    return (AppDelegate *) [[UIApplication sharedApplication] delegate];
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {

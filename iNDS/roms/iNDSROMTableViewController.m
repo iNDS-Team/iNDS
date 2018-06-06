@@ -66,7 +66,7 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+    [super viewDidAppear:animated];
     [AppDelegate.sharedInstance startBackgroundProcesses];
     // watch for changes in documents folder
     docWatchHelper = [MHWDirectoryWatcher directoryWatcherAtPath:AppDelegate.sharedInstance.documentsPath

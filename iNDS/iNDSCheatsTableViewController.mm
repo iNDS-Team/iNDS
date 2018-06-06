@@ -64,6 +64,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     NSString *cheatSavePath = [NSString stringWithUTF8String:(char *)cheats->filename];
     //Eventually we might want to create our own NSInput stream to parse XML on the fly to reduce memory overhead and increase speed. This will work fine for now though
     if (![[NSFileManager defaultManager] fileExistsAtPath:cheatSavePath]) {

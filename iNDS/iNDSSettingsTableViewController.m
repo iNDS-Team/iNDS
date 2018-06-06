@@ -36,6 +36,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     emulationController = [AppDelegate sharedInstance].currentEmulatorViewController;
     self.romName.text = [AppDelegate sharedInstance].currentEmulatorViewController.game.gameTitle;
     self.layoutName.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"currentProfile"];

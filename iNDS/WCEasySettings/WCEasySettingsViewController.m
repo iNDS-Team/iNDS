@@ -29,6 +29,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     [self.tableView reloadData];
     NSLog(@"%@", self.navigationController.viewControllers);
     if (self.navigationController.viewControllers.count == 1) { // We are the main view so add an exit

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "0940"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -31,6 +31,20 @@
                BlueprintIdentifier = "054BA1DD82C5AEF9D8983F3FC4E1EE9E"
                BuildableName = "libObjectiveDropboxOfficial.a"
                BlueprintName = "ObjectiveDropboxOfficial"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A6FB3F6948043836EFEEA17D6C27E2FC"
+               BuildableName = "libUnrarKit.a"
+               BlueprintName = "UnrarKit"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

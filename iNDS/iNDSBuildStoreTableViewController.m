@@ -41,6 +41,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [[NSUserDefaults standardUserDefaults] setBool:client.linked forKey:@"enableBuildstore"];
     [self.tableView reloadData];
