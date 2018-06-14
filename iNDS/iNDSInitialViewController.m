@@ -21,6 +21,7 @@
 
 -(void) viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     NSLog(@"Appeared");
     [self performSegueWithIdentifier:@"ToRoot" sender:self];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];

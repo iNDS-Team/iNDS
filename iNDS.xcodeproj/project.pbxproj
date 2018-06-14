@@ -21,7 +21,6 @@
 		28DA4A53178802FB002236A4 /* RTrigger@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28DA4A4F178802FB002236A4 /* RTrigger@2x.png */; };
 		28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6ED1787D110003A9C5B /* Defaults.plist */; };
 		28E7A6F61787D8D5003A9C5B /* HideEmulator@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */; };
-		2A27F31D285FBD21DB9DA186 /* Pods_iNDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A99F7DFB7EA9727C254738D /* Pods_iNDS.framework */; };
 		4651B9C81C323B3300857FB6 /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4651B9C61C323B3300857FB6 /* iCadeReaderView.m */; };
 		46C587631C502F9F00CE47BD /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C587651C502F9F00CE47BD /* MainStoryboard.storyboard */; };
 		4C3F2AED178E017600AE10B8 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C3F2AEC178E017600AE10B8 /* Twitter.framework */; };
@@ -257,8 +256,7 @@
 		CAE673901CC824F900E46EDF /* WCEasySettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673881CC824F900E46EDF /* WCEasySettingsViewController.m */; };
 		CAE673911CC824F900E46EDF /* WCEasySettingsOption.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */; };
 		CAE6739A1CC8257C00E46EDF /* WCEasySettingsOptionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAE673991CC8257C00E46EDF /* WCEasySettingsOptionViewController.m */; };
-		CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; };
-		CAE8C0C51CEA65AB00082785 /* UnrarKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CCC1117A48200DE76C285FC2 /* libPods-iNDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC8C5A54F49A7C5BED8FDCF /* libPods-iNDS.a */; };
 		D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A117927BCB0098FB9C /* CHBgDropboxSync.m */; };
 		D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8A317927BCB0098FB9C /* DropboxClearer.m */; };
 		D31CC8B217927C3B0098FB9C /* ConciseKit.m in Sources */ = {isa = PBXBuildFile; fileRef = D31CC8AB17927C3B0098FB9C /* ConciseKit.m */; };
@@ -283,7 +281,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CAE8C0C51CEA65AB00082785 /* UnrarKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,9 +288,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0A99F7DFB7EA9727C254738D /* Pods_iNDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iNDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		17DAE2A31C76F0FC00FD74E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		17DAE2A61C76F18600FD74E6 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MainStoryboard.strings; sourceTree = "<group>"; };
+		1AC8C5A54F49A7C5BED8FDCF /* libPods-iNDS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iNDS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2838715C17950B2A009B8E84 /* math_neon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = math_neon.h; path = "desmume/src/android/math-neon/math_neon.h"; sourceTree = SOURCE_ROOT; };
 		2838715D17950B69009B8E84 /* math_mat4.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_mat4.c; path = "desmume/src/android/math-neon/math_mat4.c"; sourceTree = SOURCE_ROOT; };
 		2838715E17950B69009B8E84 /* math_sqrtf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_sqrtf.c; path = "desmume/src/android/math-neon/math_sqrtf.c"; sourceTree = SOURCE_ROOT; };
@@ -309,12 +306,11 @@
 		28DA4A4F178802FB002236A4 /* RTrigger@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "RTrigger@2x.png"; path = "Resources/RTrigger@2x.png"; sourceTree = "<group>"; };
 		28E7A6ED1787D110003A9C5B /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Defaults.plist; path = iNDS/settings/Defaults.plist; sourceTree = SOURCE_ROOT; };
 		28E7A6F41787D8D5003A9C5B /* HideEmulator@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "HideEmulator@2x.png"; path = "Resources/HideEmulator@2x.png"; sourceTree = "<group>"; };
-		2D12581172E15FD89D44A0B4 /* Pods-iNDS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.debug.xcconfig"; sourceTree = "<group>"; };
 		4651B9C51C323B3300857FB6 /* iCadeReaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeReaderView.h; sourceTree = "<group>"; };
 		4651B9C61C323B3300857FB6 /* iCadeReaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iCadeReaderView.m; sourceTree = "<group>"; };
 		4651B9C71C323B3300857FB6 /* iCadeState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iCadeState.h; sourceTree = "<group>"; };
+		4C0FDDC2FFC3598C96B6324C /* Pods-iNDS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.debug.xcconfig"; sourceTree = "<group>"; };
 		4C3F2AEC178E017600AE10B8 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
-		71EE95C6B6E4CEF960CC4F98 /* Pods-iNDS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.release.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.release.xcconfig"; sourceTree = "<group>"; };
 		8B28306A178DDC7F00E92785 /* iNDSDonationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSDonationViewController.m; path = iNDS/donation/iNDSDonationViewController.m; sourceTree = SOURCE_ROOT; };
 		8B4895C4178CE15D00BA61C3 /* iNDSROMTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = iNDSROMTableViewController.m; path = iNDS/roms/iNDSROMTableViewController.m; sourceTree = SOURCE_ROOT; };
 		8BEA096017872BF90060B347 /* iNDSROMTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iNDSROMTableViewController.h; path = iNDS/roms/iNDSROMTableViewController.h; sourceTree = SOURCE_ROOT; };
@@ -690,7 +686,6 @@
 		CAB2C40D1CB2033600ED22BB /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		CAB2C4251CB2039B00ED22BB /* iNDSEmulatorViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iNDSEmulatorViewController.mm; sourceTree = "<group>"; };
 		CAB2C42B1CB21C2000ED22BB /* cheats.7z */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.7z; path = Resources/cheats/cheats.7z; sourceTree = "<group>"; };
-		CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UnrarKit.framework; sourceTree = "<group>"; };
 		CAB2C42F1CB222AF00ED22BB /* cheats.rar */ = {isa = PBXFileReference; lastKnownFileType = file; name = cheats.rar; path = Resources/cheats/cheats.rar; sourceTree = "<group>"; };
 		CAB2C4361CB2D86C00ED22BB /* iNDSGameTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSGameTableView.h; sourceTree = "<group>"; };
 		CAB2C4371CB2D86C00ED22BB /* iNDSGameTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSGameTableView.m; sourceTree = "<group>"; };
@@ -797,13 +792,13 @@
 		D32C39D6178E73C200E6809E /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D32C39D8178E748000E6809E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		D32C39DA178E749C00E6809E /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
-		D3B8BB911794ACCE0061D1D8 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = iNDS/dropbox/DropboxSDK.framework; sourceTree = "<group>"; };
 		D3B8BB931794ACEF0061D1D8 /* ZAActivityBar.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ZAActivityBar.bundle; path = iNDS/ZAActivityBar/ZAActivityBar.bundle; sourceTree = SOURCE_ROOT; };
 		D3B8BB941794ACEF0061D1D8 /* ZAActivityBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZAActivityBar.h; path = iNDS/ZAActivityBar/ZAActivityBar.h; sourceTree = SOURCE_ROOT; };
 		D3B8BB951794ACEF0061D1D8 /* ZAActivityBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZAActivityBar.m; path = iNDS/ZAActivityBar/ZAActivityBar.m; sourceTree = SOURCE_ROOT; };
 		D3B8BB981794ACFE0061D1D8 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SKBounceAnimation.h; path = iNDS/ZAActivityBar/SKBounceAnimation/SKBounceAnimation.h; sourceTree = SOURCE_ROOT; };
 		D3B8BB991794ACFE0061D1D8 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SKBounceAnimation.m; path = iNDS/ZAActivityBar/SKBounceAnimation/SKBounceAnimation.m; sourceTree = SOURCE_ROOT; };
 		DFE61E841D409CC000C3E6E9 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/MainStoryboard.storyboard"; sourceTree = "<group>"; };
+		EA3D3DCE6EE2AA754533EE1B /* Pods-iNDS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iNDS.release.xcconfig"; path = "Pods/Target Support Files/Pods-iNDS/Pods-iNDS.release.xcconfig"; sourceTree = "<group>"; };
 		EE9CCDC6190BDBFB000875C4 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -812,6 +807,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				C052147E20450E8100B6C336 /* Photos.framework in Frameworks */,
 				CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */,
 				CA6E609C1CB0574B000B269D /* MobileCoreServices.framework in Frameworks */,
@@ -830,10 +826,8 @@
 				BFAE6F931767490A000911CF /* OpenGLES.framework in Frameworks */,
 				BFAE6F9117674902000911CF /* GLKit.framework in Frameworks */,
 				BFCFE0F31764FBD3000A70CF /* UIKit.framework in Frameworks */,
-				BFCFE0F51764FBD3000A70CF /* Foundation.framework in Frameworks */,
 				BFCFE0F71764FBD3000A70CF /* CoreGraphics.framework in Frameworks */,
-				CAE8C0C41CEA65AB00082785 /* UnrarKit.framework in Frameworks */,
-				2A27F31D285FBD21DB9DA186 /* Pods_iNDS.framework in Frameworks */,
+				CCC1117A48200DE76C285FC2 /* libPods-iNDS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -858,6 +852,15 @@
 				4651B9C71C323B3300857FB6 /* iCadeState.h */,
 			);
 			path = iCade;
+			sourceTree = "<group>";
+		};
+		8BB7E038AA9B918E28E66164 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4C0FDDC2FFC3598C96B6324C /* Pods-iNDS.debug.xcconfig */,
+				EA3D3DCE6EE2AA754533EE1B /* Pods-iNDS.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		8BEA095217872BB50060B347 /* iOS */ = {
@@ -920,15 +923,6 @@
 				AE2089191916401400E2CB33 /* funcs.h */,
 			);
 			name = i386;
-			sourceTree = "<group>";
-		};
-		BE412B8984D830082BC8DA85 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2D12581172E15FD89D44A0B4 /* Pods-iNDS.debug.xcconfig */,
-				71EE95C6B6E4CEF960CC4F98 /* Pods-iNDS.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		BF2AC479177FF29000D3CF93 /* arm */ = {
@@ -1045,7 +1039,7 @@
 				BFCFE0F01764FBD3000A70CF /* Products */,
 				CA32245E1CCD4C2400C5BEA7 /* OptimizationProfiles */,
 				C053F72E20444EBF00927158 /* Recovered References */,
-				BE412B8984D830082BC8DA85 /* Pods */,
+				8BB7E038AA9B918E28E66164 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1068,7 +1062,6 @@
 				CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */,
 				CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */,
 				9C4DD2851891E5390075B66C /* GameController.framework */,
-				D3B8BB911794ACCE0061D1D8 /* DropboxSDK.framework */,
 				D32C39DA178E749C00E6809E /* libc++.dylib */,
 				D32C39D8178E748000E6809E /* QuartzCore.framework */,
 				D32C39D6178E73C200E6809E /* SystemConfiguration.framework */,
@@ -1077,13 +1070,12 @@
 				4C3F2AEC178E017600AE10B8 /* Twitter.framework */,
 				BF9D514717865D5100B5864B /* AudioToolbox.framework */,
 				BFAE6F9A17674D93000911CF /* libz.dylib */,
-				CAB2C42C1CB21D8E00ED22BB /* UnrarKit.framework */,
 				BFAE6F921767490A000911CF /* OpenGLES.framework */,
 				BFAE6F9017674902000911CF /* GLKit.framework */,
 				BFCFE0F21764FBD3000A70CF /* UIKit.framework */,
 				BFCFE0F41764FBD3000A70CF /* Foundation.framework */,
 				BFCFE0F61764FBD3000A70CF /* CoreGraphics.framework */,
-				0A99F7DFB7EA9727C254738D /* Pods_iNDS.framework */,
+				1AC8C5A54F49A7C5BED8FDCF /* libPods-iNDS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1770,13 +1762,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFCFE1151764FBD3000A70CF /* Build configuration list for PBXNativeTarget "iNDS" */;
 			buildPhases = (
-				7F5678B9207EB3A012EBE4D2 /* [CP] Check Pods Manifest.lock */,
+				9D737F8E059E988A24075E5D /* [CP] Check Pods Manifest.lock */,
 				BFCFE0EB1764FBD3000A70CF /* Sources */,
 				BFCFE0EC1764FBD3000A70CF /* Frameworks */,
 				BFCFE0ED1764FBD3000A70CF /* Resources */,
 				28CC0BE7178E46D200AE77C2 /* ShellScript */,
 				CA4748E71C100178006F1438 /* Embed Frameworks */,
-				87BF8BE4F7AB8B3366A62188 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1794,7 +1785,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = iNDS;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = iNDS;
 				TargetAttributes = {
 					BFCFE0EE1764FBD3000A70CF = {
@@ -1890,7 +1881,7 @@
 			shellScript = "GIT=`which git`\nif [ \"$GIT\" -a -d .git ]; then\n  GIT_VERSION=`$GIT describe --tags --always`\nelse\n  GIT_VERSION=unknown\nfi\ndefaults write $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Info GitVersionString -string $GIT_VERSION";
 			showEnvVarsInLog = 0;
 		};
-		7F5678B9207EB3A012EBE4D2 /* [CP] Check Pods Manifest.lock */ = {
+		9D737F8E059E988A24075E5D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1906,24 +1897,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		87BF8BE4F7AB8B3366A62188 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-iNDS/Pods-iNDS-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/ObjectiveDropboxOfficial/ObjectiveDropboxOfficial.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectiveDropboxOfficial.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iNDS/Pods-iNDS-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -2193,19 +2166,29 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -2255,19 +2238,29 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = YES;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2308,7 +2301,7 @@
 		};
 		BFCFE1161764FBD3000A70CF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D12581172E15FD89D44A0B4 /* Pods-iNDS.debug.xcconfig */;
+			baseConfigurationReference = 4C0FDDC2FFC3598C96B6324C /* Pods-iNDS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon${BUNDLE_ICON_SET_SUFFIX}";
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
@@ -2341,6 +2334,7 @@
 					"$(SRCROOT)/desmume/src",
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
+					"$(inherited)",
 				);
 				INFOPLIST_FILE = "iNDS/Base.lproj/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2365,7 +2359,7 @@
 		};
 		BFCFE1171764FBD3000A70CF /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71EE95C6B6E4CEF960CC4F98 /* Pods-iNDS.release.xcconfig */;
+			baseConfigurationReference = EA3D3DCE6EE2AA754533EE1B /* Pods-iNDS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon${BUNDLE_ICON_SET_SUFFIX}";
 				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
@@ -2398,6 +2392,7 @@
 					"$(SRCROOT)/desmume/src",
 					"$(SRCROOT)/",
 					"$(SRCROOT)/desmume/src/android",
+					"$(inherited)",
 				);
 				INFOPLIST_FILE = "iNDS/Base.lproj/iNDS-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

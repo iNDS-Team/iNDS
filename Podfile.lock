@@ -1,16 +1,22 @@
 PODS:
   - ObjectiveDropboxOfficial (3.9.0)
+  - UnrarKit (2.8.1):
+    - UnrarKit/unrar-lib (= 2.8.1)
+  - UnrarKit/unrar-lib (2.8.1)
 
 DEPENDENCIES:
   - ObjectiveDropboxOfficial
+  - UnrarKit (~> 2.6)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - ObjectiveDropboxOfficial
+    - UnrarKit
 
 SPEC CHECKSUMS:
   ObjectiveDropboxOfficial: 64a809a85744ce58866bf98066f98be5d4c0582e
+  UnrarKit: 167602bda6542e575c4cdc068509d6b787f84468
 
-PODFILE CHECKSUM: 67173865a1d88d76b6c6d8411e0a24f29aef18eb
+PODFILE CHECKSUM: 033c1a530c71e8cc18a2c9f90523b156fb0eefef
 
 COCOAPODS: 1.5.0

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "0940"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8607920AA12CBAE4DEC7CD49BE5C2CDD"
-               BuildableName = "Pods_iNDS.framework"
+               BlueprintIdentifier = "711B04D5E2C572F17F366B7AEE4CAB68"
+               BuildableName = "libPods-iNDS.a"
                BlueprintName = "Pods-iNDS"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
@@ -28,9 +28,23 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D58E5CAE0C7CB24223DBE44A15D9435E"
-               BuildableName = "ObjectiveDropboxOfficial.framework"
+               BlueprintIdentifier = "054BA1DD82C5AEF9D8983F3FC4E1EE9E"
+               BuildableName = "libObjectiveDropboxOfficial.a"
                BlueprintName = "ObjectiveDropboxOfficial"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A6FB3F6948043836EFEEA17D6C27E2FC"
+               BuildableName = "libUnrarKit.a"
+               BlueprintName = "UnrarKit"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

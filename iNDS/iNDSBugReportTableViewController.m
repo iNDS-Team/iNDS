@@ -56,6 +56,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
     [self.tableView beginUpdates];
     [self.tableView endUpdates];
     UITableViewCell *selectImageCell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:2 inSection:1]];
