@@ -75,6 +75,8 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
             settingsButtonRects[view] = CGRectMake(screenSize.width - 10 - 40, 5, 40, 40);
             mainScreenRects[view] = CGRectMake(screenSize.width/2 - gameScreenSize.width/2, (screenSize.height / 2) - gameScreenSize.height - OffsetYForScreenOniPhoneX, gameScreenSize.width, gameScreenSize.height);
             touchScreenRects[view] = CGRectMake(screenSize.width/2 - gameScreenSize.width/2, screenSize.height/2 - OffsetYForScreenOniPhoneX, gameScreenSize.width, gameScreenSize.height);
+            
+            
             startButtonRects[view].origin = CGPointMake(screenSize.width/2 - 48 - 7, screenSize.height - 28 - 7 - OffsetYForStartButtonOniPhoneX);
             selectButtonRects[view].origin = CGPointMake(screenSize.width/2 + 7, screenSize.height - 28 - 7 - OffsetYForSelectButtonOniPhoneX);
             leftTriggerRects[view].origin = CGPointMake(0, screenSize.height/2 - OffsetYForTriggerOniPhoneX);
@@ -87,6 +89,8 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
             leftTriggerRects[view].origin = CGPointMake(0, screenSize.height/2);
             rightTriggerRects[view].origin = CGPointMake(screenSize.width - 67, screenSize.height/2);
         }
+        
+        
         if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
             if (IsiPhoneX) {
                 directionalControlRects[view].origin = CGPointMake(10, screenSize.height - 130 - OffsetYForDirectionControlOniPhoneX);
@@ -405,6 +409,8 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
     [selectedView setNeedsLayout];
     [self removeSnapLines];
     [self drawSnapLines];
+    
+    [self updateLayout];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)sender
@@ -412,6 +418,7 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
     CGPoint location = [(UIPanGestureRecognizer*)sender translationInView:sender.view.superview];
     [self handlePan:sender.view Location:location state:sender.state];
 }
+
 - (void)handlePan:(UIView *)currentView Location:(CGPoint) location state:(UIGestureRecognizerState) state
 {
     CGPoint translatedPoint = location;
