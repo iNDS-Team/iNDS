@@ -18,3 +18,4 @@ DerivedData
 *.xccheckout
 build/*
 Pods/
+dist/*

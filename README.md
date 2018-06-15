@@ -1,19 +1,15 @@
 iNDS
 =======
 ###### Supports iOS 9.0 and up.
-[![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS) [![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
+[![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS)
+[![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-iNDS is a derivation of the previous Nintendo DS apps for iOS, nds4ios and Nitrogen. 
+[iNDS](https://inds.nerd.net) is a derivation of the previous Nintendo DS apps for iOS, nds4ios and [Nitrogen](https://github.com/NitrogenEmulator). 
 
-[Nitrogen](https://github.com/NitrogenEmulator) 
-
-Currently, emulation is powered by the DeSmuME threaded ARM interpreter and runs at nearly full speed on the iPhone 5 and above.
+Currently, emulation is powered by the [DeSmuME](http://desmume.org/) threaded ARM interpreter and runs at nearly full speed on the iPhone 5 and above.
 
 Due to the need to mmap the entire ROM into memory, older devices with only 256MB of RAM are not supported. These devices include the iPod touch 4, iPad 1, iPhone 3GS, and anything below those devices.
-
-[iNDS](https://inds.nerd.net)
-
-[DeSmuME](http://desmume.org/) 
 
 Installing iNDS
 ------------------------
