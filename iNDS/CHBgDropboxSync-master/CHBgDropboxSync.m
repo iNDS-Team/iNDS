@@ -199,7 +199,17 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
     anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
 }
 
-// Upload
+/*
+ Upload
+ NOTE: This function only works for files < 150 MB
+ which we assume is all .dsv files. The rational behind this
+ is that currently, batch upload is the only function in dropbox which
+ support automatic chunk size calculation while uploading, however,
+ this function does not support overwriting. Thus we are limited to these
+ fixed-size functions. We could, however, do something in the future where
+ we delete the old file before-hand, however this would require an extra
+ operation.
+ */
 - (void)startTaskUpload:(NSString*)file rev:(NSString*)rev {
     NSLog(@"%@", file);
     if (![uploadedFiles containsObject:file]) {
@@ -208,66 +218,35 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
          [client uploadFile:file toPath:@"/" withParentRev:rev fromPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
          */
         
-        NSMutableDictionary<NSURL *, DBFILESCommitInfo *> *uploadFilesUrlsToCommitInfo = [NSMutableDictionary new];
-        DBFILESCommitInfo *commitInfo = [[DBFILESCommitInfo alloc] initWithPath:[@"/" stringByAppendingPathComponent:file]];
-        NSURL *localFile = [NSURL fileURLWithPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
-        [uploadFilesUrlsToCommitInfo setObject:commitInfo forKey:localFile];
-        
+        DBFILESWriteMode *mode = [[DBFILESWriteMode alloc] initWithOverwrite];
+        NSString *path = [[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file];
         [uploadedFiles addObject:file];
-        [client.filesRoutes batchUploadFiles:uploadFilesUrlsToCommitInfo
-                                       queue:nil
-                               progressBlock:^(int64_t uploaded, int64_t uploadedTotal, int64_t expectedToUploadTotal) {
-                                   NSLog(@"Uploaded: %lld  UploadedTotal: %lld  ExpectedToUploadTotal: %lld", uploaded, uploadedTotal,
-                                         expectedToUploadTotal);
-                               }
-                               responseBlock:^(NSDictionary<NSURL *, DBFILESUploadSessionFinishBatchResultEntry *> *fileUrlsToBatchResultEntries,
-                                               DBASYNCPollError *finishBatchRouteError, DBRequestError *finishBatchRequestError,
-                                               NSDictionary<NSURL *, DBRequestError *> *fileUrlsToRequestErrors) {
-                                   if (fileUrlsToBatchResultEntries) {
-                                       NSLog(@"Call to `/upload_session/finish_batch/check` succeeded");
-                                       for (NSURL *clientSideFileUrl in fileUrlsToBatchResultEntries) {
-                                           DBFILESUploadSessionFinishBatchResultEntry *resultEntry = fileUrlsToBatchResultEntries[clientSideFileUrl];
-                                           if ([resultEntry isSuccess]) {
-                                               NSString *dropboxFilePath = resultEntry.success.pathDisplay;
-                                               NSLog(@"File successfully uploaded from %@ on local machine to %@ in Dropbox.",
-                                                     [clientSideFileUrl path], dropboxFilePath);
-                                               
-                                               // Now the file has uploaded, we need to set its 'last modified' date locally to match the date on dropbox.
-                                               // Unfortunately we can't change the dropbox date to match the local date, which would be more appropriate, really.
-                                               NSDictionary* attr = $dict(resultEntry.success.serverModified, NSFileModificationDate);
-                                               NSError *attrErr;
-                                               [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:clientSideFileUrl.path error:&attrErr];
-                                               if (attrErr) {
-                                                   NSLog(@"Error: %@", attrErr);
-                                               }
-                                               [self stepComplete];
-                                           } else if ([resultEntry isFailure]) {
-                                               // This particular file was not uploaded successfully, although the other
-                                               // files may have been uploaded successfully. Perhaps implement some retry
-                                               // logic here based on `uploadNetworkError` or `uploadSessionFinishError`
-                                               DBRequestError *uploadNetworkError = fileUrlsToRequestErrors[clientSideFileUrl];
-                                               DBFILESUploadSessionFinishError *uploadSessionFinishError = resultEntry.failure;
-                                               
-                                               // implement appropriate retry logic
-                                               NSLog(@"%@, %@", uploadNetworkError, uploadSessionFinishError);
-                                           }
-                                       }
-                                   }
-                                   
-                                   if (finishBatchRouteError) {
-                                       NSLog(@"Either bug in SDK code, or transient error on Dropbox server");
-                                       NSLog(@"%@", finishBatchRouteError);
-                                       [self internalShutdownFailed];
-                                   } else if (finishBatchRequestError) {
-                                       NSLog(@"Request error from calling `/upload_session/finish_batch/check`");
-                                       NSLog(@"%@", finishBatchRequestError);
-                                       [self internalShutdownFailed];
-                                   } else if ([fileUrlsToRequestErrors count] > 0) {
-                                       NSLog(@"Other additional errors (e.g. file doesn't exist client-side, etc.).");
-                                       NSLog(@"%@", fileUrlsToRequestErrors);
-                                       [self internalShutdownFailed];
-                                   }
-                               }];
+        
+        /*
+         We could set a "clientModified" date, however, Dropbox store both a client
+         modified date and a server modified date and we would have to keep track of both
+         and it could get confusing. We could possible sort it out later, but for now,
+         lets just stick to the old system.
+         */
+        
+        [[[client.filesRoutes uploadUrl:[@"/" stringByAppendingPathComponent:file] mode:mode autorename:@(NO) clientModified:nil mute:@(YES) propertyGroups:nil inputUrl:path]
+          setResponseBlock:^(DBFILESFileMetadata *result, DBFILESUploadError *routeError, DBRequestError *networkError) {
+              if (result) {
+                  NSString *dropboxFilePath = result.pathDisplay;
+                  NSLog(@"File successfully uploaded from %@ on local machine to %@ in Dropbox.",
+                        path, dropboxFilePath);
+                  
+                  NSDictionary* attr = $dict(result.serverModified, NSFileModificationDate);
+                  NSError *attrErr;
+                  [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:path error:&attrErr];
+                  [self stepComplete];
+              } else {
+                  NSLog(@"%@\n%@\n", routeError, networkError);
+                  [self internalShutdownFailed];
+              }
+          }] setProgressBlock:^(int64_t bytesUploaded, int64_t totalBytesUploaded, int64_t totalBytesExpectedToUploaded) {
+              NSLog(@"\n%lld\n%lld\n%lld\n", bytesUploaded, totalBytesUploaded, totalBytesExpectedToUploaded);
+          }];
         
     } else {
         NSLog(@"Prevented double file upload");
@@ -290,7 +269,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
                 NSDictionary* attr = $dict(result.serverModified, NSFileModificationDate);
                 [[NSFileManager defaultManager] setAttributes:attr ofItemAtPath:destination.path error:nil];
                 [self stepComplete];
-                anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
+                self->anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
             } else {
                 NSLog(@"%@\n%@\n", routeError, networkError);
                 [self internalShutdownFailed];
