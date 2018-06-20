@@ -115,8 +115,8 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
         
         // find preferred language
         uint32_t titleOffset = 0x240 + 0x100 * [iNDSGame preferredLanguage];
-        // version 1 doesn't have chinese, use english
-        if ((titleOffset == 0x840 && version < 2)) titleOffset = 0x340;
+        // version 1 doesn't have chinese, or chinese title is invalid, use english
+        if (titleOffset == 0x840 && (version < 2 || ((const Byte *)[iconTitleData bytes])[titleOffset] == '\0')) titleOffset = 0x340;
         
         NSData *titleData = [iconTitleData subdataWithRange:NSMakeRange(titleOffset, 0x100)];
         title = [[NSString alloc] initWithData:titleData encoding:NSUTF16LittleEndianStringEncoding];

@@ -155,7 +155,7 @@
             // use title from ROM
             NSArray *titleLines = [game.gameTitle componentsSeparatedByString:@"\n"];
             cell.textLabel.text = titleLines[0];
-            cell.detailTextLabel.text = titleLines.count >= 1 ? titleLines[1] : nil;
+            cell.detailTextLabel.text = titleLines.count > 1 ? titleLines[1] : nil;
         } else {
             // use filename
             cell.textLabel.text = game.title;
