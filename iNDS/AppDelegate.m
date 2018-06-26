@@ -442,8 +442,12 @@
                                                                                       @"Joystick"]],
                                   [[WCEasySettingsSlider alloc] initWithIdentifier:@"controlOpacity"
                                                                              title:@"Controller Opacity"],
-                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"vibrate"
-                                                                             title:@"Vibration"],
+                                  [[WCEasySettingsSegment alloc] initWithIdentifier:@"vibrationStr"
+                                                                              title:@"Vibration Strength"
+                                                                              items:@[
+                                                                                      @"Off",
+                                                                                      @"Light",
+                                                                                      @"Heavy"]],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"volumeBumper"
                                                                              title:@"Volume Button Bumpers"],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableTouchScreen"
@@ -580,7 +584,7 @@
                                                                       url:@"https://twitter.com/Pmp174"],
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"Source"
                                                                  subtitle:@"Github"
-                                                                      url:@"https://github.com/WilliamLCobb/iNDS"]];
+                                                                      url:@"https://github.com/iNDS-Team/iNDS"]];
         
         
         

@@ -38,6 +38,8 @@
 	<string>ks1ulr086qvvy1k</string>
 	<key>dbAppSecret</key>
 	<string>cd15jte9slez9wu</string>
+	<key>vibrationStr</key>
+	<integer>0</integer>
 	<key>disableTouchScreen</key>
 	<false/>
 </dict>
