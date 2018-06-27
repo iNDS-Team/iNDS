@@ -139,6 +139,8 @@ enum VideoFilter : NSUInteger {
     
     CADisplayLink *coreLink;
     dispatch_semaphore_t displaySemaphore;
+    
+    UIFeedbackGenerator *vibration;
 }
 
 
@@ -366,6 +368,13 @@ enum VideoFilter : NSUInteger {
         [volumeStealer startStealingVolumeButtonEvents];
     } else {
         [volumeStealer stopStealingVolumeButtonEvents];
+    }
+    
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 1) {
+//        [self vibrateSoft];
+        vibration = [[UISelectionFeedbackGenerator alloc] init];
+    } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 2) {
+        vibration = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
     }
     
     [self.view setNeedsLayout];
@@ -938,9 +947,11 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 {
     if (state != _previousButtons && state != 0)
     {
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+        if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 1)
         {
-            [self vibrate];
+            [self vibrateSoft];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 2) {
+            [self vibrateStrong];
         }
     }
     
@@ -956,9 +967,11 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 
 - (void) controllerOnButtonDown:(BUTTON_ID) button
 {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 1)
     {
-        [self vibrate];
+        [self vibrateSoft];
+    } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 2) {
+        [self vibrateStrong];
     }
     EMU_buttonDown(button);
 }
@@ -984,9 +997,11 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 
 - (IBAction)onButtonDown:(UIControl*)sender
 {
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"vibrate"])
+    if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 1)
     {
-        [self vibrate];
+        [self vibrateSoft];
+    } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 2) {
+        [self vibrateStrong];
     }
     EMU_buttonDown((BUTTON_ID)sender.tag);
 }
@@ -994,17 +1009,38 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 FOUNDATION_EXTERN void AudioServicesStopSystemSound(int);
 FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, objc_object*, NSDictionary*);
 
-- (void)vibrate
+- (void)vibrateSoft
 {
+//    NSLog(@"Soft.");
     if (settingsShown || inEditingMode) return;
     // If force touch is avaliable we can assume taptic vibration is too
     if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
-        [[[UIDevice currentDevice] tapticEngine] actuateFeedback:UITapticEngineFeedbackPeek];
+        [(UISelectionFeedbackGenerator*) vibration selectionChanged];
     } else {
         AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
         
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
         NSArray *pattern = @[@YES, @20, @NO, @1];
+        
+        dictionary[@"VibePattern"] = pattern;
+        dictionary[@"Intensity"] = @1;
+        
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    }
+}
+
+- (void)vibrateStrong
+{
+//    NSLog(@"Hard");
+    if (settingsShown || inEditingMode) return;
+    // If force touch is avaliable we can assume taptic vibration is too
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+        [(UIImpactFeedbackGenerator *) vibration impactOccurred];
+    } else {
+        AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+        
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        NSArray *pattern = @[@NO, @0, @YES, @30];
         
         dictionary[@"VibePattern"] = pattern;
         dictionary[@"Intensity"] = @1;
