@@ -1,0 +1,14 @@
+Package: net.nerd.iNDS
+Name: iNDS
+Version: ${INDS_VER}
+Architecture: iphoneos-arm
+Description: Revival of the Nintendo DS emulator for iOS
+ which is a derivation of the work done by William Cobb.
+ Currently, emulation is powered by the DeSmuME threaded
+ ARM interpreter and runs at nearly full speed on the iPhone
+ 5 and above.
+Homepage: https://inds.nerd.net
+Depiction: https://inds.nerd.net
+Maintainer: iNDS Team <inds@nerd.net>
+Author: iNDS Team <inds@nerd.net>
+Section: Games
