@@ -577,7 +577,7 @@
                                                                  subtitle:@"Ported DeSmuME to iOS"
                                                                       url:nil],
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"DeSmuME"
-                                                                 subtitle:@"Emulatiion Core"
+                                                                 subtitle:@"Emulation Core"
                                                                       url:@"http://www.desmume.org/"],
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"Wiki Creator"
                                                                  subtitle:@"Pmp174"
