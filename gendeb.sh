@@ -4,6 +4,11 @@ if ! which unipkg &> /dev/null; then
     exit 1
 fi
 
+if ! which ldid &> /dev/null; then
+    echo "ldid is not installed. Install with brew install ldid."
+    exit 1
+fi
+
 OUTDIR=./dist/out.xcarchive
 ORIG=$(pwd)
 
