@@ -20,6 +20,9 @@ build/*
 Pods/
 dist/*
 
+# Due to cross-platform restrictions
+Gemfile.lock
+
 # Repo files
 debs/
 Release
