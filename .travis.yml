@@ -5,6 +5,7 @@ xcode_workspace: iNDS.xcworkspace
 xcode_scheme: iNDS
 podfile: Podfile
 before_install:
+  - bundle install
   - pod repo update
 script:
   - xcodebuild -workspace iNDS.xcworkspace -allowProvisioningUpdates -scheme iNDS build CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" | xcpretty; test ${PIPESTATUS[0]} -eq 0

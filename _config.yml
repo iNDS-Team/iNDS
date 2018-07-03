@@ -1,3 +1,34 @@
-theme: jekyll-theme-minimal
+repository: iNDS-Team/iNDS
 logo: /Resources/required/AppIcon256.png
-google_analytics: UA-118954430-1
+screenshot: /Resources/IMG_0005.jpg
+cydia_repo: https://inds.nerd.net
+
+# Build settings
+markdown: GFM
+remote_theme: iNDS-Team/iNDS-Theme
+plugins:
+  - jekyll-remote-theme
+favicon: Resources/favicon.ico
+
+sass:
+  style: compact
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - iNDS
+  - desmume
+  - build
+  - Images.xcassets
+  - Tools
+  - gendeb.sh
+  - genipa.sh
+  - gensite.sh
+  - Makefile
+  - Podfile
+  - Podfile.lock
+  - Pods
+

@@ -19,3 +19,16 @@ DerivedData
 build/*
 Pods/
 dist/*
+
+# Repo files
+debs/
+Release
+Packages
+Packages.bz2
+Release.gpg
+
+# Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
