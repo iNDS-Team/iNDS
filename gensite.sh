@@ -16,5 +16,6 @@ access token with public_repo permissions."
     exit 1
 fi
 
+git pull
 bundle install
 bundle exec jekyll build
