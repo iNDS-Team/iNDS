@@ -297,6 +297,7 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   github-pages
+  jekyll-optional-front-matter
   jekyll-remote-theme
   tzinfo-data
 

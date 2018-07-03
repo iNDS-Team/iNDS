@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 gem "github-pages", group: :jekyll_plugins
 gem "jekyll-remote-theme"
+gem "jekyll-optional-front-matter"
 
 # https://stackoverflow.com/questions/8420414/how-to-add-mac-specific-gems-to-bundle-on-mac-but-not-on-linux
 case RUBY_PLATFORM

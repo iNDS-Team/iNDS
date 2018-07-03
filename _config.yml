@@ -8,10 +8,15 @@ markdown: GFM
 remote_theme: iNDS-Team/iNDS-Theme
 plugins:
   - jekyll-remote-theme
+  - jekyll-optional-front-matter
 favicon: Resources/favicon.ico
 
 sass:
   style: compact
+
+include:
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
