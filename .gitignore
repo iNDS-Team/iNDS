@@ -19,6 +19,7 @@ DerivedData
 build/*
 Pods/
 dist/*
+debs/
 
 # Jekyll
 _site/
