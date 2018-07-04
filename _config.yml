@@ -2,6 +2,7 @@ repository: iNDS-Team/iNDS
 logo: /Resources/required/AppIcon256.png
 screenshot: /Resources/IMG_0005.jpg
 cydia_repo: https://inds.nerd.net
+google_analytics: UA-118954430-1
 
 # Build settings
 markdown: GFM
