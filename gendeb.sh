@@ -9,7 +9,9 @@ if ! which ldid &> /dev/null; then
     exit 1
 fi
 
+INDS_VER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" iNDS/Base.lproj/iNDS-Info.plist)
 OUTDIR=./dist/out.xcarchive
+OUTFILE="dist/net.nerd.iNDS_${INDS_VER}_iphoneos-arm.deb"
 ORIG=$(pwd)
 
 # Cleanup
@@ -18,13 +20,17 @@ if [ -d "$OUTDIR" ]; then
     rm -r $OUTDIR
 fi
 
+if [ -f "$OUTFILE" ]; then
+    echo "Cleaning previous output..."
+    rm $OUTFILE
+fi
 
-xcodebuild -workspace iNDS.xcworkspace -scheme iNDS archive CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" -archivePath "$OUTDIR" | xcpretty
+
+xcodebuild -workspace iNDS.xcworkspace -scheme iNDS archive GCC_PREPROCESSOR_DEFINITIONS="JAILBROKEN=1 $GCC_PREPROCESSOR_DEFINITIONS" CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" -archivePath "$OUTDIR" | xcpretty
 if [ ${PIPESTATUS[0]} -eq 0 ]; then
     cd "$OUTDIR/Products"
-    INDS_VER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Applications/iNDS.app/Info.plist)
     cp -R $ORIG/DEBIAN .
-    ldid -S "Applications/iNDS.app/iNDS"
+    ldid -S../../../Tools/ent.xml "Applications/iNDS.app/iNDS"
     cd ..
     INDS_VER=$INDS_VER unipkg build "Products"
     cp "net.nerd.iNDS_${INDS_VER}_iphoneos-arm.deb" ../
