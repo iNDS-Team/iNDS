@@ -9,7 +9,7 @@ DEPENDENCIES:
   - UnrarKit (~> 2.6)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - ObjectiveDropboxOfficial
     - UnrarKit
 
@@ -19,4 +19,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 033c1a530c71e8cc18a2c9f90523b156fb0eefef
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3
