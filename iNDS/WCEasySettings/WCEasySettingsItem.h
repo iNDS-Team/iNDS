@@ -14,7 +14,8 @@ typedef NS_ENUM(NSInteger, WCEazySettingsType) {
     WCEasySettingsTypeOption,
     WCEasySettingsTypeSlider,
     WCEasySettingsTypeUrl,
-    WCEasySettingsTypeCustom
+    WCEasySettingsTypeCustom,
+    WCEasySettingsTypeButton
 };
 
 @protocol WCEasySettingsItemDelegate <NSObject>

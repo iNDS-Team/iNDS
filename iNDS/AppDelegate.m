@@ -559,6 +559,32 @@
                                    [[WCEasySettingsSwitch alloc] initWithIdentifier:@"showFPS"
                                                                               title:@"Show FPS"]];
         
+        WCEasySettingsSection *resetSection = [[WCEasySettingsSection alloc] initWithTitle:@"RESET" subTitle:@"Erase All Content"];
+        WCEasySettingsButton *button = [[WCEasySettingsButton alloc] initWithTitle:@"Reset" subtitle:nil callback:^(bool finished) {
+            NSArray *everything = @[[self batteryDir],
+                                    [self documentsPath]];
+            NSFileManager *fileMgr = [NSFileManager defaultManager];
+            for (NSString *path in everything) {
+                NSArray *files = [fileMgr contentsOfDirectoryAtPath:path error:nil];
+                for (NSString *file in files) {
+                    NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
+                    [fileMgr removeItemAtPath:[path stringByAppendingPathComponent:file] error:nil];
+                }
+            }
+            
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success" message:@"Content successfully reset!" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                  handler:^(UIAlertAction * action) {}];
+            
+            [alert addAction:defaultAction];
+            
+            [_settingsViewController presentViewController:alert animated:YES completion:nil];
+            
+        }];
+        resetSection.items = @[
+                               button
+                               ];
+        
         
         // Credits
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
@@ -589,7 +615,7 @@
         
         
         
-        _settingsViewController.sections = @[controlsSection, dropboxSection, /*buildStoreSection,*/ graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, creditsSection];
+        _settingsViewController.sections = @[controlsSection, dropboxSection, /*buildStoreSection,*/ graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, resetSection, creditsSection];
     }
     
     return _settingsViewController;

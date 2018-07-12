@@ -22,6 +22,7 @@
     [self.tableView registerClass:[WCEasySettingsSliderCell class] forCellReuseIdentifier:@"Slider"];
     [self.tableView registerClass:[WCEasySettingsUrlCell class] forCellReuseIdentifier:@"Url"];
     [self.tableView registerClass:[WCEasySettingsCustomCell class] forCellReuseIdentifier:@"Custom"];
+    [self.tableView registerClass:[WCEasySettingsButtonCell class] forCellReuseIdentifier:@"Reset"];
     if([self.tableView respondsToSelector:@selector(setCellLayoutMarginsFollowReadableWidth:)]) {
         self.tableView.cellLayoutMarginsFollowReadableWidth = NO;
     }
