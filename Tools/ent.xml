@@ -10,5 +10,7 @@
     <true/>
     <key>platform-application</key>
     <true/>
+    <key>com.apple.developer.networking.multipath</key>
+	<true/>
 </dict>
 </plist>
