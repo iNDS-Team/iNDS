@@ -36,6 +36,7 @@
 		8BEA098D17872CF40060B347 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA098817872CF40060B347 /* throttle.cpp */; };
 		9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C4DD2851891E5390075B66C /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
+		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
 		BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */; };
 		BF9D514317865CD800B5864B /* SndOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9D514117865CD800B5864B /* SndOut.cpp */; };
 		BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF9D516017867F7D00B5864B /* ABXYPad.png */; };
@@ -175,7 +176,6 @@
 		CA3224E31CD41D7C00C5BEA7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D32C39D4178E73B500E6809E /* Security.framework */; };
 		CA4258111CADADF200BFD05E /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */; };
 		CA4258141CADBD4900BFD05E /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = CA4258131CADBD4900BFD05E /* MBProgressHUD.m */; };
-		CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */; };
 		CA5F11D81CE0EE7500AA1419 /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
 		CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */ = {isa = PBXBuildFile; fileRef = CA48465F1CDFA47D005030EF /* mute.caf */; };
 		CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */; };
@@ -354,6 +354,8 @@
 		AE2F3B6318EF7F75007A4BA0 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = iNDS/ja.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		AE2F3B6418EF7F7F007A4BA0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "iNDS/zh-Hans.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
+		B65CFF8220F70212009578FF /* WCEasySettingsButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsButton.h; path = WCEasySettings/WCEasySettingsButton.h; sourceTree = "<group>"; };
+		B65CFF8320F70212009578FF /* WCEasySettingsButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsButton.m; path = WCEasySettings/WCEasySettingsButton.m; sourceTree = "<group>"; };
 		BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArmLJit.cpp; path = desmume/src/ArmLJit.cpp; sourceTree = SOURCE_ROOT; };
 		BF2AC476177FF06600D3CF93 /* ArmLJit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArmLJit.h; path = desmume/src/ArmLJit.h; sourceTree = SOURCE_ROOT; };
 		BF2AC47A177FF29000D3CF93 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asm.h; path = desmume/src/utils/lightning/arm/asm.h; sourceTree = "<group>"; };
@@ -621,8 +623,6 @@
 		CA48465C1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharkfoodMuteSwitchDetector.h; sourceTree = "<group>"; };
 		CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharkfoodMuteSwitchDetector.m; sourceTree = "<group>"; };
 		CA48465F1CDFA47D005030EF /* mute.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mute.caf; sourceTree = "<group>"; };
-		CA570B631C3B8AA300918E3A /* MHWDirectoryWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHWDirectoryWatcher.h; sourceTree = "<group>"; };
-		CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHWDirectoryWatcher.m; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
 		CA68821B1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSBuildStoreTableViewController.h; sourceTree = "<group>"; };
 		CA68821C1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iNDSBuildStoreTableViewController.m; sourceTree = "<group>"; };
@@ -1089,7 +1089,6 @@
 				BF9D51751786A60E00B5864B /* Settings */,
 				BFAE6FAB17675623000911CF /* Controls */,
 				BFAE6F8F176748CF000911CF /* Emulator View */,
-				BFCFE12E17650D3F000A70CF /* DocWatchHelper */,
 				BFCFE1191764FCDE000A70CF /* Categories */,
 				CA031CFE1BEBE1A700EDE98D /* 7z */,
 				CA031CBB1BEBDC3500EDE98D /* Zip */,
@@ -1121,15 +1120,6 @@
 				8BEA097917872C4B0060B347 /* UIScreen+Widescreen.m */,
 			);
 			name = Categories;
-			sourceTree = "<group>";
-		};
-		BFCFE12E17650D3F000A70CF /* DocWatchHelper */ = {
-			isa = PBXGroup;
-			children = (
-				CA570B631C3B8AA300918E3A /* MHWDirectoryWatcher.h */,
-				CA570B641C3B8AA300918E3A /* MHWDirectoryWatcher.m */,
-			);
-			name = DocWatchHelper;
 			sourceTree = "<group>";
 		};
 		BFCFE12F17650ED0000A70CF /* DeSmuME */ = {
@@ -1699,6 +1689,8 @@
 				CA32244F1CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m */,
 				CA3224581CCA86FC00C5BEA7 /* WCEasySettingsCustom.h */,
 				CA3224591CCA86FC00C5BEA7 /* WCEasySettingsCustom.m */,
+				B65CFF8220F70212009578FF /* WCEasySettingsButton.h */,
+				B65CFF8320F70212009578FF /* WCEasySettingsButton.m */,
 			);
 			name = WCEasySettings;
 			sourceTree = "<group>";
@@ -2070,7 +2062,6 @@
 				CAB2C4C61CB5F7FC00ED22BB /* TPCircularBuffer.c in Sources */,
 				BFCFE245176634EE000A70CF /* slot2_paddle.cpp in Sources */,
 				CA031D271BEBE1EB00EDE98D /* Delta.c in Sources */,
-				CA570B651C3B8AA300918E3A /* MHWDirectoryWatcher.m in Sources */,
 				CAB2C4BD1CB5F2C300ED22BB /* EZAudioPlotGL.m in Sources */,
 				BFCFE246176634EE000A70CF /* slot2_piano.cpp in Sources */,
 				CAB2C4BA1CB5F2C300ED22BB /* EZAudioFloatData.m in Sources */,
@@ -2093,6 +2084,7 @@
 				CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */,
 				8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */,
 				CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */,
+				B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */,
 				8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */,
 				D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */,
 				D31CC8A517927BCB0098FB9C /* DropboxClearer.m in Sources */,

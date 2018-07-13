@@ -1,22 +1,35 @@
 PODS:
+  - MHWDirectoryWatcher (0.0.8)
   - ObjectiveDropboxOfficial (3.9.0)
   - UnrarKit (2.8.1):
     - UnrarKit/unrar-lib (= 2.8.1)
   - UnrarKit/unrar-lib (2.8.1)
 
 DEPENDENCIES:
+  - MHWDirectoryWatcher (from `https://github.com/hwaxxer/MHWDirectoryWatcher.git`, tag `0.0.8`)
   - ObjectiveDropboxOfficial
   - UnrarKit (~> 2.6)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - ObjectiveDropboxOfficial
     - UnrarKit
 
+EXTERNAL SOURCES:
+  MHWDirectoryWatcher:
+    :git: https://github.com/hwaxxer/MHWDirectoryWatcher.git
+    :tag: 0.0.8
+
+CHECKOUT OPTIONS:
+  MHWDirectoryWatcher:
+    :git: https://github.com/hwaxxer/MHWDirectoryWatcher.git
+    :tag: 0.0.8
+
 SPEC CHECKSUMS:
+  MHWDirectoryWatcher: 681d399d4bcc84116461b0a2fc1146b01783016b
   ObjectiveDropboxOfficial: 64a809a85744ce58866bf98066f98be5d4c0582e
   UnrarKit: 167602bda6542e575c4cdc068509d6b787f84468
 
-PODFILE CHECKSUM: 033c1a530c71e8cc18a2c9f90523b156fb0eefef
+PODFILE CHECKSUM: 26b3309b867f0429d12559e83fba372fe42e4ae1
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3
