@@ -326,9 +326,9 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
             view.layer.borderWidth = 0;
         }
     }
+
     [self removeSnapLines];
     [self deselectView];
-    self.sizeSlider.hidden = YES;
 }
 
 -(NSArray *) editableViews
