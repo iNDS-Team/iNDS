@@ -98,11 +98,20 @@
             inEditingMode = NO;
         } else { //Discard
             //Just reload from file
-            NSString * profilePath = [iNDSEmulationProfile pathForProfileName:currentProfile.name];
-            iNDSEmulationProfile * reloadedProfile = [iNDSEmulationProfile profileWithPath:profilePath];
-            [emulationController loadProfile:reloadedProfile];
+            iNDSEmulationProfile *reloadedProfile;
+            if ([currentProfile.name isEqualToString:@"iNDSDefaultProfile"]) {
+                reloadedProfile = [[iNDSEmulationProfile alloc] initWithProfileName:@"iNDSDefaultProfile"];
+            } else {
+                NSString * profilePath = [iNDSEmulationProfile pathForProfileName:currentProfile.name];
+                reloadedProfile = [iNDSEmulationProfile profileWithPath:profilePath];
+            }
+            
             inEditingMode = NO;
             [emulationController exitEditMode];
+            [emulationController loadProfile:reloadedProfile];
+            [emulationController.profile ajustLayout];
+            
+            
             [self.navigationController popViewControllerAnimated:YES];
         }
         
