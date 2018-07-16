@@ -184,7 +184,7 @@ void EMU_init(int lang)
 
 void EMU_loadSettings()
 {
-    CommonSettings.num_cores = sysconf( _SC_NPROCESSORS_ONLN );
+    CommonSettings.num_cores = (int) sysconf( _SC_NPROCESSORS_ONLN );
 	LOGI("%i cores detected", CommonSettings.num_cores);
 	CommonSettings.advanced_timing = false;
 	CommonSettings.cheatsDisable = false;
@@ -300,6 +300,14 @@ void EMU_setSynchMode(bool enabled)
 
 void EMU_enableSound(bool enabled)
 {
+/*
+ SPU seems to need to be kickstarted. If left disabled when initializing the ROM,
+ then we can't expect to magically enable it partway through. To solve this, we
+ just let it run for a cycle if we disable sound.
+ 
+ More information see iNDS-Team/iNDS#35
+ */
+    if (!enabled) SPU_Emulate_user(true);
     soundEnabled = enabled;
 }
 
