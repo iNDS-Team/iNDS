@@ -268,6 +268,7 @@ enum VideoFilter : NSUInteger {
     disableTouchScreen = [[NSUserDefaults standardUserDefaults] boolForKey:@"disableTouchScreen"];
     
     coreLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(emulatorLoop)];
+    coreLink.preferredFramesPerSecond = 60;
     coreLink.paused = YES;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
         [coreLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];

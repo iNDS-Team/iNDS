@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D1472A4FC467EB132BFC5E4616B26273"
+               BlueprintIdentifier = "AB2792E7FD8EB866A7C0E48DB46045CB"
                BuildableName = "libPods-iNDS.a"
                BlueprintName = "Pods-iNDS"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
@@ -42,7 +42,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E419D9020BB55800B1A1519B7032D0BB"
+               BlueprintIdentifier = "EACF0F9E35C68E5203526AE65A263683"
                BuildableName = "libUnrarKit.a"
                BlueprintName = "UnrarKit"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
