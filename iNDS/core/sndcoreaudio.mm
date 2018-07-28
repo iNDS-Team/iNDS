@@ -115,13 +115,18 @@ u32 SNDCoreAudioGetAudioSpace() {
 }
 
 void SNDCoreAudioMuteAudio() {
-    AudioQueueStop(audioQueue, false);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, 0.0);
 }
 
 void SNDCoreAudioUnMuteAudio() {
-    AudioQueueStart(audioQueue, NULL);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, 1.0);
 }
 
 void SNDCoreAudioSetVolume(int volume) {
-    
+    /*
+     This function was not implemented, but if it was implemented,
+     this is how to do it.
+    float scaled = volume / 100.0;
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, scaled);
+     */
 }
