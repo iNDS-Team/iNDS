@@ -75,7 +75,7 @@
 
 -(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
         NSLog(@"Save %@", _game.saveStates[indexPath.row]);
         UITextField *textField = [alert addTextField:@""];
@@ -94,7 +94,7 @@
         }];
         [alert showEdit:self title:@"Rename" subTitle:@"Rename Save State" closeButtonTitle:@"Cancel" duration:0.0f];
     }];
-    renameAction.backgroundColor = [UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1];
+    renameAction.backgroundColor = [UIColor colorWithRed:1.00 green:0.76 blue:0.03 alpha:1.0];
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         [CHBgDropboxSync forceStopIfRunning];
