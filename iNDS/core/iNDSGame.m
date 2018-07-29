@@ -132,6 +132,9 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     }
     [titles setValue:altTitle forKey:self.title];
     [[NSUserDefaults standardUserDefaults] setValue:titles forKey:@"altTitles"];
+    
+//    We set the title to nil to indicate that we need to update the gameTitle
+    title = nil;
 }
 
 - (NSString*)gameTitle
@@ -140,8 +143,9 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     if (title == nil) {
         //        Return custom title if available
         NSDictionary *titles = [[self class] altTitles];
-        if ([titles objectForKey:self.title] && ![[titles objectForKey:self.title] isEqual: @""]) {
-            return [titles objectForKey:self.title];
+        if ([titles objectForKey:self.title] && ![[titles objectForKey:self.title] isEqualToString: @""]) {
+            title = [titles objectForKey:self.title];
+            return title;
         }
         
         title = self.origTitle;
