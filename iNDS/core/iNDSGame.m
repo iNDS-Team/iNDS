@@ -358,6 +358,8 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
         }
     }];
     
+    NSLog(@"IMAGEURL: %@", imageURL);
+    
     return imageURL;
 }
 

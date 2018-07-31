@@ -12,6 +12,9 @@
 #import "SSZipArchive.h"
 #import "LZMAExtractor.h"
 #import "ZAActivityBar.h"
+#import <SDImageCacheConfig.h>
+#import <SDImageCache.h>
+
 
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
@@ -62,9 +65,15 @@
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
     
+    [self setupSDWebImageCache];
+    
     [self authDropbox];
     
     return YES;
+}
+
+- (void)setupSDWebImageCache {
+    [SDImageCache sharedImageCache].config.maxCacheAge = 60 * 60 * 24 * 7;
 }
 
 - (void)authDropbox {
