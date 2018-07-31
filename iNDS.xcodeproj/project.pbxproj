@@ -37,6 +37,7 @@
 		9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C4DD2851891E5390075B66C /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
 		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
+		B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B66E60BB2110F5340022E0EF /* iNDSDBManager.m */; };
 		BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */; };
 		BF9D514317865CD800B5864B /* SndOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9D514117865CD800B5864B /* SndOut.cpp */; };
 		BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF9D516017867F7D00B5864B /* ABXYPad.png */; };
@@ -349,6 +350,9 @@
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		B65CFF8220F70212009578FF /* WCEasySettingsButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsButton.h; path = WCEasySettings/WCEasySettingsButton.h; sourceTree = "<group>"; };
 		B65CFF8320F70212009578FF /* WCEasySettingsButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsButton.m; path = WCEasySettings/WCEasySettingsButton.m; sourceTree = "<group>"; };
+		B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
+		B66E60BA2110F5340022E0EF /* iNDSDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iNDSDBManager.h; sourceTree = "<group>"; };
+		B66E60BB2110F5340022E0EF /* iNDSDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iNDSDBManager.m; sourceTree = "<group>"; };
 		BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArmLJit.cpp; path = desmume/src/ArmLJit.cpp; sourceTree = SOURCE_ROOT; };
 		BF2AC476177FF06600D3CF93 /* ArmLJit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArmLJit.h; path = desmume/src/ArmLJit.h; sourceTree = SOURCE_ROOT; };
 		BF2AC47A177FF29000D3CF93 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asm.h; path = desmume/src/utils/lightning/arm/asm.h; sourceTree = "<group>"; };
@@ -920,6 +924,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */,
 				CABE38BF1C34B8B800BE8857 /* Icons */,
 				CAB2C42F1CB222AF00ED22BB /* cheats.rar */,
 				CAB2C42B1CB21C2000ED22BB /* cheats.7z */,
@@ -1590,6 +1595,8 @@
 				CABE38441C30BFDE00BE8857 /* NSString+CompareToVersion.m */,
 				CA3224521CC9DEF300C5BEA7 /* iNDSSpeedTest.h */,
 				CA3224531CC9DEF300C5BEA7 /* iNDSSpeedTest.mm */,
+				B66E60BA2110F5340022E0EF /* iNDSDBManager.h */,
+				B66E60BB2110F5340022E0EF /* iNDSDBManager.m */,
 			);
 			name = Utilities;
 			sourceTree = "<group>";
@@ -2069,6 +2076,7 @@
 				28387163179561F5009B8E84 /* iNDSGame.m in Sources */,
 				CAB2C4391CB2D86C00ED22BB /* iNDSGameTableView.m in Sources */,
 				CAB2C4B81CB5F2C300ED22BB /* EZAudioFile.m in Sources */,
+				B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
