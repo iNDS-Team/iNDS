@@ -38,6 +38,7 @@
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
 		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
 		B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B66E60BB2110F5340022E0EF /* iNDSDBManager.m */; };
+		B66E60BE21110D6D0022E0EF /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */; };
 		BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */; };
 		BF9D514317865CD800B5864B /* SndOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9D514117865CD800B5864B /* SndOut.cpp */; };
 		BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF9D516017867F7D00B5864B /* ABXYPad.png */; };
@@ -1780,6 +1781,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B66E60BE21110D6D0022E0EF /* openvgdb.sqlite in Resources */,
 				CA5F11D91CE15F4F00AA1419 /* mute.caf in Resources */,
 				CAB2C4301CB2234300ED22BB /* cheats.rar in Resources */,
 				CAB2C4311CB2234300ED22BB /* cheats.7z in Resources */,

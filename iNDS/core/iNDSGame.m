@@ -7,6 +7,8 @@
 //  http://problemkaputt.de/gbatek.htm
 
 #import "iNDSGame.h"
+#import <CommonCrypto/CommonDigest.h>
+#import "iNDSDBManager.h"
 
 NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesChangedNotification";
 
@@ -157,6 +159,7 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 {
     if (iconTitleData == nil) return nil;
     if (icon == nil) {
+        NSLog(@"%@", [self imageURL]);
         NSMutableData *bitmapData = [NSMutableData dataWithCapacity:32*32*4];
         
         // Setup the 4-bit CLUT.
@@ -314,6 +317,48 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     @finally {
         [fh closeFile];
     }
+}
+
+#pragma mark - Cover
+
+- (NSString *) md5 {
+    NSData *data = [NSData dataWithContentsOfFile:self.path];
+    
+    unsigned char md5Buffer[CC_MD5_DIGEST_LENGTH];
+    
+    // Create 16 byte MD5 hash value, store in buffer
+    CC_MD5(data.bytes, data.length, md5Buffer);
+    
+    // Convert unsigned char buffer to NSString of hex values
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
+        [output appendFormat:@"%02x",md5Buffer[i]];
+    
+    return output;
+}
+
+- (NSString *) imageURL {
+    iNDSDBManager *db = [iNDSDBManager sharedInstance];
+    NSString *boop = [NSString stringWithFormat:@"SELECT romID FROM ROMs WHERE UPPER(romHashMD5) = UPPER(\"%@\");", [self md5]];
+    
+    __block int romID = 0;
+    [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+        int uhh = sqlite3_step(statement);
+        
+        if (resultCode == SQLITE_OK && uhh == SQLITE_ROW) {
+            romID = sqlite3_column_int(statement, 0);
+        }
+    }];
+    
+    __block NSString *imageURL = @"";
+    boop = [NSString stringWithFormat:@"SELECT releaseCoverFront FROM RELEASES WHERE romID = %i;", romID];
+    [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+        if (resultCode == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
+            imageURL = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(statement, 0)];
+        }
+    }];
+    
+    return imageURL;
 }
 
 @end
