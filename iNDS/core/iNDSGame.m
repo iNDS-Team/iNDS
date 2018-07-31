@@ -92,9 +92,23 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 {
     return self.path.lastPathComponent.stringByDeletingPathExtension;
 }
+
 - (NSString*)rawTitle
 {
     return rawTitle;
+}
+
+- (NSString*)origTitle
+{
+    uint16_t version = OSReadLittleInt16(iconTitleData.bytes, 0x000);
+    
+    // find preferred language
+    uint32_t titleOffset = 0x240 + 0x100 * [iNDSGame preferredLanguage];
+    // version 1 doesn't have chinese, or chinese title is invalid, use english
+    if (titleOffset == 0x840 && (version < 2 || ((const Byte *)[iconTitleData bytes])[titleOffset] == '\0')) titleOffset = 0x340;
+    
+    NSData *titleData = [iconTitleData subdataWithRange:NSMakeRange(titleOffset, 0x100)];
+    return [[NSString alloc] initWithData:titleData encoding:NSUTF16LittleEndianStringEncoding];
 }
 
 + (int)preferredLanguage
@@ -107,19 +121,34 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     return (int)pos;
 }
 
++ (NSDictionary *)altTitles {
+    return [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"altTitles"];
+}
+
+- (void) setAltTitle:(NSString *)altTitle {
+    NSMutableDictionary *titles = [[[self class] altTitles] mutableCopy];
+    if (!titles) {
+        titles = [[NSMutableDictionary alloc] init];
+    }
+    [titles setValue:altTitle forKey:self.title];
+    [[NSUserDefaults standardUserDefaults] setValue:titles forKey:@"altTitles"];
+    
+//    We set the title to nil to indicate that we need to update the gameTitle
+    title = nil;
+}
+
 - (NSString*)gameTitle
 {
     if (iconTitleData == nil) return nil;
     if (title == nil) {
-        uint16_t version = OSReadLittleInt16(iconTitleData.bytes, 0x000);
+        //        Return custom title if available
+        NSDictionary *titles = [[self class] altTitles];
+        if ([titles objectForKey:self.title] && ![[titles objectForKey:self.title] isEqualToString: @""]) {
+            title = [titles objectForKey:self.title];
+            return title;
+        }
         
-        // find preferred language
-        uint32_t titleOffset = 0x240 + 0x100 * [iNDSGame preferredLanguage];
-        // version 1 doesn't have chinese, or chinese title is invalid, use english
-        if (titleOffset == 0x840 && (version < 2 || ((const Byte *)[iconTitleData bytes])[titleOffset] == '\0')) titleOffset = 0x340;
-        
-        NSData *titleData = [iconTitleData subdataWithRange:NSMakeRange(titleOffset, 0x100)];
-        title = [[NSString alloc] initWithData:titleData encoding:NSUTF16LittleEndianStringEncoding];
+        title = self.origTitle;
     }
     return title;
 }

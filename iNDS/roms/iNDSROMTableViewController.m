@@ -115,21 +115,43 @@
     return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath { }
+
+-(NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewRowAction *renameAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Rename" handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
+        SCLAlertView * alert = [[SCLAlertView alloc] initWithNewWindow];
+        
+        UITextField *textField = [alert addTextField:@""];
+        iNDSGame *game = self->games[indexPath.row];
+        textField.placeholder = game.origTitle;
+        
+        [alert addButton:@"Rename" actionBlock:^(void) {
+            [game setAltTitle:textField.text];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }];
+        
+        [alert showEdit:self title:@"Rename" subTitle:@"Rename Game" closeButtonTitle:@"Cancel" duration:0.0f];
+    }];
+    renameAction.backgroundColor = [UIColor colorWithRed:1.00 green:0.76 blue:0.03 alpha:1.0];
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete"  handler:^(UITableViewRowAction *action, NSIndexPath *indexPath){
         if (indexPath.section == 0) {  // Del game
-            iNDSGame *game = games[indexPath.row];
+            iNDSGame *game = self->games[indexPath.row];
             if ([[NSFileManager defaultManager] removeItemAtPath:game.path error:NULL]) {
-                games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
+                self->games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
             }
         } else {
-            if (indexPath.row >= activeDownloads.count) return;
-            iNDSRomDownload * download = activeDownloads[indexPath.row];
+            if (indexPath.row >= self->activeDownloads.count) return;
+            iNDSRomDownload * download = self->activeDownloads[indexPath.row];
             [[iNDSRomDownloadManager sharedManager] removeDownload:download];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
-    }
+    }];
+    
+    deleteAction.backgroundColor = [UIColor redColor];
+    
+    return @[deleteAction, renameAction];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

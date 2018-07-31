@@ -194,13 +194,6 @@
 		CA8EA1401C37C3FB0082A3F8 /* RBVolumeButtons.m in Sources */ = {isa = PBXBuildFile; fileRef = CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CA8EA1421C37C42E0082A3F8 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */; };
 		CA8EBCF31C39BCE50082A3F8 /* Shader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */; };
-		CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */; };
-		CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BF91C2356F700B2A864 /* SCLAlertView.m */; };
-		CA908C071C2356F700B2A864 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFB1C2356F700B2A864 /* SCLButton.m */; };
-		CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */; };
-		CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */; };
-		CA908C0A1C2356F700B2A864 /* SCLTimerDisplay.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */; };
-		CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C041C2356F700B2A864 /* SCLTextView.m */; };
 		CA908C0D1C235A9B00B2A864 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */; };
 		CA908C0F1C235AA000B2A864 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA908C0E1C235AA000B2A864 /* Accelerate.framework */; };
 		CA908C1C1C23B27300B2A864 /* iNDSEmulationProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = CA908C1B1C23B27300B2A864 /* iNDSEmulationProfile.m */; };
@@ -655,21 +648,6 @@
 		CA8EA13F1C37C3FB0082A3F8 /* RBVolumeButtons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RBVolumeButtons.m; sourceTree = "<group>"; };
 		CA8EA1411C37C42E0082A3F8 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		CA8EBCF21C39BCE50082A3F8 /* Shader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Shader.fsh; sourceTree = "<group>"; };
-		CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
-		CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
-		CA908BF81C2356F700B2A864 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
-		CA908BF91C2356F700B2A864 /* SCLAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertView.m; sourceTree = "<group>"; };
-		CA908BFA1C2356F700B2A864 /* SCLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLButton.h; sourceTree = "<group>"; };
-		CA908BFB1C2356F700B2A864 /* SCLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLButton.m; sourceTree = "<group>"; };
-		CA908BFC1C2356F700B2A864 /* SCLAlertViewResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertViewResponder.h; sourceTree = "<group>"; };
-		CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertViewResponder.m; sourceTree = "<group>"; };
-		CA908BFE1C2356F700B2A864 /* SCLAlertViewStyleKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertViewStyleKit.h; sourceTree = "<group>"; };
-		CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertViewStyleKit.m; sourceTree = "<group>"; };
-		CA908C001C2356F700B2A864 /* SCLMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLMacros.h; sourceTree = "<group>"; };
-		CA908C011C2356F700B2A864 /* SCLTimerDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLTimerDisplay.h; sourceTree = "<group>"; };
-		CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTimerDisplay.m; sourceTree = "<group>"; };
-		CA908C031C2356F700B2A864 /* SCLTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLTextView.h; sourceTree = "<group>"; };
-		CA908C041C2356F700B2A864 /* SCLTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLTextView.m; sourceTree = "<group>"; };
 		CA908C0C1C235A9B00B2A864 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		CA908C0E1C235AA000B2A864 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		CA908C1A1C23B27300B2A864 /* iNDSEmulationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSEmulationProfile.h; sourceTree = "<group>"; };
@@ -1093,7 +1071,6 @@
 				CA031CFE1BEBE1A700EDE98D /* 7z */,
 				CA031CBB1BEBDC3500EDE98D /* Zip */,
 				D31CC89F17927BCB0098FB9C /* Dropbox */,
-				CA908BDF1C2356DA00B2A864 /* SCLAlertView */,
 				D31CC8B617927E840098FB9C /* ZAActivityBar */,
 				CABE38421C30BFC600BE8857 /* Utilities */,
 				BFCFE0F91764FBD3000A70CF /* Supporting Files */,
@@ -1434,28 +1411,6 @@
 			name = AFNetworking;
 			sourceTree = "<group>";
 		};
-		CA908BDF1C2356DA00B2A864 /* SCLAlertView */ = {
-			isa = PBXGroup;
-			children = (
-				CA908BF61C2356F700B2A864 /* UIImage+ImageEffects.h */,
-				CA908BF71C2356F700B2A864 /* UIImage+ImageEffects.m */,
-				CA908BF81C2356F700B2A864 /* SCLAlertView.h */,
-				CA908BF91C2356F700B2A864 /* SCLAlertView.m */,
-				CA908BFA1C2356F700B2A864 /* SCLButton.h */,
-				CA908BFB1C2356F700B2A864 /* SCLButton.m */,
-				CA908BFC1C2356F700B2A864 /* SCLAlertViewResponder.h */,
-				CA908BFD1C2356F700B2A864 /* SCLAlertViewResponder.m */,
-				CA908BFE1C2356F700B2A864 /* SCLAlertViewStyleKit.h */,
-				CA908BFF1C2356F700B2A864 /* SCLAlertViewStyleKit.m */,
-				CA908C001C2356F700B2A864 /* SCLMacros.h */,
-				CA908C011C2356F700B2A864 /* SCLTimerDisplay.h */,
-				CA908C021C2356F700B2A864 /* SCLTimerDisplay.m */,
-				CA908C031C2356F700B2A864 /* SCLTextView.h */,
-				CA908C041C2356F700B2A864 /* SCLTextView.m */,
-			);
-			name = SCLAlertView;
-			sourceTree = "<group>";
-		};
 		CAA59AF31CAB6B8B0084AB5D /* Emu */ = {
 			isa = PBXGroup;
 			children = (
@@ -1760,6 +1715,7 @@
 				BFCFE0ED1764FBD3000A70CF /* Resources */,
 				28CC0BE7178E46D200AE77C2 /* ShellScript */,
 				CA4748E71C100178006F1438 /* Embed Frameworks */,
+				B6E52EB4210D73BF00CCBEE0 /* Increment Build Number */,
 			);
 			buildRules = (
 			);
@@ -1891,6 +1847,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		B6E52EB4210D73BF00CCBEE0 /* Increment Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Increment Build Number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1973,7 +1943,6 @@
 				CA6E609A1CB056A0000B269D /* AFURLSessionManager.m in Sources */,
 				BFCFE1A617650FB0000A70CF /* wifi.cpp in Sources */,
 				CA6E60961CB056A0000B269D /* AFNetworkReachabilityManager.m in Sources */,
-				CA908C051C2356F700B2A864 /* UIImage+ImageEffects.m in Sources */,
 				CAB2C43E1CB2D89700ED22BB /* UIImage+Utilities.m in Sources */,
 				BFCFE1B417651005000A70CF /* 2xsai.cpp in Sources */,
 				CA031D291BEBE1EB00EDE98D /* LzmaDec.c in Sources */,
@@ -1990,12 +1959,10 @@
 				CAB2C4261CB2039B00ED22BB /* iNDSEmulatorViewController.mm in Sources */,
 				BFCFE1BA17651005000A70CF /* scanline.cpp in Sources */,
 				CAB2C4BF1CB5F2C300ED22BB /* EZMicrophone.m in Sources */,
-				CA908C071C2356F700B2A864 /* SCLButton.m in Sources */,
 				BFCFE1BE17651038000A70CF /* metaspu.cpp in Sources */,
 				CA031D1F1BEBE1EB00EDE98D /* 7zBuf.c in Sources */,
 				BFCFE1D517651076000A70CF /* ConvertUTF.c in Sources */,
 				BFCFE1D617651076000A70CF /* datetime.cpp in Sources */,
-				CA908C061C2356F700B2A864 /* SCLAlertView.m in Sources */,
 				CAE6738E1CC824F900E46EDF /* WCEasySettingsSlider.m in Sources */,
 				BFCFE1D717651076000A70CF /* dlditool.cpp in Sources */,
 				BFCFE1D817651076000A70CF /* emufat.cpp in Sources */,
@@ -2018,7 +1985,6 @@
 				BFCFE1E91765109C000A70CF /* header.cpp in Sources */,
 				CABE383F1C2FB4E300BE8857 /* iNDSProfileEditorTableViewController.m in Sources */,
 				BFCFE21A176634AF000A70CF /* cache.cpp in Sources */,
-				CA908C0A1C2356F700B2A864 /* SCLTimerDisplay.m in Sources */,
 				BFCFE21B176634AF000A70CF /* directory.cpp in Sources */,
 				BFCFE21C176634AF000A70CF /* disc.cpp in Sources */,
 				BFCFE21D176634AF000A70CF /* fatdir.cpp in Sources */,
@@ -2071,7 +2037,6 @@
 				CAB2C4BC1CB5F2C300ED22BB /* EZAudioPlot.m in Sources */,
 				CAE6738C1CC824F900E46EDF /* WCEasySettingsSection.m in Sources */,
 				CABE38451C30BFDF00BE8857 /* NSString+CompareToVersion.m in Sources */,
-				CA908C091C2356F700B2A864 /* SCLAlertViewStyleKit.m in Sources */,
 				BFCFE26B1766379F000A70CF /* addons.cpp in Sources */,
 				CA3224501CC9BEBC00C5BEA7 /* WCEasySettingsUrl.m in Sources */,
 				CA32245A1CCA86FC00C5BEA7 /* WCEasySettingsCustom.m in Sources */,
@@ -2083,7 +2048,6 @@
 				CA031D221BEBE1EB00EDE98D /* 7zFile.c in Sources */,
 				CA031D331BEBE36200EDE98D /* 7zAlloc.c in Sources */,
 				8B4895C5178CE15D00BA61C3 /* iNDSROMTableViewController.m in Sources */,
-				CA908C081C2356F700B2A864 /* SCLAlertViewResponder.m in Sources */,
 				B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */,
 				8B28306B178DDC7F00E92785 /* iNDSDonationViewController.m in Sources */,
 				D31CC8A417927BCB0098FB9C /* CHBgDropboxSync.m in Sources */,
@@ -2097,7 +2061,6 @@
 				D31CC8B417927C3B0098FB9C /* NSDictionary+ConciseKit.m in Sources */,
 				D31CC8B517927C3B0098FB9C /* NSString+ConciseKit.m in Sources */,
 				CA031ADF1BEB103B00EDE98D /* iNDSRomDownloader.m in Sources */,
-				CA908C0B1C2356F700B2A864 /* SCLTextView.m in Sources */,
 				D3B8BB971794ACEF0061D1D8 /* ZAActivityBar.m in Sources */,
 				D3B8BB9A1794ACFE0061D1D8 /* SKBounceAnimation.m in Sources */,
 				CABE38391C2B2BA800BE8857 /* iNDSEmulationProfileTableViewController.m in Sources */,
