@@ -31,6 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    urlField.translatesAutoresizingMaskIntoConstraints = false;
     CGRect urlFieldRect = urlField.frame;
     urlFieldRect.size.width = self.view.frame.size.width - 80;
     urlField.frame = urlFieldRect;
