@@ -7,6 +7,8 @@
 //  http://problemkaputt.de/gbatek.htm
 
 #import "iNDSGame.h"
+#import <FileMD5Hash/FileHash.h>
+#import "iNDSDBManager.h"
 
 NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesChangedNotification";
 
@@ -17,6 +19,8 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     NSData      *iconTitleData;
     NSString    *title;
     UIImage     *icon;
+    NSString    *md5;
+    NSString    *imageURL;
 }
 
 + (NSArray*)gamesAtPath:(NSString*)gamesPath saveStateDirectoryPath:(NSString*)saveStatePath
@@ -314,6 +318,50 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     @finally {
         [fh closeFile];
     }
+}
+
+#pragma mark - Cover
+
+- (NSString *) md5 {
+    if (md5 == nil) {
+        md5 = [FileHash md5HashOfFileAtPath:self.path];
+    }
+    return md5;
+}
+
+- (NSString *) imageURL {
+    if (imageURL == nil) {
+        iNDSDBManager *db = [iNDSDBManager sharedInstance];
+        NSString *boop = [NSString stringWithFormat:@"SELECT romID FROM ROMs WHERE UPPER(romHashMD5) = UPPER(\"%@\");", [self md5]];
+        
+        __block int romID = 0;
+        [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+            int uhh = sqlite3_step(statement);
+            
+            if (resultCode == SQLITE_OK && uhh == SQLITE_ROW) {
+                romID = sqlite3_column_int(statement, 0);
+            }
+        }];
+
+        boop = [NSString stringWithFormat:@"SELECT releaseCoverFront FROM RELEASES WHERE romID = %i;", romID];
+        [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+            if (resultCode == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
+                self->imageURL = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(statement, 0)];
+            }
+        }];
+        
+        NSLog(@"IMAGEURL: %@", imageURL);
+    }
+    
+    return imageURL;
+}
+
+- (BOOL) isEqual:(id)object {
+    return [self.path isEqualToString:((iNDSGame *)object).path];
+}
+
+- (NSUInteger) hash {
+    return self.path.hash;
 }
 
 @end

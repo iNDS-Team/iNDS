@@ -17,6 +17,9 @@
 #import "WCEasySettingsViewController.h"
 #import "WCBuildStoreClient.h"
 #import "SharkfoodMuteSwitchDetector.h"
+#import <SDWebImage/UIView+WebCache.h>
+#import <SDWebImage/UIImageView+WebCache.h>
+#import <SDWebImage/SDWebImagePrefetcher.h>
 
 @interface iNDSROMTableViewController () {
     NSMutableArray * activeDownloads;
@@ -50,6 +53,10 @@
         });
     }
 #endif
+    
+    [SDWebImageManager sharedManager].delegate = self;
+    
+    [self prefetchImages];
 }
 
 - (void)didReceiveMemoryWarning
@@ -75,6 +82,18 @@
                                                         }];
 }
 
+- (void) prefetchImages {
+    // Prefetch images
+    /*
+    NSMutableArray *urls = [[NSMutableArray alloc] init];
+    for (int i = 0; i < games.count; i++) {
+        [urls addObject:[games[i] imageURL]];
+    }
+    NSLog(@"%@", urls);
+    [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls];
+     */
+}
+
 
 - (IBAction)openSettings:(id)sender
 {
@@ -95,12 +114,18 @@
 - (void)reloadGames:(id)sender
 {
     NSLog(@"Reloading");
+    [self prefetchImages];
     if (sender == self) {
         // do it later, the file may not be written yet
         [self performSelector:_cmd withObject:nil afterDelay:1];
     } else  {
         // reload all games
-        games = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
+        NSArray *games2 = [iNDSGame gamesAtPath:AppDelegate.sharedInstance.documentsPath saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
+        NSMutableSet *setA = [NSMutableSet setWithArray:games];
+        NSSet *setB = [NSSet setWithArray:games2];
+        [setA intersectSet:setB];
+        [setA unionSet:setB];
+        games = [setA allObjects];
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
@@ -166,12 +191,18 @@
     return 2;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 88.0;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell;
     if (indexPath.section == 0) { // Game
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSGame"];
         if (indexPath.row >= games.count) return [UITableViewCell new];
+        
         iNDSGame *game = games[indexPath.row];
         if (game.gameTitle) {
             // use title from ROM
@@ -183,7 +214,10 @@
             cell.textLabel.text = game.title;
             cell.detailTextLabel.text = nil;
         }
-//        cell.imageView.image = game.icon;
+        NSString *gameIcon = [game imageURL];
+        [cell.imageView sd_setShowActivityIndicatorView:true];
+        [cell.imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        [cell.imageView sd_setImageWithURL:[NSURL URLWithString:gameIcon] placeholderImage:[UIImage imageNamed:@"smpte.png"]];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSDownload"];
@@ -192,8 +226,9 @@
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;
         cell.detailTextLabel.text = @"Waiting...";
-//        cell.imageView.image = nil;
+        cell.imageView.image = nil;
     }
+    
     return cell;
 }
 
@@ -210,6 +245,20 @@
     } else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
+}
+
+#pragma mark - Resize Downloaded Images
+
+- (UIImage *) imageManager:(SDWebImageManager *)imageManager transformDownloadedImage:(UIImage *)image withURL:(NSURL *)imageURL {
+    float newHeight = 72;
+    float scaleFactor = newHeight / image.size.height;
+    float newWidth = image.size.width * scaleFactor;
+    
+    UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
+    [image drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
 }
 
 
