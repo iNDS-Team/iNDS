@@ -36,10 +36,10 @@
 		8BEA098D17872CF40060B347 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA098817872CF40060B347 /* throttle.cpp */; };
 		9C4DD2861891E5390075B66C /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C4DD2851891E5390075B66C /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
+		B63D20FF21116CA4000A1A41 /* smpte.png in Resources */ = {isa = PBXBuildFile; fileRef = B63D20FE21116CA3000A1A41 /* smpte.png */; };
 		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
 		B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B66E60BB2110F5340022E0EF /* iNDSDBManager.m */; };
 		B66E60BE21110D6D0022E0EF /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */; };
-		B66E60C0211125270022E0EF /* smpte.png in Resources */ = {isa = PBXBuildFile; fileRef = B66E60BF211125260022E0EF /* smpte.png */; };
 		BF2AC478177FF0B700D3CF93 /* ArmLJit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */; };
 		BF9D514317865CD800B5864B /* SndOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF9D514117865CD800B5864B /* SndOut.cpp */; };
 		BF9D516817867F7D00B5864B /* ABXYPad.png in Resources */ = {isa = PBXBuildFile; fileRef = BF9D516017867F7D00B5864B /* ABXYPad.png */; };
@@ -350,12 +350,12 @@
 		AE2F3B6318EF7F75007A4BA0 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = iNDS/ja.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		AE2F3B6418EF7F7F007A4BA0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "iNDS/zh-Hans.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
+		B63D20FE21116CA3000A1A41 /* smpte.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smpte.png; sourceTree = "<group>"; };
 		B65CFF8220F70212009578FF /* WCEasySettingsButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsButton.h; path = WCEasySettings/WCEasySettingsButton.h; sourceTree = "<group>"; };
 		B65CFF8320F70212009578FF /* WCEasySettingsButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsButton.m; path = WCEasySettings/WCEasySettingsButton.m; sourceTree = "<group>"; };
 		B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
 		B66E60BA2110F5340022E0EF /* iNDSDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iNDSDBManager.h; sourceTree = "<group>"; };
 		B66E60BB2110F5340022E0EF /* iNDSDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iNDSDBManager.m; sourceTree = "<group>"; };
-		B66E60BF211125260022E0EF /* smpte.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smpte.png; sourceTree = "<group>"; };
 		BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArmLJit.cpp; path = desmume/src/ArmLJit.cpp; sourceTree = SOURCE_ROOT; };
 		BF2AC476177FF06600D3CF93 /* ArmLJit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArmLJit.h; path = desmume/src/ArmLJit.h; sourceTree = SOURCE_ROOT; };
 		BF2AC47A177FF29000D3CF93 /* asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asm.h; path = desmume/src/utils/lightning/arm/asm.h; sourceTree = "<group>"; };
@@ -927,7 +927,7 @@
 		BF9D515517865E1300B5864B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B66E60BF211125260022E0EF /* smpte.png */,
+				B63D20FE21116CA3000A1A41 /* smpte.png */,
 				B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */,
 				CABE38BF1C34B8B800BE8857 /* Icons */,
 				CAB2C42F1CB222AF00ED22BB /* cheats.rar */,
@@ -1809,7 +1809,7 @@
 				CABE38C21C34B8B800BE8857 /* Folder.png in Resources */,
 				28E7A6EE1787D110003A9C5B /* Defaults.plist in Resources */,
 				BF9D516B17867F7D00B5864B /* DPad@2x.png in Resources */,
-				B66E60C0211125270022E0EF /* smpte.png in Resources */,
+				B63D20FF21116CA4000A1A41 /* smpte.png in Resources */,
 				CABE38C71C34B8C600BE8857 /* Sync@2x.png in Resources */,
 				CABE38C61C34B8C600BE8857 /* Sync.png in Resources */,
 				BF9D516C17867F7D00B5864B /* JoystickBackground.png in Resources */,

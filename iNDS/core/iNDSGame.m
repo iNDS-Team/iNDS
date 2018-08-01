@@ -20,6 +20,7 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
     NSString    *title;
     UIImage     *icon;
     NSString    *md5;
+    NSString    *imageURL;
 }
 
 + (NSArray*)gamesAtPath:(NSString*)gamesPath saveStateDirectoryPath:(NSString*)saveStatePath
@@ -160,7 +161,6 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 {
     if (iconTitleData == nil) return nil;
     if (icon == nil) {
-        NSLog(@"%@", [self imageURL]);
         NSMutableData *bitmapData = [NSMutableData dataWithCapacity:32*32*4];
         
         // Setup the 4-bit CLUT.
@@ -324,35 +324,44 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 
 - (NSString *) md5 {
     if (md5 == nil) {
-        md5 = [FileHash md5HashOfFileAtPath:self.path];;
+        md5 = [FileHash md5HashOfFileAtPath:self.path];
     }
     return md5;
 }
 
 - (NSString *) imageURL {
-    iNDSDBManager *db = [iNDSDBManager sharedInstance];
-    NSString *boop = [NSString stringWithFormat:@"SELECT romID FROM ROMs WHERE UPPER(romHashMD5) = UPPER(\"%@\");", [self md5]];
-    
-    __block int romID = 0;
-    [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
-        int uhh = sqlite3_step(statement);
+    if (imageURL == nil) {
+        iNDSDBManager *db = [iNDSDBManager sharedInstance];
+        NSString *boop = [NSString stringWithFormat:@"SELECT romID FROM ROMs WHERE UPPER(romHashMD5) = UPPER(\"%@\");", [self md5]];
         
-        if (resultCode == SQLITE_OK && uhh == SQLITE_ROW) {
-            romID = sqlite3_column_int(statement, 0);
-        }
-    }];
-    
-    __block NSString *imageURL = @"";
-    boop = [NSString stringWithFormat:@"SELECT releaseCoverFront FROM RELEASES WHERE romID = %i;", romID];
-    [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
-        if (resultCode == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
-            imageURL = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(statement, 0)];
-        }
-    }];
-    
-    NSLog(@"IMAGEURL: %@", imageURL);
+        __block int romID = 0;
+        [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+            int uhh = sqlite3_step(statement);
+            
+            if (resultCode == SQLITE_OK && uhh == SQLITE_ROW) {
+                romID = sqlite3_column_int(statement, 0);
+            }
+        }];
+
+        boop = [NSString stringWithFormat:@"SELECT releaseCoverFront FROM RELEASES WHERE romID = %i;", romID];
+        [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
+            if (resultCode == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
+                self->imageURL = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(statement, 0)];
+            }
+        }];
+        
+        NSLog(@"IMAGEURL: %@", imageURL);
+    }
     
     return imageURL;
+}
+
+- (BOOL) isEqual:(id)object {
+    return [self.path isEqualToString:((iNDSGame *)object).path];
+}
+
+- (NSUInteger) hash {
+    return self.path.hash;
 }
 
 @end

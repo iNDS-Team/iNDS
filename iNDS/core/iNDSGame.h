@@ -38,5 +38,7 @@ FOUNDATION_EXPORT NSString * const iNDSGameSaveStatesChangedNotification;
 - (NSArray*)saveStates;
 - (void) setAltTitle:(NSString *)altTitle;
 - (NSString *) imageURL;
+- (BOOL) isEqual:(id)object;
+- (NSUInteger) hash;
 
 @end
