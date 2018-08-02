@@ -350,10 +350,10 @@
 		AE2F3B6318EF7F75007A4BA0 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = iNDS/ja.lproj/Localizable.strings; sourceTree = SOURCE_ROOT; };
 		AE2F3B6418EF7F7F007A4BA0 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "iNDS/zh-Hans.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
-		B63D20FE21116CA3000A1A41 /* smpte.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = smpte.png; sourceTree = "<group>"; };
+		B63D20FE21116CA3000A1A41 /* smpte.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = smpte.png; path = Resources/smpte.png; sourceTree = "<group>"; };
 		B65CFF8220F70212009578FF /* WCEasySettingsButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsButton.h; path = WCEasySettings/WCEasySettingsButton.h; sourceTree = "<group>"; };
 		B65CFF8320F70212009578FF /* WCEasySettingsButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsButton.m; path = WCEasySettings/WCEasySettingsButton.m; sourceTree = "<group>"; };
-		B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = openvgdb.sqlite; sourceTree = "<group>"; };
+		B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = openvgdb.sqlite; path = Resources/openvgdb.sqlite; sourceTree = "<group>"; };
 		B66E60BA2110F5340022E0EF /* iNDSDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iNDSDBManager.h; sourceTree = "<group>"; };
 		B66E60BB2110F5340022E0EF /* iNDSDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iNDSDBManager.m; sourceTree = "<group>"; };
 		BF2AC475177FF06600D3CF93 /* ArmLJit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArmLJit.cpp; path = desmume/src/ArmLJit.cpp; sourceTree = SOURCE_ROOT; };
