@@ -20,7 +20,7 @@
     [super viewDidLoad];
     webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
     webView.delegate = self;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://builds.io/accounts/login/"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://www.builds.io/accounts/login/"]]];
     [self.view addSubview:webView];
     
     UIBarButtonItem *cancel = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStylePlain target:self action:@selector(cancel)];

@@ -43,7 +43,7 @@
 
 - (NSString *)getCSRF
 {
-    NSData *CSRFData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"https://builds.io/apps/inds/"]];
+    NSData *CSRFData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://builds.io/apps/inds/"]];
     NSString *searchedString = [[NSString alloc] initWithData:CSRFData encoding:NSUTF8StringEncoding];
     NSRange   searchedRange = NSMakeRange(0, [searchedString length]);
     NSString *pattern = @"'X-CSRFToken': \"(.*?)\"";
@@ -67,12 +67,12 @@
             NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
             NSString *postLength = [NSString stringWithFormat:@"%ld", [postData length]];
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-            [request setURL:[NSURL URLWithString:@"https://builds.io/api/resign/"]];
+            [request setURL:[NSURL URLWithString:@"http://builds.io/api/resign/"]];
             [request setHTTPMethod:@"POST"];
             [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
             [request setValue:@"application/x-www-form-urlencoded; charset=UTF-8" forHTTPHeaderField:@"Content-Type"];
-            [request setValue:@"https://builds.io" forHTTPHeaderField:@"Origin"];
-            [request setValue:@"https://builds.io/apps/inds/" forHTTPHeaderField:@"Referer"]; //Needs to be changed oer app
+            [request setValue:@"http://builds.io" forHTTPHeaderField:@"Origin"];
+            [request setValue:@"http://builds.io/apps/inds/" forHTTPHeaderField:@"Referer"]; //Needs to be changed oer app
             [request setValue:@"XMLHttpRequest" forHTTPHeaderField:@"X-Requested-With"];
             [request setValue:CSRF forHTTPHeaderField:@"X-CSRFToken"];
             [request setHTTPBody:postData];
