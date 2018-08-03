@@ -624,7 +624,7 @@
         
         
         
-        _settingsViewController.sections = @[controlsSection, dropboxSection, /*buildStoreSection,*/ graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, resetSection, creditsSection];
+        _settingsViewController.sections = @[controlsSection, dropboxSection, buildStoreSection, graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, resetSection, creditsSection];
     }
     
     return _settingsViewController;
