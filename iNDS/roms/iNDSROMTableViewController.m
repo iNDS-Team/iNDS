@@ -215,9 +215,14 @@
             cell.detailTextLabel.text = nil;
         }
         NSString *gameIcon = [game imageURL];
-        [cell.imageView sd_setShowActivityIndicatorView:true];
-        [cell.imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-        [cell.imageView sd_setImageWithURL:[NSURL URLWithString:gameIcon] placeholderImage:[UIImage imageNamed:@"smpte.png"]];
+        
+        if ([gameIcon isEqualToString:@"none"]) {
+            cell.imageView.image = [UIImage imageNamed:@"smpte.png"];
+        } else {
+            [cell.imageView sd_setShowActivityIndicatorView:true];
+            [cell.imageView sd_setIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+            [cell.imageView sd_setImageWithURL:[NSURL URLWithString:gameIcon] placeholderImage:[UIImage imageNamed:@"smpte.png"]];
+        }
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     } else { //Download
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"iNDSDownload"];
@@ -226,7 +231,7 @@
         cell.textLabel.text = download.name;
         download.progressLabel = cell.detailTextLabel;
         cell.detailTextLabel.text = @"Waiting...";
-        cell.imageView.image = nil;
+        cell.imageView.image = [UIImage imageNamed:@"smpte.png"];
     }
     
     return cell;

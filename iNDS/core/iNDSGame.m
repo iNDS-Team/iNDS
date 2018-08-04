@@ -346,7 +346,12 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
         boop = [NSString stringWithFormat:@"SELECT releaseCoverFront FROM RELEASES WHERE romID = %i;", romID];
         [db query:boop result:^(int resultCode, sqlite3_stmt *statement) {
             if (resultCode == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
-                self->imageURL = [NSString stringWithUTF8String:(const char *)sqlite3_column_text(statement, 0)];
+                const char *output = (const char *) sqlite3_column_text(statement, 0);
+                if (output) {
+                    self->imageURL = [NSString stringWithUTF8String:(const char *)output];
+                } else {
+                    self->imageURL = @"none"; // we avoid using nil here for caching purposes
+                }
             }
         }];
         
