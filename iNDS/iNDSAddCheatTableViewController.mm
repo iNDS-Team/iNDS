@@ -76,9 +76,9 @@
         });
         return;
     }
-    NSString *code = [self.cheatCode.text stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-    NSString *description = [NSString stringWithFormat:@"||%@||", self.cheatName.text];
-    if (cheats->add_AR([code UTF8String], [description UTF8String], NO)) {
+    char *code = (char *)[[self.cheatCode.text stringByReplacingOccurrencesOfString:@"\n" withString:@""] UTF8String];
+    char *description = (char *)[[NSString stringWithFormat:@"||%@||", self.cheatName.text] UTF8String];
+    if (cheats->add_AR(code, description, NO)) {
         cheats->save();
         showConfirmation = NO;
         [self.navigationController popViewControllerAnimated:YES];

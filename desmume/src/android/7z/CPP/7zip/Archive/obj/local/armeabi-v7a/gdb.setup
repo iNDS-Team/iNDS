@@ -1,4 +1,0 @@
-file obj/local/armeabi-v7a/app_process
-target remote :5039
-file obj/local/armeabi-v7a/app_process
-target remote :5039

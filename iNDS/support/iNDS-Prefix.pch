@@ -35,6 +35,11 @@
 #define ANDROID_LOG_ERROR ""
 #define __android_log_print(fmt, ...) printf(fmt)
 
+#define HOST_DARWIN
+#define DESMUME_COCOA
+#define HAVE_OPENGL
+#define HAVE_LIBZ
+
 
 #include <mach/mach.h>
 #include <mach/mach_time.h>

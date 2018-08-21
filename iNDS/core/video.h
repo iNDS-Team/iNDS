@@ -15,7 +15,7 @@
 	along with the this software.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "filter/filter.h"
+#include "videofilter.h"
 
 class VideoInfo
 {
