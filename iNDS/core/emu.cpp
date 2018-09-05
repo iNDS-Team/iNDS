@@ -485,7 +485,7 @@ void EMU_touchScreenRelease()
 
 void EMU_setWorkingDir(const char* path)
 {
-//    strncpy(PathInfo::pathToModule, path, MAX_PATH);
+    strncpy(PathInfo::pathToModule, path, MAX_PATH);
 }
 
 void EMU_closeRom()
