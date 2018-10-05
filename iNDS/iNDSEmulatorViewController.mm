@@ -1142,7 +1142,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
                                                                       @"buttonUp"  : ^{[self controllerPressedABXY:0];}},
 
                               ICADE_BTN_NUMBER(iCadeButtonE):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_R];},
-                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_START];}},
+                                                                      @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_R];}},
 
                               ICADE_BTN_NUMBER(iCadeButtonF):       @{@"buttonDown": ^{[self controllerOnButtonDown:BUTTON_L];},
                                                                       @"buttonUp"  : ^{[self controllerOnButtonUp:BUTTON_L];}},
