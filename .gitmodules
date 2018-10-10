@@ -1,0 +1,4 @@
+[submodule "desmume"]
+	path = desmume
+	url = https://github.com/iNDS-Team/desmume
+	branch = release_0_9_11

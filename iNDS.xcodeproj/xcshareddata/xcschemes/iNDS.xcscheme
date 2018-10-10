@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B6B957F0212BAC7500510418"
+               BuildableName = "libDeSmuME-OpenEmu.a"
+               BlueprintName = "DeSmuME-OpenEmu"
+               ReferencedContainer = "container:iNDS.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "106CC30EBD5CA715BA5F67930AB587F3"
                BuildableName = "libPods-iNDS.a"
                BlueprintName = "Pods-iNDS"

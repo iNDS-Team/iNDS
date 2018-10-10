@@ -65,9 +65,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    NSString *cheatSavePath = [NSString stringWithUTF8String:(char *)cheats->filename];
+//    NSString *cheatSavePath = [NSString stringWithUTF8String:(char *)cheats->filename];
+    BOOL cheatSaved = cheats->load();
+    
     //Eventually we might want to create our own NSInput stream to parse XML on the fly to reduce memory overhead and increase speed. This will work fine for now though
-    if (![[NSFileManager defaultManager] fileExistsAtPath:cheatSavePath]) {
+    if (!cheatSaved) {
         NSLog(@"Loading DB Cheats");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             NSData *cheatData;
@@ -166,8 +168,9 @@
         NSLog(@"%@-%@", currentFolder, cheatName);
         NSLog(@"%@", cheatCode);
         NSLog(@"%@", cheatNote);*/
-        NSString * cheatDescription = [NSString stringWithFormat:@"%@||%@||%@", currentFolder, cheatName, cheatNote];
-        cheats->add_AR([cheatCode UTF8String], [cheatDescription UTF8String], NO);
+        char *cheatCodeChar = (char *)[cheatCode UTF8String];
+        char *cheatDescription = (char *)[[NSString stringWithFormat:@"%@||%@||%@", currentFolder, cheatName, cheatNote] UTF8String];
+        cheats->add_AR(cheatCodeChar, cheatDescription, NO);
         cheatName = @"";
         cheatCode = @"";
         cheatNote = @"";
