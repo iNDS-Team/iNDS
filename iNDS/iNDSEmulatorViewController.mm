@@ -684,15 +684,14 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
     
     if (!EMU_frameSkip(false)) {
         [self calculateFPS:1];
+        EMU_copyMasterBuffer();
         if (filter == -1) {
-            EMU_copyMasterBuffer();
             [self updateDisplay];
         } else {
             // Run the filter on a seperate thread to increase performance
             // Core will always be one frame ahead
             dispatch_semaphore_wait(displaySemaphore, DISPATCH_TIME_FOREVER);
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-                EMU_copyMasterBuffer();
                 //This will automatically throttle fps to 60
                 [self updateDisplay];
                 dispatch_semaphore_signal(displaySemaphore);
