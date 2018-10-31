@@ -459,16 +459,7 @@ u32 *EMU_RBGA8Buffer()
 
 void EMU_copyMasterBuffer()
 {
-    video.srcBuffer = GPU_screen;
-    
-    //convert pixel format to 32bpp for compositing
-    //why do we do this over and over? well, we are compositing to
-    //filteredbuffer32bpp, and it needs to get refreshed each frame..
-    const int size = video.size();
-    u16* src = (u16*)video.srcBuffer;
-    u32* dest = video.buffer;
-    for(int i=0;i<size;++i)
-        *dest++ = 0xFF000000 | RGB15TO32_NOALPHA(src[i]);
+    video.copyBuffer(GPU_screen);
 }
 
 void EMU_touchScreenTouch(int x, int y)

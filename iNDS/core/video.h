@@ -16,6 +16,8 @@
 */
 
 #include "videofilter.h"
+#include "libkern/OSAtomic.h"
+#include "gfx3d.h"
 
 class VideoInfo
 {
@@ -33,8 +35,10 @@ public:
 
 	int currentfilter;
 
-	CACHE_ALIGN u8* srcBuffer;
-	CACHE_ALIGN u32 buffer[16*256*192*2];
+	pthread_mutex_t bufferMutex;
+	int currentBuffer;
+
+	CACHE_ALIGN u32 buffer[2][16*256*192*2];
 	CACHE_ALIGN u32 filteredbuffer[16*256*192*2];
 
 	enum {
@@ -64,6 +68,9 @@ public:
 		NUM_FILTERS,
 	};
 
+	VideoInfo() {
+		pthread_mutex_init(&bufferMutex, NULL);
+	}
 
 	void reset() {
 		width = 256;
@@ -113,19 +120,40 @@ public:
 	SSurface src;
 	SSurface dst;
 
+	void copyBuffer(u8* srcBuffer)
+	{
+		pthread_mutex_lock(&bufferMutex);
+		//convert pixel format to 32bpp for compositing
+		//why do we do this over and over? well, we are compositing to
+		//filteredbuffer32bpp, and it needs to get refreshed each frame..
+		const int size = this->size();
+		u16* src = (u16*)srcBuffer;
+		u32* dest = buffer[currentBuffer];
+		for(int i=0;i<size;++i)
+			*dest++ = 0xFF000000 | RGB15TO32_NOALPHA(src[i]);
+		pthread_mutex_unlock(&bufferMutex);
+	}
+
+	u8* swapBuffer()
+	{
+		pthread_mutex_lock(&bufferMutex);
+		u8* returnBuffer = (u8*)buffer[currentBuffer];
+		currentBuffer = currentBuffer == 0 ? 1 : 0;
+		pthread_mutex_unlock(&bufferMutex);
+		return returnBuffer;
+	}
+
 	u16* finalBuffer() const
 	{
-		if(currentfilter == NONE)
-			return (u16*)buffer;
-		else return (u16*)filteredbuffer;
+		return (u16*)filteredbuffer;
 	}
 
 	void filter() {
-
 		src.Height = 384;
 		src.Width = 256;
 		src.Pitch = 512;
-		src.Surface = (u8*)buffer;
+		src.Surface = swapBuffer();
+		currentBuffer = currentBuffer == 0 ? 1 : 0;
 
 		dst.Height = height;
 		dst.Width = width;
@@ -135,6 +163,7 @@ public:
 		switch(currentfilter)
 		{
 			case NONE:
+				memcpy(dst.Surface, src.Surface, dst.Width * dst.Height * sizeof(uint32_t));
 				break;
 			case LQ2X:
 				RenderLQ2X(src, dst);
