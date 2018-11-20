@@ -43,13 +43,14 @@ void Mic_Reset(){
 }
 
 // For debugging
-static inline void calcSampleRate() {
+static inline void debugSampleRate() {
     static CFTimeInterval now = 0;
     static long count = 16000;
     if (count == 16000) {
+        micSampleRate = 1 / ((CACurrentMediaTime() - now) / count);
         count = 0;
         now = CACurrentMediaTime();
-        micSampleRate = 1 / ((CACurrentMediaTime() - now) / count);
+        printf("Microphone sample rate: %d\n", micSampleRate);
     }
     count++;
 }
@@ -57,20 +58,19 @@ static inline void calcSampleRate() {
 // the closer the sample rate is to 16000, the better the microphone will work
 u8 Mic_ReadSample(){
     if (!microphone || !micEnabled)
-        return 128;
+        return 64;
 
-    calcSampleRate();
+    //debugSampleRate();
     
     int32_t availableBytes;
     u8 *stream = (u8 *)TPCircularBufferTail(buf, &availableBytes);
     int32_t index = availableBytes > 4096 ? (3081/SampleRateModifier) : 0; // Skip when the buffer starts overflowing
     if (availableBytes > 0) {
         TPCircularBufferConsume(buf, (index + 1) * SampleRateModifier);
-        // The ds mic is much less sensitive so the sound needs to be dampened
-        s8 sample = (stream[index] - 128);
-        
-        //printf("Sample: %d -> %d\n", (stream[index] - 128), sample/5);
-        return sample / 5 + 128;
+        // DeSmuME expects 7 bit samples instead of the returned 8 bits
+        u8 sample = stream[index] >> 1;
+
+        return sample;
         
     } else {
 //#ifdef DEBUG
@@ -79,7 +79,7 @@ u8 Mic_ReadSample(){
         micEnabled = microphone.micEnabled;
         [microphone start];
         buf = microphone.buffer;
-        return 128;
+        return 64;
     }
 }
 

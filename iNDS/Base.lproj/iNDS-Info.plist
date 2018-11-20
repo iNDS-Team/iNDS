@@ -124,6 +124,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>"For DS Microphone"</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Need Permission to Access Photos</string>
 	<key>UIFileSharingEnabled</key>
