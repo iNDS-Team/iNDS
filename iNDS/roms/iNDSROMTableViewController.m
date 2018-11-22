@@ -16,7 +16,6 @@
 #import "MHWDirectoryWatcher.h"
 #import "WCEasySettingsViewController.h"
 #import "WCBuildStoreClient.h"
-#import "SharkfoodMuteSwitchDetector.h"
 #import <AVFoundation/AVFoundation.h>
 #import <SDWebImage/UIView+WebCache.h>
 #import <SDWebImage/UIImageView+WebCache.h>
