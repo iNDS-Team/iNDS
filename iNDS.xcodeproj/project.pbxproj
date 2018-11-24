@@ -33,7 +33,6 @@
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
 		B6387947212BCFD8008AA87D /* libDeSmuME-OpenEmu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B957F1212BAC7500510418 /* libDeSmuME-OpenEmu.a */; };
 		B63D20FF21116CA4000A1A41 /* smpte.png in Resources */ = {isa = PBXBuildFile; fileRef = B63D20FE21116CA3000A1A41 /* smpte.png */; };
-		B63FAC48212BCD8E00872521 /* SharkfoodMuteSwitchDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */; };
 		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
 		B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B66E60BB2110F5340022E0EF /* iNDSDBManager.m */; };
 		B66E60BE21110D6D0022E0EF /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */; };
@@ -1599,8 +1598,6 @@
 		CA4258101CADADF200BFD05E /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		CA4258121CADBD4900BFD05E /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		CA4258131CADBD4900BFD05E /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
-		CA48465C1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharkfoodMuteSwitchDetector.h; sourceTree = "<group>"; };
-		CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SharkfoodMuteSwitchDetector.m; sourceTree = "<group>"; };
 		CA48465F1CDFA47D005030EF /* mute.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = mute.caf; sourceTree = "<group>"; };
 		CA6614AF1BFF7D7800AAD7D4 /* libFlurry_7.0.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libFlurry_7.0.0.a; path = ../ShoutOut/ShoutOut/Flurry/libFlurry_7.0.0.a; sourceTree = "<group>"; };
 		CA68821B1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iNDSBuildStoreTableViewController.h; sourceTree = "<group>"; };
@@ -3931,8 +3928,6 @@
 		CABE38421C30BFC600BE8857 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				CA48465C1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.h */,
-				CA48465D1CDF9BF2005030EF /* SharkfoodMuteSwitchDetector.m */,
 				CA48465F1CDFA47D005030EF /* mute.caf */,
 				CA8EA13A1C375D860082A3F8 /* UITapticEngine.h */,
 				CA8EA13B1C375D870082A3F8 /* UIDevice+Private.h */,
@@ -4383,7 +4378,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B63FAC48212BCD8E00872521 /* SharkfoodMuteSwitchDetector.m in Sources */,
 				CA68821D1CDC118500B0ED05 /* iNDSBuildStoreTableViewController.m in Sources */,
 				CA031D261BEBE1EB00EDE98D /* CpuArch.c in Sources */,
 				CAB2C4421CB2D8BC00ED22BB /* iNDSBugReportRomTableViewController.m in Sources */,

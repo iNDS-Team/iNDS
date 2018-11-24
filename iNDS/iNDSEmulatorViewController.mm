@@ -17,7 +17,6 @@
 
 #import "UIDevice+Private.h"
 #import "RBVolumeButtons.h"
-#import "SharkfoodMuteSwitchDetector.h"
 
 #import <GLKit/GLKit.h>
 #import <OpenGLES/ES2/gl.h>
@@ -135,7 +134,6 @@ enum VideoFilter : NSUInteger {
     UINavigationController * settingsNav;
     
     RBVolumeButtons *volumeStealer;
-    SharkfoodMuteSwitchDetector *muteDetector;
     
     CADisplayLink *coreLink;
     dispatch_semaphore_t displaySemaphore;
@@ -232,13 +230,6 @@ enum VideoFilter : NSUInteger {
             }
         });
     };
-    
-    muteDetector = [SharkfoodMuteSwitchDetector shared];
-    __weak iNDSEmulatorViewController* weakself = self;
-    muteDetector.silentNotify = ^(BOOL silent){
-        [weakself defaultsChanged:nil];
-    };
-    
     
     
     [self defaultsChanged:nil];
@@ -353,7 +344,7 @@ enum VideoFilter : NSUInteger {
         EMU_setSynchMode([defaults boolForKey:@"synchSound"]);
         
         // (Mute on && don't ignore it) or user has sound disabled
-        BOOL muteSound = (muteDetector.isMute && ![defaults boolForKey:@"ignoreMute"]) || [defaults boolForKey:@"disableSound"];
+        BOOL muteSound = [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
         AVAudioSessionCategoryOptions opts = AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothA2DP;
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:opts error:nil];
