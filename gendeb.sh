@@ -26,7 +26,7 @@ if [ -f "$OUTFILE" ]; then
 fi
 
 
-xcodebuild -workspace iNDS.xcworkspace -scheme iNDS archive GCC_PREPROCESSOR_DEFINITIONS="JAILBROKEN=1 $GCC_PREPROCESSOR_DEFINITIONS" CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" -archivePath "$OUTDIR" | xcpretty
+xcodebuild -workspace iNDS.xcworkspace -scheme iNDS archive GCC_PREPROCESSOR_DEFINITIONS="JAILBROKEN=1 $GCC_PREPROCESSOR_DEFINITIONS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" -archivePath "$OUTDIR" | xcpretty
 if [ ${PIPESTATUS[0]} -eq 0 ]; then
     cd "$OUTDIR/Products"
     cp -R $ORIG/DEBIAN .
