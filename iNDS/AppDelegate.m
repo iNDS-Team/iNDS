@@ -568,24 +568,35 @@
         
         WCEasySettingsSection *resetSection = [[WCEasySettingsSection alloc] initWithTitle:@"RESET" subTitle:@"Erase All Content"];
         WCEasySettingsButton *button = [[WCEasySettingsButton alloc] initWithTitle:@"Reset" subtitle:nil callback:^(bool finished) {
-            NSArray *everything = @[[self batteryDir],
-                                    [self documentsPath]];
-            NSFileManager *fileMgr = [NSFileManager defaultManager];
-            for (NSString *path in everything) {
-                NSArray *files = [fileMgr contentsOfDirectoryAtPath:path error:nil];
-                for (NSString *file in files) {
-                    NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
-                    [fileMgr removeItemAtPath:[path stringByAppendingPathComponent:file] error:nil];
+            
+            // prompt the user before deleting all data
+            UIAlertController *warningAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"This will erase all content. Do you want to continue?" preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {}];
+            UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+                
+                NSArray *everything = @[[self batteryDir],
+                                        [self documentsPath]];
+                NSFileManager *fileMgr = [NSFileManager defaultManager];
+                for (NSString *path in everything) {
+                    NSArray *files = [fileMgr contentsOfDirectoryAtPath:path error:nil];
+                    for (NSString *file in files) {
+                        NSLog(@"Removing %@", [path stringByAppendingPathComponent:file]);
+                        [fileMgr removeItemAtPath:[path stringByAppendingPathComponent:file] error:nil];
+                    }
                 }
-            }
+                
+                UIAlertController *doneAlert = [UIAlertController alertControllerWithTitle:@"Success" message:@"Content successfully reset!" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                      handler:^(UIAlertAction * action) {}];
+                
+                [doneAlert addAction:defaultAction];
+                
+                [self->_settingsViewController presentViewController:doneAlert animated:YES completion:nil];
+            }];
             
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success" message:@"Content successfully reset!" preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                                  handler:^(UIAlertAction * action) {}];
-            
-            [alert addAction:defaultAction];
-            
-            [_settingsViewController presentViewController:alert animated:YES completion:nil];
+            [warningAlert addAction:cancelAction];
+            [warningAlert addAction:continueAction];
+            [self->_settingsViewController presentViewController:warningAlert animated:YES completion:nil];
             
         }];
         resetSection.items = @[
