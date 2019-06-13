@@ -15,6 +15,7 @@
 #import <SDImageCacheConfig.h>
 #import <SDImageCache.h>
 
+#import "iNDSDBManager.h"
 
 #include <libkern/OSAtomic.h>
 #include <execinfo.h>
@@ -436,6 +437,22 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (void)downloadDB:(void(^)(int))handler {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *stringURL = @"https://inds.nerd.net/editor/openvgdb.sqlite";
+        NSURL  *url = [NSURL URLWithString:stringURL];
+        NSData *urlData = [NSData dataWithContentsOfURL:url];
+        if ( urlData )
+        {
+            NSString *dbPath = [[NSBundle mainBundle] pathForResource:@"openvgdb" ofType:@"sqlite"];
+            
+            [urlData writeToFile:dbPath atomically:YES];
+            handler(0);
+        }
+        handler(1);
+    });
+}
+
 - (WCEasySettingsViewController *)getSettingsViewController
 {
     
@@ -565,9 +582,38 @@
                                                                               title:@"Full Screen Settings"],
                                    [[WCEasySettingsSwitch alloc] initWithIdentifier:@"showFPS"
                                                                               title:@"Show FPS"]];
+        WCEasySettingsSection *iconSection = [[WCEasySettingsSection alloc] initWithTitle:@"ICONS" subTitle:@"Download the Latest Icon Pack"];
+        WCEasySettingsButton *iconButton = [[WCEasySettingsButton alloc] initWithTitle:@"Update Icons" subtitle:nil callback:^(bool finished) {
+            [[iNDSDBManager sharedInstance] closeDB];
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"Please wait..." preferredStyle:UIAlertControllerStyleAlert];
+            UIActivityIndicatorView *loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(10, 5, 50, 50)];
+            loadingIndicator.hidesWhenStopped = true;
+            loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+            [loadingIndicator startAnimating];
+            [alert.view addSubview:loadingIndicator];
+            [self->_settingsViewController presentViewController:alert animated:YES completion:nil];
+            
+            [self downloadDB:^(int result) {
+                [self->_settingsViewController dismissViewControllerAnimated:true completion:nil];
+                if (result == 0) {
+                    UIAlertController *success = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icons updated successfully" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                          handler:^(UIAlertAction * action) {}];
+                    [success addAction:defaultAction];
+                    [self->_settingsViewController presentViewController:success animated:YES completion:nil];
+                } else {
+                    UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icon update failed" preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                          handler:^(UIAlertAction * action) {}];
+                    [fail addAction:defaultAction];
+                    [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
+                }
+                [[iNDSDBManager sharedInstance] openDB];
+            }];
+        }];
         
         WCEasySettingsSection *resetSection = [[WCEasySettingsSection alloc] initWithTitle:@"RESET" subTitle:@"Erase All Content"];
-        WCEasySettingsButton *button = [[WCEasySettingsButton alloc] initWithTitle:@"Reset" subtitle:nil callback:^(bool finished) {
+        WCEasySettingsButton *resetButton = [[WCEasySettingsButton alloc] initWithTitle:@"Reset" subtitle:nil callback:^(bool finished) {
             
             // prompt the user before deleting all data
             UIAlertController *warningAlert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"This will erase all content. Do you want to continue?" preferredStyle:UIAlertControllerStyleAlert];
@@ -600,8 +646,9 @@
             
         }];
         resetSection.items = @[
-                               button
+                               resetButton
                                ];
+        iconSection.items = @[ iconButton ];
         
         
         // Credits
@@ -633,7 +680,7 @@
         
         
         
-        _settingsViewController.sections = @[controlsSection, dropboxSection, /*buildStoreSection,*/ graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, resetSection, creditsSection];
+        _settingsViewController.sections = @[controlsSection, dropboxSection, /*buildStoreSection,*/ graphicsSection, coreSection, emulatorSection, audioSection, interfaceSection, resetSection, iconSection, creditsSection];
     }
     
     return _settingsViewController;
