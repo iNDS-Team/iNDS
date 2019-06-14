@@ -330,6 +330,10 @@ void EMU_setAdvancedBusTiming(bool mode) {
     CommonSettings.advanced_timing = mode;
 }
 
+void EMU_setDepthComparisonThreshold(int depth) {
+    CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = depth;
+}
+
 void EMU_runCore()
 {
 	NDS_beginProcessingInput();
