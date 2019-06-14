@@ -185,7 +185,6 @@ void EMU_loadSettings()
 {
     CommonSettings.num_cores = (int) sysconf( _SC_NPROCESSORS_ONLN );
 	LOGI("%i cores detected", CommonSettings.num_cores);
-	CommonSettings.advanced_timing = false;
 	CommonSettings.cheatsDisable = false;
 	CommonSettings.autodetectBackupMethod = 0;
 	video.rotation =  0;
@@ -204,7 +203,7 @@ void EMU_loadSettings()
 	CommonSettings.showGpu.main = 1;
 	CommonSettings.showGpu.sub = 1;
 	CommonSettings.spu_advanced = false;
-	CommonSettings.advanced_timing = false;
+	CommonSettings.advanced_timing = true;
 	CommonSettings.GFX3D_Zelda_Shadow_Depth_Hack = 1;
 	CommonSettings.wifi.mode = 0;
 	CommonSettings.wifi.infraBridgeAdapter = 0;
@@ -325,6 +324,10 @@ void EMU_setFrameSkip(int skip)
 void EMU_setCPUMode(int cpuMode)
 {
 //    CommonSettings.CpuMode = cpuMode;
+}
+
+void EMU_setAdvancedBusTiming(bool mode) {
+    CommonSettings.advanced_timing = mode;
 }
 
 void EMU_runCore()
