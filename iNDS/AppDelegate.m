@@ -132,6 +132,7 @@
         return;
     }
     backgroundProcessesStarted = YES;
+    /*
     dispatch_async(dispatch_get_main_queue(), ^{
         //Show Twitter alert
         if (![[NSUserDefaults standardUserDefaults] objectForKey:@"TwitterAlert"]) {
@@ -150,6 +151,7 @@
             [alert showCustom:[self topMostController] image:twitterImage color:[UIColor colorWithRed:85/255.0 green:175/255.0 blue:238/255.0 alpha:1] title:@"Love iNDS?" subTitle:@"Show some love and get updates about the newest emulators by following the developer on Twitter!" closeButtonTitle:@"No, Thanks" duration:0.0];
         }
     });
+     */
 }
 
 
@@ -668,12 +670,9 @@
                                                  initWithTitle:@"Info"
                                                  subTitle:[NSString stringWithFormat:@"Version %@ %@", myVersion, noRar]];
         
-        creditsSection.items = @[[[WCEasySettingsUrl alloc] initWithTitle:@"Will Cobb"
+        creditsSection.items = @[[[WCEasySettingsUrl alloc] initWithTitle:@"iNDS Team"
                                                                  subtitle:@"Developer"
-                                                                      url:@"https://twitter.com/miniroo321"],
-                                 [[WCEasySettingsUrl alloc] initWithTitle:@"Twitter"
-                                                                 subtitle:@"@iNDSapp"
-                                                                      url:@"https://twitter.com/iNDSapp"],
+                                                                      url:@"https://github.com/iNDS-Team"],
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"NDS4iOS Team"
                                                                  subtitle:@"Ported DeSmuME to iOS"
                                                                       url:nil],
