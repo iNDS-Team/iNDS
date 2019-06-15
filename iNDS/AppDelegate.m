@@ -597,24 +597,28 @@
             loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
             [loadingIndicator startAnimating];
             [alert.view addSubview:loadingIndicator];
-            [self->_settingsViewController presentViewController:alert animated:YES completion:nil];
             
-            [self downloadDB:^(int result) {
-                [self->_settingsViewController dismissViewControllerAnimated:true completion:nil];
-                if (result == 0) {
-                    UIAlertController *success = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icons updated successfully" preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                                          handler:^(UIAlertAction * action) {}];
-                    [success addAction:defaultAction];
-                    [self->_settingsViewController presentViewController:success animated:YES completion:nil];
-                } else {
-                    UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icon update failed" preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
-                                                                          handler:^(UIAlertAction * action) {}];
-                    [fail addAction:defaultAction];
-                    [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
-                }
-                [[iNDSDBManager sharedInstance] openDB];
+                [self->_settingsViewController presentViewController:alert animated:YES completion:nil];
+                
+                [self downloadDB:^(int result) {
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
+                    [self->_settingsViewController dismissViewControllerAnimated:true completion:^{
+                        if (result == 0) {
+                            UIAlertController *success = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icons updated successfully" preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                                  handler:^(UIAlertAction * action) {}];
+                            [success addAction:defaultAction];
+                            [self->_settingsViewController presentViewController:success animated:YES completion:nil];
+                        } else {
+                            UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icon update failed" preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                                  handler:^(UIAlertAction * action) {}];
+                            [fail addAction:defaultAction];
+                            [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
+                        }
+                        [[iNDSDBManager sharedInstance] openDB];
+                    }];
+                }];
             }];
         }];
         
