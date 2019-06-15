@@ -42,5 +42,9 @@
 	<integer>0</integer>
 	<key>disableTouchScreen</key>
 	<false/>
+	<key>adv_timing</key>
+	<false/>
+	<key>depth</key>
+	<integer>0</integer>
 </dict>
 </plist>

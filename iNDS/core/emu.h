@@ -41,6 +41,8 @@ void EMU_enableSound(bool enable);
 bool EMU_frameSkip(bool force);
 void EMU_setFrameSkip(int skip);
 void EMU_setCPUMode(int cpuMode);
+void EMU_setAdvancedBusTiming(bool mode);
+void EMU_setDepthComparisonThreshold(int depth);
 void EMU_setSynchMode(bool enabled);
 void EMU_runCore();
 int EMU_runOther();

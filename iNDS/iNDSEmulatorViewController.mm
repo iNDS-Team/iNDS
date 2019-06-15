@@ -452,6 +452,8 @@ enum VideoFilter : NSUInteger {
     EMU_init([iNDSGame preferredLanguage]);
     //2 for JIT
     EMU_setCPUMode((int)[[NSUserDefaults standardUserDefaults] integerForKey:@"cpuMode"] + 1);
+    EMU_setAdvancedBusTiming([[NSUserDefaults standardUserDefaults] boolForKey:@"adv_timing"]);
+    EMU_setDepthComparisonThreshold([[NSUserDefaults standardUserDefaults] boolForKey:@"depth"]);
     EMU_loadRom([self.game.path fileSystemRepresentation]);
     EMU_change3D(1);
         

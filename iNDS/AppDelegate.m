@@ -560,7 +560,13 @@
                                                                    subtitle:@"JIT is not yet available for your device."];
         }
         
+        WCEasySettingsSwitch *adv_timing = [[WCEasySettingsSwitch alloc] initWithIdentifier:@"adv_timing" title:@"Enable Advanced Bus Timing"];
+        
+        WCEasySettingsSlider2 *depth = [[WCEasySettingsSlider2 alloc] initWithIdentifier:@"depth" title:@"Depth Comparison Threshold" max:500];
+        
         coreSection.items = @[engineOption,
+                              adv_timing,
+                              depth,
                               [[WCEasySettingsSegment alloc] initWithIdentifier:@"frameSkip"
                                                                           title:@"Frame Skip"
                                                                           items:@[@"None",

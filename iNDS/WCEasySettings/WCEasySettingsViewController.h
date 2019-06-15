@@ -11,6 +11,7 @@
 #import "WCEasySettingsSwitch.h"
 #import "WCEasySettingsSegment.h"
 #import "WCEasySettingsSlider.h"
+#import "WCEasySettingsSlider2.h"
 #import "WCEasySettingsSection.h"
 #import "WCEasySettingsOption.h"
 #import "WCEasySettingsUrl.h"
