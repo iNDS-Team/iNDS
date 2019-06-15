@@ -347,6 +347,9 @@ enum VideoFilter : NSUInteger {
         BOOL muteSound = [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
         AVAudioSessionCategoryOptions opts = AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothA2DP;
+        if([defaults boolForKey:@"allowExternalAudio"]){
+            opts |= AVAudioSessionCategoryOptionMixWithOthers;
+        }
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:opts error:nil];
         
         // Filter

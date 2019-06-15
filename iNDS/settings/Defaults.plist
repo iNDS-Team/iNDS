@@ -16,6 +16,8 @@
 	<integer>-1</integer>
 	<key>disableSound</key>
 	<false/>
+	<key>allowExternalAudio</key>
+	<false/>
 	<key>controlOpacity</key>
 	<real>0.5</real>
 	<key>controlSize</key>
