@@ -13,6 +13,7 @@ typedef NS_ENUM(NSInteger, WCEazySettingsType) {
     WCEasySettingsTypeSegment,
     WCEasySettingsTypeOption,
     WCEasySettingsTypeSlider,
+    WCEasySettingsTypeSlider2,
     WCEasySettingsTypeUrl,
     WCEasySettingsTypeCustom,
     WCEasySettingsTypeButton

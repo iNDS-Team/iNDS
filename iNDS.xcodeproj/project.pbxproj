@@ -33,6 +33,7 @@
 		AE2F3B6018EF7F5A007A4BA0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AE2F3B5E18EF7F5A007A4BA0 /* Localizable.strings */; };
 		B6387947212BCFD8008AA87D /* libDeSmuME-OpenEmu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6B957F1212BAC7500510418 /* libDeSmuME-OpenEmu.a */; };
 		B63D20FF21116CA4000A1A41 /* smpte.png in Resources */ = {isa = PBXBuildFile; fileRef = B63D20FE21116CA3000A1A41 /* smpte.png */; };
+		B64D74F122B45DBC004909DC /* WCEasySettingsSlider2.m in Sources */ = {isa = PBXBuildFile; fileRef = B64D74F022B45DBC004909DC /* WCEasySettingsSlider2.m */; };
 		B65CFF8420F70212009578FF /* WCEasySettingsButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B65CFF8320F70212009578FF /* WCEasySettingsButton.m */; };
 		B66E60BC2110F5340022E0EF /* iNDSDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B66E60BB2110F5340022E0EF /* iNDSDBManager.m */; };
 		B66E60BE21110D6D0022E0EF /* openvgdb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */; };
@@ -356,6 +357,8 @@
 		AE2F3B6518EF7F88007A4BA0 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "iNDS/zh-Hant.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		B63D20FE21116CA3000A1A41 /* smpte.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = smpte.png; path = Resources/smpte.png; sourceTree = "<group>"; };
 		B6468B71212BBF0D00767F52 /* DeSmuME_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeSmuME_Prefix.pch; sourceTree = "<group>"; };
+		B64D74EF22B45DBC004909DC /* WCEasySettingsSlider2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WCEasySettingsSlider2.h; sourceTree = "<group>"; };
+		B64D74F022B45DBC004909DC /* WCEasySettingsSlider2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WCEasySettingsSlider2.m; sourceTree = "<group>"; };
 		B65CFF8220F70212009578FF /* WCEasySettingsButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WCEasySettingsButton.h; path = WCEasySettings/WCEasySettingsButton.h; sourceTree = "<group>"; };
 		B65CFF8320F70212009578FF /* WCEasySettingsButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WCEasySettingsButton.m; path = WCEasySettings/WCEasySettingsButton.m; sourceTree = "<group>"; };
 		B66E60B62110E5EB0022E0EF /* openvgdb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = openvgdb.sqlite; path = Resources/openvgdb.sqlite; sourceTree = "<group>"; };
@@ -3988,6 +3991,8 @@
 				CAE673821CC824F900E46EDF /* WCEasySettingsSegment.m */,
 				CAE673831CC824F900E46EDF /* WCEasySettingsSlider.h */,
 				CAE673841CC824F900E46EDF /* WCEasySettingsSlider.m */,
+				B64D74EF22B45DBC004909DC /* WCEasySettingsSlider2.h */,
+				B64D74F022B45DBC004909DC /* WCEasySettingsSlider2.m */,
 				CAE673891CC824F900E46EDF /* WCEasySettingsOption.h */,
 				CAE6738A1CC824F900E46EDF /* WCEasySettingsOption.m */,
 				CAE673981CC8257C00E46EDF /* WCEasySettingsOptionViewController.h */,
@@ -4438,6 +4443,7 @@
 				B6B96692212BB3E600510418 /* iNDSMicrophone.m in Sources */,
 				CAE6738D1CC824F900E46EDF /* WCEasySettingsSegment.m in Sources */,
 				CA031D251BEBE1EB00EDE98D /* Alloc.c in Sources */,
+				B64D74F122B45DBC004909DC /* WCEasySettingsSlider2.m in Sources */,
 				8BEA097117872C320060B347 /* GLProgram.m in Sources */,
 				CA6882271CDC19B400B0ED05 /* WCBuildStoreClient.m in Sources */,
 				CA031D2C1BEBE1EB00EDE98D /* Ppmd7Dec.c in Sources */,
