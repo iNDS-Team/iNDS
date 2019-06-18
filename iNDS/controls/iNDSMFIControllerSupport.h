@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <GameController/GameController.h>
 
 // This class will manage MFi (Made For iPhone) controllers.
 // It will only support the DS buttons, not the touch screen.
@@ -11,5 +12,6 @@
 
 -(void) startMonitoringGamePad;
 -(void) stopMonitoringGamePad;
+- (void)listenforPause:(void(^)(GCController *controller))handler;
 
 @end
