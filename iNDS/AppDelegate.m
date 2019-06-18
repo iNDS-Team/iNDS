@@ -455,6 +455,37 @@
     });
 }
 
+- (void)checkForUpdate:(void(^)(int, NSString*))handler {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSString *stringURL = @"https://api.github.com/repos/iNDS-Team/iNDS/releases/latest";
+        NSURL  *url = [NSURL URLWithString:stringURL];
+        NSData *urlData = [NSData dataWithContentsOfURL:url];
+        if ( urlData )
+        {
+            NSError *error = nil;
+            id object = [NSJSONSerialization
+                         JSONObjectWithData:urlData
+                         options:0
+                         error:&error];
+            
+            if(error) { /* JSON was malformed, act appropriately here */ }
+            
+            // the originating poster wants to deal with dictionaries;
+            // assuming you do too then something like this is the first
+            // validation step:
+            if([object isKindOfClass:[NSDictionary class]])
+            {
+                NSDictionary *results = object;
+                handler(0, results[@"tab_name"]);
+                return;
+            }
+            handler(0, nil);
+            return;
+        }
+        handler(1, nil);
+    });
+}
+
 - (WCEasySettingsViewController *)getSettingsViewController
 {
     
@@ -606,13 +637,13 @@
                     [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
                     [self->_settingsViewController dismissViewControllerAnimated:true completion:^{
                         if (result == 0) {
-                            UIAlertController *success = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icons updated successfully" preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertController *success = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icons updated successfully." preferredStyle:UIAlertControllerStyleAlert];
                             UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                                                                                   handler:^(UIAlertAction * action) {}];
                             [success addAction:defaultAction];
                             [self->_settingsViewController presentViewController:success animated:YES completion:nil];
                         } else {
-                            UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Success" message:@"Icon update failed" preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Failure" message:@"Icon update failed." preferredStyle:UIAlertControllerStyleAlert];
                             UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
                                                                                   handler:^(UIAlertAction * action) {}];
                             [fail addAction:defaultAction];
@@ -666,6 +697,46 @@
         // Credits
         NSString *myVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
         NSString *noRar = @"";
+        WCEasySettingsButton *updateButton = [[WCEasySettingsButton alloc] initWithTitle:@"Check for Updates" subtitle:nil callback:^(bool finished) {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"Please wait..." preferredStyle:UIAlertControllerStyleAlert];
+            UIActivityIndicatorView *loadingIndicator = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(10, 5, 50, 50)];
+            loadingIndicator.hidesWhenStopped = true;
+            loadingIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+            [loadingIndicator startAnimating];
+            [alert.view addSubview:loadingIndicator];
+            
+            [self->_settingsViewController presentViewController:alert animated:YES completion:nil];
+            
+            [self checkForUpdate:^(int result, NSString *version) {
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
+                    [self->_settingsViewController dismissViewControllerAnimated:true completion:^{
+                        if (result == 0 || version == nil) {
+                            if ([[version substringFromIndex:1] compare:myVersion options:NSNumericSearch] == NSOrderedDescending) {
+                                // update needed
+                                UIAlertController *update = [UIAlertController alertControllerWithTitle:@"Update Available" message:@"An update is available on the iNDS Github" preferredStyle:UIAlertControllerStyleAlert];
+                                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                                      handler:^(UIAlertAction * action) {}];
+                                [update addAction:defaultAction];
+                                [self->_settingsViewController presentViewController:update animated:YES completion:nil];
+                            } else {
+                                UIAlertController *no_update = [UIAlertController alertControllerWithTitle:@"Up To Date" message:@"Your iNDS is already up to date." preferredStyle:UIAlertControllerStyleAlert];
+                                UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                                      handler:^(UIAlertAction * action) {}];
+                                [no_update addAction:defaultAction];
+                                [self->_settingsViewController presentViewController:no_update animated:YES completion:nil];
+                            }
+                            
+                        } else {
+                            UIAlertController *fail = [UIAlertController alertControllerWithTitle:@"Failure" message:@"Checking for update failed." preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                                                  handler:^(UIAlertAction * action) {}];
+                            [fail addAction:defaultAction];
+                            [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
+                        }
+                    }];
+                }];
+            }];
+        }];
         WCEasySettingsSection *creditsSection = [[WCEasySettingsSection alloc]
                                                  initWithTitle:@"Info"
                                                  subTitle:[NSString stringWithFormat:@"Version %@ %@", myVersion, noRar]];
@@ -684,7 +755,8 @@
                                                                       url:@"https://twitter.com/Pmp174"],
                                  [[WCEasySettingsUrl alloc] initWithTitle:@"Source"
                                                                  subtitle:@"Github"
-                                                                      url:@"https://github.com/iNDS-Team/iNDS"]];
+                                                                      url:@"https://github.com/iNDS-Team/iNDS"],
+                                 updateButton];
         
         
         
