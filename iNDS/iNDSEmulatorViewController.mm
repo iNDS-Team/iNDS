@@ -1021,7 +1021,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
     //NSLog(@"Soft.");
     if (settingsShown || inEditingMode) return;
     // If force touch is avaliable we can assume taptic vibration is too
-    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) && [[NSUserDefaults standardUserDefaults] boolForKey:@"hapticForVibration"]) {
         [(UISelectionFeedbackGenerator*) vibration selectionChanged];
     } else {
         AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
@@ -1039,16 +1039,20 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 - (void)vibrateStrong
 {
     //NSLog(@"Hard");
-    if (settingsShown || inEditingMode) return;
-    AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
-    
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    NSArray *pattern = @[@NO, @0, @YES, @30];
-    
-    dictionary[@"VibePattern"] = pattern;
-    dictionary[@"Intensity"] = @1;
-    
-    AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    if (settingsShown || inEditingMode) return;// If force touch is avaliable we can assume taptic vibration is too
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) && [[NSUserDefaults standardUserDefaults] boolForKey:@"hapticForVibration"]) {
+        [(UIImpactFeedbackGenerator*) vibration impactOccurred];
+    } else {
+        AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
+        
+        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+        NSArray *pattern = @[@NO, @0, @YES, @30];
+        
+        dictionary[@"VibePattern"] = pattern;
+        dictionary[@"Intensity"] = @1;
+        
+        AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+    }
 }
 
 - (void)touchScreenAtPoint:(CGPoint)point

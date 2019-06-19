@@ -474,6 +474,8 @@
                                                                                       @"Off",
                                                                                       @"Light",
                                                                                       @"Heavy"]],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"hapticForVibration"
+                                                                             title:@"Haptic for Vibration"],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"volumeBumper"
                                                                              title:@"Volume Button Bumpers"],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableTouchScreen"
