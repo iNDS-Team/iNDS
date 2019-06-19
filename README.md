@@ -5,6 +5,8 @@
 [![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
 [![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS)
 [![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![OpenCollective Supporters](https://img.shields.io/opencollective/all/inds-team.svg?color=green)](https://opencollective.com/inds-team)
+
 
 [iNDS](https://inds.nerd.net) is a derivation of the previous Nintendo DS apps
 for iOS, nds4ios and [Nitrogen](https://github.com/NitrogenEmulator). The iNDS
