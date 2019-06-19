@@ -507,6 +507,8 @@
                                                                                       @"Off",
                                                                                       @"Light",
                                                                                       @"Heavy"]],
+                                  [[WCEasySettingsSwitch alloc] initWithIdentifier:@"hapticForVibration"
+                                                                             title:@"Haptic for Vibration"],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"volumeBumper"
                                                                              title:@"Volume Button Bumpers"],
                                   [[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableTouchScreen"
@@ -549,6 +551,8 @@
         WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
         audioSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableSound"
                                                                           title:@"Disable Sound"],
+                               [[WCEasySettingsSwitch alloc] initWithIdentifier:@"allowExternalAudio"
+                                                                          title:@"Allow External Audio"],
                                [[WCEasySettingsSwitch alloc] initWithIdentifier:@"synchSound"
                                                                           title:@"Synchronous Audio"],
                                [[WCEasySettingsSwitch alloc] initWithIdentifier:@"enableMic"

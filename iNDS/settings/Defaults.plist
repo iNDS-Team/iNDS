@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>hapticForVibration</key>
+	<false/>
 	<key>videoFilter</key>
 	<integer>5</integer>
 	<key>enableMic</key>
@@ -15,6 +17,8 @@
 	<key>frameSkip</key>
 	<integer>-1</integer>
 	<key>disableSound</key>
+	<false/>
+	<key>allowExternalAudio</key>
 	<false/>
 	<key>controlOpacity</key>
 	<real>0.5</real>

@@ -347,6 +347,9 @@ enum VideoFilter : NSUInteger {
         BOOL muteSound = [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
         AVAudioSessionCategoryOptions opts = AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothA2DP;
+        if([defaults boolForKey:@"allowExternalAudio"]){
+            opts |= AVAudioSessionCategoryOptionMixWithOthers;
+        }
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:opts error:nil];
         
         // Filter
@@ -933,6 +936,15 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 
 - (void)controllerPressedDPad:(iNDSDirectionalControlDirection) state
 {
+    if (state != _previousDirection && state != 0)
+    {
+        if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 1)
+        {
+            [self vibrateSoft];
+        } else if ([[NSUserDefaults standardUserDefaults] integerForKey:@"vibrationStr"] == 2) {
+            [self vibrateStrong];
+        }
+    }
     EMU_setDPad(state & iNDSDirectionalControlDirectionUp, state & iNDSDirectionalControlDirectionDown, state & iNDSDirectionalControlDirectionLeft, state & iNDSDirectionalControlDirectionRight);
     
     _previousDirection = state;
@@ -1006,10 +1018,10 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)vibrateSoft
 {
-//    NSLog(@"Soft.");
+    //NSLog(@"Soft.");
     if (settingsShown || inEditingMode) return;
     // If force touch is avaliable we can assume taptic vibration is too
-    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) && [[NSUserDefaults standardUserDefaults] boolForKey:@"hapticForVibration"]) {
         [(UISelectionFeedbackGenerator*) vibration selectionChanged];
     } else {
         AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
@@ -1026,11 +1038,10 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 - (void)vibrateStrong
 {
-//    NSLog(@"Hard");
-    if (settingsShown || inEditingMode) return;
-    // If force touch is avaliable we can assume taptic vibration is too
-    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && [[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) {
-        [(UIImpactFeedbackGenerator *) vibration impactOccurred];
+    //NSLog(@"Hard");
+    if (settingsShown || inEditingMode) return;// If force touch is avaliable we can assume taptic vibration is too
+    if ([[self.view traitCollection] respondsToSelector:@selector(forceTouchCapability)] && ([[self.view traitCollection] forceTouchCapability] == UIForceTouchCapabilityAvailable) && [[NSUserDefaults standardUserDefaults] boolForKey:@"hapticForVibration"]) {
+        [(UIImpactFeedbackGenerator*) vibration impactOccurred];
     } else {
         AudioServicesStopSystemSound(kSystemSoundID_Vibrate);
         
