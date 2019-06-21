@@ -57,6 +57,7 @@
     [SDWebImageManager sharedManager].delegate = self;
     
     [self prefetchImages];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userRequestedToPlayROM:) name:iNDSUserRequestedToPlayROMNotification object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -294,6 +295,14 @@
     return newImage;
 }
 
+#pragma mark - Start Game from URL
+
+- (void) userRequestedToPlayROM:(NSNotification *) notification {
+    iNDSGame *game = notification.object;
+    
+    [AppDelegate.sharedInstance startGame:game withSavedState:-1];
+
+}
 
 @end
 

@@ -109,9 +109,19 @@
 				<string>db-ks1ulr086qvvy1k</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>None</string>
+			<key>CFBundleURLName</key>
+			<string>net.nerd.iNDS</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>iNDS</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>65</string>
+	<string>66</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>dbapi-8-emm</string>
