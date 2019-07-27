@@ -16,5 +16,6 @@
 }
 
 - (void)reloadGames:(id)sender;
+- (void) userRequestedToPlayROM:(NSNotification *) notification;
 
 @end

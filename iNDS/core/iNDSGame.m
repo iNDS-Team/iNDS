@@ -9,6 +9,7 @@
 #import "iNDSGame.h"
 #import <FileMD5Hash/FileHash.h>
 #import "iNDSDBManager.h"
+#import "AppDelegate.h"
 
 NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesChangedNotification";
 
@@ -40,6 +41,10 @@ NSString * const iNDSGameSaveStatesChangedNotification = @"iNDSGameSaveStatesCha
 + (iNDSGame*)gameWithPath:(NSString*)path saveStateDirectoryPath:(NSString*)saveStatePath
 {
     return [[iNDSGame alloc] initWithPath:path saveStateDirectoryPath:saveStatePath];
+}
+
++ (iNDSGame*)gameWithName:(NSString *)name {
+    return [[iNDSGame alloc] initWithPath:[[AppDelegate.sharedInstance.documentsPath stringByAppendingPathComponent:name] stringByAppendingPathExtension:@"nds"] saveStateDirectoryPath:AppDelegate.sharedInstance.batteryDir];
 }
 
 - (iNDSGame*)initWithPath:(NSString*)path saveStateDirectoryPath:(NSString*)saveStatePath

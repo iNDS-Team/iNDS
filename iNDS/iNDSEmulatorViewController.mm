@@ -200,7 +200,8 @@ enum VideoFilter : NSUInteger {
     [notificationCenter addObserver:self selector:@selector(screenChanged:) name:UIScreenDidDisconnectNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(controllerActivated:) name:GCControllerDidConnectNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(controllerDeactivated:) name:GCControllerDidDisconnectNotification object:nil];
-    
+    [notificationCenter addObserver:self selector:@selector(userRequestedToPlayROM:) name:iNDSUserRequestedToPlayROMNotification object:nil];
+
     if ([[GCController controllers] count] > 0) {
         [self controllerActivated:nil];
     }
@@ -303,6 +304,33 @@ enum VideoFilter : NSUInteger {
         [self.profile ajustLayout];
         [self toggleSettings:self];
     });
+}
+
+- (void) userRequestedToPlayROM:(NSNotification *) notification {
+    NSLog(@"Notification");
+    iNDSGame *game = notification.object;
+    
+    if ([self.game isEqual:game]) {
+        return;
+    }
+    
+    if (self.game == nil) {
+        [AppDelegate.sharedInstance startGame:game withSavedState:-1];
+    }
+    
+    [self pauseEmulation];
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Game Currently Running" message:[NSString stringWithFormat:@"Would you like to end %@ and start %@? All unsaved data will be lost.", self.game.title, game.title] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {
+        [self resumeEmulation];
+    }];
+    UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self changeGame:game];
+    }];
+    
+    [alert addAction:cancelAction];
+    [alert addAction:continueAction];
+    
 }
 
 - (void)didReceiveMemoryWarning

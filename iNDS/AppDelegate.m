@@ -42,6 +42,8 @@
 
 @end
 
+NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToPlayROMNotification";
+
 @implementation AppDelegate
 
 + (AppDelegate*)sharedInstance
@@ -157,7 +159,7 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@"Opening: %@", url);
-    if ([[[NSString stringWithFormat:@"%@", url] substringToIndex:2] isEqualToString: @"db"]) {
+    if ([[url scheme] hasPrefix:@"db"]) {
         NSLog(@"DB");
         //        if ([[DBSession sharedSession] handleOpenURL:url]) {
         //            if ([[DBSession sharedSession] isLinked]) {
@@ -179,6 +181,20 @@
         //            }
         return YES;
         //        }
+    } else if ([[[url scheme] lowercaseString] isEqualToString:@"inds"]) {
+        NSString *name = [[url host] stringByRemovingPercentEncoding];
+        
+        iNDSGame *rom = [iNDSGame gameWithName:name];
+        
+        if (rom) {
+            NSLog(@"Found ROM");
+            [[NSNotificationCenter defaultCenter] postNotificationName:iNDSUserRequestedToPlayROMNotification object:rom userInfo:nil];
+            return YES;
+        } else {
+            NSLog(@"Could not find ROM");
+        }
+        
+        return NO;
     } else if (url.isFileURL && [[NSFileManager defaultManager] fileExistsAtPath:url.path]) {
         NSLog(@"Zip File (maybe)");
         NSFileManager *fm = [NSFileManager defaultManager];

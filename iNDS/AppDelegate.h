@@ -41,6 +41,8 @@
 
 - (BOOL)isSystemApplication;
 
+extern NSString * const iNDSUserRequestedToPlayROMNotification;
+
 @end
 
 
