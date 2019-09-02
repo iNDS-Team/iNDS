@@ -2,10 +2,9 @@
 
 ###### Supports iOS 9.0 and up.
 
-[![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
+[![Financial Contributors on Open Collective](https://opencollective.com/inds-team/all/badge.svg?color=green&label=financial+contributors)](https://opencollective.com/inds-team) [![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
 [![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS)
 [![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![OpenCollective Supporters](https://img.shields.io/opencollective/all/inds-team.svg?color=green)](https://opencollective.com/inds-team)
 
 
 [iNDS](https://inds.nerd.net) is a derivation of the previous Nintendo DS apps
@@ -53,3 +52,33 @@ please read our [Contributing Guide](CONTRIBUTING.md).
 - Sharable game hacks
 - Add more localizations
 - Much more
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/iNDS-Team/iNDS/graphs/contributors"><img src="https://opencollective.com/inds-team/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/inds-team/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/inds-team"><img src="https://opencollective.com/inds-team/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/inds-team/contribute)]
+
+<a href="https://opencollective.com/inds-team/organization/0/website"><img src="https://opencollective.com/inds-team/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/1/website"><img src="https://opencollective.com/inds-team/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/2/website"><img src="https://opencollective.com/inds-team/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/3/website"><img src="https://opencollective.com/inds-team/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/4/website"><img src="https://opencollective.com/inds-team/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/5/website"><img src="https://opencollective.com/inds-team/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/6/website"><img src="https://opencollective.com/inds-team/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/7/website"><img src="https://opencollective.com/inds-team/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/8/website"><img src="https://opencollective.com/inds-team/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/inds-team/organization/9/website"><img src="https://opencollective.com/inds-team/organization/9/avatar.svg"></a>
