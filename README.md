@@ -2,7 +2,8 @@
 
 ###### Supports iOS 9.0 and up.
 
-[![Financial Contributors on Open Collective](https://opencollective.com/inds-team/all/badge.svg?color=green&label=financial+contributors)](https://opencollective.com/inds-team) [![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
+[![Financial Contributors on Open Collective](https://opencollective.com/inds-team/all/badge.svg?color=green&label=financial+contributors)](https://opencollective.com/inds-team)
+[![Version](https://img.shields.io/github/release/iNDS-Team/iNDS.svg)](https://github.com/iNDS-Team/iNDS/releases/latest)
 [![Build Status](https://travis-ci.com/iNDS-Team/iNDS.svg?branch=master)](https://travis-ci.com/iNDS-Team/iNDS)
 [![Join the chat at https://gitter.im/iNDS-Team/iNDS](https://badges.gitter.im/iNDS-Team/iNDS.svg)](https://gitter.im/iNDS-Team/iNDS?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
