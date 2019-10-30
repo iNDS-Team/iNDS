@@ -273,14 +273,12 @@ enum VideoFilter : NSUInteger {
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [UIApplication sharedApplication].statusBarHidden = YES;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self pauseEmulation];
-    [UIApplication sharedApplication].statusBarHidden = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -341,7 +339,7 @@ enum VideoFilter : NSUInteger {
 
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
+    return !settingsShown;
 }
 
 - (void)loadProfile:(iNDSEmulationProfile *)profile
@@ -811,27 +809,22 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
 
 - (IBAction)toggleSettings:(id)sender
 {
-    UIView * statusBar = [self statuBarView];
     if (!settingsShown) { //About to show settings
         [self setLidClosed:YES];
         // Give time for lid close
         //dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [volumeStealer performSelector:@selector(stopStealingVolumeButtonEvents) withObject:nil afterDelay:0.1]; //Non blocking
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
-                [[UIApplication sharedApplication] setStatusBarHidden:NO];
-                statusBar.alpha = 0;
-            }
             [self.settingsContainer setHidden:NO];
             [self pauseEmulation];
             [UIView animateWithDuration:0.3 animations:^{
                 self.darkenView.hidden = NO;
                 self.darkenView.alpha = 0.6;
                 self.settingsContainer.alpha = 1;
+                settingsShown = YES;
                 if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
-                    statusBar.alpha = 1;
+                    [self setNeedsStatusBarAppearanceUpdate];
                 }
             } completion:^(BOOL finished) {
-                settingsShown = YES;
                 if (!inEditingMode)
                     [CHBgDropboxSync start];
             }];
@@ -845,10 +838,11 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
         [UIView animateWithDuration:0.3 animations:^{
             self.darkenView.alpha = 0.0;
             self.settingsContainer.alpha = 0;
-            statusBar.alpha = 0;
-        } completion:^(BOOL finished) {
-            [[UIApplication sharedApplication] setStatusBarHidden:YES];
             settingsShown = NO;
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+                [self setNeedsStatusBarAppearanceUpdate];
+            }
+        } completion:^(BOOL finished) {
             self.settingsContainer.hidden = YES;
             [self resumeEmulation];
             self.darkenView.hidden = YES;
