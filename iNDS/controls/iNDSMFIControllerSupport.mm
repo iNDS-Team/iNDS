@@ -89,7 +89,9 @@
     };
     
     // Make sure the screen doesn't turn off on us while we're playing
-    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+    });
 }
 
 -(void) onControllerDisconnected:(NSNotification *)notification {
@@ -128,7 +130,9 @@
     _controllerElementToButtonIdMapping = nil;
     
     // Allow the screen to turn off again.
-    [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] setIdleTimerDisabled:NO];
+    });
 }
 
 @end
