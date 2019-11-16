@@ -9,7 +9,7 @@ if ! which ldid &> /dev/null; then
     exit 1
 fi
 
-INDS_VER=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" iNDS/Base.lproj/iNDS-Info.plist)
+INDS_VER=$(sed -n '/MARKETING_VERSION/{s/MARKETING_VERSION = //;s/;//;s/^[[:space:]]*//;p;q;}' ./iNDS.xcodeproj/project.pbxproj)
 OUTDIR=./dist/out.xcarchive
 OUTFILE="dist/net.nerd.iNDS_${INDS_VER}_iphoneos-arm.deb"
 ORIG=$(pwd)
