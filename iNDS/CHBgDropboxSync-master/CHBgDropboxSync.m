@@ -228,8 +228,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
          and it could get confusing. We could possible sort it out later, but for now,
          lets just stick to the old system.
          */
-        
-        [[[client.filesRoutes uploadUrl:[@"/" stringByAppendingPathComponent:file] mode:mode autorename:@(NO) clientModified:nil mute:@(YES) propertyGroups:nil inputUrl:path]
+        [[[client.filesRoutes uploadUrl:[@"/" stringByAppendingPathComponent:file] mode:mode autorename:@(NO) clientModified:nil mute:@(YES) propertyGroups:nil strictConflict:@(NO) inputUrl:path]
           setResponseBlock:^(DBFILESFileMetadata *result, DBFILESUploadError *routeError, DBRequestError *networkError) {
               if (result) {
                   NSString *dropboxFilePath = result.pathDisplay;
@@ -263,6 +262,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
          [client loadFile:$str(@"/%@", file) intoPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
          */
         NSURL *dest = [NSURL fileURLWithPath:[[[AppDelegate sharedInstance] batteryDir] stringByAppendingPathComponent:file]];
+        
         [[client.filesRoutes downloadUrl:$str(@"/%@", file) overwrite:YES destination:dest] setResponseBlock:^(DBFILESFileMetadata * _Nullable result, DBFILESDownloadError * _Nullable routeError, DBRequestError * _Nullable networkError, NSURL * _Nonnull destination) {
             if (result) {
                 NSLog(@"Downloaded >%@<, it's DB date is: %@", destination, [result.serverModified descriptionWithLocale:[NSLocale currentLocale]]);
@@ -271,7 +271,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
                 [self stepComplete];
                 self->anyLocalChanges = YES; // So that when we complete, we notify that there were local changes
             } else {
-                NSLog(@"%@\n%@\n", routeError, networkError);
+                NSLog(@"dl%@\n%@\n", routeError, networkError);
                 [self internalShutdownFailed];
             }
         }];
@@ -285,7 +285,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 - (void)startTaskRemoteDelete:(NSString*)file {
     NSLog(@"Sync: Deleting remote file %@", file);
     [deletedFiles addObject:file];
-    [[client.filesRoutes deleteV2:$str(@"/%@", file)] setResponseBlock:^(DBFILESMetadata * _Nullable result, DBFILESDeleteError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+    [[client.filesRoutes delete_V2:$str(@"/%@", file)] setResponseBlock:^(DBFILESMetadata * _Nullable result, DBFILESDeleteError * _Nullable routeError, DBRequestError * _Nullable networkError) {
         if (result) {
             [self stepComplete];
         } else {

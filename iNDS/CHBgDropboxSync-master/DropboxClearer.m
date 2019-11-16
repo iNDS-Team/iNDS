@@ -81,7 +81,7 @@
 - (void)start {
     client = [DBClientsManager authorizedClient];
     
-    [client.filesRoutes deleteV2:@""];
+    [client.filesRoutes delete_V2:@""];
 }
 
 // Create a dropbox clearer that calls your completion block when it's done. Handles memory for you.

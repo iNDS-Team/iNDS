@@ -116,13 +116,15 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
             }
             
             if (!invalidAppKeyOrSecret && !shouldRetry && [unsuccessfullyMigratedTokenData count] == 0) {
-                [DBClientsManager setupWithAppKey:[self appKey]];
+                DBTransportDefaultConfig *transportConfiguration = [[DBTransportDefaultConfig alloc] initWithAppKey:[self appKey] forceForegroundSession:YES];
+                [DBClientsManager setupWithTransportConfig:transportConfiguration];
                 [CHBgDropboxSync start];
             }
         } queue:nil appKey:[self appKey] appSecret:[self appSecret]];
         
         if (!willPerformMigration) {
-            [DBClientsManager setupWithAppKey:[self appKey]];
+            DBTransportDefaultConfig *transportConfiguration = [[DBTransportDefaultConfig alloc] initWithAppKey:[self appKey] forceForegroundSession:YES];
+            [DBClientsManager setupWithTransportConfig:transportConfiguration];
             [CHBgDropboxSync start];
         }
     }
