@@ -383,8 +383,11 @@ enum VideoFilter : NSUInteger {
         NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoFilter"];
         EMU_setFilter(filterTranslate[filter]);
     }
-    self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
-    self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.directionalControl.style = [defaults integerForKey:@"controlPadStyle"];
+        self.fpsLabel.hidden = ![defaults integerForKey:@"showFPS"];
+    });
+    
     
     // For some reason both of these disable the mic
     if ([defaults integerForKey:@"volumeBumper"] && !settingsShown) {
@@ -400,7 +403,9 @@ enum VideoFilter : NSUInteger {
         vibration = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
     }
     
-    [self.view setNeedsLayout];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.view setNeedsLayout];
+    });
 }
 
 
