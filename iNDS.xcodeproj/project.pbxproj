@@ -4790,7 +4790,7 @@
 					"$(PROJECT_DIR)",
 				);
 				LLVM_LTO = NO;
-				MARKETING_VERSION = 1.10.4;
+				MARKETING_VERSION = 1.10.5;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -4838,7 +4838,7 @@
 					"$(PROJECT_DIR)",
 				);
 				LLVM_LTO = NO;
-				MARKETING_VERSION = 1.10.4;
+				MARKETING_VERSION = 1.10.5;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
