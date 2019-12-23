@@ -1,0 +1,258 @@
+
+/* Class = "UITableViewSection"; footerTitle = "使用Dropbox同步会在你的账户中建立iNDS文件夹。你的游戏存档会在这个文件夹保存，并同步到其他设备。"; ObjectID = "0Py-uK-oNg"; */
+"0Py-uK-oNg.footerTitle" = "使用Dropbox同步会在你的账户中建立iNDS文件夹。你的游戏存档会在这个文件夹保存，并同步到其他设备。";
+
+/* Class = "UITableViewSection"; headerTitle = "Dropbox"; ObjectID = "0Py-uK-oNg"; */
+"0Py-uK-oNg.headerTitle" = "Dropbox";
+
+/* Class = "UILabel"; text = "布局"; ObjectID = "2US-OK-06r"; */
+"2US-OK-06r.text" = "布局";
+
+/* Class = "UITableViewSection"; footerTitle = "Game ID: XXXX"; ObjectID = "42X-Aw-BBz"; */
+"42X-Aw-BBz.footerTitle" = "Game ID: XXXX";
+
+/* Class = "UITableViewSection"; headerTitle = "名称"; ObjectID = "42X-Aw-BBz"; */
+"42X-Aw-BBz.headerTitle" = "名称";
+
+/* Class = "UIButton"; normalTitle = "<"; ObjectID = "4aI-FU-eO8"; */
+"4aI-FU-eO8.normalTitle" = "<";
+
+/* Class = "UILabel"; text = "控制器样式"; ObjectID = "628-xJ-TE3"; */
+"628-xJ-TE3.text" = "控制器样式";
+
+/* Class = "UILabel"; text = "当前ROM"; ObjectID = "7Nm-3Y-HQy"; */
+"7Nm-3Y-HQy.text" = "当前ROM";
+
+/* Class = "UILabel"; text = "DeSmuME"; ObjectID = "7hH-Y3-i5I"; */
+"7hH-Y3-i5I.text" = "DeSmuME";
+
+/* Class = "UILabel"; text = "存档"; ObjectID = "9Y1-Oj-gA3"; */
+"9Y1-Oj-gA3.text" = "存档";
+
+/* Class = "UILabel"; text = "@iNDSapp"; ObjectID = "9aT-vh-0tO"; */
+"9aT-vh-0tO.text" = "@iNDSapp";
+
+/* Class = "UISegmentedControl"; Aa4-Hv-ujp.segmentTitles[0] = "方向键"; ObjectID = "Aa4-Hv-ujp"; */
+"Aa4-Hv-ujp.segmentTitles[0]" = "方向键";
+
+/* Class = "UISegmentedControl"; Aa4-Hv-ujp.segmentTitles[1] = "摇杆"; ObjectID = "Aa4-Hv-ujp"; */
+"Aa4-Hv-ujp.segmentTitles[1]" = "摇杆";
+
+/* Class = "UILabel"; text = "复制布局"; ObjectID = "CRW-Js-4qm"; */
+"CRW-Js-4qm.text" = "复制布局";
+
+/* Class = "UIBarButtonItem"; title = "保存"; ObjectID = "FkX-0g-MMi"; */
+"FkX-0g-MMi.title" = "保存";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "Fpc-cd-CwK"; */
+"Fpc-cd-CwK.title" = "Item";
+
+/* Class = "UITableViewSection"; headerTitle = "可选项"; ObjectID = "HKZ-6C-5cn"; */
+"HKZ-6C-5cn.headerTitle" = "可选项";
+
+/* Class = "UITableViewSection"; footerTitle = "GNU Lighting JIT 让游戏运行得更快，但在不越狱的设备上会导致闪退。 "; ObjectID = "HQs-Z9-d7P"; */
+"HQs-Z9-d7P.footerTitle" = "GNU Lighting JIT 让游戏运行得更快，但在不越狱的设备上会导致闪退。 ";
+
+/* Class = "UITableViewSection"; headerTitle = "实验设置"; ObjectID = "HQs-Z9-d7P"; */
+"HQs-Z9-d7P.headerTitle" = "实验设置";
+
+/* Class = "UINavigationItem"; title = "选择配置"; ObjectID = "Hxy-GB-gYw"; */
+"Hxy-GB-gYw.title" = "选择配置";
+
+/* Class = "UILabel"; text = "麦克风"; ObjectID = "I3v-Nc-d4S"; */
+"I3v-Nc-d4S.text" = "麦克风";
+
+/* Class = "UILabel"; text = "禁用触摸"; ObjectID = "IH7-ia-d9J"; */
+"IH7-ia-d9J.text" = "禁用触摸";
+
+/* Class = "UILabel"; text = "模拟器设置"; ObjectID = "IrQ-Ld-BIK"; */
+"IrQ-Ld-BIK.text" = "模拟器设置";
+
+/* Class = "UILabel"; text = "控制器透明度"; ObjectID = "IzY-y9-rcs"; */
+"IzY-y9-rcs.text" = "控制器透明度";
+
+/* Class = "UILabel"; text = "截图"; ObjectID = "JsF-Gx-pqg"; */
+"JsF-Gx-pqg.text" = "截图";
+
+/* Class = "UILabel"; text = "Volume Button Bumpers"; ObjectID = "Kub-Od-1N5"; */
+"Kub-Od-1N5.text" = "Volume Button Bumpers";
+
+/* Class = "UILabel"; text = "使用 Dropbox 同步"; ObjectID = "M3y-fK-XWf"; */
+"M3y-fK-XWf.text" = "使用 Dropbox 同步";
+
+/* Class = "UITextField"; placeholder = "Cheat Name"; ObjectID = "MCG-cT-CwN"; */
+"MCG-cT-CwN.placeholder" = "Cheat Name";
+
+/* Class = "UILabel"; text = "游戏"; ObjectID = "NCR-q3-QnB"; */
+"NCR-q3-QnB.text" = "游戏";
+
+/* Class = "UINavigationItem"; title = "布局选项"; ObjectID = "NXh-pG-0Rw"; */
+"NXh-pG-0Rw.title" = "布局选项";
+
+/* Class = "UILabel"; text = "唇音同步"; ObjectID = "O1f-2K-M0t"; */
+"O1f-2K-M0t.text" = "唇音同步";
+
+/* Class = "UILabel"; text = "存档"; ObjectID = "O59-L8-IDA"; */
+"O59-L8-IDA.text" = "存档";
+
+/* Class = "UITableViewSection"; headerTitle = "Developer"; ObjectID = "O9Q-KX-eTM"; */
+"O9Q-KX-eTM.headerTitle" = "Developer";
+
+/* Class = "UILabel"; text = "速度"; ObjectID = "OH5-aq-hT5"; */
+"OH5-aq-hT5.text" = "速度";
+
+/* Class = "UILabel"; text = "布局选项"; ObjectID = "P2c-hh-ouv"; */
+"P2c-hh-ouv.text" = "布局选项";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "PbD-9E-hsE"; */
+"PbD-9E-hsE.text" = "Title";
+
+/* Class = "UILabel"; text = "金手指"; ObjectID = "QLj-V6-c8i"; */
+"QLj-V6-c8i.text" = "金手指";
+
+/* Class = "UIBarButtonItem"; title = "取消"; ObjectID = "QkK-k6-oNu"; */
+"QkK-k6-oNu.title" = "取消";
+
+/* Class = "UILabel"; text = "显示帧率"; ObjectID = "RV9-0b-oWH"; */
+"RV9-0b-oWH.text" = "显示帧率";
+
+/* Class = "UILabel"; text = "暂未关联"; ObjectID = "STN-h0-VIH"; */
+"STN-h0-VIH.text" = "暂未关联";
+
+/* Class = "UILabel"; text = "全屏设置"; ObjectID = "SY3-FN-oou"; */
+"SY3-FN-oou.text" = "全屏设置";
+
+/* Class = "UILabel"; text = "Github"; ObjectID = "TBh-Rc-Ubf"; */
+"TBh-Rc-Ubf.text" = "Github";
+
+/* Class = "UILabel"; text = "NDS4iOS团队"; ObjectID = "Tds-MR-hME"; */
+"Tds-MR-hME.text" = "NDS4iOS团队";
+
+/* Class = "UILabel"; text = "Twitter"; ObjectID = "WMZ-cq-doC"; */
+"WMZ-cq-doC.text" = "Twitter";
+
+/* Class = "UILabel"; text = "Will Cobb"; ObjectID = "Y2T-PC-9Uh"; */
+"Y2T-PC-9Uh.text" = "Will Cobb";
+
+/* Class = "UITableViewSection"; headerTitle = "控制"; ObjectID = "Y6o-vJ-AvE"; */
+"Y6o-vJ-AvE.headerTitle" = "控制";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[0] = "0.5x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[0]" = "0.5x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[1] = "1x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[1]" = "1x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[2] = "2x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[2]" = "2x";
+
+/* Class = "UISegmentedControl"; Ypy-oX-VPW.segmentTitles[3] = "4x"; ObjectID = "Ypy-oX-VPW"; */
+"Ypy-oX-VPW.segmentTitles[3]" = "4x";
+
+/* Class = "UILabel"; text = "新布局"; ObjectID = "Z1L-fs-zh3"; */
+"Z1L-fs-zh3.text" = "新布局";
+
+/* Class = "UITableViewSection"; headerTitle = "金手指代码"; ObjectID = "ZGH-jB-Jsf"; */
+"ZGH-jB-Jsf.headerTitle" = "金手指代码";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "ZaP-XB-7Ha"; */
+"ZaP-XB-7Ha.text" = "Subtitle";
+
+/* Class = "UITableViewSection"; footerTitle = "自动保存会每隔几分钟以及出错时存储你的游戏进度。"; ObjectID = "Zfz-To-hqF"; */
+"Zfz-To-hqF.footerTitle" = "自动保存会每隔几分钟以及出错时存储你的游戏进度。";
+
+/* Class = "UITableViewSection"; headerTitle = "模拟器"; ObjectID = "Zfz-To-hqF"; */
+"Zfz-To-hqF.headerTitle" = "模拟器";
+
+/* Class = "UINavigationItem"; title = "设置"; ObjectID = "aA7-QL-3jR"; */
+"aA7-QL-3jR.title" = "设置";
+
+/* Class = "UILabel"; text = "将DeSmuME移植到iOS"; ObjectID = "anh-aD-krd"; */
+"anh-aD-krd.text" = "将DeSmuME移植到iOS";
+
+/* Class = "UILabel"; text = "GNU Lightning JIT"; ObjectID = "bIB-FM-Hft"; */
+"bIB-FM-Hft.text" = "GNU Lightning JIT";
+
+/* Class = "UILabel"; text = "振动"; ObjectID = "cNL-IT-Ar0"; */
+"cNL-IT-Ar0.text" = "振动";
+
+/* Class = "UIButton"; normalTitle = ">"; ObjectID = "cO1-PS-QPR"; */
+"cO1-PS-QPR.normalTitle" = ">";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "cXf-GX-t2i"; */
+"cXf-GX-t2i.title" = "Item";
+
+/* Class = "UILabel"; text = "Pokemon"; ObjectID = "d6Z-Sh-06Y"; */
+"d6Z-Sh-06Y.text" = "Pokemon";
+
+/* Class = "UINavigationItem"; title = "问题反馈"; ObjectID = "d9o-PH-ffX"; */
+"d9o-PH-ffX.title" = "问题反馈";
+
+/* Class = "UITableViewSection"; footerTitle = "版本 1.1.6"; ObjectID = "f6X-Yw-0Td"; */
+"f6X-Yw-0Td.footerTitle" = "版本 1.1.6";
+
+/* Class = "UITableViewSection"; headerTitle = "信息"; ObjectID = "f6X-Yw-0Td"; */
+"f6X-Yw-0Td.headerTitle" = "信息";
+
+/* Class = "UILabel"; text = "禁用声音"; ObjectID = "gJw-qx-K1N"; */
+"gJw-qx-K1N.text" = "禁用声音";
+
+/* Class = "UILabel"; text = "自动保存"; ObjectID = "i1H-5W-GBv"; */
+"i1H-5W-GBv.text" = "自动保存";
+
+/* Class = "UILabel"; text = "源码"; ObjectID = "j7Z-7e-txx"; */
+"j7Z-7e-txx.text" = "源码";
+
+/* Class = "UILabel"; text = "模拟器内核"; ObjectID = "kGJ-Zf-nOZ"; */
+"kGJ-Zf-nOZ.text" = "模拟器内核";
+
+/* Class = "UILabel"; text = "MFI手柄设置（即将上线）"; ObjectID = "lt9-GU-1uI"; */
+"lt9-GU-1uI.text" = "MFI手柄设置（即将上线）";
+
+/* Class = "UILabel"; text = "? FPS"; ObjectID = "mo4-qa-NUQ"; */
+"mo4-qa-NUQ.text" = "? FPS";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "n2J-99-dwn"; */
+"n2J-99-dwn.text" = "Title";
+
+/* Class = "UILabel"; text = "双三次插值"; ObjectID = "p7C-Hn-wrd"; */
+"p7C-Hn-wrd.text" = "双三次插值";
+
+/* Class = "UINavigationItem"; title = "New Cheat"; ObjectID = "pBZ-dv-s3c"; */
+"pBZ-dv-s3c.title" = "New Cheat";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "qaf-Bt-HzZ"; */
+"qaf-Bt-HzZ.text" = "Subtitle";
+
+/* Class = "UITableViewSection"; headerTitle = "问题描述（请使用英文）"; ObjectID = "r3Y-cQ-4vD"; */
+"r3Y-cQ-4vD.headerTitle" = "问题描述（请使用英文）";
+
+/* Class = "UINavigationItem"; title = "模拟器设置"; ObjectID = "rWF-4U-yKM"; */
+"rWF-4U-yKM.title" = "模拟器设置";
+
+/* Class = "UILabel"; text = "Wiki创建者"; ObjectID = "twp-tN-iPD"; */
+"twp-tN-iPD.text" = "Wiki创建者";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "uTC-VG-Bcz"; */
+"uTC-VG-Bcz.text" = "Subtitle";
+
+/* Class = "UILabel"; text = "重命名布局"; ObjectID = "uco-au-tPw"; */
+"uco-au-tPw.text" = "重命名布局";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "uui-Kk-GET"; */
+"uui-Kk-GET.text" = "Title";
+
+/* Class = "UILabel"; text = "开发者"; ObjectID = "vRu-OD-kxI"; */
+"vRu-OD-kxI.text" = "开发者";
+
+/* Class = "UILabel"; text = "编辑布局"; ObjectID = "x2E-FO-x01"; */
+"x2E-FO-x01.text" = "编辑布局";
+
+/* Class = "UILabel"; text = "Default"; ObjectID = "z6e-hj-9kP"; */
+"z6e-hj-9kP.text" = "Default";
+
+/* Class = "UILabel"; text = "Pmp174"; ObjectID = "zUt-7U-gQp"; */
+"zUt-7U-gQp.text" = "Pmp174";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "zdy-Vn-XW6"; */
+"zdy-Vn-XW6.title" = "Item";
