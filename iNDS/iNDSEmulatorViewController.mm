@@ -826,9 +826,10 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
                 self.darkenView.alpha = 0.6;
                 self.settingsContainer.alpha = 1;
                 settingsShown = YES;
-                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+//                Removed until clicking on a category in settings doesn't make the status bar appear
+//                if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
                     [self setNeedsStatusBarAppearanceUpdate];
-                }
+//                }
             } completion:^(BOOL finished) {
                 if (!inEditingMode)
                     [CHBgDropboxSync start];
@@ -844,9 +845,10 @@ NSInteger filter = [[NSUserDefaults standardUserDefaults] integerForKey:@"videoF
             self.darkenView.alpha = 0.0;
             self.settingsContainer.alpha = 0;
             settingsShown = NO;
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
+//            Removed until clicking on a category in settings doesn't make the status bar appear
+//            if ([[NSUserDefaults standardUserDefaults] boolForKey:@"fullScreenSettings"]) {
                 [self setNeedsStatusBarAppearanceUpdate];
-            }
+//            }
         } completion:^(BOOL finished) {
             self.settingsContainer.hidden = YES;
             [self resumeEmulation];
