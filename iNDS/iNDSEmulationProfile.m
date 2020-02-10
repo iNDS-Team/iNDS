@@ -198,7 +198,7 @@ static CGFloat const OffsetYForTriggerOniPhoneX = 130.f;
             CFTimeInterval lastVersionAlert = [[NSUserDefaults standardUserDefaults] integerForKey:@"iNDSLastOutOfDateProfileAlert"];
             if (CACurrentMediaTime() - lastVersionAlert > 500) {
                 SCLAlertView * alert = [[SCLAlertView alloc] init];
-                [alert showInfo:emulationView title:@"Unable to load Profiles" subTitle:@"Some profiles were used with a later version of iNDS. These profiles will be hidded until you upgrade iNDS." closeButtonTitle:@"Thanks" duration:0.0];
+                [alert showInfo:emulationView title:@"Unable to load Profiles" subTitle:@"Some profiles were used with a later version of iNDS. These profiles will be hidden until you upgrade iNDS." closeButtonTitle:@"Thanks" duration:0.0];
                 [[NSUserDefaults standardUserDefaults] setInteger:CACurrentMediaTime() forKey:@"iNDSLastOutOfDateProfileAlert"];
             }
             return nil;
