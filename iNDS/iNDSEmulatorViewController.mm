@@ -198,13 +198,14 @@ enum VideoFilter : NSUInteger {
     [notificationCenter addObserver:self selector:@selector(defaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(screenChanged:) name:UIScreenDidConnectNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(screenChanged:) name:UIScreenDidDisconnectNotification object:nil];
+#if !(TARGET_IPHONE_SIMULATOR)
     [notificationCenter addObserver:self selector:@selector(controllerActivated:) name:GCControllerDidConnectNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(controllerDeactivated:) name:GCControllerDidDisconnectNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(userRequestedToPlayROM:) name:iNDSUserRequestedToPlayROMNotification object:nil];
-
     if ([[GCController controllers] count] > 0) {
         [self controllerActivated:nil];
     }
+#endif
+    [notificationCenter addObserver:self selector:@selector(userRequestedToPlayROM:) name:iNDSUserRequestedToPlayROMNotification object:nil];
     
     // Volume Button Bumpers
     // This works pretty well but there's a 0.5 second delay when
