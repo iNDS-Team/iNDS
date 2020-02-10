@@ -18,6 +18,6 @@
 #define ScreenMaxLength (MAX(ScreenWidth, ScreenHeight))
 #define IsiPhone (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
 
-#define IsiPhoneX (IsiPhone && ScreenMaxLength == 812.0)
+#define IsiPhoneX (IsiPhone && ScreenMaxLength >= 812.0)
 
 #endif /* CommonMacro_h */
