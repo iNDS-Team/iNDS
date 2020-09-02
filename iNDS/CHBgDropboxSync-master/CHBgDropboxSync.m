@@ -285,7 +285,7 @@ CHBgDropboxSync* bgDropboxSyncInstance=nil;
 - (void)startTaskRemoteDelete:(NSString*)file {
     NSLog(@"Sync: Deleting remote file %@", file);
     [deletedFiles addObject:file];
-    [[client.filesRoutes delete_V2:$str(@"/%@", file)] setResponseBlock:^(DBFILESMetadata * _Nullable result, DBFILESDeleteError * _Nullable routeError, DBRequestError * _Nullable networkError) {
+    [[client.filesRoutes delete_V2:$str(@"/%@", file)] setResponseBlock:^(DBFILESDeleteResult * _Nullable result, DBFILESDeleteError * _Nullable routeError, DBRequestError * _Nullable networkError) {
         if (result) {
             [self stepComplete];
         } else {
