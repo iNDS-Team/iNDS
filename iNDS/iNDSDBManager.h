@@ -16,7 +16,7 @@
 + (id) sharedInstance;
 
 - (void) query:(NSString*)queryString result:(void (^)(int resultCode, sqlite3_stmt *statement))result;
-- (void) openDB;
+- (void) openDB:(NSString *)dbPath;
 - (void) closeDB;
 
 

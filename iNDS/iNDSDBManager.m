@@ -21,21 +21,10 @@
 }
 
 - (id) init {
-    if (self = [super init]) {
-        NSString *dbPath = [[NSBundle mainBundle] pathForResource:@"openvgdb" ofType:@"sqlite"];
-        
-        if (sqlite3_open_v2([dbPath UTF8String], &_database, SQLITE_OPEN_READWRITE, NULL) != SQLITE_OK) {
-            sqlite3_close(_database);
-            NSLog(@"Failed to open games database");
-        }
-    }
-    
-    return self;
+    return [super init];
 }
 
-- (void) openDB {
-    NSString *dbPath = [[NSBundle mainBundle] pathForResource:@"openvgdb" ofType:@"sqlite"];
-    
+- (void) openDB:(NSString *)dbPath {
     if (sqlite3_open_v2([dbPath UTF8String], &_database, SQLITE_OPEN_READWRITE, NULL) != SQLITE_OK) {
         sqlite3_close(_database);
         NSLog(@"Failed to open games database");
@@ -50,7 +39,7 @@
     sqlite3_stmt *statement;
     int resultCode = sqlite3_prepare_v2(_database, [queryString UTF8String], -1, &statement, nil);
     
-    if (result) {
+    if ((resultCode == SQLITE_OK) && result) {
         result(resultCode, statement);
     }
     

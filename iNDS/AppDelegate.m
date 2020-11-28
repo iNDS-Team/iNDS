@@ -62,11 +62,17 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.batteryDir]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.dbDir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.dbDir withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    
     
     [self.window setTintColor:[UIColor colorWithRed:1 green:59/255.0 blue:48/255.0 alpha:1]];
     
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
+    
+    [[iNDSDBManager sharedInstance] openDB:self.dbFile];
     
     [self setupSDWebImageCache];
     
@@ -333,6 +339,11 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     return [self.documentsPath stringByAppendingPathComponent:@"Battery"];
 }
 
+- (NSString *)dbDir
+{
+    return [self.documentsPath stringByAppendingPathComponent:@"OpenVGDB"];
+}
+
 - (NSString *)documentsPath
 {
     if ([self isSystemApplication]) {
@@ -362,8 +373,13 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"dbAppSecret"];
 }
 
+- (NSString *)dbFile
+{
+    return [self.dbDir stringByAppendingPathComponent:@"openvgdb.sqlite"];
+}
+
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState
-{;
+{
     if (!self.currentEmulatorViewController) {
         iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
         emulatorViewController.game = game;
@@ -464,12 +480,18 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
         NSData *urlData = [NSData dataWithContentsOfURL:url];
         if ( urlData )
         {
-            NSString *dbPath = [[NSBundle mainBundle] pathForResource:@"openvgdb" ofType:@"sqlite"];
-            
-            [urlData writeToFile:dbPath atomically:YES];
+            NSError *error;
+            if ( [urlData writeToFile:self.dbFile options:NSDataWritingAtomic error:&error] ) {
+                handler(0);
+            }
+            else {
+                NSLog(@"%@", error);
+                handler(0);
+            }
+        }
+        else {
             handler(0);
         }
-        handler(1);
     });
 }
 
@@ -671,7 +693,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
                             [fail addAction:defaultAction];
                             [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
                         }
-                        [[iNDSDBManager sharedInstance] openDB];
+                        [[iNDSDBManager sharedInstance] openDB:[self.dbDir stringByAppendingPathComponent:@"openvgdb.sqlite"]];
                     }];
                 }];
             }];
@@ -686,6 +708,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
             UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 
                 NSArray *everything = @[[self batteryDir],
+                                        [self dbDir],
                                         [self documentsPath]];
                 NSFileManager *fileMgr = [NSFileManager defaultManager];
                 for (NSString *path in everything) {
