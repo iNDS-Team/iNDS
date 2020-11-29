@@ -25,7 +25,10 @@
 }
 
 - (void) openDB:(NSString *)dbPath {
-    if (sqlite3_open_v2([dbPath UTF8String], &_database, SQLITE_OPEN_READWRITE, NULL) != SQLITE_OK) {
+    if (sqlite3_open_v2([dbPath UTF8String], &_database, SQLITE_OPEN_READWRITE, NULL) == SQLITE_OK) {
+        NSLog(@"Sucessfully opened games database");
+    }
+    else {
         sqlite3_close(_database);
         NSLog(@"Failed to open games database");
     }

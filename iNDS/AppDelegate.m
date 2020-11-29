@@ -55,7 +55,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
-    //Create documents and battery folder if needed
+    // Create folders if needed
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:nil];
     }
@@ -64,6 +64,12 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     }
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.dbDir]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.dbDir withIntermediateDirectories:YES attributes:nil error:nil];
+        
+        // Copy the content of the db from the bundle into documents
+        NSData *bundleDB = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]
+                                                           pathForResource:[[self.dbFile lastPathComponent] stringByDeletingPathExtension]
+                                                           ofType:[self.dbFile pathExtension]]];
+        [bundleDB writeToFile:self.dbFile atomically:YES];
     }
     
     
@@ -72,6 +78,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
     
+    // Open DB
     [[iNDSDBManager sharedInstance] openDB:self.dbFile];
     
     [self setupSDWebImageCache];
@@ -693,7 +700,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
                             [fail addAction:defaultAction];
                             [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
                         }
-                        [[iNDSDBManager sharedInstance] openDB:[self.dbDir stringByAppendingPathComponent:@"openvgdb.sqlite"]];
+                        [[iNDSDBManager sharedInstance] openDB:self.dbFile];
                     }];
                 }];
             }];
