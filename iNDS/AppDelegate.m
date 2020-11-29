@@ -493,11 +493,11 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
             }
             else {
                 NSLog(@"%@", error);
-                handler(0);
+                handler(1);
             }
         }
         else {
-            handler(0);
+            handler(1);
         }
     });
 }
