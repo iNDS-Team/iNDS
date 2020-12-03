@@ -55,18 +55,31 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:[NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Defaults" ofType:@"plist"]]];
     
-    //Create documents and battery folder if needed
+    // Create folders if needed
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.documentsPath]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.documentsPath withIntermediateDirectories:YES attributes:nil error:nil];
     }
     if (![[NSFileManager defaultManager] fileExistsAtPath:self.batteryDir]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batteryDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    if (![[NSFileManager defaultManager] fileExistsAtPath:self.dbDir]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:self.dbDir withIntermediateDirectories:YES attributes:nil error:nil];
+        
+        // Copy the content of the db from the bundle into documents
+        NSData *bundleDB = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]
+                                                           pathForResource:[[self.dbFile lastPathComponent] stringByDeletingPathExtension]
+                                                           ofType:[self.dbFile pathExtension]]];
+        [bundleDB writeToFile:self.dbFile atomically:YES];
+    }
+    
     
     [self.window setTintColor:[UIColor colorWithRed:1 green:59/255.0 blue:48/255.0 alpha:1]];
     
     [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(-200, 0)
                                                          forBarMetrics:UIBarMetricsDefault];
+    
+    // Open DB
+    [[iNDSDBManager sharedInstance] openDB:self.dbFile];
     
     [self setupSDWebImageCache];
     
@@ -333,6 +346,11 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     return [self.documentsPath stringByAppendingPathComponent:@"Battery"];
 }
 
+- (NSString *)dbDir
+{
+    return [self.documentsPath stringByAppendingPathComponent:@"OpenVGDB"];
+}
+
 - (NSString *)documentsPath
 {
     if ([self isSystemApplication]) {
@@ -362,8 +380,13 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"dbAppSecret"];
 }
 
+- (NSString *)dbFile
+{
+    return [self.dbDir stringByAppendingPathComponent:@"openvgdb.sqlite"];
+}
+
 - (void)startGame:(iNDSGame *)game withSavedState:(NSInteger)savedState
-{;
+{
     if (!self.currentEmulatorViewController) {
         iNDSEmulatorViewController *emulatorViewController = (iNDSEmulatorViewController *)[[UIStoryboard storyboardWithName:@"MainStoryboard" bundle:nil] instantiateViewControllerWithIdentifier:@"emulatorView"];
         emulatorViewController.game = game;
@@ -464,12 +487,18 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
         NSData *urlData = [NSData dataWithContentsOfURL:url];
         if ( urlData )
         {
-            NSString *dbPath = [[NSBundle mainBundle] pathForResource:@"openvgdb" ofType:@"sqlite"];
-            
-            [urlData writeToFile:dbPath atomically:YES];
-            handler(0);
+            NSError *error;
+            if ( [urlData writeToFile:self.dbFile options:NSDataWritingAtomic error:&error] ) {
+                handler(0);
+            }
+            else {
+                NSLog(@"%@", error);
+                handler(1);
+            }
         }
-        handler(1);
+        else {
+            handler(1);
+        }
     });
 }
 
@@ -671,7 +700,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
                             [fail addAction:defaultAction];
                             [self->_settingsViewController presentViewController:fail animated:YES completion:nil];
                         }
-                        [[iNDSDBManager sharedInstance] openDB];
+                        [[iNDSDBManager sharedInstance] openDB:self.dbFile];
                     }];
                 }];
             }];
@@ -686,6 +715,7 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
             UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"Continue" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
                 
                 NSArray *everything = @[[self batteryDir],
+                                        [self dbDir],
                                         [self documentsPath]];
                 NSFileManager *fileMgr = [NSFileManager defaultManager];
                 for (NSString *path in everything) {
