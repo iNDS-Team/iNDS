@@ -16,6 +16,8 @@
 	<true/>
 	<key>frameSkip</key>
 	<integer>-1</integer>
+	<key>outputVolume</key>
+	<integer>1</integer>
 	<key>disableSound</key>
 	<false/>
 	<key>allowExternalAudio</key>

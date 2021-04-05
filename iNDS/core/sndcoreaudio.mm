@@ -41,6 +41,7 @@ static s16 *sndBuffer[NUM_BUFFERS];
 static bool audioQueueStarted = false;
 static AudioQueueBufferRef aqBuffer[NUM_BUFFERS];
 static AudioQueueRef audioQueue;
+static float volume = 1.0;
 
 void SNDCoreAudioCallback(void *data, AudioQueueRef mQueue, AudioQueueBufferRef mBuffer) {
     mBuffer->mAudioDataByteSize = sndBufferSize;
@@ -119,14 +120,11 @@ void SNDCoreAudioMuteAudio() {
 }
 
 void SNDCoreAudioUnMuteAudio() {
-    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, 1.0);
+    AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, volume);
 }
 
 void SNDCoreAudioSetVolume(int volume) {
-    /*
-     This function was not implemented, but if it was implemented,
-     this is how to do it.
     float scaled = volume / 100.0;
+    ::volume = scaled;
     AudioQueueSetParameter(audioQueue, kAudioQueueParam_Volume, scaled);
-     */
 }

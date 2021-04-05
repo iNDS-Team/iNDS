@@ -596,7 +596,9 @@ NSString * const iNDSUserRequestedToPlayROMNotification = @"iNDSUserRequestedToP
         
         // Audio
         WCEasySettingsSection *audioSection = [[WCEasySettingsSection alloc] initWithTitle:@"Audio" subTitle:@""];
-        audioSection.items = @[[[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableSound"
+        audioSection.items = @[[[WCEasySettingsSlider alloc] initWithIdentifier:@"outputVolume"
+                                                                          title:@"Output Volume"],
+                               [[WCEasySettingsSwitch alloc] initWithIdentifier:@"disableSound"
                                                                           title:@"Disable Sound"],
                                [[WCEasySettingsSwitch alloc] initWithIdentifier:@"allowExternalAudio"
                                                                           title:@"Allow External Audio"],

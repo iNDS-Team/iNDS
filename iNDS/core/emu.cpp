@@ -301,12 +301,18 @@ void EMU_enableSound(bool enabled)
 /*
  SPU seems to need to be kickstarted. If left disabled when initializing the ROM,
  then we can't expect to magically enable it partway through. To solve this, we
- just let it run for a cycle if we disable sound.
+ just let it run for a cycle if we disable sound. We only kick the SPU when soundEnabled has changed, to prevent unnecessarily kickstarting the SPU.
  
  More information see iNDS-Team/iNDS#35
  */
-    if (!enabled) SPU_Emulate_user(true);
+    if(!enabled && soundEnabled != enabled) SPU_Emulate_user(true);
     soundEnabled = enabled;
+}
+
+void EMU_setAudioOutputVolume(double volume)
+{
+    int vol = volume * 100;
+    SPU_SetVolume(vol);
 }
 
 void EMU_setFrameSkip(int skip)
