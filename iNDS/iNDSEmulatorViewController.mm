@@ -373,6 +373,10 @@ enum VideoFilter : NSUInteger {
         // (Mute on && don't ignore it) or user has sound disabled
         BOOL muteSound = [defaults boolForKey:@"disableSound"];
         EMU_enableSound(!muteSound);
+        
+        double outputVolume = [defaults doubleForKey:@"outputVolume"];
+        EMU_setAudioOutputVolume(outputVolume);
+        
         AVAudioSessionCategoryOptions opts = AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothA2DP;
         if([defaults boolForKey:@"allowExternalAudio"]){
             opts |= AVAudioSessionCategoryOptionMixWithOthers;

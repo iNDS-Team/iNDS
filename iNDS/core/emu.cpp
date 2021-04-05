@@ -309,6 +309,12 @@ void EMU_enableSound(bool enabled)
     soundEnabled = enabled;
 }
 
+void EMU_setAudioOutputVolume(double volume)
+{
+    int vol = volume * 100;
+    SPU_SetVolume(vol);
+}
+
 void EMU_setFrameSkip(int skip)
 {
     if (skip == -1) {
