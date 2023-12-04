@@ -2,12 +2,12 @@
 
 ## ⚠️ BIG IMPORTANT NOTE ⚠️
 
-**This repository is largely unmaintained.** [I](https://github.com/FrederickGeek8)
+**This repository is largely unmaintained. There is a high likelihood that basically everything here is broken.** [I](https://github.com/FrederickGeek8)
 archived this repository sometime in 2021. One of the problems with open-source
 is that many people will post Issues about your application, but few will
 actually contribute to the project. My goal with creating
 [iNDS-Team](https://github.com/iNDS-Team) was to foster community support and
-maintaince of this project, but few actually contributed anything. Currently,
+maintenance of this project, but few actually contributed anything. Currently,
 `inds.nerd.net` has not been revived, although I still own that domain. Ideally,
 I would not need to pay for hosting costs of that website since, especially if
 it becomes popular again, I would not want to scale a small server up for heavy
