@@ -37,6 +37,7 @@ bool EMU_doRomLoad(const char* path, const char* logical);
 bool EMU_loadRom(const char* path);
 void EMU_change3D(int type);
 void EMU_changeSound(int type);
+void EMU_setAudioOutputVolume(double volume);
 void EMU_enableSound(bool enable);
 bool EMU_frameSkip(bool force);
 void EMU_setFrameSkip(int skip);
